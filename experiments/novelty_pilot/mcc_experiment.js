@@ -9,6 +9,14 @@ function showSlide(id) {
 	$("#"+id).show();
 }
 
+function showText(id) {
+  // Hide all slides
+	$(".text").hide();
+	// Show just the slide we want to show
+	$("#"+id).show();
+}
+
+
 function showAgent(id, orient) {
   // Hide all slides
 	$(".agent").hide();
@@ -245,6 +253,10 @@ var experiment = {
   choice: function(event) {
     
     showSlide("choice");
+    
+    showText("back");
+    setTimeout(function() {showText()}, 3000);
+    
       
     choiceLeftFruit("images/"+leftFruit[0]+".png");
     choiceRightFruit("images/"+rightFruit[0]+".png");
@@ -320,6 +332,8 @@ setTimeout(function() {
         pause("next",1500); 
         sourceSound("sound/"+agents[0]+"_id.mp3");
         playSound();
+        showText("hello");
+        setTimeout(function() {showText()}, 2000);
     };  
     
       
@@ -337,7 +351,7 @@ setTimeout(function() {
         }, 1400)
     }; 
       
-      if (experiment.agentOrient[0][0] == "point_l") {
+    if (experiment.agentOrient[0][0] == "point_l") {
         setTimeout(function() {
             $("#fruit_l").animate({height: "100px",opacity: '0.3', queue: false, duration: 1000});
             $("#fruit_l").animate({height: "60px",opacity: '1', queue: false, duration: 1000})
@@ -348,9 +362,12 @@ setTimeout(function() {
       
     showAgent(agents[0],experiment.agentOrient[0][0]);
  
-     if (experiment.agentOrient[0][0] == "gone") { 
-        pause("next",3500);
-    };  
+    if (experiment.agentOrient[0][0] == "disappear") { 
+        showText("mgone");
+        setTimeout(function() {showText()}, 2500);
+        pause("next",2500);
+    };
+      
       
     if (experiment.novel[0] == "right"){
             if (experiment.agentOrient[0][0] == "gone"){

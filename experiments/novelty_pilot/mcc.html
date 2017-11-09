@@ -31,7 +31,7 @@
 			<table style="width:100%">
 				<tbody>
                        <p class="block-text2">
-                          These little animals are hungry. They want the food that is on the tables. But, be careful, they are very picky! They only want specific food items and they will always name the food they want. You can give them the food by klicking on the plate. Before they ask for food, they go and get their plate. Watch out, sometimes a different animal returns. First, they will ask for food you already know the name for (apple or carrot). This will make you familiar with the procedure. Later, they will name new kinds of food and you have to find out which food they want.
+                          These little animals are hungry. They want the food that is on the tables. But, be careful, they are very picky! They only want specific food items and they will always name the food they want. You can give them the food by clicking on the plate. Before they ask for food, they go and get their plate. Watch out, sometimes a different animal returns. First, they will ask for food you already know the name for (apple or carrot). This will make you familiar with the procedure. Later, they will name new kinds of food and you have to find out which food they want.
                         </p>
                         <p class="block-text2">
                             To move forward, press the "Next" button in the top left corner. Let's see if you can help them. Make sure, that your volume is turned on. Press the button below to begin.</p>
@@ -116,7 +116,7 @@
 			<table style="width:100%">
 				<tbody>
 					<tr align="center" height="300px">
-						<td><nextButton class ="button" type="button" id="next" onclick="getTime1(); experiment.next()">Next</nextButton>
+						<td><nextButton class ="button" type="button" id="next" onclick="getTime1(); experiment.next();">Next</nextButton>
                         </td>
 						<td>
                         <audio id="sound" src = ""></audio>
@@ -147,7 +147,10 @@
                        <img id="elefant_disappear" class="agent"  src="images/elefant_disappear.png">
                         <img id="duck_disappear" class="agent"  src="images/duck_disappear.png">
                         </td>
-						<td></td>
+						<td>
+                        <p id="hello" class="text">Look who is here</p>
+                        <p id="mgone" class="text">He went to get his bowl</p>
+                        </td>
 					</tr>
 					<tr align="center" height="300px">
 						<td>
@@ -190,6 +193,7 @@
                         </td>
                          <td> 
                             <img id="choiceFruit_r" class="fruit_r" src="">
+                             <p id="back" class="text">Look who is here</p>
                             <img id="table_r" class="table_r" src="images/table_r.png" width="200px">
                         </td>
 				</tbody>
