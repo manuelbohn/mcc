@@ -104,7 +104,7 @@ function playSound() {
   function pause(id,time){
       $("#"+id).hide();
       setTimeout(function() {
-           $("#"+id).show();
+           $("#"+id).show();    
        }, time); 
     };
 
@@ -112,7 +112,7 @@ function playSound() {
 
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
 
-var trial = ["train","train","finTrain",1,2,3,4]
+var trial = ["train","ctrain","finTrain",1,2]
 
 var trainAgents = ["mole","hedge"]
 var trainAltAgent = ["duck"]
@@ -123,6 +123,12 @@ var remainingAgent = $.grep(allAgents, function(value) {
 var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,2);
 var agents = trainAgents.concat(testAgents);
 var altAgents = trainAltAgent.concat(testAltAgent);
+
+var trainSounds = [["mole","mole"],["hedge","duck"]]
+var testSounds = shuffle([shuffle(["fdax","mdax"]),
+                      shuffle(["fmodi","mmodi"])]);
+
+var sounds = trainSounds.concat(testSounds);
 
 var trainSpeakerChange = [["false","true"]];
 var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"])]);
@@ -163,6 +169,7 @@ var experiment = {
   trial: trial,
   speakerChange: speakerChange,
   agents: agents,
+  sounds: sounds,
   altAgents: altAgents,
   agentOrient: agentOrient,
   rightFruit: rightFruit,
@@ -183,16 +190,20 @@ var experiment = {
    eat: function(event) {
     // Show the finish slide.
     showSlide("eat");
-       
-       
+    
+    showText("continue");  
+        
     if (speakerChange[0][0] == "true"){
         showEat(altAgents[0])
+        sourceSound("sound/"+sounds[0][1]+"_eat.mp3");
+        playSound();
     } else {
         showEat(agents[0])
+        sourceSound("sound/"+sounds[0][0]+"_eat.mp3");
+        playSound();
     };
         
-    sourceSound("sound/"+agents[0]+"_eat.mp3");
-        playSound();
+   
         
     var endTime = (new Date()).getTime();    
     
@@ -240,6 +251,7 @@ var experiment = {
     experiment.speakerChange[0].shift();
     experiment.rightFruit.shift();
     experiment.leftFruit.shift();
+    experiment.sounds.shift();
      
     if(speakerChange[0].length == 0) {
         experiment.speakerChange.shift();
@@ -275,26 +287,33 @@ var experiment = {
     $("#"+altAgents[0]+"_choice").animate({height: "268px",opacity: '0.3', queue: false, duration: "slow"});
     $("#"+altAgents[0]+"_choice").animate({height: "168px",opacity: '1', queue: false, duration: "slow"});
     
-    if (experiment.trial[0] == "train"){
-        sourceSound("sound/"+agents[0]+"_id.mp3");
+//    if (experiment.trial[0] == "train"){
+//        sourceSound("sound/mole_id.mp3");
+//        playSound();
+//       setTimeout(function() {
+//        sourceSound("sound/mole_carrot.mp3");
+//        playSound();}, 2000);
+//    } else if (experiment.trial[0] == "ctrain") {
+//        sourceSound("sound/duck_id.mp3");
+//        playSound();
+//       setTimeout(function() {
+//        sourceSound("sound/duck_carrot.mp3");
+//        playSound();}, 2000);
+//    }
+      
+    if (experiment.speakerChange[0] == "true"){
+        sourceSound("sound/"+sounds[0][1]+"_id.mp3");
         playSound();
        setTimeout(function() {
-        sourceSound("sound/carrot.mp3");
-        playSound();}, 1500);
-    } else if (speakerChange[0][0] == "true") {
-        sourceSound("sound/"+altAgents[0]+"_id.mp3");
+        sourceSound("sound/"+sounds[0][1]+"_choice.mp3");
+        playSound();}, 2000);
+    } else {
+       sourceSound("sound/"+sounds[0][0]+"_id.mp3");
         playSound();
        setTimeout(function() {
-        sourceSound("sound/"+altAgents[0]+"_choice.mp3");
-        playSound();}, 1500);
-    }else{
-       sourceSound("sound/"+agents[0]+"_id.mp3");
-        playSound();
-       setTimeout(function() {
-        sourceSound("sound/"+agents[0]+"_choice.mp3");
-        playSound();}, 1500);
-    };  
-   
+        sourceSound("sound/"+sounds[0][0]+"_choice.mp3");
+        playSound();}, 2000);
+            }; 
       
 setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
@@ -330,7 +349,7 @@ setTimeout(function() {
     if (experiment.agentOrient[0][0] == "straight") { 
     //inactivate next button for the time the sound is played 
         pause("next",1500); 
-        sourceSound("sound/"+agents[0]+"_id.mp3");
+        sourceSound("sound/"+sounds[0][0]+"_id.mp3");
         playSound();
         showText("hello");
         setTimeout(function() {showText()}, 2000);
@@ -340,7 +359,7 @@ setTimeout(function() {
       
     if (experiment.agentOrient[0][0] == "point_l" ||experiment.agentOrient[0][0] == "point_r") { 
         pause("next",2300); 
-        sourceSound("sound/"+agents[0]+"_point.mp3");
+        sourceSound("sound/"+sounds[0][0]+"_point.mp3");
         playSound();
     };  
       
@@ -364,8 +383,12 @@ setTimeout(function() {
  
     if (experiment.agentOrient[0][0] == "disappear") { 
         showText("mgone");
-        setTimeout(function() {showText()}, 2500);
-        pause("next",2500);
+        setTimeout(function() {showText()}, 2000);
+        pause("next",2000);
+    };
+      
+     if (experiment.agentOrient[0][0] == "gone") { 
+        pause("next",3500);
     };
       
       

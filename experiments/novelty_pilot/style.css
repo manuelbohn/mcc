@@ -12,8 +12,8 @@ body {
 
 /* We manage display using "slides". A slide is a <code>div</code> that takes up the entire page. Only one slide should be visible at a time. Navigation between slides is most sensibly accomplished using using buttons, rather than keyboard events. */
 .slide {
-	width: 95%;
-	height: 95%;
+	width: 950px;
+	height: 600px;
 	display: none;
 	position: absolute;
 	margin: 0;
@@ -217,6 +217,19 @@ nextButton[disabled] {
   top: 50px;
   left: 240px;
 }
+
+.text2 {
+  font-size: 25px;
+  width: 500px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  position: absolute;
+  top: 500px;
+  left: 240px;
+}
+
 
 #legal {
   margin: 0 auto;
