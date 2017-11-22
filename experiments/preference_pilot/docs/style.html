@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>style.css</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  <link rel="stylesheet" media="all" href="../_layout/custom.css" />
+  <script src="../jquery-1.11.2.min.js"></script>
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="even-odd.html">
+                  even-odd.html
+                </a>
+              
+                
+                <a class="source" href="experiment.html">
+                  experiment.js
+                </a>
+              
+                
+                <a class="source" href="style.html">
+                  style.css
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>style.css</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2 id="general-styles">General styles</h2>
+<p>This stuff can be ported from experiment to experiment.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>We want the page to sit flush inside the browser window - that means no margins or padding. Also, use a nice-looking serif font. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-tag">body</span> <span class="hljs-rules">{
+	<span class="hljs-rule"><span class="hljs-attribute">padding</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">font-family</span>:<span class="hljs-value"> Palatino Linotype, Bookman Antiqua, Palatino, serif</span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">font-size</span>:<span class="hljs-value"> <span class="hljs-number">16px</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">line-height</span>:<span class="hljs-value"> <span class="hljs-number">20px</span></span></span>;
+<span class="hljs-rule">}</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>We manage display using “slides”. A slide is a <code>div</code> that takes up the entire page. Only one slide should be visible at a time. Navigation between slides is most sensibly accomplished using using buttons, rather than keyboard events. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class">.slide</span> <span class="hljs-rules">{
+	<span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">95%</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">95%</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> none</span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> absolute</span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">margin-left</span>:<span class="hljs-value"> <span class="hljs-number">0.5%</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">padding</span>:<span class="hljs-value"> <span class="hljs-number">1%</span> <span class="hljs-number">2%</span> <span class="hljs-number">1%</span> <span class="hljs-number">2%</span></span></span>;
+<span class="hljs-rule">}</span></span>
+
+<span class="hljs-tag">input</span>, <span class="hljs-tag">select</span>, <span class="hljs-tag">button</span> <span class="hljs-rules">{<span class="hljs-rule"><span class="hljs-attribute">font-family</span>:<span class="hljs-value"> Georgia, serif</span></span>; <span class="hljs-rule"><span class="hljs-attribute">font-size</span>:<span class="hljs-value"> <span class="hljs-number">14px</span></span></span>;<span class="hljs-rule">}</span></span>
+
+<span class="hljs-tag">button</span> <span class="hljs-rules">{
+	<span class="hljs-rule"><span class="hljs-attribute">background</span>:<span class="hljs-value"> <span class="hljs-function">url</span>(images/button-gradient.png)</span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">border</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> solid <span class="hljs-hexcolor">#999</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">border-top</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> solid <span class="hljs-hexcolor">#e0e0e0</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">border-left</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> solid <span class="hljs-hexcolor">#e0e0e0</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> <span class="hljs-number">10px</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">padding-left</span>:<span class="hljs-value"> <span class="hljs-number">5px</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">padding-right</span>:<span class="hljs-value"> <span class="hljs-number">5px</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">29px</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">min-width</span>:<span class="hljs-value"> <span class="hljs-number">70px</span></span></span>;
+<span class="hljs-rule">}</span></span>
+<span class="hljs-tag">button</span><span class="hljs-pseudo">:active</span> <span class="hljs-rules">{
+	<span class="hljs-rule"><span class="hljs-attribute">border-left</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> solid <span class="hljs-hexcolor">#c9c9c9</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">border-top</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> solid <span class="hljs-hexcolor">#c9c9c9</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">background</span>:<span class="hljs-value"> none</span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">background-color</span>:<span class="hljs-value"> <span class="hljs-hexcolor">#c9c9c9</span></span></span>;
+<span class="hljs-rule">}</span></span>
+
+<span class="hljs-tag">button</span><span class="hljs-attr_selector">[disabled]</span> <span class="hljs-rules">{
+	<span class="hljs-rule"><span class="hljs-attribute">background</span>:<span class="hljs-value"> <span class="hljs-function">url</span>(zen-button.png)</span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">border</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> solid <span class="hljs-hexcolor">#999</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">border-top</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> solid <span class="hljs-hexcolor">#e0e0e0</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">border-left</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> solid <span class="hljs-hexcolor">#e0e0e0</span></span></span>;
+	<span class="hljs-rule"><span class="hljs-attribute">cursor</span>:<span class="hljs-value"> not-allowed</span></span>;
+<span class="hljs-rule">}</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="experiment-specific-styles">Experiment-specific styles</h2>
+<p>This stuff will vary by experiment. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-id">#logo-text</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">font-weight</span>:<span class="hljs-value"> bold</span></span>;
+<span class="hljs-rule">}</span></span>
+
+<span class="hljs-id">#instructions</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">text-align</span>:<span class="hljs-value"> center</span></span>;
+<span class="hljs-rule">}</span></span>
+
+<span class="hljs-id">#odd-key</span>, <span class="hljs-id">#even-key</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">background-color</span>:<span class="hljs-value"> <span class="hljs-hexcolor">#e3e3e3</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">padding</span>:<span class="hljs-value"> <span class="hljs-number">2px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">border</span>:<span class="hljs-value"> <span class="hljs-number">1px</span> outset <span class="hljs-hexcolor">#cccccc</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">font-family</span>:<span class="hljs-value"> Courier New</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">font-weight</span>:<span class="hljs-value"> bold</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">font-size</span>:<span class="hljs-value"> <span class="hljs-number">15px</span></span></span>;
+<span class="hljs-rule">}</span></span>
+
+<span class="hljs-class">.block-text</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">500px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">text-align</span>:<span class="hljs-value"> justify</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> <span class="hljs-number">0</span> auto</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-bottom</span>:<span class="hljs-value"> <span class="hljs-number">1em</span></span></span>;
+<span class="hljs-rule">}</span></span>
+
+<span class="hljs-id">#legal</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> <span class="hljs-number">0</span> auto</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-top</span>:<span class="hljs-value"> <span class="hljs-number">1.5em</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">font-size</span>:<span class="hljs-value"> <span class="hljs-number">0.8em</span></span></span>;
+<span class="hljs-rule">}</span></span>
+
+<span class="hljs-id">#number</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">font-size</span>:<span class="hljs-value"> <span class="hljs-number">42px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">font-family</span>:<span class="hljs-value"> Arial, sans-serif</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> <span class="hljs-number">0</span> auto</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">text-align</span>:<span class="hljs-value"> center</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">100px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-top</span>:<span class="hljs-value"> <span class="hljs-number">100px</span></span></span>;
+<span class="hljs-rule">}</span></span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+<script src="../_layout/custom.js"></script>
+</html>
