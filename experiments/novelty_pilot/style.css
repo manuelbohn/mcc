@@ -123,7 +123,7 @@ nextButton[disabled] {
 .point_agent_r {
     position: absolute;
     bottom: 255px;
-    left: 370px;
+    left: 368px;
     width: 280px;
 }
 
@@ -131,7 +131,7 @@ nextButton[disabled] {
 .point_agent_l {
     position: absolute;
     bottom: 255px;
-    left: 390px;
+    left: 392px;
     width: 280px;
 }
 
@@ -144,17 +144,12 @@ nextButton[disabled] {
 
 .hill {
     position: absolute;
-    top: 270px;
+    bottom: 70px;
     left: 380px;
     width: 280px;
     z-index: 1
 }
 
-.eat {
-    position: relative;
-
-    width: 500px;
-}
 
 .animal_intro {
     position: relative;
@@ -182,7 +177,7 @@ nextButton[disabled] {
 
 .table_r {
     position: absolute;
-    top: 220px;
+    bottom: 0px;
     left: 590px;
     width: 400px;
     z-index: 0
@@ -190,7 +185,7 @@ nextButton[disabled] {
 
 .table_l {
     position: absolute;
-    top: 220px;
+    bottom: 0px;
     left: 30px;
     width: 400px;
     z-index: 0
