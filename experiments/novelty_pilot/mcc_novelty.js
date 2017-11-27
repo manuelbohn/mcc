@@ -263,6 +263,7 @@ var experiment = {
         leftFruit: leftFruit[0],
         rightFruit: rightFruit[0],
         novel: novel[0],
+        sound: sounds[0],
         pick: pick,
         correct: correct,
         rt: endTime - startTime,
