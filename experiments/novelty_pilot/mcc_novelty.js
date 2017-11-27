@@ -1,4 +1,30 @@
 
+
+// Full screen 
+
+function toggleFullScreen() {
+  if ((document.fullScreenElement && document.fullScreenElement !== null) ||    
+   (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+    if (document.documentElement.requestFullScreen) {  
+      document.documentElement.requestFullScreen();  
+    } else if (document.documentElement.mozRequestFullScreen) {  
+      document.documentElement.mozRequestFullScreen();  
+    } else if (document.documentElement.webkitRequestFullScreen) {  
+      document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);  
+    }  
+  } else {  
+    if (document.cancelFullScreen) {  
+      document.cancelFullScreen();  
+    } else if (document.mozCancelFullScreen) {  
+      document.mozCancelFullScreen();  
+    } else if (document.webkitCancelFullScreen) {  
+      document.webkitCancelFullScreen();  
+    }  
+  }  
+}
+
+
+
 // ## Helper functions
 
 
@@ -116,14 +142,12 @@ function playSound() {
        }, time); 
     };
 
-
-
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
 
 var trial = ["train","train","finTrain",1]
 
-var trainAgents = ["Elefant","Beaver"]
-var trainAltAgent = ["Tiger"]
+var trainAgents = ["Dog","Tiger"]
+var trainAltAgent = ["Bunny"]
 var allAgents = ["Frog","Beaver","Mouse","Ape","Bunny","Elefant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
 var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,4);
 var remainingAgent = $.grep(allAgents, function(value) {
@@ -149,8 +173,8 @@ var trainSpeakerChange = [["false","false"]];
 var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"])]);
 var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
-var trainFruitLeft = ["t1","t2"];
-var trainFruitRight = ["t3","t4"];
+var trainFruitLeft = ["ball","duck"];
+var trainFruitRight = ["bear","car"];
 var fruits = ["t1", "t2","t3","t4","t5","t6","t7","t8","t9","t10", "t11","t12","t13","t14","t15","t16"];
 var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,4);
 var remainingFruits = $.grep(fruits, function(value) {
@@ -216,7 +240,7 @@ var experiment = {
     };
         
    
-    $("#continue").text("Klick on the animal to continue")
+    $("#continue").text("Click on the animal to continue")
         
     var endTime = (new Date()).getTime();    
     
@@ -282,7 +306,7 @@ var experiment = {
     
     showSlide("choice"); 
    
-    setTimeout(function() {$("#text2").text("Klick on the  toy")}, 15000);
+    setTimeout(function() {$("#text2").text("Click on the  toy")}, 15000);
     
       
     choiceLeftFruit("images/"+leftFruit[0]+".png");

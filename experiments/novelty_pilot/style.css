@@ -115,31 +115,31 @@ nextButton[disabled] {
 
 .agent {
     position: absolute;
-    top: 100px;
+    bottom: 255px;
     left: 380px;
     width: 280px;
 }
 
 .point_agent_r {
     position: absolute;
-    top: 80px;
-    left: 410px;
+    bottom: 255px;
+    left: 370px;
     width: 280px;
 }
 
 
 .point_agent_l {
     position: absolute;
-    top: 80px;
-    left: 350px;
+    bottom: 255px;
+    left: 390px;
     width: 280px;
 }
 
 .agent_eat {
     position: absolute;
-    top: -100px;
-    left: 50px;
-    width: 800px;
+    bottom: 100px;
+    left: 230px;
+    width: 500px;
 }
 
 .hill {
@@ -241,7 +241,7 @@ nextButton[disabled] {
   margin-bottom: 1em;
   position: absolute;
   top: 20px;
-  left: 240px;
+  left: 270px;
 }
 
 .text2 {
@@ -252,8 +252,8 @@ nextButton[disabled] {
   margin: 0 auto;
   margin-bottom: 1em;
   position: absolute;
-  top: 550px;
-  left: 240px;
+  top: 500px;
+  left: 270px;
 }
 
 

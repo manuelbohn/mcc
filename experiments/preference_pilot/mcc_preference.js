@@ -123,7 +123,7 @@ function playSound() {
 
 var trial = ["train","train","finTrain",1]
 
-var trainAgents = ["Elefant","Dog"]
+var trainAgents = ["Tiger","Dog"]
 var trainAltAgent = ["Tiger"]
 var allAgents = ["Frog","Beaver","Mouse","Ape","Bunny","Elefant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
 var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,4);

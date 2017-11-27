@@ -18,7 +18,7 @@
 		</div>
 		<p id='logo-text'>Stanford Language and Cognition Lab</p>
 		<p class="block-text">In this experiment, you will learn words for new objects from animals. Your task is to figure out which word goes with each objects. The materials were designed for children. Even if they seem strange at times, we ask you to try to be as accurate as possible. You will be hearing sound, so please make sure your volume is turned on.</p>
-		<button type="button" onClick="this.blur(); showSlide('training')">Press to begin</button>
+		<button type="button" onClick="this.blur(); showSlide('training');toggleFullScreen();">Press to begin</button>
             
 		<!-- Legal blurb that we're required to show. -->
 		<p class="block-text" id="legal">Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact Manuel Bohn at <a href="mailto://bohn@stanford.edu">bohn@stanford.edu</a>. You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.</p>
@@ -44,7 +44,7 @@
                             <img src="images/hill.png" 
                             style="position:absolute; TOP:420px; LEFT:450px; WIDTH:90px; z-index: 1">
                             <img src="images/Bear_straight.png"
-                            style="position:absolute; TOP:340px; LEFT:440px; WIDTH:100px">
+                            style="position:absolute; TOP:350px; LEFT:445px; WIDTH:100px">
                         </td>
 						<td>
                    
@@ -52,14 +52,14 @@
 					
 					<tr align="center" height="50px">
 						<td>
-                            <img src="images/bear.png" style="position:absolute; TOP:413px; LEFT:370px; WIDTH:30px; z-index:1">
+                            <img src="images/bear.png" style="position:absolute; TOP:394px; LEFT:345px; WIDTH:80px; z-index:1">
                             <img src="images/table_l.png" style="position:absolute; TOP:390px; LEFT:310px; WIDTH:143px">
                         </td>
 						<td>
                        <startButton type="button" onClick="this.blur(); showSlide('intro')">Meet the animals</startButton>
                         </td>
 						<td>
-                            <img src="images/ball.png" style="position:absolute; TOP:413px; LEFT:590px; WIDTH:30px; z-index:1">
+                            <img src="images/ball.png" style="position:absolute; TOP:394px; LEFT:565px; WIDTH:80px; z-index:1">
                             <img src="images/table_r.png" style="position:absolute; TOP:390px; LEFT:530px; WIDTH:143px">
                             
                         </td>
@@ -184,7 +184,7 @@
                                 In the experiment, you will encounter new types of food. The animals will name them for you. Try your best to guess which food they want.
                             </p>  
                             <p class="block-text">
-                                Proceed by cklicking the button below.
+                                Proceed by clicking the button below.
                             </p> 
                         </td>
 						<td></td>
@@ -355,7 +355,6 @@
     
    <div class="slide" id="eat"> 
 		<div align="center" width="500px">
-			<img id="Mouse_eat" class="agent"  src="images/Mouse_eat.png">
                           
                           <img id="Mouse_eat" class="agent_eat"  src="images/Mouse_eat.png">
                           
