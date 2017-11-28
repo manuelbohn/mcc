@@ -1,30 +1,4 @@
 
-
-// Full screen 
-
-function toggleFullScreen() {
-  if ((document.fullScreenElement && document.fullScreenElement !== null) ||    
-   (!document.mozFullScreen && !document.webkitIsFullScreen)) {
-    if (document.documentElement.requestFullScreen) {  
-      document.documentElement.requestFullScreen();  
-    } else if (document.documentElement.mozRequestFullScreen) {  
-      document.documentElement.mozRequestFullScreen();  
-    } else if (document.documentElement.webkitRequestFullScreen) {  
-      document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);  
-    }  
-  } else {  
-    if (document.cancelFullScreen) {  
-      document.cancelFullScreen();  
-    } else if (document.mozCancelFullScreen) {  
-      document.mozCancelFullScreen();  
-    } else if (document.webkitCancelFullScreen) {  
-      document.webkitCancelFullScreen();  
-    }  
-  }  
-}
-
-
-
 // ## Helper functions
 
 
@@ -144,17 +118,16 @@ function playSound() {
 
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
 
-var trial = ["train","train","finTrain",1]
+var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
 
 var trainAgents = ["Dog","Tiger"]
-var trainAltAgent = ["Bunny"]
 var allAgents = ["Frog","Beaver","Mouse","Ape","Bunny","Elefant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
-var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,4);
+var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,8);
 var remainingAgent = $.grep(allAgents, function(value) {
     return $.inArray(value, testAgents) < 0;});
-var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,2);
+var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,4);
 var agents = trainAgents.concat(testAgents);
-var altAgents = trainAltAgent.concat(testAltAgent);
+var altAgents = testAltAgent;
 
 var trainSounds = [["fball","mball"],["fcar","mcar"]]
 var testSounds = shuffle([
@@ -170,16 +143,16 @@ var testSounds = shuffle([
 var sounds = trainSounds.concat(testSounds);
 
 var trainSpeakerChange = [["false","false"]];
-var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"])]);
+var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"]),shuffle(["false","true"])]);
 var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
 var trainFruitLeft = ["ball","duck"];
 var trainFruitRight = ["bear","car"];
 var fruits = ["t1", "t2","t3","t4","t5","t6","t7","t8","t9","t10", "t11","t12","t13","t14","t15","t16"];
-var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,4);
+var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
-var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,4);
+var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,8);
 var leftFruit = trainFruitLeft.concat(testLeftFruit);
 var rightFruit = trainFruitRight.concat(testRightFruit);
 
@@ -190,12 +163,13 @@ var agentOrientations = [
     ["straight","point_l", "point_r","disappear","gone","down"],
     ["straight","point_r", "point_l","disappear","gone","down"],
     ["straight","point_l", "point_r","disappear","gone","down"],
-    ["straight","point_r", "point_l","disappear","gone","down"]];
+    ["straight","point_r", "point_l","disappear","gone","down"],
+    ["straight","point_r", "point_l","disappear","gone","down"],["straight","point_r", "point_l","disappear","gone","down"],["straight","point_r", "point_l","disappear","gone","down"],["straight","point_r", "point_l","disappear","gone","down"]];
 
 var agentOrient = shuffle(agentOrientations);
 
 var trainNovel = ["left","right"];
-var testNovel = shuffle(["left","right","left","right"]);
+var testNovel = shuffle(["left","right","left","right","left","right","left","right"]);
 var novel = trainNovel.concat(testNovel)
 
 // Show the instructions slide .
@@ -470,12 +444,11 @@ setTimeout(function() {
         playSound();
         $("#text").text("");
         setTimeout(function()
-            {showAgent(agents[0],"disappear")}, 3000);
-        pause("next",5500);
+            {showAgent(agents[0],"disappear")}, 2000);
+        pause("next",5000);
         setTimeout(function()
-            {$("#text").text(agents[0]+" is gone!")}, 5000);
-//        setTimeout(function() {showText()}, 4500);
-        setTimeout(function(){hideAgent()}, 5000);
+            {$("#text").text(agents[0]+" is gone!")}, 4000);
+        setTimeout(function(){hideAgent()}, 4000);
     };
       
       

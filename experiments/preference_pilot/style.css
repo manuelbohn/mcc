@@ -115,46 +115,41 @@ nextButton[disabled] {
 
 .agent {
     position: absolute;
-    top: 80px;
-    left: 370px;
+    bottom: 255px;
+    left: 380px;
     width: 280px;
 }
 
 .point_agent_r {
     position: absolute;
-    top: 80px;
-    left: 410px;
+    bottom: 255px;
+    left: 368px;
     width: 280px;
 }
 
 
 .point_agent_l {
     position: absolute;
-    top: 80px;
-    left: 350px;
+    bottom: 255px;
+    left: 392px;
     width: 280px;
 }
 
 .agent_eat {
     position: absolute;
-    top: -100px;
-    left: 50px;
-    width: 800px;
+    bottom: 100px;
+    left: 230px;
+    width: 500px;
 }
 
 .hill {
     position: absolute;
-    top: 310px;
-    left: 400px;
-    width: 200px;
+    bottom: 70px;
+    left: 380px;
+    width: 280px;
     z-index: 1
 }
 
-.eat {
-    position: relative;
-
-    width: 500px;
-}
 
 .animal_intro {
     position: relative;
@@ -163,18 +158,18 @@ nextButton[disabled] {
 
 .fruit_r {
     position: absolute;
-    bottom: 40px;  
-    left: 570px;
-    width: 450px;
+    bottom: 160px;  
+    left: 670px;
+    width: 250px;
     z-index: 1
 }
 
 
 .fruit_l {
     position: absolute;
-    bottom: 40px;
-    left: 0px;
-    width: 450px;
+    bottom: 160px;
+    left: 120px;
+    width: 250px;
     z-index: 1
 }
 
@@ -182,7 +177,7 @@ nextButton[disabled] {
 
 .table_r {
     position: absolute;
-    top: 220px;
+    bottom: 0px;
     left: 590px;
     width: 400px;
     z-index: 0
@@ -190,7 +185,7 @@ nextButton[disabled] {
 
 .table_l {
     position: absolute;
-    top: 220px;
+    bottom: 0px;
     left: 30px;
     width: 400px;
     z-index: 0
@@ -241,7 +236,7 @@ nextButton[disabled] {
   margin-bottom: 1em;
   position: absolute;
   top: 20px;
-  left: 240px;
+  left: 270px;
 }
 
 .text2 {
@@ -252,8 +247,8 @@ nextButton[disabled] {
   margin: 0 auto;
   margin-bottom: 1em;
   position: absolute;
-  top: 550px;
-  left: 240px;
+  top: 500px;
+  left: 270px;
 }
 
 

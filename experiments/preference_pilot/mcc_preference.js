@@ -121,17 +121,16 @@ function playSound() {
 
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
 
-var trial = ["train","train","finTrain",1]
+var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
 
-var trainAgents = ["Tiger","Dog"]
-var trainAltAgent = ["Tiger"]
+var trainAgents = ["Dog","Tiger"]
 var allAgents = ["Frog","Beaver","Mouse","Ape","Bunny","Elefant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
-var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,4);
+var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,8);
 var remainingAgent = $.grep(allAgents, function(value) {
     return $.inArray(value, testAgents) < 0;});
-var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,2);
+var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,4);
 var agents = trainAgents.concat(testAgents);
-var altAgents = trainAltAgent.concat(testAltAgent);
+var altAgents = testAltAgent;
 
 var trainSounds = [["fball","mball"],["fcar","mcar"]]
 var testSounds = shuffle([
@@ -146,33 +145,36 @@ var testSounds = shuffle([
 
 var sounds = trainSounds.concat(testSounds);
 
-var trainSpeakerChange = [["false","true"]];
-var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"])]);
+var trainSpeakerChange = [["false","false"]];
+var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"]),shuffle(["false","true"])]);
 var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
-var trainFruitLeft = ["t1","t2"];
-var trainFruitRight = ["t3","t4"];
+var trainFruitLeft = ["ball","duck"];
+var trainFruitRight = ["bear","car"];
 var fruits = ["t1", "t2","t3","t4","t5","t6","t7","t8","t9","t10", "t11","t12","t13","t14","t15","t16"];
-var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,4);
+var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
-var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,4);
+var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,8);
 var leftFruit = trainFruitLeft.concat(testLeftFruit);
 var rightFruit = trainFruitRight.concat(testRightFruit);
-
 
 var agentOrientations = [
     ["straight","point_l", "point_r","disappear","down"],
     ["straight","point_r", "point_l","disappear","down"],
     ["straight","point_l", "point_r","disappear","down"],
-    ["straight","point_r", "point_l","disappear","down"],
     ["straight","point_l", "point_r","disappear","down"],
-    ["straight","point_r", "point_l","disappear","down"]];
+    ["straight","point_l", "point_r","disappear","down"],
+    ["straight","point_l", "point_r","disappear","down"],
+    ["straight","point_l", "point_r","disappear","down"],
+    ["straight","point_l", "point_r","disappear","down"],
+    ["straight","point_l", "point_r","disappear","down"],
+    ["straight","point_l", "point_r","disappear","down"]];
 
 var agentOrient = shuffle(agentOrientations);
 
 var trainPref = ["right","left"];
-var testPref = shuffle(["left","right","left","right"]);
+var testPref = shuffle(["left","right","left","right","left","right","left","right"]);
 var pref = trainPref.concat(testPref)
 
 // Show the instructions slide .
@@ -218,7 +220,7 @@ var experiment = {
     };
         
    
-    $("#continue").text("Klick on the animal to continue")
+    $("#continue").text("Click on the animal to continue")
         
     var endTime = (new Date()).getTime();    
     
@@ -283,8 +285,8 @@ var experiment = {
   choice: function(event) {
     
     showSlide("choice"); 
-   
-    setTimeout(function() {$("#text2").text("Klick on the  toy")}, 15000);
+      
+    setTimeout(function() {$("#text2").text("Click on the  toy")}, 13000);
     
       
     choiceLeftFruit("images/"+leftFruit[0]+".png");
@@ -327,13 +329,16 @@ var experiment = {
 setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
-}, 6000);
+}, 11000);
   
   },
     
   // The work horse of the sequence - what to do on every trial.
   next: function() {
   // when no more trials are left, end experiment
+      
+    getTime1()
+      
     if (experiment.trial[0] == "train"){
         experiment.agentOrient[0].shift();
         experiment.choice();
@@ -421,12 +426,11 @@ if (experiment.agentOrient[0][0] == "disappear") {
         playSound();
         $("#text").text("");
         setTimeout(function()
-            {showAgent(agents[0],"disappear")}, 3000);
-        pause("next",5500);
+            {showAgent(agents[0],"disappear")}, 2000);
+        pause("next",5000);
         setTimeout(function()
-            {$("#text").text(agents[0]+" is gone!")}, 5000);
-//        setTimeout(function() {showText()}, 4500);
-        setTimeout(function(){hideAgent()}, 5000);
+            {$("#text").text(agents[0]+" is gone!")}, 4000);
+        setTimeout(function(){hideAgent()}, 4000);
     };
     
     experiment.agentOrient[0].shift(); 
