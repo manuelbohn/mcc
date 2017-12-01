@@ -116,6 +116,34 @@ function playSound() {
        }, time); 
     };
 
+// preloading images and sounds
+
+var folder = "images/";
+
+$.ajax({
+    url : folder,
+    success: function (data) {
+        $(data).find("a").attr("href", function (i, val) {
+            if( val.match(/\.(png)$/) ) { 
+                $("preload").append( "<img src='"+ folder + val +"'>" );
+            } 
+        });
+    }
+});
+
+
+var folder = "sound/";
+
+$.ajax({
+    url : folder,
+    success: function (data) {
+        $(data).find("a").attr("href", function (i, val) {
+            if( val.match(/\.(mp3)$/) ) { 
+                $("body").append( "<audio src='"+ folder + val +"'>" );
+            } 
+        });
+    }
+});
 
 
 
