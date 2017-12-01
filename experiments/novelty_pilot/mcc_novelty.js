@@ -118,22 +118,18 @@ function playSound() {
 
 // preloading images and sounds
 
-var dir = "images/";
-var fileextension = ".png";
+var folder = "images/";
+
 $.ajax({
-    //This will retrieve the contents of the folder if the folder is configured as 'browsable'
-    url: dir,
+    url : folder,
     success: function (data) {
-        //List all .png file names in the page
-        $(data).find("a:contains(" + fileextension + ")").each(function () {
-            var filename = this.href.replace(window.location, "").replace("http://", "");
-            $("body").append("<img src='" + dir + filename + "'>");
+        $(data).find("a").attr("href", function (i, val) {
+            if( val.match(/\.(jpe?g|png|gif)$/) ) { 
+                $("body").append( "<img src='"+ folder + val +"'>" );
+            } 
         });
     }
 });
-
-
-
 
 
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
