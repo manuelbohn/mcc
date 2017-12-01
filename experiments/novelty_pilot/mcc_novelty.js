@@ -116,6 +116,26 @@ function playSound() {
        }, time); 
     };
 
+// preloading images and sounds
+
+var dir = "images/";
+var fileextension = ".png";
+$.ajax({
+    //This will retrieve the contents of the folder if the folder is configured as 'browsable'
+    url: dir,
+    success: function (data) {
+        //List all .png file names in the page
+        $(data).find("a:contains(" + fileextension + ")").each(function () {
+            var filename = this.href.replace(window.location, "").replace("http://", "");
+            $("body").append("<img src='" + dir + filename + "'>");
+        });
+    }
+});
+
+
+
+
+
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
 
 var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
