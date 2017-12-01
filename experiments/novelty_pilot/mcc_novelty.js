@@ -125,11 +125,27 @@ $.ajax({
     success: function (data) {
         $(data).find("a").attr("href", function (i, val) {
             if( val.match(/\.(jpe?g|png|gif)$/) ) { 
-                $("body").append( "<img src='"+ folder + val +"'>" );
+                $("preload").append( "<img src='"+ folder + val +"'>" );
             } 
         });
     }
 });
+
+
+var folder = "sound/";
+
+$.ajax({
+    url : folder,
+    success: function (data) {
+        $(data).find("a").attr("href", function (i, val) {
+            if( val.match(/\.(mp3)$/) ) { 
+                $("body").append( "<audio src='"+ folder + val +"'>" );
+            } 
+        });
+    }
+});
+
+
 
 
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
