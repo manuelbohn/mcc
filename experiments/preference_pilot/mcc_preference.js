@@ -152,7 +152,7 @@ $.ajax({
 var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
 
 var trainAgents = ["Dog","Tiger"]
-var allAgents = ["Frog","Beaver","Mouse","Ape","Bunny","Elefant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
+var allAgents = ["Frog","Beaver","Mouse","Monkey","Bunny","Elephant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
 var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,8);
 var remainingAgent = $.grep(allAgents, function(value) {
     return $.inArray(value, testAgents) < 0;});
@@ -179,7 +179,7 @@ var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
 var trainFruitLeft = ["ball","duck"];
 var trainFruitRight = ["bear","car"];
-var fruits = ["t1", "t2","t3","t4","t5","t6","t7","t8","t9","t10", "t11","t12","t13","t14","t15","t16"];
+var fruits = ["t1", "t2","t3","t18","t5","t6","t7","t8","t17","t10", "t11","t12","t13","t14","t15","t16"];
 var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
@@ -314,7 +314,7 @@ var experiment = {
     
     showSlide("choice"); 
       
-    setTimeout(function() {$("#text2").text("Click on the  toy")}, 13000);
+    setTimeout(function() {$("#text2").text("Click on the toy")}, 12000);
     
       
     choiceLeftFruit("images/"+leftFruit[0]+".png");
@@ -357,7 +357,7 @@ var experiment = {
 setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
-}, 11000);
+}, 12000);
   
   },
     

@@ -1,16 +1,18 @@
 
 <html>
-
+    
 <head>
 	<title>Learning words from animals</title>
-
 	<script src="jquery-1.11.2.min.js"></script>
 	<script src="mmturkey-0.6.js"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+        <link type="text/css" href ="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" rel="stylesheet" />
 	<link rel="stylesheet" href="style.css" />
 </head>
-
+    
 <body>
-
+ <div id="progressbar" style="width: 200px;" align="center"></div>
 	<!-- The instructions slide. -->
 	<div class="slide" id="instructions">
 		<div style="width: 500px; margin: 0 auto; text-align: center; background-color: #8C1516; padding: 20px 15px 10px 10px">
@@ -18,7 +20,11 @@
 		</div>
 		<p id='logo-text'>Stanford Language and Cognition Lab</p>
 		<p class="block-text">In this experiment, you will learn words for new toys. Your task is to figure out which word goes with which toy. The materials were designed for children. Even if they seem strange at times, we ask you to try to be as accurate as possible. You will hear sound, so please make sure your volume is turned on.</p>
-		<button type="button" onClick="this.blur(); showSlide('training');">Press to begin</button>
+		<button
+                type="button" 
+                id="start_button" 
+                onClick="this.blur(); showSlide('training');move();"
+                >Press to begin</button>
             
 		<!-- Legal blurb that we're required to show. -->
 		<p class="block-text" id="legal">Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact Manuel Bohn at <a href="mailto://bohn@stanford.edu">bohn@stanford.edu</a>. You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.</p>
@@ -31,10 +37,10 @@
 			<table style="width:100%">
 				<tbody>
                        <p class="block-text">
-                          These little animals like to play with funny toys. They want the toys on the tables, but they are too small to reach them. You can give them the toys by clicking on them. First, they will ask for toys you already know the name for. This will make you familiar with the procedure. Later, they will name new kinds of toys and you have to find out which toys they want.
+                          These little animals like to play with funny toys. They want the toys on the tables, but they can't reach them. You can give them the toys by clicking on them. First, they will ask for toys you already know the name for. This will make you familiar with the procedure. Later, they will name new kinds of toys and you have to find out which toys they want. Let's see if you can help them.
                         </p>
                         <p class="block-text">
-                            To move forward, press the "Next" button in the top left corner. Let's see if you can help them. Make sure, that your volume is turned on. Press the button below to begin.</p>
+                            To move forward, press the button below. Make sure that your volume is turned on. Press the button below to begin.</p>
                 
 					<tr align="center" height="300px">
 						<td>
@@ -56,7 +62,8 @@
                             <img src="images/table_l.png" style="position:absolute; TOP:390px; LEFT:310px; WIDTH:143px">
                         </td>
 						<td>
-                       <startButton type="button" onClick="this.blur(); showSlide('intro')">Meet the animals</startButton>
+                            <button type="button" onClick="this.blur(); showSlide('intro');move()">My volume is turned up and I am 
+                ready to begin</button>
                         </td>
 						<td>
                             <img src="images/ball.png" style="position:absolute; TOP:394px; LEFT:565px; WIDTH:80px; z-index:1">
@@ -76,11 +83,11 @@
 			<table style="width:100%">
 				<tbody>
                     <p class="block-text">
-                          These are the animals that you will see in this game. Take a look at each of them and try to remember them. Click the button below to start the training.
+                          These are the animals that you will see in this game. Take a look at each of them and try to remember them. To move forward within the experiment, press the "Next" button. Press below to start the training.
                         </p>
 					<tr align="center" height="200px">
 						<td>
-                        <img class="animal_intro" src="images/Ape_straight.png"> 
+                        <img class="animal_intro" src="images/Monkey_straight.png"> 
                         </td>
                         <td>
                         <img class="animal_intro" src="images/Bunny_straight.png">  
@@ -89,7 +96,7 @@
                         <img class="animal_intro" src="images/Dog_straight.png">
                         </td>
                         <td>
-                        <img class="animal_intro" src="images/Elefant_straight.png">   
+                        <img class="animal_intro" src="images/Elephant_straight.png">   
                         </td>
                         <td>
                         <img class="animal_intro" src="images/Pig_straight.png">
@@ -100,7 +107,7 @@
                     </tr>
                      <tr align="center">
 						<td>
-                        <p>Ape</p> 
+                        <p>Monkey</p> 
                         </td>
                         <td>
                         <p>Bunny</p>
@@ -109,7 +116,7 @@
                         <p>Dog</p>
                         </td>
                          <td>
-                        <p>Elefant</p>
+                        <p>Elephant</p>
                         </td>
                          <td>
                         <p>Pig</p>
@@ -163,7 +170,7 @@
 			</table>
 		</div>
         <div align="center" width="500px">
-         <button type="button" onClick="this.blur(); experiment.next()">Start Training</button>
+         <button type="button" onClick="this.blur();move(); experiment.next()">Next</button>
 	   </div>
     </div>
     
@@ -222,10 +229,10 @@
                         <img id="Mouse_point_r" class="point_agent_r"  src="images/Mouse_point_r.png">
                        <img id="Mouse_disappear" class="agent"  src="images/Mouse_disappear.png">
                             
-                        <img id="Ape_straight" class="agent"  src="images/Ape_straight.png">
-                        <img id="Ape_point_l" class="point_agent_l"  src="images/Ape_point_l.png">
-                        <img id="Ape_point_r" class="point_agent_r"  src="images/Ape_point_r.png">
-                       <img id="Ape_disappear" class="agent"  src="images/Ape_disappear.png">
+                        <img id="Monkey_straight" class="agent"  src="images/Monkey_straight.png">
+                        <img id="Monkey_point_l" class="point_agent_l"  src="images/Monkey_point_l.png">
+                        <img id="Monkey_point_r" class="point_agent_r"  src="images/Monkey_point_r.png">
+                       <img id="Monkey_disappear" class="agent"  src="images/Monkey_disappear.png">
                                 
                         <img id="Bunny_straight" class="agent"  src="images/Bunny_straight.png">
                         <img id="Bunny_point_l" class="point_agent_l"  src="images/Bunny_point_l.png">
@@ -237,10 +244,10 @@
                         <img id="Dog_point_r" class="point_agent_r"  src="images/Dog_point_r.png">
                        <img id="Dog_disappear" class="agent"  src="images/Dog_disappear.png">     
                             
-                        <img id="Elefant_straight" class="agent"  src="images/Elefant_straight.png">
-                        <img id="Elefant_point_l" class="point_agent_l"  src="images/Elefant_point_l.png">
-                        <img id="Elefant_point_r" class="point_agent_r"  src="images/Elefant_point_r.png">
-                       <img id="Elefant_disappear" class="agent"  src="images/Elefant_disappear.png">    
+                        <img id="Elephant_straight" class="agent"  src="images/Elephant_straight.png">
+                        <img id="Elephant_point_l" class="point_agent_l"  src="images/Elephant_point_l.png">
+                        <img id="Elephant_point_r" class="point_agent_r"  src="images/Elephant_point_r.png">
+                       <img id="Elephant_disappear" class="agent"  src="images/Elephant_disappear.png">    
                             
                         <img id="Pig_straight" class="agent"  src="images/Pig_straight.png">
                         <img id="Pig_point_l" class="point_agent_l"  src="images/Pig_point_l.png">
@@ -288,7 +295,7 @@
                             <img id="fruit_l" class="fruit_l" src="">
                             <img id="table_l" class="table_l" src="images/table_l.png">
                         </td>
-						<td></td>
+						
 						<td>
                             
                             <img id="fruit_r" class="fruit_r" src="">
@@ -317,13 +324,13 @@
                              
                           <img id="Mouse_choice" class="agent"  src="images/Mouse_straight.png">
                           
-                          <img id="Ape_choice" class="agent"  src="images/Ape_straight.png">  
+                          <img id="Monkey_choice" class="agent"  src="images/Monkey_straight.png">  
                           
                           <img id="Bunny_choice" class="agent"  src="images/Bunny_straight.png">   
                           
                           <img id="Dog_choice" class="agent"  src="images/Dog_straight.png">
                              
-                          <img id="Elefant_choice" class="agent"  src="images/Elefant_straight.png">   
+                          <img id="Elephant_choice" class="agent"  src="images/Elephant_straight.png">   
                             
                           <img id="Pig_choice" class="agent"  src="images/Pig_straight.png">
                              
@@ -354,17 +361,19 @@
 <!--  eat slide-->
     
    <div class="slide" id="eat"> 
-		<div align="center" width="500px">
-                          
+		<div align="center" width="500px">   
+            
+            <p id='logo-text'>Click on the animal to continue</p>
+            
                           <img id="Mouse_eat" class="agent_eat"  src="images/Mouse_eat.png">
                           
-                          <img id="Ape_eat" class="agent_eat"  src="images/Ape_eat.png">  
+                          <img id="Monkey_eat" class="agent_eat"  src="images/Monkey_eat.png">  
                           
                           <img id="Bunny_eat" class="agent_eat"  src="images/Bunny_eat.png">   
                           
                           <img id="Dog_eat" class="agent_eat"  src="images/Dog_eat.png">
                              
-                          <img id="Elefant_eat" class="agent_eat"  src="images/Elefant_eat.png">   
+                          <img id="Elephant_eat" class="agent_eat"  src="images/Elephant_eat.png">   
                             
                           <img id="Pig_eat" class="agent_eat"  src="images/Pig_eat.png">
                              
@@ -379,15 +388,17 @@
                           <img id="Tiger_eat" class="agent_eat"  src="images/Tiger_eat.png"> 
                              
                           <img id="Frog_eat" class="agent_eat"  src="images/Frog_eat.png">  
-            
-            <p id="continue" class="text2">{{}}</p>
 		</div>
 	</div>
        
     
 	<!-- The finish slide. -->
 	<div class="slide" id="finished">
-		You're finished - thanks for participating! Submitting to Mechanical Turk...
+		You're finished - thanks for participating! 
+        
+        In this experiment we wanted to find out if people think that novel words go with novel objects. 
+        
+        Submitting to Mechanical Turk...
 	</div>
 
 	<!-- Include the <a href="experiment.html">JavaScript file for the experiment</a>. As written, that script immediately executes commands, so we include it here at the end of the HTML file to ensure that resources referenced by the script actually exist. For instance, one of the immediately executed commands is <code>showSlide("instructions")</code>. If we loaded experiment.js, say, in the <code>head</code> section, <code>showSlide("instructions")</code> would fail because the <code>instructions</code> slide doesn't exist yet. It is possible to load the script in <code>head</code> but you have to ensure that any immediately executed commands, if they rely on potentially uninitialized HTML elements, are _delayed_ until the page is ready, using either [window.onload][onload] or jQuery's more robust [$(document).ready()][domReady]  -->

@@ -1,7 +1,6 @@
 
 // ## Helper functions
 
-
 function showSlide(id) {
   // Hide all slides
 	$(".slide").hide();
@@ -116,6 +115,31 @@ function playSound() {
        }, time); 
     };
 
+// disabling next button in preview mode
+
+$("#start_button").click(function() {
+    //disable accept button if in turk preview mode
+    if (turk.previewMode) {
+      showSlide("instructions");
+      alert("Please accept HIT to view");
+    } else {
+      showSlide('training')
+    }
+});
+
+// Progress bar
+
+$("#progressbar").progressbar();
+$("#progressbar").progressbar( "option", "max", 13);
+
+// move progress bar
+
+function move() {
+	$("#progressbar").progressbar("option", "value", 
+        ($("#progressbar").progressbar( "option", "value")+1));
+}
+
+
 // preloading images and sounds
 
 var folder = "images/";
@@ -145,15 +169,12 @@ $.ajax({
     }
 });
 
-
-
-
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
 
 var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
 
 var trainAgents = ["Dog","Tiger"]
-var allAgents = ["Frog","Beaver","Mouse","Ape","Bunny","Elefant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
+var allAgents = ["Frog","Beaver","Mouse","Monkey","Bunny","Elephant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
 var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,8);
 var remainingAgent = $.grep(allAgents, function(value) {
     return $.inArray(value, testAgents) < 0;});
@@ -180,7 +201,7 @@ var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
 var trainFruitLeft = ["ball","duck"];
 var trainFruitRight = ["bear","car"];
-var fruits = ["t1", "t2","t3","t4","t5","t6","t7","t8","t9","t10", "t11","t12","t13","t14","t15","t16"];
+var fruits = ["t1", "t2","t3","t18","t5","t6","t7","t8","t17","t10", "t11","t12","t13","t14","t15","t16"];
 var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
@@ -206,6 +227,7 @@ var novel = trainNovel.concat(testNovel)
 
 // Show the instructions slide .
 showSlide("instructions");
+  
 
 
 // ## The main event
@@ -246,7 +268,7 @@ var experiment = {
     };
         
    
-    $("#continue").text("Click on the animal to continue")
+    $("#text2").text("Click on the animal to continue")
         
     var endTime = (new Date()).getTime();    
     
@@ -262,6 +284,7 @@ var experiment = {
       
         
       data = {
+        condition: "novelty",
         trial: trial[0],
         speakerChange: speakerChange[0][0],
         agent: agents[0],
@@ -287,6 +310,12 @@ var experiment = {
     $("#text").text("");
     $("#text2").text("");
     $("#text3").text("");
+     
+    sourceRightFruit("images/empty.png");
+    showRightFruit();
+    sourceLeftFruit("images/empty.png");
+    showLeftFruit();  
+     
    
      if(speakerChange[0][0] == "true") {
         experiment.altAgents.shift()};
@@ -304,6 +333,9 @@ var experiment = {
         experiment.speakerChange.shift();
     }
      
+    // move progress bar 
+    move()
+     
     experiment.next();
   },
 // Slide recording the choice
@@ -313,7 +345,7 @@ var experiment = {
     
     showSlide("choice"); 
    
-    setTimeout(function() {$("#text2").text("Click on the  toy")}, 15000);
+    setTimeout(function() {$("#text2").text("Click on the object")}, 14000);
     
       
     choiceLeftFruit("images/"+leftFruit[0]+".png");
@@ -323,14 +355,14 @@ var experiment = {
     if (speakerChange[0][0] == "true") {
         choiceAgent(altAgents[0]);
         $("#text2").text("");  
-        $("#text3").text(altAgents[0]+" is here");
+        $("#text3").text(agents[0]+" is gone ... now "+altAgents[0]+" is here");
     }else{
        choiceAgent(agents[0]);
         $("#text2").text("");  
         $("#text3").text(agents[0]+" is here");
     };
     
-       
+      
     $("#"+agents[0]+"_choice").animate({height: "180px",opacity: '0.3', queue: false, duration: "slow"});
     $("#"+agents[0]+"_choice").animate({height: "280px",opacity: '1', queue: false, duration: "slow"});
       
@@ -338,25 +370,26 @@ var experiment = {
     $("#"+altAgents[0]+"_choice").animate({height: "280px",opacity: '1', queue: false, duration: "slow"});
     
     if (experiment.speakerChange[0][0] == "true"){
+        setTimeout(function() {
         sourceSound("sound/"+sounds[0][1]+"_id.mp3");
-        playSound();
+        playSound();}, 1000);
        setTimeout(function() {
         sourceSound("sound/"+sounds[0][1]+"_choice.mp3");
-        playSound();}, 2000);
+        playSound();}, 4000);
     } else {
        sourceSound("sound/"+sounds[0][0]+"_id.mp3");
-        playSound();
+        setTimeout(function() {
+        playSound();}, 1000);
        setTimeout(function() {
         sourceSound("sound/"+sounds[0][0]+"_choice.mp3");
-        playSound();}, 2000);
+        playSound();}, 4000);
             }; 
       
       
 setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
-}, 6000);
-  
+}, 14000);
   },
     
   train: function() {
@@ -476,11 +509,11 @@ setTimeout(function() {
         playSound();
         $("#text").text("");
         setTimeout(function()
-            {showAgent(agents[0],"disappear")}, 2000);
-        pause("next",5000);
+            {showAgent(agents[0],"disappear")}, 4000);
+        pause("next",7000);
         setTimeout(function()
-            {$("#text").text(agents[0]+" is gone!")}, 4000);
-        setTimeout(function(){hideAgent()}, 4000);
+            {$("#text").text(agents[0]+" is gone!")}, 6000);
+        setTimeout(function(){hideAgent()}, 6000);
     };
       
       
@@ -495,7 +528,7 @@ setTimeout(function() {
             sourceRightFruit("images/"+rightFruit[0]+".png");
             showRightFruit();
             $("#fruit_r").css("bottom", "460px");     
-            $("#fruit_r").animate({bottom: "160px"},{duration: 1500});
+            $("#fruit_r").animate({bottom: "165px"},{duration: 1500});
             sourceLeftFruit("images/"+leftFruit[0]+".png");
             showLeftFruit();
             setTimeout(function() { 
@@ -513,7 +546,7 @@ setTimeout(function() {
             sourceLeftFruit("images/"+leftFruit[0]+".png");
             showLeftFruit();
             $("#fruit_l").css("bottom", "460px");     
-            $("#fruit_l").animate({bottom: "160px"},{duration: 1500});
+            $("#fruit_l").animate({bottom: "165px"},{duration: 1500});
             sourceRightFruit("images/"+rightFruit[0]+".png");
             showRightFruit();
             setTimeout(function() { 
