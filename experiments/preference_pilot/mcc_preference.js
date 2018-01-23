@@ -116,6 +116,31 @@ function playSound() {
        }, time); 
     };
 
+// disabling next button in preview mode
+
+$("#start_button").click(function() {
+    //disable accept button if in turk preview mode
+    if (turk.previewMode) {
+      showSlide("instructions");
+      alert("Please accept HIT to view");
+    } else {
+      showSlide('training')
+    }
+});
+
+// Progress bar
+
+$("#progressbar").progressbar();
+$("#progressbar").progressbar( "option", "max", 11  );
+
+// move progress bar
+
+function move() {
+	$("#progressbar").progressbar("option", "value", 
+        ($("#progressbar").progressbar( "option", "value")+1));
+}
+
+
 // preloading images and sounds
 
 var folder = "images/";
@@ -149,37 +174,30 @@ $.ajax({
 
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
 
-var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
+//var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
+var trial = ["train","finTrain",1,2,3,4]
 
-var trainAgents = ["Dog","Tiger"]
-var allAgents = ["Frog","Beaver","Mouse","Monkey","Bunny","Elephant","Dog","Bear","Tiger","Pig","Cat","Sheep"];
-var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,8);
+//var trainAgents = ["Pig","Elephant"]
+var trainAgents = ["Elephant"]
+//var allAgents = ["Frog","Beaver","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep"];
+var allAgents = ["Mouse","Dog","Tiger","Cat","Sheep","Bear","Monkey","Frog"];
+var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,4);
 var remainingAgent = $.grep(allAgents, function(value) {
     return $.inArray(value, testAgents) < 0;});
-var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,4);
+var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,3);
 var agents = trainAgents.concat(testAgents);
 var altAgents = testAltAgent;
 
-var trainSounds = [["fball","mball"],["fcar","mcar"]]
-var testSounds = shuffle([
-        shuffle(["furbe","murbe"]),
-        shuffle(["fkepel","mkepel"]),
-        shuffle(["ftutta","mtutta"]),
-        shuffle(["foskot","moskot"]),
-        shuffle(["fmodi","mmodi"]),
-        shuffle(["fzoyar","mzoyar"]),
-        shuffle(["fwiso","mwiso"]),
-        shuffle(["fchikon","mchikon"])]);
-
-var sounds = trainSounds.concat(testSounds);
-
-var trainSpeakerChange = [["false","false"]];
+//var trainSpeakerChange = [["false","false"]];
+var trainSpeakerChange = [["false"]];
 var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"]),shuffle(["false","true"])]);
 var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
-var trainFruitLeft = ["ball","duck"];
-var trainFruitRight = ["bear","car"];
-var fruits = ["t1", "t2","t3","t18","t5","t6","t7","t8","t17","t10", "t11","t12","t13","t14","t15","t16"];
+//var trainFruitLeft = ["car","duck"];
+var trainFruitLeft = ["car"];
+//var trainFruitRight = ["bear","ball"];
+var trainFruitRight = ["bear"];
+var fruits = ["t1", "t2","t3","t18","t5","t6","t7","t8","t17","t10", "t11","t12","t13","t15","t16"];
 var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
@@ -191,13 +209,13 @@ var agentOrientations = [
     ["straight","point_l", "point_r","disappear","down"],
     ["straight","point_r", "point_l","disappear","down"],
     ["straight","point_l", "point_r","disappear","down"],
+    ["straight","point_r", "point_l","disappear","down"],
     ["straight","point_l", "point_r","disappear","down"],
+    ["straight","point_r", "point_l","disappear","down"],
     ["straight","point_l", "point_r","disappear","down"],
+    ["straight","point_r", "point_l","disappear","down"],
     ["straight","point_l", "point_r","disappear","down"],
-    ["straight","point_l", "point_r","disappear","down"],
-    ["straight","point_l", "point_r","disappear","down"],
-    ["straight","point_l", "point_r","disappear","down"],
-    ["straight","point_l", "point_r","disappear","down"]];
+    ["straight","point_r", "point_l","disappear","down"]];
 
 var agentOrient = shuffle(agentOrientations);
 
@@ -215,7 +233,6 @@ var experiment = {
   trial: trial,
   speakerChange: speakerChange,
   agents: agents,
-  sounds: sounds,
   altAgents: altAgents,
   agentOrient: agentOrient,
   rightFruit: rightFruit,
@@ -299,7 +316,6 @@ var experiment = {
     experiment.speakerChange[0].shift();
     experiment.rightFruit.shift();
     experiment.leftFruit.shift();
-    experiment.sounds.shift();
      
     if(speakerChange[0].length == 0) {
         experiment.speakerChange.shift();
@@ -314,45 +330,58 @@ var experiment = {
     
     showSlide("choice"); 
       
-    setTimeout(function() {$("#text2").text("Click on the toy")}, 12000);
+    setTimeout(function() {$("#text2").text("Click on the toy")}, 14000);
     
       
     choiceLeftFruit("images/"+leftFruit[0]+".png");
     choiceRightFruit("images/"+rightFruit[0]+".png");
-       
-      
-    if (speakerChange[0][0] == "true") {
+              
+   if (speakerChange[0][0] == "true") {
         choiceAgent(altAgents[0]);
         $("#text2").text("");  
-        $("#text3").text(altAgents[0]+" is here");
-    }else{
+        $("#text3").text(agents[0]+" is gone ... now "+altAgents[0]+" is here");
+    }else {
        choiceAgent(agents[0]);
         $("#text2").text("");  
         $("#text3").text(agents[0]+" is here");
     };
     
-       
+    
+     if (experiment.trial[0] == "train"){
+    } else {    
+      
     $("#"+agents[0]+"_choice").animate({height: "180px",opacity: '0.3', queue: false, duration: "slow"});
     $("#"+agents[0]+"_choice").animate({height: "280px",opacity: '1', queue: false, duration: "slow"});
       
     $("#"+altAgents[0]+"_choice").animate({height: "180px",opacity: '0.3', queue: false, duration: "slow"});
     $("#"+altAgents[0]+"_choice").animate({height: "280px",opacity: '1', queue: false, duration: "slow"});
-
-      
+    };   
+    
+    if (experiment.trial[0] == "train"){
+        setTimeout(function() {
+        sourceSound("sound/"+agents[0]+"_hello.mp3");
+        playSound();}, 0);
+       setTimeout(function() {
+        sourceSound("sound/"+agents[0]+"_choice.mp3");
+        playSound();}, 2500);
+    } else { 
+    
     if (experiment.speakerChange[0][0] == "true"){
-        sourceSound("sound/"+sounds[0][1]+"_id.mp3");
-        playSound();
+        setTimeout(function() {
+        sourceSound("sound/"+altAgents[0]+"_hello.mp3");
+        playSound();}, 0);
        setTimeout(function() {
-        sourceSound("sound/"+sounds[0][1]+"_choice.mp3");
-        playSound();}, 2000);
+        sourceSound("sound/"+altAgents[0]+"_choice.mp3");
+        playSound();}, 2500);
     } else {
-       sourceSound("sound/"+sounds[0][0]+"_id.mp3");
-        playSound();
+       sourceSound("sound/"+agents[0]+"_return.mp3");
+        setTimeout(function() {
+        playSound();}, 0);
        setTimeout(function() {
-        sourceSound("sound/"+sounds[0][0]+"_choice.mp3");
-        playSound();}, 2000);
+        sourceSound("sound/"+agents[0]+"_choice.mp3");
+        playSound();}, 2500);
             }; 
-      
+    }
       
 setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
@@ -403,30 +432,30 @@ setTimeout(function() {
    if (experiment.agentOrient[0][0] == "straight") { 
     //inactivate next button for the time the sound is played 
         pause("next",1500); 
-        sourceSound("sound/"+sounds[0][0]+"_id.mp3");
+        sourceSound("sound/"+agents[0]+"_hello.mp3");
         playSound();
         $("#text").text(experiment.agents[0]+" is here");
-    };  
+    }; 
       
     
        
     if (experiment.agentOrient[0][0] == "point_l" && experiment.pref[0] == "right") { 
-        pause("next",2300); 
-        sourceSound("sound/"+sounds[0][0]+"_npoint.mp3");
+        pause("next",4000); 
+        sourceSound("sound/"+agents[0]+"_npoint.mp3");
         playSound();   
     } else if (experiment.agentOrient[0][0] == "point_l" && experiment.pref[0] == "left") { 
-        pause("next",2300); 
-        sourceSound("sound/"+sounds[0][0]+"_ppoint.mp3");
+        pause("next",4000); 
+        sourceSound("sound/"+agents[0]+"_ppoint.mp3");
         playSound();   
     };
      
      if (experiment.agentOrient[0][0] == "point_r" && experiment.pref[0] == "left") { 
-        pause("next",2300); 
-        sourceSound("sound/"+sounds[0][0]+"_npoint.mp3");
+        pause("next",4000); 
+        sourceSound("sound/"+agents[0]+"_npoint.mp3");
         playSound();   
     } else if (experiment.agentOrient[0][0] == "point_r" && experiment.pref[0] == "right") { 
-        pause("next",2300); 
-        sourceSound("sound/"+sounds[0][0]+"_ppoint.mp3");
+        pause("next",4000); 
+        sourceSound("sound/"+agents[0]+"_ppoint.mp3");
         playSound();   
     };
     
@@ -437,14 +466,14 @@ if (experiment.agentOrient[0][0] == "point_r") {
         setTimeout(function() {
             $("#fruit_r").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
             $("#fruit_r").animate({width: "250px",opacity: '1', queue: false, duration: 1000})
-        }, 2000)
+        }, 2500)
     }; 
       
     if (experiment.agentOrient[0][0] == "point_l") {
         setTimeout(function() {
             $("#fruit_l").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
             $("#fruit_l").animate({width: "250px",opacity: '1', queue: false, duration: 1000})
-        }, 2000)
+        }, 2500)
     }; 
     
       
@@ -455,7 +484,7 @@ if (experiment.agentOrient[0][0] == "disappear") {
         $("#text").text("");
         setTimeout(function()
             {showAgent(agents[0],"disappear")}, 2000);
-        pause("next",5000);
+        pause("next",4000);
         setTimeout(function()
             {$("#text").text(agents[0]+" is gone!")}, 4000);
         setTimeout(function(){hideAgent()}, 4000);
