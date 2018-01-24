@@ -93,6 +93,7 @@ nextButton {
     position: absolute;
     top: 530px;
     left: 470px;
+    z-index: 2
 }
 nextButton:active {
 	border-left: 1px solid #c9c9c9;
@@ -104,6 +105,7 @@ nextButton:active {
     position: absolute;
     top: 530px;
     left: 470px;
+    z-index: 2
 }
 
 nextButton[disabled] {

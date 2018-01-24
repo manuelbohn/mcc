@@ -131,7 +131,7 @@ $("#start_button").click(function() {
 // Progress bar
 
 $("#progressbar").progressbar();
-$("#progressbar").progressbar( "option", "max", 11  );
+$("#progressbar").progressbar( "option", "max", 10);
 
 // move progress bar
 
@@ -174,29 +174,26 @@ $.ajax({
 
 // ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
 
-//var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
-var trial = ["train","finTrain",1,2,3,4]
+var trial = ["train","train","finTrain",1,2,3,4,5,6]
 
-//var trainAgents = ["Pig","Elephant"]
-var trainAgents = ["Elephant"]
-//var allAgents = ["Frog","Beaver","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep"];
-var allAgents = ["Mouse","Dog","Tiger","Cat","Sheep","Bear","Monkey","Frog"];
-var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,4);
+
+var trainAgents = ["Elephant","Pig"]
+var allAgents = ["Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep"];
+var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,6);
 var remainingAgent = $.grep(allAgents, function(value) {
     return $.inArray(value, testAgents) < 0;});
 var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,3);
 var agents = trainAgents.concat(testAgents);
 var altAgents = testAltAgent;
 
-//var trainSpeakerChange = [["false","false"]];
-var trainSpeakerChange = [["false"]];
-var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"]),shuffle(["false","true"])]);
+var trainSpeakerChange = [["false","false"]];
+
+var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"])]);
 var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
-//var trainFruitLeft = ["car","duck"];
-var trainFruitLeft = ["car"];
-//var trainFruitRight = ["bear","ball"];
-var trainFruitRight = ["bear"];
+var trainFruitLeft = ["car","duck"];
+var trainFruitRight = ["bear","ball"];
+
 var fruits = ["t1", "t2","t3","t18","t5","t6","t7","t8","t17","t10", "t11","t12","t13","t15","t16"];
 var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
@@ -213,14 +210,12 @@ var agentOrientations = [
     ["straight","point_l", "point_r","disappear","down"],
     ["straight","point_r", "point_l","disappear","down"],
     ["straight","point_l", "point_r","disappear","down"],
-    ["straight","point_r", "point_l","disappear","down"],
-    ["straight","point_l", "point_r","disappear","down"],
     ["straight","point_r", "point_l","disappear","down"]];
 
 var agentOrient = shuffle(agentOrientations);
 
-var trainPref = ["right","left"];
-var testPref = shuffle(["left","right","left","right","left","right","left","right"]);
+var trainPref = ["left","right"];
+var testPref = shuffle(["left","right","left","right","left","right"]);
 var pref = trainPref.concat(testPref)
 
 // Show the instructions slide .
@@ -320,6 +315,9 @@ var experiment = {
     if(speakerChange[0].length == 0) {
         experiment.speakerChange.shift();
     }
+  
+     // move progress bar 
+   move()  
      
     experiment.next();
   },
@@ -330,12 +328,18 @@ var experiment = {
     
     showSlide("choice"); 
       
-    setTimeout(function() {$("#text2").text("Click on the toy")}, 14000);
+    setTimeout(function() {$("#text2").text("Click on the toy")}, 13000);
     
       
     choiceLeftFruit("images/"+leftFruit[0]+".png");
     choiceRightFruit("images/"+rightFruit[0]+".png");
-              
+   
+    if (experiment.trial[0] == "train"){
+        sourceSound("sound/"+agents[0]+"_choice.mp3");
+        playSound();
+    };       
+      
+      
    if (speakerChange[0][0] == "true") {
         choiceAgent(altAgents[0]);
         $("#text2").text("");  
@@ -346,26 +350,21 @@ var experiment = {
         $("#text3").text(agents[0]+" is here");
     };
     
-    
      if (experiment.trial[0] == "train"){
-    } else {    
-      
-    $("#"+agents[0]+"_choice").animate({height: "180px",opacity: '0.3', queue: false, duration: "slow"});
+    } else { 
+       
+    $("#"+agents[0]+"_choice").animate({height: "380px",opacity: '0.3', queue: false, duration: "slow"});
     $("#"+agents[0]+"_choice").animate({height: "280px",opacity: '1', queue: false, duration: "slow"});
       
-    $("#"+altAgents[0]+"_choice").animate({height: "180px",opacity: '0.3', queue: false, duration: "slow"});
+    $("#"+altAgents[0]+"_choice").animate({height: "380px",opacity: '0.3', queue: false, duration: "slow"});
     $("#"+altAgents[0]+"_choice").animate({height: "280px",opacity: '1', queue: false, duration: "slow"});
-    };   
+     };  
     
-    if (experiment.trial[0] == "train"){
-        setTimeout(function() {
-        sourceSound("sound/"+agents[0]+"_hello.mp3");
-        playSound();}, 0);
-       setTimeout(function() {
+     if (experiment.trial[0] == "train"){
         sourceSound("sound/"+agents[0]+"_choice.mp3");
-        playSound();}, 2500);
+        playSound();
     } else { 
-    
+      
     if (experiment.speakerChange[0][0] == "true"){
         setTimeout(function() {
         sourceSound("sound/"+altAgents[0]+"_hello.mp3");
@@ -381,24 +380,51 @@ var experiment = {
         sourceSound("sound/"+agents[0]+"_choice.mp3");
         playSound();}, 2500);
             }; 
-    }
+     };
       
 setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
-}, 12000);
+}, 9000);
   
   },
+ 
+train: function() {
+      
+    showSlide("stage");  
+      
+    showAgent(agents[0],experiment.agentOrient[0][0]);
+    
+    sourceRightFruit("images/"+rightFruit[0]+".png");
+    showRightFruit();
+    sourceLeftFruit("images/"+leftFruit[0]+".png");
+    showLeftFruit();  
+
+    if (experiment.agentOrient[0][0] == "point_l" || experiment.agentOrient[0][0] == "point_r") {
+        experiment.choice();
+        return;
+    };  
+   // play sound depending on agent orientation  
+    
+      
+    if (experiment.agentOrient[0][0] == "straight") { 
+    //inactivate next button for the time the sound is played 
+        pause("next",2000); 
+        sourceSound("sound/"+agents[0]+"_hello.mp3");
+        playSound();
+        $("#text").text(experiment.agents[0]+" is here");
+        };  
+      
+      experiment.agentOrient[0].shift();
+     
+  },   
     
   // The work horse of the sequence - what to do on every trial.
   next: function() {
   // when no more trials are left, end experiment
       
-    getTime1()
-      
     if (experiment.trial[0] == "train"){
-        experiment.agentOrient[0].shift();
-        experiment.choice();
+        experiment.train();
         return;
     };
       
@@ -483,11 +509,11 @@ if (experiment.agentOrient[0][0] == "disappear") {
         playSound();
         $("#text").text("");
         setTimeout(function()
-            {showAgent(agents[0],"disappear")}, 2000);
-        pause("next",4000);
+            {showAgent(agents[0],"disappear")}, 1500);
+        pause("next",3000);
         setTimeout(function()
-            {$("#text").text(agents[0]+" is gone!")}, 4000);
-        setTimeout(function(){hideAgent()}, 4000);
+            {$("#text").text(agents[0]+" is gone!")}, 3000);
+        setTimeout(function(){hideAgent()}, 3000);
     };
     
     experiment.agentOrient[0].shift(); 
