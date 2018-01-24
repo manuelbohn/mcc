@@ -301,6 +301,11 @@ var experiment = {
     $("#text2").text("");
     $("#text3").text("");
    
+    sourceLeftFruit("images/empty.png");
+            showLeftFruit(); 
+    sourceRightFruit("images/empty.png");
+            showRightFruit();
+     
      if(speakerChange[0][0] == "true") {
         experiment.altAgents.shift()};
      
