@@ -157,14 +157,14 @@ $.ajax({
 });
 
 
-var folder = "sound/";
+var folder2 = "sound/";
 
 $.ajax({
-    url : folder,
+    url : folder2,
     success: function (data) {
         $(data).find("a").attr("href", function (i, val) {
             if( val.match(/\.(mp3)$/) ) { 
-                $("body").append( "<audio src='"+ folder + val +"'>" );
+                $("body").append( "<audio src='"+ folder2 + val +"'>" );
             } 
         });
     }
