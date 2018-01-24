@@ -337,12 +337,7 @@ var experiment = {
     
       
     choiceLeftFruit("images/"+leftFruit[0]+".png");
-    choiceRightFruit("images/"+rightFruit[0]+".png");
-   
-    if (experiment.trial[0] == "train"){
-        sourceSound("sound/"+agents[0]+"_choice.mp3");
-        playSound();
-    };       
+    choiceRightFruit("images/"+rightFruit[0]+".png");     
       
       
    if (speakerChange[0][0] == "true") {
