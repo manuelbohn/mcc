@@ -236,7 +236,7 @@ var experiment = {
     // Show the finish slide.
     showSlide("finished");
     // Wait 1.5 seconds and then submit the whole experiment object to Mechanical Turk (mmturkey filters out the functions so we know we're just submitting properties [i.e. data])
-    setTimeout(function() { turk.submit(experiment) }, 4000);
+    setTimeout(function() { turk.submit(experiment) }, 8000);
   },
     
    endTraining: function() {
