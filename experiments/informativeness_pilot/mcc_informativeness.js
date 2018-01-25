@@ -200,14 +200,10 @@ $.ajax({
 
 var trial = ["train","train","finTrain",1,2,3,4,5,6]
 
-
 var trainAgents = ["Elephant","Pig"]
 var allAgents = ["Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep"];
 var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,6);
-var remainingAgent = $.grep(allAgents, function(value) {
-    return $.inArray(value, testAgents) < 0;});
 var agents = trainAgents.concat(testAgents);
-
 
 var trainControl = [["false","false"]];
 
@@ -313,6 +309,8 @@ var experiment = {
     $(".agent_eat").unbind("click"); 
     $(".fruit_r").unbind("click");
     $(".fruit_l").unbind("click");
+    $(".fruit_r2").unbind("click");
+    $(".fruit_l2").unbind("click");
     $("#text").text("");
     $("#text2").text("");
     $("#text3").text("");
@@ -384,43 +382,11 @@ var experiment = {
 setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
+    $(".fruit_r2").bind("click", experiment.eat);
+    $(".fruit_l2").bind("click", experiment.eat);
 }, 9000);
   
   },
- 
-train: function() {
-      
-    showSlide("stage");  
-      
-    showAgent(agents[0],experiment.agentOrient[0][0]);
-    
-    sourceRightFruit("images/"+rightFruit[0]+".png");
-    sourceRightFruit2("images/empty.png");
-    showRightFruit();
-    showRightFruit2();
-    sourceLeftFruit("images/"+leftFruit[0]+".png");
-    sourceLeftFruit2("images/empty.png");
-    showLeftFruit();
-    showLeftFruit2();  
-
-    if (experiment.agentOrient[0][0] == "down") {
-        experiment.choice();
-        return;
-    };  
-   // play sound depending on agent orientation  
-    
-      
-    if (experiment.agentOrient[0][0] == "straight") { 
-    //inactivate next button for the time the sound is played 
-        pause("next",2000); 
-        sourceSound("sound/"+agents[0]+"_hello.mp3");
-        playSound();
-        $("#text").text(experiment.agents[0]+" is here");
-        };  
-      
-      experiment.agentOrient[0].shift();
-     
-  },   
     
   // The work horse of the sequence - what to do on every trial.
   next: function() {
