@@ -384,7 +384,7 @@ setTimeout(function() {
     $(".fruit_l").bind("click", experiment.eat);
     $(".fruit_r2").bind("click", experiment.eat);
     $(".fruit_l2").bind("click", experiment.eat);
-}, 9000);
+}, 9500);
   
   },
     
@@ -426,7 +426,7 @@ setTimeout(function() {
       
    if (experiment.agentOrient[0][0] == "straight") { 
     //inactivate next button for the time the sound is played 
-        pause("next",1500); 
+        pause("next",1600); 
         sourceSound("sound/"+agents[0]+"_hello.mp3");
         playSound();
         $("#text").text(experiment.agents[0]+" is here");
