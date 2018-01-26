@@ -1,7 +1,5 @@
 
 // ## Helper functions
-
-
 function showSlide(id) {
   // Hide all slides
 	$(".slide").hide();
@@ -18,11 +16,9 @@ function showText(id) {
 
 
 function showAgent(id, orient) {
-  // Hide all slides
 	$(".agent").hide();
     $(".point_agent_l").hide();
     $(".point_agent_r").hide();
-	// Show just the slide we want to show
 	$("#"+id+"_"+orient).show();
 }
 
@@ -164,8 +160,8 @@ function move() {
         ($("#progressbar").progressbar( "option", "value")+1));
 }
 
-
 // preloading images and sounds
+// images
 
 var folder = "images/";
 
@@ -180,6 +176,7 @@ $.ajax({
     }
 });
 
+// sound
 
 var folder2 = "sound/";
 
@@ -196,24 +193,26 @@ $.ajax({
 
 
 
-// ## Configuration settings - create all the variables that are necesary for the experiment, figute our how to call them later 
+// Variables and randomization for the experiment
 
 var trial = ["train","train","finTrain",1,2,3,4,5,6]
-
+// agent order for training
 var trainAgents = ["Elephant","Pig"]
 var allAgents = ["Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep"];
+// randomization of agent order for test trials
 var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,6);
 var agents = trainAgents.concat(testAgents);
 
+// randomizing order of control and test condition
 var trainControl = [["false","false"]];
-
 var testControl = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"])]);
 var control = trainControl.concat(testControl);
 
+// objects on tables in training and test (fruits = toys)
 var trainFruitLeft = ["car","duck"];
 var trainFruitRight = ["bear","ball"];
-
 var fruits = ["t1","t2","t3","t18","t5","t6","t7","t8","t17","t10", "t11","t12","t13","t15","t16"];
+// randomizing order and combiantion of test objects
 var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
@@ -221,7 +220,8 @@ var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,8);
 var leftFruit = trainFruitLeft.concat(testLeftFruit);
 var rightFruit = trainFruitRight.concat(testRightFruit);
 
-var agentOrientations = [
+// orientation of agent 
+var agentOrient = [
     ["straight","down"],
     ["straight","down"],
     ["straight","down"],
@@ -231,17 +231,17 @@ var agentOrientations = [
     ["straight","down"],
     ["straight","down"]];
 
-var agentOrient = shuffle(agentOrientations);
-
+// randomizing location of target object (i.e. single object)
 var trainInf = ["left","right"];
 var testInf = shuffle(["left","right","left","right","left","right"]);
 var inf = trainInf.concat(testInf)
 
+// beginning of actual experiment
+
 // Show the instructions slide .
 showSlide("instructions");
 
-
-// ## The main event
+// the actual experiment
 var experiment = {
   // Parameters for this sequence.
   trial: trial,
@@ -252,19 +252,21 @@ var experiment = {
   leftFruit: leftFruit,
   inf: inf,
   data: [],
+    
+// end of the experiment
   end: function() {
     // Show the finish slide.
     showSlide("finished");
-    // Wait 1.5 seconds and then submit the whole experiment object to Mechanical Turk (mmturkey filters out the functions so we know we're just submitting properties [i.e. data])
     setTimeout(function() { turk.submit(experiment) }, 8000);
   },
     
    endTraining: function() {
     showSlide("training2");
   }, 
-    
+  
+// what happens between trials - display agent from previous trial and click on it to move on to the next trial    
    eat: function(event) {
-    // Show the finish slide.
+
     showSlide("eat");
     
     sourceSound("sound/end.mp3");
@@ -273,20 +275,21 @@ var experiment = {
     showEat(agents[0])
    
     $("#continue").text("Click on the animal to continue")
-        
+    
+    // get time for reaction time
     var endTime = (new Date()).getTime();    
-    
+    // select correct object
     var corrFruit = $(".fruit_"+inf[0][0]).attr("src");
-      
+    // select chosen object  
     var pick = event.target.src;
-    
+    // Code correct: does name of chosen object contain the name of the correct object
     if (pick.indexOf(corrFruit) > -1) {
         var correct =1
         } else {
         var correct = 0
         };
       
-        
+    // data collected  
       data = {
         condition: "informativeness",
         trial: trial[0],
@@ -303,7 +306,8 @@ var experiment = {
         
      $(".agent_eat").bind("click", experiment.newtrial);     
   },
-        
+    
+// unbind and shif variables between trials      
  newtrial: function() {
     
     $(".agent_eat").unbind("click"); 
@@ -333,13 +337,13 @@ var experiment = {
         experiment.control.shift();
     }
   
-     // move progress bar 
+// move progress bar 
    move()    
    experiment.next();
   },
-// Slide recording the choice
 
 
+// recording the choice 
   choice: function(event) {
     
     showSlide("choice"); 
@@ -347,10 +351,13 @@ var experiment = {
     $("#text2").text("")  
     setTimeout(function() {$("#text2").text("Click on the toy")}, 11000);
     
+    // show agent
     choiceAgent(agents[0])
-      
+    
+    // show agent name
     $("#text3").text(agents[0]+" is here")  
-      
+    
+    // specify what is shown on the tables depending on training and test condition
     if (experiment.trial[0] == "train" || experiment.control[0][0] == "true"){
         choiceLeftFruit("images/"+leftFruit[0]+".png");
         choiceLeftFruit2("images/empty.png");
@@ -374,11 +381,12 @@ var experiment = {
             };
         };
        
-    
+    // play choice sound
     sourceSound("sound/"+agents[0]+"_choice.mp3");
-    playSound();  
+    playSound(); 
       
-setTimeout(function() {      
+    // choice can be made by clicking the objects after - possible after 9.5s
+    setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
     $(".fruit_r2").bind("click", experiment.eat);
@@ -387,50 +395,41 @@ setTimeout(function() {
   
   },
     
-  // The work horse of the sequence - what to do on every trial.
+// moving on within a trial
   next: function() {
-  // when no more trials are left, end experiment
-      
-//    if (experiment.trial[0] == "train"){
-//        experiment.train();
-//        return;
-//    };
-      
+  // when training is over show sinished training slide 
     if (experiment.trial[0] == "finTrain"){
         experiment.endTraining();
         experiment.trial.shift();
         return;
     };
-      
+   // when no more trials are left, end experiment    
     if (experiment.trial.length == 0){
         setTimeout(function() {experiment.end() }, 0);
       return;
     };  
-  // after the agent trial sequence is finished, switch to choice      
+      
+  // after exposure is finished, switch to choice      
     if (experiment.agentOrient[0][0] == "down") {
       setTimeout(function() {experiment.choice() }, 0);
       return;
     };  
-   // play sound depending on agent orientation  
     
     showSlide("stage");  
-      
+     
+    // show agent
     showAgent(agents[0],experiment.agentOrient[0][0]);
     
-    sourceRightFruit("images/"+rightFruit[0]+".png");
-            showRightFruit();  
-     
-    sourceLeftFruit("images/"+leftFruit[0]+".png");
-            showLeftFruit();  
-      
+ 
+    // play hello sound and write name of agent
    if (experiment.agentOrient[0][0] == "straight") { 
-    //inactivate next button for the time the sound is played 
         pause("next",1600); 
         sourceSound("sound/"+agents[0]+"_hello.mp3");
         playSound();
         $("#text").text(experiment.agents[0]+" is here");
     }; 
-      
+     
+    // display obejcts on table depending on training and test condition  
     if (experiment.trial[0] == "train" || experiment.control[0][0] == "true"){
         sourceLeftFruit("images/"+leftFruit[0]+".png");
         showLeftFruit(); 
@@ -440,7 +439,6 @@ setTimeout(function() {
         sourceRightFruit2("images/empty.png");
         showRightFruit2(); 
     } else {    
-        
         if (experiment.inf[0] == "left") { 
         sourceLeftFruit("images/"+leftFruit[0]+".png");
         showLeftFruit(); 
@@ -461,7 +459,7 @@ setTimeout(function() {
         showRightFruit2(); 
         };
     };
-    
+    // move on to next phase of exposure
     experiment.agentOrient[0].shift(); 
   }
 };
