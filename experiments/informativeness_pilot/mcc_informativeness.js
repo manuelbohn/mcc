@@ -334,9 +334,8 @@ var experiment = {
     }
   
      // move progress bar 
-   move()  
-     
-    experiment.next();
+   move()    
+   experiment.next();
   },
 // Slide recording the choice
 
