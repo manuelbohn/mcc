@@ -118,7 +118,7 @@ function playSound() {
 
 // disabling next button in preview mode
 
-$("#start_button").click(function() {
+$("#button").click(function() {
     //disable accept button if in turk preview mode
     if (turk.previewMode) {
       showSlide("instructions");
