@@ -321,7 +321,7 @@ var experiment = {
             showRightFruit();
      
      
-    experiment.trial.shift();  
+    experiment.trial.shift();   
     experiment.agentOrient.shift();   
     experiment.agents.shift();
     experiment.inf.shift();
@@ -346,7 +346,7 @@ var experiment = {
     showSlide("choice"); 
     
     $("#text2").text("")  
-    setTimeout(function() {$("#text2").text("Click on the toy")}, 13000);
+    setTimeout(function() {$("#text2").text("Click on the toy")}, 11000);
     
     choiceAgent(agents[0])
       
