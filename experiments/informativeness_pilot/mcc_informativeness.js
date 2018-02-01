@@ -32,7 +32,7 @@ function choiceAgent(id) {
   // Hide all slides
 	$(".agent").hide();
 	// Show just the agent we want to show
-	$("#"+id+"_choice").show();
+	$("#"+id+"_straight").show();
 }
 
 function sourceRightFruit(a) {
@@ -252,7 +252,8 @@ var experiment = {
   leftFruit: leftFruit,
   inf: inf,
   data: [],
-    
+  fruitPosition: [],
+  fruitPosition2: [],
 // end of the experiment
   end: function() {
     // Show the finish slide.
@@ -279,15 +280,43 @@ var experiment = {
     // get time for reaction time
     var endTime = (new Date()).getTime();    
     // select correct object
-    var corrFruit = $(".fruit_"+inf[0][0]).attr("src");
+    //var corrFruit = $(".fruit_"+inf[0][0]).attr("src");
+    if (inf[0]=="left") {
+        var corrFruit = leftFruit[0];
+    } else {
+        var corrFruit = rightFruit[0]
+        };
     // select chosen object  
     var pick = event.target.src;
+    // record position of objects on each table
+    var innerRight = $(".fruit_r").attr('src')
+    var outerRight = $(".fruit_r2").attr('src')
+    var innerLeft = $(".fruit_l").attr('src')
+    var outerLeft = $(".fruit_l2").attr('src')
     // Code correct: does name of chosen object contain the name of the correct object
     if (pick.indexOf(corrFruit) > -1) {
         var correct =1
         } else {
         var correct = 0
         };
+    //Code location of correct object (inner or outer one on the respective table)
+       
+    if (experiment.inf[0] == "left"){
+            if (innerLeft.indexOf(corrFruit) > -1) {
+                var tablePositionCorr = "inner"
+            } else {
+                var tablePositionCorr = "outer"
+            };
+    } else {
+            if (innerRight.indexOf(corrFruit) > -1) {
+                var tablePositionCorr = "inner"
+            } else {
+                var tablePositionCorr = "outer"
+            };
+    };
+   
+        
+       
       
     // data collected  
       data = {
@@ -297,6 +326,7 @@ var experiment = {
         agent: agents[0],
         leftFruit: leftFruit[0],
         rightFruit: rightFruit[0],
+        tablePositionCorr: tablePositionCorr,
         inf: inf[0],
         pick: pick,
         correct: correct,
@@ -332,6 +362,8 @@ var experiment = {
     experiment.control[0].shift();
     experiment.rightFruit.shift();
     experiment.leftFruit.shift();
+    experiment.fruitPosition = shuffle([leftFruit[0],rightFruit[0]]);
+    experiment.fruitPosition2 = shuffle([leftFruit[0],rightFruit[0]]);
      
     if(control[0].length == 0) {
         experiment.control.shift();
@@ -352,13 +384,13 @@ var experiment = {
     setTimeout(function() {$("#text2").text("Click on the toy")}, 11000);
     
     // show agent
-    choiceAgent(agents[0])
     
     // show agent name
     $("#text3").text(agents[0]+" is here")  
     
     // specify what is shown on the tables depending on training and test condition
-    if (experiment.trial[0] == "train" || experiment.control[0][0] == "true"){
+    if (experiment.trial[0] == "train"){
+        showAgent(agents[0],"choice");
         choiceLeftFruit("images/"+leftFruit[0]+".png");
         choiceLeftFruit2("images/empty.png");
       
@@ -366,32 +398,82 @@ var experiment = {
         choiceRightFruit2("images/empty.png");
         
         } else {
-            if (experiment.inf[0] == "left") { 
-                choiceLeftFruit("images/"+leftFruit[0]+".png");
-                choiceLeftFruit2("images/empty.png");
+            if (experiment.control[0][0] == "true"){
+                if (experiment.inf[0] == "left") {
+                    showAgent(agents[0],"point_l")
+                    choiceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
+                    choiceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
       
-                choiceRightFruit("images/"+rightFruit[0]+".png");     
-                choiceRightFruit2("images/"+rightFruit[0]+".png");
+                    choiceRightFruit("images/"+experiment.fruitPosition2[0]+".png"); choiceRightFruit2("images/"+experiment.fruitPosition2.filter(function(x) { return x !== experiment.fruitPosition2[0]; })+".png"); 
+                    
+                    $("#choiceFruit_l").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_l").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+                    $("#choiceFruit_l2").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_l2").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+                    
+                } else { 
+                    showAgent(agents[0],"point_r")
+                    choiceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
+                    choiceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
+      
+                    choiceRightFruit("images/"+experiment.fruitPosition2[0]+".png"); choiceRightFruit2("images/"+experiment.fruitPosition2.filter(function(x) { return x !== experiment.fruitPosition2[0]; })+".png");
+                    
+                    $("#choiceFruit_r").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_r").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+                    $("#choiceFruit_r2").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_r2").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+                };
+            } else {
+               
+                if (experiment.inf[0] == "left") {
+                    showAgent(agents[0],"point_l")
+                   choiceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
+                    choiceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
+                    
+                    $("#choiceFruit_l").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_l").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+                    $("#choiceFruit_l2").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_l2").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+                    
+                    choiceRightFruit("images/"+rightFruit[0]+".png"); choiceRightFruit2("images/empty.png");
             } else { 
-                choiceLeftFruit("images/"+leftFruit[0]+".png");
-                choiceLeftFruit2("images/"+leftFruit[0]+".png");
+                    showAgent(agents[0],"point_r")
+                    choiceLeftFruit("images/"+leftFruit[0]+".png");
+                    choiceLeftFruit2("images/empty.png");
       
-                choiceRightFruit("images/"+rightFruit[0]+".png");     
-                choiceRightFruit2("images/empty.png");
+                    choiceRightFruit("images/"+experiment.fruitPosition[0]+".png"); choiceRightFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
+                
+                
+                    $("#choiceFruit_r").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_r").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+                    $("#choiceFruit_r2").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_r2").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
             };
         };
-       
+    };
+      
     // play choice sound
     sourceSound("sound/"+agents[0]+"_choice.mp3");
     playSound(); 
       
     // choice can be made by clicking the objects after - possible after 9.5s
-    setTimeout(function() {      
-    $(".fruit_r").bind("click", experiment.eat);
-    $(".fruit_l").bind("click", experiment.eat);
-    $(".fruit_r2").bind("click", experiment.eat);
-    $(".fruit_l2").bind("click", experiment.eat);
-}, 9500);
+    setTimeout(function() {
+        if (experiment.trial[0] == "train") {
+            $(".fruit_l").bind("click", experiment.eat);
+            $(".fruit_l2").bind("click", experiment.eat);
+            
+            $(".fruit_r").bind("click", experiment.eat);
+            $(".fruit_r2").bind("click", experiment.eat);
+        } else { 
+            if (experiment.inf[0] == "left") {
+                $(".fruit_l").bind("click", experiment.eat);
+                $(".fruit_l2").bind("click", experiment.eat);
+            } else {  
+                $(".fruit_r").bind("click", experiment.eat);
+                $(".fruit_r2").bind("click", experiment.eat);
+            };
+        };
+}, 0);
   
   },
     
@@ -420,7 +502,6 @@ var experiment = {
     // show agent
     showAgent(agents[0],experiment.agentOrient[0][0]);
     
- 
     // play hello sound and write name of agent
    if (experiment.agentOrient[0][0] == "straight") { 
         pause("next",1600); 
@@ -429,8 +510,9 @@ var experiment = {
         $("#text").text(experiment.agents[0]+" is here");
     }; 
      
-    // display obejcts on table depending on training and test condition  
-    if (experiment.trial[0] == "train" || experiment.control[0][0] == "true"){
+    // display obejcts on table depending on training and test condition
+
+    if (experiment.trial[0] == "train"){
         sourceLeftFruit("images/"+leftFruit[0]+".png");
         showLeftFruit(); 
         sourceLeftFruit2("images/empty.png");
@@ -438,25 +520,37 @@ var experiment = {
         showRightFruit();
         sourceRightFruit2("images/empty.png");
         showRightFruit2(); 
-    } else {    
-        if (experiment.inf[0] == "left") { 
-        sourceLeftFruit("images/"+leftFruit[0]+".png");
-        showLeftFruit(); 
-        sourceLeftFruit2("images/empty.png");
-        showLeftFruit2(); 
-        sourceRightFruit("images/"+rightFruit[0]+".png");
-        showRightFruit();
-        sourceRightFruit2("images/"+rightFruit[0]+".png");
-        showRightFruit2();
-        } else { 
-        sourceLeftFruit("images/"+leftFruit[0]+".png");
-        showLeftFruit(); 
-        sourceLeftFruit2("images/"+leftFruit[0]+".png");
-        showLeftFruit2(); 
-        sourceRightFruit("images/"+rightFruit[0]+".png");
-        showRightFruit();
-        sourceRightFruit2("images/empty.png");
-        showRightFruit2(); 
+    } else {
+        if (experiment.control[0][0] == "true") {
+            sourceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
+            showLeftFruit(); 
+            sourceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
+            sourceRightFruit("images/"+experiment.fruitPosition2[0]+".png");
+            showRightFruit();
+            sourceRightFruit2("images/"+experiment.fruitPosition2.filter(function(x) { return x !== experiment.fruitPosition2[0]; })+".png");
+            showRightFruit2(); 
+        } else {
+            if (experiment.inf[0] == "left") {
+                sourceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
+                showLeftFruit(); 
+                sourceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
+                showLeftFruit2(); 
+                
+                sourceRightFruit("images/"+rightFruit[0]+".png");
+                showRightFruit();
+                sourceRightFruit2("images/empty.png");
+                showRightFruit2();
+            } else { 
+                sourceLeftFruit("images/"+leftFruit[0]+".png");
+                showLeftFruit(); 
+                sourceLeftFruit2("images/empty.png");
+                showLeftFruit2(); 
+                
+                sourceRightFruit("images/"+experiment.fruitPosition[0]+".png");
+                showRightFruit();
+                sourceRightFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
+                showRightFruit2(); 
+            };
         };
     };
     // move on to next phase of exposure

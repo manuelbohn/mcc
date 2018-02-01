@@ -161,7 +161,7 @@ nextButton[disabled] {
 .fruit_r {
     position: absolute;
     bottom: 165px;  
-    left: 615px;
+    left: 600px;
     width: 250px;
     z-index: 2
 }
@@ -169,7 +169,7 @@ nextButton[disabled] {
 .fruit_r2 {
     position: absolute;
     bottom: 165px;  
-    left: 740px;
+    left: 743px;
     width: 250px;
     z-index: 1
 }
@@ -178,7 +178,7 @@ nextButton[disabled] {
 .fruit_l {
     position: absolute;
     bottom: 165px;
-    left: 180px;
+    left: 183px;
     width: 250px;
     z-index: 2
 }
@@ -186,7 +186,7 @@ nextButton[disabled] {
 .fruit_l2 {
     position: absolute;
     bottom: 165px;
-    left: 55px;
+    left: 40px;
     width: 250px;
     z-index: 1
 }
