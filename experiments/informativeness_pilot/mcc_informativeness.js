@@ -195,7 +195,7 @@ $.ajax({
 
 // Variables and randomization for the experiment
 
-var trial = ["train","train","finTrain",1,2,3,4,5,6]
+var trial = ["train1","train2","finTrain",1,2,3,4,5,6]
 // agent order for training
 var trainAgents = ["Elephant","Pig"]
 var allAgents = ["Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep"];
@@ -389,13 +389,28 @@ var experiment = {
     $("#text3").text(agents[0]+" is here")  
     
     // specify what is shown on the tables depending on training and test condition
-    if (experiment.trial[0] == "train"){
-        showAgent(agents[0],"choice");
+    if (experiment.trial[0] == "train1"){
+        showAgent(agents[0],"point_l");
         choiceLeftFruit("images/"+leftFruit[0]+".png");
-        choiceLeftFruit2("images/empty.png");
+        choiceLeftFruit2("images/"+rightFruit[0]+".png");
+        //choiceLeftFruit2("images/empty.png");
       
-        choiceRightFruit("images/"+rightFruit[0]+".png");     
+        choiceRightFruit("images/empty.png");
+        //choiceRightFruit("images/"+rightFruit[0]+".png");     
         choiceRightFruit2("images/empty.png");
+        
+        $("#choiceFruit_l").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_l").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+                    $("#choiceFruit_l2").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
+                    $("#choiceFruit_l2").animate({width: "250px",opacity: '1', queue: false, duration: 1000});
+        
+        } else if (experiment.trial[0] == "train2"){
+        showAgent(agents[0],"choice");
+        choiceLeftFruit("images/empty.png");
+        choiceLeftFruit2("images/"+leftFruit[0]+".png");
+      
+        choiceRightFruit("images/empty.png");     
+        choiceRightFruit2("images/"+rightFruit[0]+".png");
         
         } else {
             if (experiment.control[0][0] == "true"){
@@ -512,13 +527,27 @@ var experiment = {
      
     // display obejcts on table depending on training and test condition
 
-    if (experiment.trial[0] == "train"){
+    if (experiment.trial[0] == "train1"){
         sourceLeftFruit("images/"+leftFruit[0]+".png");
         showLeftFruit(); 
-        sourceLeftFruit2("images/empty.png");
-        sourceRightFruit("images/"+rightFruit[0]+".png");
+        //sourceLeftFruit2("images/empty.png");
+        //showLeftFruit2(); 
+        sourceLeftFruit2("images/"+rightFruit[0]+".png");
+        showLeftFruit2(); 
+        sourceRightFruit("images/empty.png");
         showRightFruit();
+        // sourceRightFruit("images/"+rightFruit[0]+".png");
+        // showRightFruit();
         sourceRightFruit2("images/empty.png");
+        showRightFruit2(); 
+    } else  if (experiment.trial[0] == "train2"){
+        sourceLeftFruit("images/empty.png");
+        showLeftFruit(); 
+        sourceLeftFruit2("images/"+leftFruit[0]+".png");
+        showLeftFruit2(); 
+        sourceRightFruit("images/empty.png");
+        showRightFruit();
+        sourceRightFruit2("images/"+rightFruit[0]+".png");
         showRightFruit2(); 
     } else {
         if (experiment.control[0][0] == "true") {

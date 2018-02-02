@@ -121,7 +121,10 @@ d %>%
  
 ```
 
-Model testing for interaction between change and condition. No interaction between change and condition, and no effect of condition suggesting that speaker change manipualtion is similar in novelty and preference.
+ChoiceAgent can be seen as an approximation for "item".
+Model below converges, however, the random effects for choiceAgent are highly correlated suggesting that there is not enough data to estimate them independently (makes sense in light of table above). Therefore I would remove the random slopes within choiceAgent (AIC looks better when they are removed). 
+What would you do with non-significant interaction? I put it in there just to check. We did not hypothesize that there would be an interaction, therefore I would remove it. Model 2 reflects what I would suggest.
+Result (independent of model): No interaction between change and condition, effect of change and no effect of condition suggesting that speaker change manipualtion is similar in novelty and preference.
 ```{r}
 ## model
 library(lme4)
@@ -131,12 +134,21 @@ data_cg <- d%>%
   mutate(choiceAgent = ifelse( change == "false", agent, altAgent)) %>%
   mutate(trial = scale(as.numeric(trial), center = TRUE, scale=FALSE))
 
-lm <- glmer(correct ~ change * condition + trial +
-              (change + trial|id) + (1|choiceAgent), 
-            data = data_cg, family = binomial, control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5)))
+# maximal converging model
+lm <- glmer(correct ~ change * condition +
+              (condition + change + trial|id) + (0 + condition + change + trial |choiceAgent), 
+              data = data_cg, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
 summary(lm)
+
+# alternative model
+lm2 <- glmer(correct ~ change + condition +
+              (condition + change + trial|id) + (1|choiceAgent), 
+              data = data_cg, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm2)
  
 ```
 
