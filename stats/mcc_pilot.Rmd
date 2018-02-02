@@ -74,7 +74,7 @@ ggplot(ms,
   theme_few() + 
   scale_colour_solarized()
 ```
-Conditions by agents. Unequal distribution of agents across condition and change combinations leads to seemingly strange patterns for some agents. However, these strange results are always those with very few data points (e.g. Tiger novelty speaker change is only one data point). For those cells with more than five data points, the pattern is very similar to the overall pattern. 
+Conditions by agents. Unequal distribution of agents across condition and change combinations leads to seemingly strange patterns for some agents. However, these strange results are always those with very few data points (e.g. Tiger novelty speaker change is only one data point). For those cells with more than five data points, the pattern is very similar to the overall pattern. Agents are ranodmly selected and assigned to speaker change in the beginning of the experiment. This causes the unequal distribution.
 ```{r trials per condition and agent}
 d %>%
   filter(trial_type == "test") %>%
@@ -122,8 +122,8 @@ d %>%
 ```
 
 ChoiceAgent can be seen as an approximation for "item".
-Model below converges, however, the random effects for choiceAgent are highly correlated suggesting that there is not enough data to estimate them independently (makes sense in light of table above). Therefore I would remove the random slopes within choiceAgent (AIC looks better when they are removed). 
-What would you do with non-significant interaction? I put it in there just to check. We did not hypothesize that there would be an interaction, therefore I would remove it. Model 2 reflects what I would suggest.
+First model below converges, however, the random effects for choiceAgent are highly correlated suggesting that there is not enough data to estimate them independently (makes sense in light of plot/table above). Therefore I would remove the random slopes within choiceAgent (AIC looks better when they are removed). 
+What would you do with the non-significant interaction? I put it in there just to check. I did not hypothesize that there would be an interaction, therefore I would remove it. Model 2 reflects what I would suggest.
 Result (independent of model): No interaction between change and condition, effect of change and no effect of condition suggesting that speaker change manipualtion is similar in novelty and preference.
 ```{r}
 ## model
@@ -141,7 +141,9 @@ lm <- glmer(correct ~ change * condition +
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
 summary(lm)
+```
 
+```{r}
 # alternative model
 lm2 <- glmer(correct ~ change + condition +
               (condition + change + trial|id) + (1|choiceAgent), 
