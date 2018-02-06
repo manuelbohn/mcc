@@ -160,34 +160,34 @@ nextButton[disabled] {
 
 .fruit_r {
     position: absolute;
-    bottom: 165px;  
-    left: 600px;
-    width: 250px;
+    bottom: 250px;  
+    left: 660px;
+    width: 130px;
     z-index: 2
 }
 
 .fruit_r2 {
     position: absolute;
-    bottom: 165px;  
-    left: 743px;
-    width: 250px;
+    bottom: 250px;  
+    left: 804px;
+    width: 130px;
     z-index: 1
 }
 
 
 .fruit_l {
     position: absolute;
-    bottom: 165px;
-    left: 183px;
-    width: 250px;
+    bottom: 250px;
+    left: 244px;
+    width: 130px;
     z-index: 2
 }
 
 .fruit_l2 {
     position: absolute;
-    bottom: 165px;
-    left: 40px;
-    width: 250px;
+    bottom: 250px;
+    left: 103px;
+    width: 130px;
     z-index: 1
 }
 

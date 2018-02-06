@@ -144,9 +144,10 @@ summary(lm)
 ```
 
 ```{r}
-# alternative model
+#  final model
+#  removing random effects for trial as there seems to be no evidence for a trial effect
 lm2 <- glmer(correct ~ change + condition +
-              (condition + change + trial|id) + (1|choiceAgent), 
+              (condition + change |id) + (1|choiceAgent), 
               data = data_cg, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
