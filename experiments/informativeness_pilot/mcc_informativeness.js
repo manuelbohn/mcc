@@ -482,7 +482,6 @@ var experiment = {
             };
         };
 }, 9500);
-  
   },
     
 // moving on within a trial
