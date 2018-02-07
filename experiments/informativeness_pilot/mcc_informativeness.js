@@ -466,7 +466,7 @@ var experiment = {
       
     // choice can be made by clicking the objects after - possible after 9.5s
     setTimeout(function() {
-        if (experiment.trial[0] == "train") {
+        if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2") {
             $(".fruit_l").bind("click", experiment.eat);
             $(".fruit_l2").bind("click", experiment.eat);
             
@@ -481,7 +481,7 @@ var experiment = {
                 $(".fruit_r2").bind("click", experiment.eat);
             };
         };
-}, 0);
+}, 9500);
   
   },
     
