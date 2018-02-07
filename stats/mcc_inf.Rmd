@@ -1,0 +1,163 @@
+---
+title: "MCC_Informativeness"
+author: "Manuel Bohn"
+date: "7 2 2018"
+output: html_document
+---
+
+```{r setup}
+###
+library(tidyverse)
+library(knitr)
+library(langcog)
+library(ggthemes)
+
+
+## importing data
+d <- read_csv(file="inf.data.csv") %>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"))
+
+```
+
+Sanity checks.
+```{r training performance}
+## performance in training and test
+d %>%
+  group_by(trial_type) %>%
+  summarise(n = length(unique(id)), 
+            correct = mean(correct)) %>%
+  knitr::kable(digits = 3)
+
+```
+
+Plot for test vs control with 95%CI
+```{r plot}
+
+ms <- d %>%
+  filter(trial_type == "test") %>%
+  group_by(control, id) %>%
+  summarise(correct = mean(correct)) %>%
+  multi_boot_standard(col = "correct")
+
+ggplot(ms, 
+       aes(x = control, y = mean, fill = control)) +
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few(base_size = 12) + 
+  ylim(0,1)+
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_fill_solarized(name="Trial Type",
+                     breaks=c("false", "true"),
+                     labels=c("Test", "Control"))
+```
+
+Effect of target object location on table. Inner = closer to the agent, outer = further away. 
+For test this does not seem to matter. For control: If they had a tendency to pick the one closer to the agent, they should be above chance for inner and below chance for outer. Only the latter seems to be the case. Not sure why, could also be just noise. 
+```{r inner vs outer location}
+## performance in training and test
+ms <- d %>%
+  filter(trial_type == "test") %>%
+  group_by(targetOnTable,control, id) %>%
+  summarise(correct = mean(correct)) %>%
+  multi_boot_standard(col = "correct")
+
+ggplot(ms, 
+       aes(x = control, y = mean, fill = control,frame = targetOnTable)) +
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  facet_wrap(~ targetOnTable) +
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few(base_size = 12) +
+  ylim(0,1)+
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_fill_solarized(name="Trial Type",
+                     breaks=c("false", "true"),
+                     labels=c("Test", "Control"))
+
+```
+
+Conditions by trial.
+```{r plot trials}
+ms <- d %>%
+  filter(trial_type == "test") %>%
+  group_by(control, trial, id) %>%
+  summarise(correct = mean(correct)) %>%
+  multi_boot_standard(col = "correct")
+
+ggplot(ms, 
+       aes(x = trial, y = mean, col = control)) +
+  geom_line(aes(group= control)) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
+                  position = position_dodge(width = .1)) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  theme_few() + 
+  scale_colour_solarized()
+```
+
+Conditions by agents.
+```{r trials per condition and agent}
+d %>%
+  filter(trial_type == "test") %>%
+  group_by(agent,control) %>%
+  summarise(n = length(agent), 
+            correct = mean(correct)) %>%
+  knitr::kable(digits = 2)
+```
+
+Agent effect. Dog seems a little strange (despite enough data) but no idea what to make of this.
+```{r plot agents}
+ms <- d %>%
+  filter(trial_type == "test") %>%
+  group_by(control, agent, id) %>%
+  summarise(correct = mean(correct)) %>%
+  multi_boot_standard(col = "correct")
+
+ggplot(ms, 
+       aes(x = agent, y = mean, col = control)) +
+  geom_line(aes(group= control)) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
+                  position = position_dodge(width = .1)) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  theme_few() + 
+  scale_colour_solarized()
+```
+
+T-tests against chance test and control
+```{r}
+## t tests against chance
+d %>%
+  filter(trial_type == "test") %>%
+  group_by(control, id) %>%
+  summarise(correct = mean(correct)) %>%
+  summarise(correct = list(correct)) %>%
+  group_by(control) %>%
+  mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
+         t_value = t.test(unlist(correct), mu = 0.5)$statistic,
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
+  select(control,df,t_value,p_value) %>%
+  knitr::kable(digits = 2)
+ 
+```
+
+Agent can be seen as an approximation for "item".
+
+```{r}
+## model
+library(lme4)
+
+data_inf <- d%>%
+  filter(trial_type == "test")%>%
+  mutate(trial = scale(as.numeric(trial), center = TRUE, scale=FALSE))
+
+# registered  model
+lm <- glmer(correct ~ control +
+              (control |id) + (control |agent), 
+              data = data_inf, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm)
+```
+

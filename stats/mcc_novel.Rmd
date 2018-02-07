@@ -1,5 +1,5 @@
 ---
-title: "MCC_pilot"
+title: "MCC_Novelty"
 author: "Manuel Bohn"
 date: "26 1 2018"
 output: html_document
@@ -14,8 +14,7 @@ library(ggthemes)
 
 
 ## importing data
-d <- bind_rows(read_csv(file="pref.data.csv"),
-               read_csv(file="novel.data.csv")) %>%
+d <- read_csv(file="novel.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
 ```
@@ -25,30 +24,30 @@ Sanity checks.
 
 ## sanity checks
 d %>%
-  group_by(trial_type, condition) %>%
+  group_by(trial_type) %>%
   summarise(n = length(unique(id)), 
             correct = mean(correct)) %>%
   knitr::kable(digits = 2)
 
 ```
-Plot condition and speaker change with 95%CI
+
+Plot for speaker change with 95%CI
 ```{r plot}
 
 ms <- d %>%
   filter(trial_type == "test") %>%
-  group_by(change, condition, id) %>%
+  group_by(change, id) %>%
   summarise(correct = mean(correct)) %>%
   multi_boot_standard(col = "correct")
 
 ggplot(ms, 
-       aes(x = change, y = mean, fill = change, frame = condition)) +
+       aes(x = change, y = mean, fill = change)) +
   geom_bar(stat="identity") + 
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) + 
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
-  facet_wrap(~ condition,
-             labeller = as_labeller(c(`novelty`="Novelty", `preference`="Preference")))+ 
   theme_few(base_size = 12) + 
+  ylim(0,1)+
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
   scale_fill_solarized(name="Speaker Change",
                      breaks=c("false", "true"),
@@ -60,7 +59,7 @@ Conditions by trial.
 ```{r plot trials}
 ms <- d %>%
   filter(trial_type == "test") %>%
-  group_by(change, condition, trial, id) %>%
+  group_by(change, trial, id) %>%
   summarise(correct = mean(correct)) %>%
   multi_boot_standard(col = "correct")
 
@@ -70,16 +69,16 @@ ggplot(ms,
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
                   position = position_dodge(width = .1)) + 
   geom_hline(yintercept = 0.5, lty=2)+
-  facet_wrap(~ condition) + 
   theme_few() + 
   scale_colour_solarized()
 ```
-Conditions by agents. Unequal distribution of agents across condition and change combinations leads to seemingly strange patterns for some agents. However, these strange results are always those with very few data points (e.g. Tiger novelty speaker change is only one data point). For those cells with more than five data points, the pattern is very similar to the overall pattern. Agents are ranodmly selected and assigned to speaker change in the beginning of the experiment. This causes the unequal distribution.
+
+Conditions by agents. Unequal distribution of agents across change combinations leads to seemingly strange patterns for some agents. However, these strange results are always those with very few data points (e.g. Tiger novelty speaker change is only one data point). For those cells with more than five data points, the pattern is very similar to the overall pattern. Agents are ranodmly selected and assigned to speaker change in the beginning of the experiment. This causes the unequal distribution.
 ```{r trials per condition and agent}
 d %>%
   filter(trial_type == "test") %>%
   mutate(choiceAgent = ifelse( change == "false", agent, altAgent)) %>%
-  group_by(choiceAgent,change, condition) %>%
+  group_by(choiceAgent,change) %>%
   summarise(n = length(choiceAgent), 
             correct = mean(correct)) %>%
   knitr::kable(digits = 2)
@@ -89,7 +88,7 @@ d %>%
 ms <- d %>%
   filter(trial_type == "test") %>%
   mutate(choiceAgent = ifelse( change == "false", agent, altAgent)) %>%
-  group_by(change, condition, choiceAgent, id) %>%
+  group_by(change, choiceAgent, id) %>%
   summarise(correct = mean(correct)) %>%
   multi_boot_standard(col = "correct")
 
@@ -99,32 +98,29 @@ ggplot(ms,
   geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
                   position = position_dodge(width = .1)) + 
   geom_hline(yintercept = 0.5, lty=2)+
-  facet_wrap(~ condition) + 
   theme_few() + 
   scale_colour_solarized()
 ```
 
-T-tests against chance for each condition*change combination
+T-tests against chance for each change conditions
 ```{r}
 ## t tests against chance
 d %>%
   filter(trial_type == "test") %>%
-  group_by(change, condition, id) %>%
+  group_by(change, id) %>%
   summarise(correct = mean(correct)) %>%
   summarise(correct = list(correct)) %>%
-  group_by(change,condition) %>%
+  group_by(change) %>%
   mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
          t_value = t.test(unlist(correct), mu = 0.5)$statistic,
          p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(condition,change,df,t_value,p_value) %>%
+  select(change,df,t_value,p_value) %>%
   knitr::kable(digits = 2)
  
 ```
 
 ChoiceAgent can be seen as an approximation for "item".
-First model below converges, however, the random effects for choiceAgent are highly correlated suggesting that there is not enough data to estimate them independently (makes sense in light of plot/table above). Therefore I would remove the random slopes within choiceAgent (AIC looks better when they are removed). 
-What would you do with the non-significant interaction? I put it in there just to check. I did not hypothesize that there would be an interaction, therefore I would remove it. Model 2 reflects what I would suggest.
-Result (independent of model): No interaction between change and condition, effect of change and no effect of condition suggesting that speaker change manipualtion is similar in novelty and preference.
+
 ```{r}
 ## model
 library(lme4)
@@ -135,23 +131,11 @@ data_cg <- d%>%
   mutate(trial = scale(as.numeric(trial), center = TRUE, scale=FALSE))
 
 # maximal converging model
-lm <- glmer(correct ~ change * condition +
-              (condition + change + trial|id) + (0 + condition + change + trial |choiceAgent), 
+lm <- glmer(correct ~ change +
+              (change |id) + (change |choiceAgent), 
               data = data_cg, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
 summary(lm)
-```
-
-```{r}
-#  final model
-#  removing random effects for trial as there seems to be no evidence for a trial effect
-lm2 <- glmer(correct ~ change + condition +
-              (condition + change |id) + (1|choiceAgent), 
-              data = data_cg, family = binomial, 
-              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
-
-summary(lm2)
- 
 ```
 
