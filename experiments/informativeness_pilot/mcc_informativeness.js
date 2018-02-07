@@ -353,6 +353,10 @@ var experiment = {
             showLeftFruit(); 
     sourceRightFruit("images/empty.png");
             showRightFruit();
+      sourceLeftFruit2("images/empty.png");
+            showLeftFruit(); 
+    sourceRightFruit2("images/empty.png");
+            showRightFruit();
      
      
     experiment.trial.shift();   
