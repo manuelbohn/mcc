@@ -201,10 +201,10 @@ var trainFruitRight = ["bear","ball"];
 var fruits = ["t1","t2","t3","t4","t5","t7","t8","t17","t10", "t11","t12","t15","t16"];
 
 // randomizing order and combiantion of test objects
-var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
+var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,6);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
-var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,8);
+var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,6);
 var leftFruit = trainFruitLeft.concat(testLeftFruit);
 var rightFruit = trainFruitRight.concat(testRightFruit);
 

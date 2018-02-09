@@ -200,13 +200,13 @@ var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 // objects on tables in training and test (fruits = toys)
 var trainFruitLeft = ["car","duck"];
 var trainFruitRight = ["bear","ball"];
-var fruits = ["t1", "t2","t3","t18","t5","t6","t7","t8","t17","t10", "t11","t12","t13","t15","t16"];
+var fruits = ["t1","t2","t3","t4","t5","t7","t8","t17","t10", "t11","t12","t15","t16"];
 
 // randomizing order and combiantion of test objects
-var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
+var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,6);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
-var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,8);
+var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,6);
 var leftFruit = trainFruitLeft.concat(testLeftFruit);
 var rightFruit = trainFruitRight.concat(testRightFruit);
 
@@ -263,22 +263,18 @@ var experiment = {
   }, 
  
 // what happens between trials - display agent from previous trial and click on it to move on to the next trial  
-   eat: function(event) {
-    // Show the finish slide.
-    showSlide("eat");
+    eat: function(event) {
+
+    setTimeout(function() {experiment.eat2() }, 1500);
+       
+    showSlide("choice");  
+       
+    event.target.style.border = '5px solid red';
     
     sourceSound("sound/end.mp3");
     playSound();
-   
-   // display same agent as during choice     
-    if (speakerChange[0][0] == "true"){
-        showEat(altAgents[0])
-    } else {
-        showEat(agents[0])
-    };
         
    
-    $("#continue").text("Click on the animal to continue")
    // get time for reaction time       
     var endTime = (new Date()).getTime();    
     // select correct object
@@ -307,13 +303,35 @@ var experiment = {
         rt: endTime - startTime,
             };
       experiment.data.push(data);
-        
-     $(".agent_eat").bind("click", experiment.newtrial);     
+   
   },
+ 
+ eat2: function(event) {
     
+    showSlide("eat");
+    
+    background("images/back"+back[0]+".jpg");
+    
+    sourceSound("sound/end.mp3");
+    playSound();
+   
+    // display same agent as during choice
+    if (speakerChange[0][0] == "true"){
+        showEat(altAgents[0])
+    } else {
+        showEat(agents[0])
+    };
+   
+    $("#continue").text("Touch the animal to continue")
+    $(".agent_eat").bind("click", experiment.newtrial);     
+  
+},     
  // unbind and shif variables between trials       
  newtrial: function() {
     
+    $(".fruit_l").css("border","none")
+    $(".fruit_r").css("border","none") 
+     
     $(".agent_eat").unbind("click"); 
     $(".fruit_r").unbind("click");
     $(".fruit_l").unbind("click");
@@ -408,7 +426,7 @@ var experiment = {
     setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
-}, 9000);
+}, 0);
   
   },
  // sequence of events during training exposure
@@ -520,15 +538,15 @@ var experiment = {
     // animate object when visible and pointed at 
       if (experiment.agentOrient[0][0] == "point_r") {
         setTimeout(function() {
-            $("#fruit_r").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
-            $("#fruit_r").animate({width: "250px",opacity: '1', queue: false, duration: 1000})
+            $("#fruit_r").animate({width: "180px",opacity: '0.3', queue: false, duration: 1000});
+            $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: 1000})
         }, 2500)
     }; 
       
     if (experiment.agentOrient[0][0] == "point_l") {
         setTimeout(function() {
-            $("#fruit_l").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
-            $("#fruit_l").animate({width: "250px",opacity: '1', queue: false, duration: 1000})
+            $("#fruit_l").animate({width: "180px",opacity: '0.3', queue: false, duration: 1000});
+            $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: 1000})
         }, 2500)
     }; 
     

@@ -269,7 +269,7 @@ var experiment = {
   end: function() {
     // Show the finish slide.
     showSlide("finished");
-    setTimeout(function() { turk.submit(experiment) }, 8000);
+    setTimeout(function() { turk.submit(experiment) }, 2000);
   },
     
    endTraining: function() {
@@ -520,7 +520,7 @@ eat2: function(event) {
                 $(".fruit_r2").bind("click", experiment.eat);
             };
         };
-}, 9500);
+}, 0);
   },
         
 // moving on within a trial
