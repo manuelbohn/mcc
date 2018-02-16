@@ -2,6 +2,6 @@
 auth.json
 my-own-auth.json
 .Rapp.history
-/rsconnect/*
+stats/rsconnect/*
 
 
