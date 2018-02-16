@@ -14,17 +14,40 @@
 <body>
 <div id="progressbar" style="width: 200px;" align="center"></div>
 	<!-- The instructions slide. -->
+    
 	<div class="slide" id="instructions">
 		<div style="width: 500px; margin: 0 auto; text-align: center; background-color: #8C1516; padding: 20px 15px 10px 10px">
 			<img src="images/stanford.png" height="46" width="360" alt="Stanford University">
 		</div>
-		<p id='logo-text'>Stanford Language and Cognition Lab</p>
-		<p class="block-text">In this experiment, you will learn words for new toys. Your task is to figure out which word goes with which toy. The materials were designed for children. Even if they seem strange at times, we ask you to try to be as accurate as possible. You will hear sound, so please make sure your volume is turned on. The experiment takes about 6-8 minutes.</p>
-		<button type="button" onClick="this.blur(); showSlide('training');move();">Press to begin</button>
-            
-		<!-- Legal blurb that we're required to show. -->
-		<p class="block-text" id="legal">Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact Manuel Bohn at <a href="mailto://bohn@stanford.edu">bohn@stanford.edu</a>. You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.</p>
+        <p id='logo-text'>Stanford Language and Cognition Lab</p>
+        
+           <p class="block-text"><center>Thank you for participating in this study! <br></center></p>
+
+    <p class="block-text"><center>
+      Enter subject ID: <br>
+      <input type="text" id="subjectID" name="subjectID" size="30"> 
+    </center></p>
+
+        <br><br>
+		<center>
+            <button type="button" onClick="this.blur(); experiment.checkInput()">Start touch training</font></button>
+        <div id="checkMessage"> </div>
+        </center>
 	</div>
+
+<!-- touch training -->   
+<div class="slide" id="dotGame">
+    <br><br><br><br><br><br><br>
+    <center>
+      <button type="button" onClick="this.blur(); experiment.trainingDot()">More Dot Games</font></button>
+    </center>
+    <center>
+      <button type="button" onClick="this.blur(); showSlide('training')">Start Game!</font></button>
+    </center>
+</div>
+    
+
+<div class="slide" id="trainingDot"></div> 
 
 <!-- The training slide. -->
 	<div class="slide" id="training">
@@ -393,14 +416,13 @@
        
     
 	<!-- The finish slide. -->
-		<div class="slide" id="finished">
-        
-        <p class="block-text">You're finished - thanks for participating</p> 
-        
-        <p class="block-text">
-        In this experiment we wanted to find out if people think that novel words go with things that the speakers like.</p>
-        
-        <p class="block-text">Submitting to Mechanical Turk...</p>
+	<div class="slide" id="finished">
+		<div style="width: 500px; margin: 0 auto; text-align: center; ">	
+		</div>
+        <br><br>
+        <center>
+        <p id='logo-text'>Thank you for participating!</p>
+        </center>
 	</div>
 
 	<!-- Include the <a href="experiment.html">JavaScript file for the experiment</a>. As written, that script immediately executes commands, so we include it here at the end of the HTML file to ensure that resources referenced by the script actually exist. For instance, one of the immediately executed commands is <code>showSlide("instructions")</code>. If we loaded experiment.js, say, in the <code>head</code> section, <code>showSlide("instructions")</code> would fail because the <code>instructions</code> slide doesn't exist yet. It is possible to load the script in <code>head</code> but you have to ensure that any immediately executed commands, if they rely on potentially uninitialized HTML elements, are _delayed_ until the page is ready, using either [window.onload][onload] or jQuery's more robust [$(document).ready()][domReady]  -->

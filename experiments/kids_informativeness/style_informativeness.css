@@ -250,6 +250,13 @@ nextButton[disabled] {
   margin-bottom: 1em;
 }
 
+.block-text3 {
+  width: 600px;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
 
 .text {
   font-size: 40px;
