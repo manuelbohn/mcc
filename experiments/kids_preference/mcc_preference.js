@@ -132,15 +132,15 @@ $("#button").click(function() {
 
 // Progress bar
 
-$("#progressbar").progressbar();
-$("#progressbar").progressbar( "option", "max", 9);
+// $("#progressbar").progressbar();
+// $("#progressbar").progressbar( "option", "max", 9);
 
 // move progress bar
 
-function move() {
-	$("#progressbar").progressbar("option", "value", 
-        ($("#progressbar").progressbar( "option", "value")+1));
-}
+//function move() {
+//	$("#progressbar").progressbar("option", "value", 
+//        ($("#progressbar").progressbar( "option", "value")+1));
+//}
 
 
 // preloading images and sounds
@@ -168,11 +168,25 @@ $.ajax({
     success: function (data) {
         $(data).find("a").attr("href", function (i, val) {
             if( val.match(/\.(mp3)$/) ) { 
-                $("body").append( "<audio src='"+ folder2 + val +"'>" );
+                $("preload").append( "<audio src='"+ folder2 + val +"'>" );
             } 
         });
     }
 });
+
+var folder3 = "dots/";
+
+$.ajax({
+    url : folder3,
+    success: function (data) {
+        $(data).find("a").attr("href", function (i, val) {
+            if( val.match(/\.(jpg)$/) ) { 
+                $("preload").append( "<img src='"+ folder3 + val +"'>" );
+            } 
+        });
+    }
+});
+
 
 
 
@@ -280,7 +294,7 @@ checkInput: function() {
        
     showSlide("choice");  
        
-    event.target.style.border = '5px solid red';
+    event.target.style.border = '5px solid blue';
     
     sourceSound("sound/end.mp3");
     playSound();
@@ -367,6 +381,7 @@ checkInput: function() {
     experiment.speakerChange[0].shift();
     experiment.rightFruit.shift();
     experiment.leftFruit.shift();
+    experiment.back.shift();
      
     if(speakerChange[0].length == 0) {
         experiment.speakerChange.shift();

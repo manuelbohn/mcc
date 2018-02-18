@@ -194,11 +194,25 @@ $.ajax({
     success: function (data) {
         $(data).find("a").attr("href", function (i, val) {
             if( val.match(/\.(mp3)$/) ) { 
-                $("body").append( "<audio src='"+ folder2 + val +"'>" );
+                $("preload").append( "<audio src='"+ folder2 + val +"'>" );
             } 
         });
     }
 });
+
+var folder3 = "dots/";
+
+$.ajax({
+    url : folder3,
+    success: function (data) {
+        $(data).find("a").attr("href", function (i, val) {
+            if( val.match(/\.(jpg)$/) ) { 
+                $("preload").append( "<img src='"+ folder3 + val +"'>" );
+            } 
+        });
+    }
+});
+
 
 
 
@@ -295,7 +309,7 @@ var experiment = {
        
     showSlide("choice");  
        
-    event.target.style.border = '5px solid red';
+    event.target.style.border = '5px solid blue';
     
     sourceSound("sound/end.mp3");
     playSound();

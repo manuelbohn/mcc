@@ -21,15 +21,13 @@ body {
 	padding: 1% 2% 1% 2%;
 }
 
+input, select, button {font-family: Georgia, serif; font-size: 14px;}
 
 .background {
 	width: 950px;
 	height: 480px;
     opacity: 0.3;
 }
-
-input, select, button {font-family: Georgia, serif; font-size: 14px;}
-
 
 button {
 	background: url(images/button-gradient.png);
@@ -181,6 +179,7 @@ nextButton[disabled] {
     width: 130px;
     z-index: 1
 }
+
 
 
 
