@@ -126,14 +126,14 @@ nextButton[disabled] {
 
 .agent {
     position: absolute;
-    bottom: 240px;
+    bottom: 245px;
     left: 304px;
     width: 380px;
 }
 
 .point_agent_r {
     position: absolute;
-    bottom: 240px;
+    bottom: 245px;
     left: 304px;
     width: 380px;
 }
@@ -141,7 +141,7 @@ nextButton[disabled] {
 
 .point_agent_l {
     position: absolute;
-    bottom: 240px;
+    bottom: 245px;
     left: 304px;
     width: 380px;
 }
@@ -154,7 +154,7 @@ nextButton[disabled] {
 
 .hill {
     position: absolute;
-    bottom: 0px;
+    bottom: 5px;
     left: 325px;
     width: 350px;
     z-index: 1
@@ -203,17 +203,17 @@ nextButton[disabled] {
 
 .table_r {
     position: absolute;
-    bottom: -90px;
-    left: 571px;
-    width: 500px;
+    bottom: 80px;
+    left: 692px;
+    width: 280px;
     z-index: 0
 }
 
 .table_l {
     position: absolute;
-    bottom: -90px;
-    left: -89px;
-    width: 500px;
+    bottom: 80px;
+    left: 30px;
+    width: 280px;
     z-index: 0
 }
 
