@@ -3,7 +3,9 @@
 
 /* We want the page to sit flush inside the browser window - that means no margins or padding. Also, use a nice-looking serif font. */
 body {
-	padding: 0;
+    width: 1024px;
+	height: 768px;
+    padding: 0;
 	margin: 0;
 	font-family: Palatino Linotype, Bookman Antiqua, Palatino, serif;
 	font-size: 16px;
@@ -12,8 +14,8 @@ body {
 
 /* We manage display using "slides". A slide is a <code>div</code> that takes up the entire page. Only one slide should be visible at a time. Navigation between slides is most sensibly accomplished using using buttons, rather than keyboard events. */
 .slide {
-	width: 950px;
-	height: 600px;
+	width: 1024px;
+	height: 768px;
 	display: none;
 	position: absolute;
 	margin: 0;
@@ -22,8 +24,8 @@ body {
 }
 
 .background {
-	width: 950px;
-	height: 480px;
+	width: 1024px;
+	height: 700px;
     opacity: 0.3;
 }
 
@@ -97,8 +99,8 @@ nextButton {
 	height: 29px;
 	min-width: 70px;
     position: absolute;
-    top: 530px;
-    left: 470px;
+    bottom: 20px;
+    left: 480px;
     z-index: 2
 }
 nextButton:active {
@@ -106,11 +108,11 @@ nextButton:active {
 	border-top: 1px solid #c9c9c9;
 	background: none;
 	background-color: #c9c9c9;
-    top: 50px;
-    left: 50px;
+    bottom: 20px;
+    left: 480px;
     position: absolute;
-    top: 530px;
-    left: 470px;
+    bottom: 20px;
+    left: 480px;
     z-index: 2
 }
 
@@ -124,37 +126,37 @@ nextButton[disabled] {
 
 .agent {
     position: absolute;
-    bottom: 255px;
-    left: 380px;
-    width: 280px;
+    bottom: 245px;
+    left: 334px;
+    width: 380px;
 }
 
 .point_agent_r {
     position: absolute;
-    bottom: 255px;
-    left: 368px;
-    width: 280px;
+    bottom: 245px;
+    left: 334px;
+    width: 380px;
 }
 
 
 .point_agent_l {
     position: absolute;
-    bottom: 255px;
-    left: 392px;
-    width: 280px;
+    bottom: 245px;
+    left: 334px;
+    width: 380px;
 }
 
 .agent_eat {
     margin-left: auto;
     margin-right: auto;
-    width: 500px;
+    width: 700px;
 }
 
 .hill {
     position: absolute;
-    bottom: 70px;
-    left: 380px;
-    width: 280px;
+    bottom: 0px;
+    left: 355px;
+    width: 350px;
     z-index: 1
 }
 
@@ -166,34 +168,34 @@ nextButton[disabled] {
 
 .fruit_r {
     position: absolute;
-    bottom: 250px;  
-    left: 660px;
-    width: 130px;
+    bottom: 225px;  
+    left: 710px;
+    width: 150px;
     z-index: 2
 }
 
 .fruit_r2 {
     position: absolute;
-    bottom: 250px;  
-    left: 804px;
-    width: 130px;
+    bottom: 225px;  
+    left: 890px;
+    width: 150px;
     z-index: 1
 }
 
 
 .fruit_l {
     position: absolute;
-    bottom: 250px;
-    left: 244px;
-    width: 130px;
+    bottom: 225px;
+    left: 193px;
+    width: 150px;
     z-index: 2
 }
 
 .fruit_l2 {
     position: absolute;
-    bottom: 250px;
-    left: 103px;
-    width: 130px;
+    bottom: 225px;
+    left: 14px;
+    width: 150px;
     z-index: 1
 }
 
@@ -201,17 +203,17 @@ nextButton[disabled] {
 
 .table_r {
     position: absolute;
-    bottom: 0px;
-    left: 590px;
-    width: 400px;
+    bottom: -90px;
+    left: 617px;
+    width: 500px;
     z-index: 0
 }
 
 .table_l {
     position: absolute;
-    bottom: 0px;
-    left: 30px;
-    width: 400px;
+    bottom: -90px;
+    left: -75px;
+    width: 500px;
     z-index: 0
 }
 
@@ -278,8 +280,8 @@ nextButton[disabled] {
   margin: 0 auto;
   margin-bottom: 1em;
   position: absolute;
-  top: 500px;
-  left: 270px;
+  top: 120px;
+  left: 267px;
 }
 
 
