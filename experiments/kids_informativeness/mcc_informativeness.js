@@ -1,5 +1,20 @@
-//For training:
+// preload
+var preFruits = ["t1.png", "t2.png", "t3.png", "t4.png", "t5.png", "t6.png", "t7.png", "t8.png", "t9.png", "t10.png", "t11.png", "t12.png", "t13.png", "t14.png", "t15.png", "t16.png", "t17.png", "t18.png","back1.jpg","back2.jpg","back3.jpg","back4.jpg","back5.jpg","back6.jpg","back7.jpg","back8.jpg","back9.jpg","empty.png"];
+//for critical trials and fillers
+var images = new Array();
+for (i = 0; i < preFruits.length; i++) {
+	images[i] = new Image();
+	images[i].src = "images/" + preFruits[i];
+}
 
+
+var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Elephant_choice.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3"];
+//for critical trials and fillers
+var sound = new Array();
+for (i = 0; i < preSounds.length; i++) {
+	sound[i] = new Audio();
+	sound[i].src = "sound/" + preSounds[i];
+}
 
 // ## Helper functions
 function showSlide(id) {
@@ -172,6 +187,7 @@ function move() {
 // preloading images and sounds
 // images
 
+/*
 var folder = "images/";
 
 $.ajax({
@@ -214,6 +230,7 @@ $.ajax({
 });
 
 
+*/
 
 
 // Variables and randomization for the experiment
