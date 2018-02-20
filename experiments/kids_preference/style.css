@@ -131,7 +131,7 @@ nextButton[disabled] {
 .point_agent_r {
     position: absolute;
     bottom: 245px;
-    left: 325px;
+    left: 305px;
     width: 350px;
 }
 
@@ -139,7 +139,7 @@ nextButton[disabled] {
 .point_agent_l {
     position: absolute;
     bottom: 245px;
-    left: 325px;
+    left: 345px;
     width: 350px;
 }
 

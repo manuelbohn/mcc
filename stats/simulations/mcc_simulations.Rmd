@@ -106,7 +106,7 @@ seq <- ggplot(ms,
   ggtitle("4: if (info = prior, max(prior,info), mean(prior,info)")+
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
 
-sum= ggarrange(mp,ip, cgp,seq,
+sum= ggarrange(mp, cgp,ip,seq,
           ncol = 1, nrow = 4,
           common.legend=TRUE)
 ```
@@ -120,7 +120,7 @@ sum
 
 ## Sometimes models for different predictions (correct - correct4) do not converge - probably due to data structure, as this changes when data are newly simulated.
 
-lm <- glmer(correct ~ speaker * prior * info+ (1|subid), 
+lm <- glmer(correct3 ~ speaker * prior * info+ (1|subid), 
       data = participant_data,
       family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
