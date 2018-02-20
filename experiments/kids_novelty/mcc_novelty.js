@@ -1,3 +1,21 @@
+// preload
+var preFruits = ["duck.png","car.png","bear.png","ball.png","t1.png", "t2.png", "t3.png", "t4.png", "t5.png", "t6.png", "t7.png", "t8.png", "t9.png", "t10.png", "t11.png", "t12.png", "t13.png", "t14.png", "t15.png", "t16.png", "t17.png", "t18.png","back1.jpg","back2.jpg","back3.jpg","back4.jpg","back5.jpg","back6.jpg","back7.jpg","back8.jpg","back9.jpg","empty.png"];
+
+//for critical trials and fillers
+var images = new Array();
+for (i = 0; i < preFruits.length; i++) {
+	images[i] = new Image();
+	images[i].src = "images/" + preFruits[i];
+}
+
+
+var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Elephant_choice.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3"];
+//for critical trials and fillers
+var sound = new Array();
+for (i = 0; i < preSounds.length; i++) {
+	sound[i] = new Audio();
+	sound[i].src = "sound/" + preSounds[i];
+}
 
 // ## Helper functions
 
@@ -129,62 +147,6 @@ $("#button").click(function() {
     }
 });
 
-// Progress bar
-
-$("#progressbar").progressbar();
-$("#progressbar").progressbar( "option", "max", 9);
-
-// move progress bar
-
-function move() {
-	$("#progressbar").progressbar("option", "value", 
-        ($("#progressbar").progressbar( "option", "value")+1));
-}
-
-
-// preloading images and sounds
-// images
-
-var folder = "images/";
-
-$.ajax({
-    url : folder,
-    success: function (data) {
-        $(data).find("a").attr("href", function (i, val) {
-            if( val.match(/\.(png)$/) ) { 
-                $("preload").append( "<img src='"+ folder + val +"'>" );
-            } 
-        });
-    }
-});
-
-// sound
-
-var folder2 = "sound/";
-
-$.ajax({
-    url : folder2,
-    success: function (data) {
-        $(data).find("a").attr("href", function (i, val) {
-            if( val.match(/\.(mp3)$/) ) { 
-                $("preload").append( "<audio src='"+ folder2 + val +"'>" );
-            } 
-        });
-    }
-});
-
-var folder3 = "dots/";
-
-$.ajax({
-    url : folder3,
-    success: function (data) {
-        $(data).find("a").attr("href", function (i, val) {
-            if( val.match(/\.(jpg)$/) ) { 
-                $("preload").append( "<img src='"+ folder3 + val +"'>" );
-            } 
-        });
-    }
-});
 
 // Variables and randomization for the experiment
 
@@ -384,7 +346,6 @@ newtrial: function() {
     }
      
     // move progress bar and move on
-    move()
     experiment.next();
   },
 
@@ -417,11 +378,11 @@ newtrial: function() {
     // animate agent in test trials
      if (experiment.trial[0] == "train"){
     } else {     
-    $("#"+agents[0]+"_choice").animate({height: "380px",opacity: '0.3', queue: false, duration: "slow"});
-    $("#"+agents[0]+"_choice").animate({height: "280px",opacity: '1', queue: false, duration: "slow"});
+    $("#"+agents[0]+"_choice").animate({height: "450px",opacity: '0.3', queue: false, duration: "slow"});
+    $("#"+agents[0]+"_choice").animate({height: "350px",opacity: '1', queue: false, duration: "slow"});
       
-    $("#"+altAgents[0]+"_choice").animate({height: "380px",opacity: '0.3', queue: false, duration: "slow"});
-    $("#"+altAgents[0]+"_choice").animate({height: "280px",opacity: '1', queue: false, duration: "slow"});
+    $("#"+altAgents[0]+"_choice").animate({height: "450px",opacity: '0.3', queue: false, duration: "slow"});
+    $("#"+altAgents[0]+"_choice").animate({height: "350px",opacity: '1', queue: false, duration: "slow"});
      };    
     
     // play choice sound only in training
@@ -578,15 +539,15 @@ newtrial: function() {
 // animate object when visible and pointed at  
     if (experiment.agentOrient[0][0].slice(0,-1) == "point_r") {
         setTimeout(function() {
-            $("#fruit_r").animate({width: "180px",opacity: '0.3', queue: false, duration: 1000});
-            $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: 1000})
+            $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: false, duration: 1000});
+            $("#fruit_r").animate({width: "150px",opacity: '1', queue: false, duration: 1000})
         }, 1500)
     }; 
       
     if (experiment.agentOrient[0][0].slice(0,-1) == "point_l") {
         setTimeout(function() {
-            $("#fruit_l").animate({width: "180px",opacity: '0.3', queue: false, duration: 1000});
-            $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: 1000})
+            $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: false, duration: 1000});
+            $("#fruit_l").animate({width: "150px",opacity: '1', queue: false, duration: 1000})
         }, 1500)
     }; 
     
@@ -615,14 +576,14 @@ newtrial: function() {
             sourceRightFruit("images/"+rightFruit[0]+".png");
             showRightFruit();
             $("#fruit_r").css("bottom", "460px");     
-            $("#fruit_r").animate({bottom: "250px"},{duration: 1500});
+            $("#fruit_r").animate({bottom: "225px"},{duration: 1500});
             sourceLeftFruit("images/"+leftFruit[0]+".png");
             showLeftFruit();
             setTimeout(function() { 
-            $("#fruit_r").animate({width: "180px", opacity: '0.3', queue: false, duration: "slow"});
-            $("#fruit_l").animate({width: "180px",opacity: '0.3', queue: false, duration: "slow"});
-            $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: "slow"});
-            $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: "slow"})}, 2500)
+            $("#fruit_r").animate({width: "200px", opacity: '0.3', queue: false, duration: "slow"});
+            $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: false, duration: "slow"});
+            $("#fruit_l").animate({width: "150px",opacity: '1', queue: false, duration: "slow"});
+            $("#fruit_r").animate({width: "150px",opacity: '1', queue: false, duration: "slow"})}, 2500)
             } else {
             sourceRightFruit("images/"+rightFruit[0]+".png");
             hideRightFruit();
@@ -633,14 +594,14 @@ newtrial: function() {
             sourceLeftFruit("images/"+leftFruit[0]+".png");
             showLeftFruit();
             $("#fruit_l").css("bottom", "460px");     
-            $("#fruit_l").animate({bottom: "250px"},{duration: 1500});
+            $("#fruit_l").animate({bottom: "225px"},{duration: 1500});
             sourceRightFruit("images/"+rightFruit[0]+".png");
             showRightFruit();
             setTimeout(function() { 
-            $("#fruit_l").animate({width: "180px", opacity: '0.3', queue: false, duration: "slow"});
-            $("#fruit_r").animate({width: "180px",opacity: '0.3', queue: false, duration: "slow"});
-            $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: "slow"});
-            $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: "slow"})}, 2500);
+            $("#fruit_l").animate({width: "200px", opacity: '0.3', queue: false, duration: "slow"});
+            $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: false, duration: "slow"});
+            $("#fruit_r").animate({width: "150px",opacity: '1', queue: false, duration: "slow"});
+            $("#fruit_l").animate({width: "150px",opacity: '1', queue: false, duration: "slow"})}, 2500);
             } else {
             sourceRightFruit("images/"+rightFruit[0]+".png");
             showRightFruit();

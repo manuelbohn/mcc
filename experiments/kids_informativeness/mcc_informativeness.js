@@ -1,5 +1,5 @@
 // preload
-var preFruits = ["t1.png", "t2.png", "t3.png", "t4.png", "t5.png", "t6.png", "t7.png", "t8.png", "t9.png", "t10.png", "t11.png", "t12.png", "t13.png", "t14.png", "t15.png", "t16.png", "t17.png", "t18.png","back1.jpg","back2.jpg","back3.jpg","back4.jpg","back5.jpg","back6.jpg","back7.jpg","back8.jpg","back9.jpg","empty.png"];
+var preFruits = ["duck.png","car.png","bear.png","ball.png","t1.png", "t2.png", "t3.png", "t4.png", "t5.png", "t6.png", "t7.png", "t8.png", "t9.png", "t10.png", "t11.png", "t12.png", "t13.png", "t14.png", "t15.png", "t16.png", "t17.png", "t18.png","back1.jpg","back2.jpg","back3.jpg","back4.jpg","back5.jpg","back6.jpg","back7.jpg","back8.jpg","back9.jpg","empty.png"];
 //for critical trials and fillers
 var images = new Array();
 for (i = 0; i < preFruits.length; i++) {
@@ -463,13 +463,6 @@ eat2: function(event) {
       
     $("#text2").text("")  
     setTimeout(function() {$("#text2").text("Touch the toy")}, 11000);
-      
-    // hide frames
-    $("#frame_l2").hide();
-    $("#frame_l").hide();
-      
-    $("#frame_r2").hide();
-    $("#frame_r").hide();  
     
     // show agent name
     $("#text3").text(agents[0]+" is here")  
