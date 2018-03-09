@@ -1,0 +1,13 @@
+﻿count;age;condition;type;correct
+1;2;pref;test;0.8666667
+2;2;pref;ctrl;0.5416667
+3;2;novel;test;0.7333333
+4;2;novel;ctrl;0.4916667
+5;2;inf;test;0.6716667
+6;2;inf;ctrl;0.5
+1;4;pref;test;0.9666667
+2;4;pref;ctrl;0.6416667
+3;4;novel;test;0.8333333
+4;4;novel;ctrl;0.5916667
+5;4;inf;test;0.7416667
+6;4;inf;ctrl;0.4583333

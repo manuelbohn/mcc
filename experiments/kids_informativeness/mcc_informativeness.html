@@ -30,6 +30,11 @@
       Enter subject ID: <br>
       <input type="text" id="subjectID" name="subjectID" size="30"> 
     </center></p>
+        
+    <p class="block-text"><center>
+      Enter subject age: <br>
+      <input type="text" id="subjectAge" name="subjectAge" size="30"> 
+    </center></p>
 
         <br><br>
 		<center>
@@ -61,20 +66,16 @@
 			<table style="width:100%">
 				<tbody>
                        <p class="block-text">
-                          These little animals like to play with funny toys. They want the toys on the tables, but they can't reach them. You can give them the toys by clicking on them. First, they will ask for toys you already know the name for. This will make you familiar with the procedure. Later, they will name new kinds of toys and you have to find out which toys they want.
+                          These little animals like to play with funny toys. They want the toys on the tables, but they can't reach them. You can give them the toys by tapping them. First, they will ask for toys you already know the name for. Later, they will name new kinds of toys and you have to find out which toys they want.
                         </p>
-                        <p class="block-text">
-                            To move forward, press the "Next" button. Let's see if you can help them. Make sure that your volume is turned on. Press the button below to begin.</p>
                 
 					<tr align="center" height="300px">
 						<td>
                         
                         </td>
 						<td>
-                            <img src="images/hill.png" 
-                            style="position:absolute; TOP:420px; LEFT:450px; WIDTH:90px; z-index: 1">
-                            <img src="images/Bear_straight.png"
-                            style="position:absolute; TOP:350px; LEFT:445px; WIDTH:100px">
+                            <img src="images/hill.png" style="position:absolute;TOP: 400px;LEFT: 400px;WIDTH: 190px;z-index: 1;">
+                            <img src="images/Bear_straight.png" style="position:absolute;TOP: 260px;LEFT: 390px;WIDTH: 200px;">
                         </td>
 						<td>
                    
@@ -82,21 +83,21 @@
 					
 					<tr align="center" height="50px">
 						<td>
-                            <img src="images/bear.png" style="position:absolute; TOP:385px; LEFT:356px; WIDTH:60px; z-index:1">
-                            <img src="images/table_l.png" style="position:absolute; TOP:440px; LEFT:345px; WIDTH:80px">
+                            <img src="images/bear.png" style="position:absolute;TOP: 350px;LEFT: 240px;WIDTH: 110px;z-index:1;">
+                            <img src="images/table_l.png" style="position:absolute;TOP: 450px;LEFT: 200px;WIDTH: 180px;">
                         </td>
+						
 						<td>
-                       <startButton type="button" onClick="this.blur(); showSlide('intro'); move()">My volume is turned up and I am 
-                ready to begin</startButton>
-                        </td>
-						<td>
-                            <img src="images/ball.png" style="position:absolute; TOP:385px; LEFT:573; WIDTH:60px; z-index:1">
-                            <img src="images/table_r.png" style="position:absolute; TOP:440px; LEFT:565px; WIDTH:80px">
+                            <img src="images/ball.png" style="position:absolute;TOP: 350px;LEFT: 630;WIDTH: 110px;z-index:1;">
+                            <img src="images/table_r.png" style="position:absolute;TOP: 450px;LEFT: 600px;WIDTH: 180px;">
                             
                         </td>
 					</tr>
 				</tbody>
 			</table>
+           
+            <startButton type="button" onClick="this.blur(); showSlide('intro')">Let's meet the animals!</startButton>
+                       
 		</div>
 	</div>
 
@@ -196,7 +197,7 @@
 			</table>
 		</div>
         <div align="center" width="500px">
-         <button type="button" onClick="this.blur(); experiment.next();move()">Start Training</button>
+         <button type="button" onClick="this.blur(); experiment.next()">Start Training</button>
 	   </div>
     </div>
     
@@ -216,9 +217,6 @@
                             <p class="block-text">
                                 In the experiment, you will encounter new kinds of toys. The animals will name them for you. Try your best to find out which toy they want.
                             </p>  
-                            <p class="block-text">
-                                Proceed by clicking the button below.
-                            </p> 
                         </td>
 						<td></td>
 					</tr>
@@ -226,7 +224,7 @@
 						<td>
                         </td>
 						<td>
-                       <startButton type="button" onClick="this.blur(); experiment.next()">Start experiment</startButton>
+                       <startButton type="button" onClick="this.blur(); experiment.next()">Start game</startButton>
 						</td>
                         <td>
                         </td>
@@ -242,7 +240,7 @@
     <div class="slide" id="stage"> 
         <img class="background" id="background" src=""> 
         
-                        <nextButton class ="button" type="button" id="next" align="center" onclick="getTime1(); experiment.next();">Next</nextButton>
+                        <nextButton class ="button" type="button" id="next" align="center" onclick="getTime1(); experiment.next();"></nextButton>
         
                         <audio id="sound" src = "" ></audio> 
         
@@ -278,8 +276,6 @@
                             
                         <img id="Frog_straight" class="agent"  src="images/Frog_straight.png">
 						
-                        <p id="text" class="text">{{}}</p>
-                       
                             <img id="fruit_l" class="fruit_l" src="">
                             <img id="fruit_l2" class="fruit_l2" src="">
                             
@@ -369,9 +365,6 @@
                             <img id="choiceFruit_r" class="fruit_r" src="">
                             <img id="choiceFruit_r2" class="fruit_r2" src="">
                  
-                             
-                            <p id="text3" class="text">{{}}</p>
-                            <p id="text2" class="text2">{{}}</p>
                             <img id="table_r" class="table_r" src="images/table_r.png" width="200px">
        
 	</div>
@@ -380,7 +373,7 @@
     
    <div class="slide" id="eat"> 
 		<div align="center" width="500px">
-                <p id='text' class ="text">Touch the animal to continue</p>  
+        
                           <img id="Mouse_eat" class="agent_eat"  src="images/Mouse_eat.png">
                           
                           <img id="Monkey_eat" class="agent_eat"  src="images/Monkey_eat.png">  

@@ -135,17 +135,6 @@ function playSound() {
        }, time); 
     };
 
-// disabling next button in preview mode
-
-$("#button").click(function() {
-    //disable accept button if in turk preview mode
-    if (turk.previewMode) {
-      showSlide("instructions");
-      alert("Please accept HIT to view");
-    } else {
-      showSlide('training')
-    }
-});
 
 
 // Variables and randomization for the experiment
@@ -229,7 +218,12 @@ checkInput: function() {
 			$("#checkMessage").html('<font color="red">You must input a subject ID</font>');
 			return;
 		}
+        if (document.getElementById("subjectAge").value.length < 1) {
+			$("#checkMessage").html('<font color="red">You must input a subject age</font>');
+			return;
+		}
 		experiment.subid = document.getElementById("subjectID").value
+        experiment.subage = document.getElementById("subjectAge").value
         experiment.trainingDot()
       },    
     
@@ -237,7 +231,7 @@ checkInput: function() {
   end: function() {
     // Show the finish slide.
     showSlide("finished");
-    setTimeout(function() { turk.submit(experiment) }, 8000);
+    setTimeout(function() { turk.submit(experiment) }, 2000);
   },
     
 // end of training  
@@ -249,7 +243,10 @@ checkInput: function() {
     eat: function(event) {
 
     setTimeout(function() {experiment.eat2() }, 1500);
-       
+     
+    $(".fruit_r").unbind("click");
+    $(".fruit_l").unbind("click");    
+        
     showSlide("choice");  
        
     event.target.style.border = '5px solid blue';
@@ -271,10 +268,12 @@ checkInput: function() {
         var correct = 0
         };
       
-    var subid = experiment.subid; 
+    var subid = experiment.subid;
+    var subage = experiment.subage;    
     // data collected  
       data = {
         subid: subid,
+        subage: subage,
         condition: "preference",
         trial: trial[0],
         speakerChange: speakerChange[0][0],
@@ -307,8 +306,7 @@ checkInput: function() {
         showEat(agents[0])
     };
    
-    $("#continue").text("Touch the animal to continue")
-    $(".agent_eat").bind("click", experiment.newtrial);     
+    $(".agent_eat").click(experiment.newtrial);     
   
 },     
  // unbind and shif variables between trials       
@@ -318,11 +316,7 @@ checkInput: function() {
     $(".fruit_r").css("border","none") 
      
     $(".agent_eat").unbind("click"); 
-    $(".fruit_r").unbind("click");
-    $(".fruit_l").unbind("click");
-    $("#text").text("");
-    $("#text2").text("");
-    $("#text3").text("");
+   
    
     sourceLeftFruit("images/empty.png");
             showLeftFruit(); 
@@ -345,7 +339,7 @@ checkInput: function() {
         experiment.speakerChange.shift();
     }
   
-     // move progress bar and move on   
+      
     experiment.next();
   },
 // Slide recording the choice
@@ -356,8 +350,6 @@ checkInput: function() {
     showSlide("choice"); 
     
     background2("images/back"+back[0]+".jpg");  
-      
-    setTimeout(function() {$("#text2").text("Touch the toy")}, 13000);
     
     // show objects  
     choiceLeftFruit("images/"+leftFruit[0]+".png");
@@ -366,12 +358,8 @@ checkInput: function() {
    // show agent depending on speaker change and write their name  
    if (speakerChange[0][0] == "true") {
         choiceAgent(altAgents[0]);
-        $("#text2").text("");  
-        $("#text3").text(agents[0]+" is gone ... now "+altAgents[0]+" is here");
     }else {
        choiceAgent(agents[0]);
-        $("#text2").text("");  
-        $("#text3").text(agents[0]+" is here");
     };
     
     // animate agent in test trials
@@ -407,11 +395,11 @@ checkInput: function() {
             }; 
      };
     
-    // choice can be made by clicking the objects after - possible after 9s  
+    // choice can be made by clicking the objects after - possible after 8s  
     setTimeout(function() {      
-    $(".fruit_r").bind("click", experiment.eat);
-    $(".fruit_l").bind("click", experiment.eat);
-}, 0);
+    $(".fruit_r").click(experiment.eat);
+    $(".fruit_l").click(experiment.eat);
+}, 8000);
   
   },
  // sequence of events during training exposure
@@ -434,7 +422,6 @@ checkInput: function() {
         pause("next",2000); 
         sourceSound("sound/"+agents[0]+"_hello.mp3");
         playSound();
-        $("#text").text(experiment.agents[0]+" is here");
         }; 
      
     // move to choice after agent has said hello 
@@ -493,7 +480,6 @@ checkInput: function() {
         pause("next",1500); 
         sourceSound("sound/"+agents[0]+"_hello.mp3");
         playSound();
-        $("#text").text(experiment.agents[0]+" is here");
     }; 
       
     
@@ -541,13 +527,10 @@ checkInput: function() {
         showAgent(agents[0],"straight")
         sourceSound("sound/ring.mp3")
         playSound();
-        $("#text").text("");
         setTimeout(function()
-            {showAgent(agents[0],"disappear")}, 1500);
-        pause("next",3000);
-        setTimeout(function()
-            {$("#text").text(agents[0]+" is gone!")}, 3000);
-        setTimeout(function(){hideAgent()}, 3000);
+            {showAgent(agents[0],"disappear")}, 1000);
+        pause("next",2000);
+        setTimeout(function(){hideAgent()}, 2000);
     };
     // move on to next phase of exposure 
     experiment.agentOrient[0].shift(); 
@@ -562,7 +545,7 @@ trainingDot: function() {
 	   dot.id = "dot_" + dots[i];
 	   dot.src = "dots/dot_" + dots[i] + ".jpg";
 
-	   var x = Math.floor(Math.random() * 950);
+	   var x = Math.floor(Math.random() * 850);
 	   var y = Math.floor(Math.random() * 550);
 
 	   var invalid = "true";

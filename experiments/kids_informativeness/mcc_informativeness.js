@@ -160,77 +160,7 @@ function playSound() {
        }, time); 
     };
 
-// disabling next button in preview mode
 
-$("#button").click(function() {
-    //disable accept button if in turk preview mode
-    if (turk.previewMode) {
-      showSlide("instructions");
-      alert("Please accept HIT to view");
-    } else {
-      showSlide('training')
-    }
-});
-
-// Progress bar
-
-$("#progressbar").progressbar();
-$("#progressbar").progressbar( "option", "max", 9);
-
-// move progress bar
-
-function move() {
-	$("#progressbar").progressbar("option", "value", 
-        ($("#progressbar").progressbar( "option", "value")+1));
-}
-
-// preloading images and sounds
-// images
-
-/*
-var folder = "images/";
-
-$.ajax({
-    url : folder,
-    success: function (data) {
-        $(data).find("a").attr("href", function (i, val) {
-            if( val.match(/\.(png)$/) ) { 
-                $("preload").append( "<img src='"+ folder + val +"'>" );
-            } 
-        });
-    }
-});
-
-// sound
-
-var folder2 = "sound/";
-
-$.ajax({
-    url : folder2,
-    success: function (data) {
-        $(data).find("a").attr("href", function (i, val) {
-            if( val.match(/\.(mp3)$/) ) { 
-                $("preload").append( "<audio src='"+ folder2 + val +"'>" );
-            } 
-        });
-    }
-});
-
-var folder3 = "dots/";
-
-$.ajax({
-    url : folder3,
-    success: function (data) {
-        $(data).find("a").attr("href", function (i, val) {
-            if( val.match(/\.(jpg)$/) ) { 
-                $("preload").append( "<img src='"+ folder3 + val +"'>" );
-            } 
-        });
-    }
-});
-
-
-*/
 
 
 // Variables and randomization for the experiment
@@ -305,9 +235,15 @@ var experiment = {
 			$("#checkMessage").html('<font color="red">You must input a subject ID</font>');
 			return;
 		}
+        if (document.getElementById("subjectAge").value.length < 1) {
+			$("#checkMessage").html('<font color="red">You must input a subject age</font>');
+			return;
+		}
 		experiment.subid = document.getElementById("subjectID").value
+        experiment.subage = document.getElementById("subjectAge").value
         experiment.trainingDot()
-      },    
+      }, 
+    
 // end of the experiment
   end: function() {
     // Show the finish slide.
@@ -331,6 +267,12 @@ var experiment = {
     sourceSound("sound/end.mp3");
     playSound();
     
+       
+    $(".fruit_r").unbind("click");
+    $(".fruit_l").unbind("click");
+    $(".fruit_r2").unbind("click");
+    $(".fruit_l2").unbind("click");   
+       
     // get time for reaction time
     var endTime = (new Date()).getTime();    
     // select correct object
@@ -370,10 +312,12 @@ var experiment = {
     };   
      
     var subid = experiment.subid; 
+    var subage = experiment.subage;
     
     // data collected  
       data = {
         subid: subid,
+        subage: subage,
         condition: "informativeness",
         trial: trial[0],
         control: control[0][0],
@@ -401,8 +345,7 @@ eat2: function(event) {
    
     showEat(agents[0])
    
-    $("#continue").text("Touch the animal to continue")
-    $(".agent_eat").bind("click", experiment.newtrial);     
+    $(".agent_eat").click(experiment.newtrial);     
   
 },
     
@@ -415,13 +358,7 @@ eat2: function(event) {
     $(".fruit_r2").css("border","none")
      
     $(".agent_eat").unbind("click"); 
-    $(".fruit_r").unbind("click");
-    $(".fruit_l").unbind("click");
-    $(".fruit_r2").unbind("click");
-    $(".fruit_l2").unbind("click");
-    $("#text").text("");
-    $("#text2").text("");
-    $("#text3").text("");
+   
    
     sourceLeftFruit("images/empty.png");
             showLeftFruit(); 
@@ -448,8 +385,7 @@ eat2: function(event) {
         experiment.control.shift();
     }
   
-// move progress bar 
-   move()    
+  
    experiment.next();
   },
 
@@ -460,13 +396,7 @@ eat2: function(event) {
     showSlide("choice"); 
     
     background2("images/back"+back[0]+".jpg");
-      
-    $("#text2").text("")  
-    setTimeout(function() {$("#text2").text("Touch the toy")}, 11000);
-    
-    // show agent name
-    $("#text3").text(agents[0]+" is here")  
-    
+   
     // specify what is shown on the tables depending on training and test condition
     if (experiment.trial[0] == "train1"){
         showAgent(agents[0],"choice");
@@ -543,23 +473,23 @@ eat2: function(event) {
     sourceSound("sound/"+agents[0]+"_choice.mp3");
     playSound(); 
       
-    // choice can be made by clicking the objects after - possible after 9.5s
+    // choice can be made by clicking the objects after - possible after 8s
     setTimeout(function() {
         if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2") {
-            $(".fruit_l").bind("click",experiment.eat);
-            $(".fruit_l2").bind("click",experiment.eat);
-            $(".fruit_r").bind("click", experiment.eat);
-            $(".fruit_r2").bind("click", experiment.eat);
+            $(".fruit_l").click(experiment.eat);
+            $(".fruit_l2").click(experiment.eat);
+            $(".fruit_r").click(experiment.eat);
+            $(".fruit_r2").click(experiment.eat);
         } else { 
             if (experiment.inf[0] == "left") {
-                $(".fruit_l").bind("click", experiment.eat);
-                $(".fruit_l2").bind("click", experiment.eat);
+                $(".fruit_l").click(experiment.eat);
+                $(".fruit_l2").click(experiment.eat);
             } else {  
-                $(".fruit_r").bind("click", experiment.eat);
-                $(".fruit_r2").bind("click", experiment.eat);
+                $(".fruit_r").click(experiment.eat);
+                $(".fruit_r2").click(experiment.eat);
             };
         };
-}, 0);
+}, 8000);
   },
         
 // moving on within a trial
@@ -594,7 +524,6 @@ eat2: function(event) {
         pause("next",1600); 
         sourceSound("sound/"+agents[0]+"_hello.mp3");
         playSound();
-        $("#text").text(experiment.agents[0]+" is here");
     }; 
      
     // display obejcts on table depending on training and test condition
@@ -664,7 +593,7 @@ trainingDot: function() {
 	   dot.id = "dot_" + dots[i];
 	   dot.src = "dots/dot_" + dots[i] + ".jpg";
 
-	   var x = Math.floor(Math.random() * 950);
+	   var x = Math.floor(Math.random() * 850);
 	   var y = Math.floor(Math.random() * 550);
 
 	   var invalid = "true";

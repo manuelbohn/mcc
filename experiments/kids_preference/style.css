@@ -22,7 +22,7 @@ body {
 }
 
 .background {
-	width: 1024px;
+	width: 980px;
 	height: 660px;
     opacity: 0.3;
 }
@@ -39,6 +39,7 @@ button {
 	padding-right: 5px;
 	height: 29px;
 	min-width: 70px;
+  
 }
 button:active {
 	border-left: 1px solid #c9c9c9;
@@ -67,6 +68,9 @@ startButton {
 	padding-right: 5px;
 	height: 35px;
 	min-width: 70px;
+    position: absolute;
+    bottom: 80px;
+    left: 410px;
    
 }
 
@@ -75,6 +79,9 @@ startButton:active {
 	border-top: 1px solid #c9c9c9;
 	background: none;
 	background-color: #c9c9c9;
+    position: absolute;
+    bottom: 80px;
+    left: 410px;
 }
 
 startButton[disabled] {
@@ -86,30 +93,25 @@ startButton[disabled] {
 }
 
 nextButton {
-	background: url(images/button-gradient.png);
-	border: 1px solid #999;
-	border-top: 1px solid #e0e0e0;
-	border-left: 1px solid #e0e0e0;
+	background: lightgrey;
 	margin: 10px;
 	padding-left: 5px;
 	padding-right: 5px;
-	height: 29px;
-	min-width: 70px;
+	height: 50px;
+	min-width: 100px;
     position: absolute;
-    bottom: 20px;
-    left: 450px;
+    bottom: 0px;
+    left: 430px;
     z-index: 2
 }
+
 nextButton:active {
-	border-left: 1px solid #c9c9c9;
-	border-top: 1px solid #c9c9c9;
 	background: none;
 	background-color: #c9c9c9;
-    bottom: 20px;
-    left: 480px;
+    bottom: 10px;
     position: absolute;
-    bottom: 20px;
-    left: 450px;
+    bottom: 0px;
+    left: 430px;
     z-index: 2
 }
 
@@ -124,14 +126,14 @@ nextButton[disabled] {
 .agent {
     position: absolute;
     bottom: 245px;
-    left: 325px;
+    left: 320px;
     width: 350px;
 }
 
 .point_agent_r {
     position: absolute;
     bottom: 245px;
-    left: 305px;
+    left: 320px;
     width: 350px;
 }
 
@@ -139,7 +141,7 @@ nextButton[disabled] {
 .point_agent_l {
     position: absolute;
     bottom: 245px;
-    left: 345px;
+    left: 320px;
     width: 350px;
 }
 
@@ -152,7 +154,7 @@ nextButton[disabled] {
 .hill {
     position: absolute;
     bottom: 5px;
-    left: 325px;
+    left: 320px;
     width: 350px;
     z-index: 1
 }
@@ -166,7 +168,7 @@ nextButton[disabled] {
 .fruit_r {
     position: absolute;
     bottom: 225px;  
-    left: 760px;
+    left: 747px;
     width: 150px;
     z-index: 2
 }
@@ -174,7 +176,7 @@ nextButton[disabled] {
 .fruit_r2 {
     position: absolute;
     bottom: 225px;  
-    left: 844px;
+    left: 831px;
     width: 150px;
     z-index: 1
 }
@@ -201,7 +203,7 @@ nextButton[disabled] {
 .table_r {
     position: absolute;
     bottom: 80px;
-    left: 692px;
+    left: 679px;
     width: 280px;
     z-index: 0
 }
@@ -213,6 +215,10 @@ nextButton[disabled] {
     width: 280px;
     z-index: 0
 }
+
+
+
+
 
 
 /* ## Experiment-specific styles */

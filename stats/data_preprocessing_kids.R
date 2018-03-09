@@ -30,9 +30,9 @@ for (f in files) {
 }
 
 # convert into short format, drop unnecessary columns, rename variables and sort by id
-novel.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.condition","^data.agent","^data.altAgent","^data.leftFruit","^data.rightFruit","^data.pick","^data.novel","^data.trial","^data.speakerChange","^data.rt", "^data.correct"))
-names(novel.data) = c("alltrial","id","condition","agent","altAgent","leftObject","rightObject","pick","target","trial","change","rt","correct") 
-novel.data$pick= str_sub(novel.data$pick,72,str_length(novel.data$pick)-4)
+novel.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.subage","^data.condition","^data.agent","^data.altAgent","^data.leftFruit","^data.rightFruit","^data.pick","^data.novel","^data.trial","^data.speakerChange","^data.rt", "^data.correct"))
+names(novel.data) = c("alltrial","id","age","condition","agent","altAgent","leftObject","rightObject","pick","target","trial","change","rt","correct") 
+novel.data$pick= str_sub(novel.data$pick,115,str_length(novel.data$pick)-4)
 novel.data = novel.data[!duplicated(novel.data), ]
 novel.data = novel.data[order(id)]
 # check resulting datafile
@@ -62,9 +62,9 @@ for (f in files) {
 }
 
 # convert into short format, drop unnecessary columns, rename variables and sort by id
-pref.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.condition","^data.agent","^data.altAgent","^data.leftFruit","^data.rightFruit","^data.pick","^data.pref","^data.trial","^data.speakerChange","^data.rt", "^data.correct"))
-names(pref.data) = c("alltrial","id","condition","agent","altAgent","leftObject","rightObject","pick","target","trial","change","rt","correct") 
-pref.data$pick= str_sub(pref.data$pick,75,str_length(pref.data$pick)-4)
+pref.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.subage","^data.condition","^data.agent","^data.altAgent","^data.leftFruit","^data.rightFruit","^data.pick","^data.pref","^data.trial","^data.speakerChange","^data.rt", "^data.correct"))
+names(pref.data) = c("alltrial","id","age","condition","agent","altAgent","leftObject","rightObject","pick","target","trial","change","rt","correct") 
+pref.data$pick= str_sub(pref.data$pick,118,str_length(pref.data$pick)-4)
 pref.data = pref.data[!duplicated(pref.data), ]
 pref.data = pref.data[order(id)]
 # check resulting datafile
@@ -94,9 +94,9 @@ for (f in files) {
 }
 
 # convert into short format, drop unnecessary columns, rename variables and sort by id
-inf.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.condition","^data.agent","^data.leftFruit","^data.rightFruit","^data.tablePositionCorr","^data.pick","^data.inf","^data.trial","^data.control","^data.rt", "^data.correct"))
-names(inf.data) = c("alltrial","id","condition","agent","leftObject","rightObject","targetOnTable","pick","target","trial","control","rt","correct") 
-inf.data $pick= str_sub(inf.data $pick,80,str_length(inf.data $pick)-4)
+inf.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.subage","^data.condition","^data.agent","^data.leftFruit","^data.rightFruit","^data.tablePositionCorr","^data.pick","^data.inf","^data.trial","^data.control","^data.rt", "^data.correct"))
+names(inf.data) = c("alltrial","id","age","condition","agent","leftObject","rightObject","targetOnTable","pick","target","trial","control","rt","correct") 
+inf.data $pick= str_sub(inf.data $pick,123,str_length(inf.data $pick)-4)
 inf.data = inf.data[!duplicated(inf.data), ]
 inf.data = inf.data[order(id)]
 inf.data$trial[inf.data$trial=="train1"]="train"

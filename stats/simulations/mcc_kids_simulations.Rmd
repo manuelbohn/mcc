@@ -1,0 +1,92 @@
+---
+title: "MCC Simulations"
+author: "Manuel Bohn"
+date: "10 2 2018"
+output: html_document
+---
+
+```{r setup}
+###
+library(tidyverse)
+library(knitr)
+library(langcog)
+library(ggthemes)
+library(ggpubr)
+library(lme4)
+
+```
+
+
+```{r}
+conditions <- read.csv("kids_condition_means.csv", sep=";")
+
+
+generate_data <- function(condition_df, n_subs = 16, n_trials = 3) {
+  tibble(count = condition_df$count,
+         condition = condition_df$condition,
+         age = condition_df$age,
+         type = condition_df$type,
+         correct = rbinom( n_subs * n_trials, 1,
+                          condition_df$correct),
+         subid = rep(1:n_subs, n_trials))
+}
+
+
+
+participant_data <- conditions %>%
+  mutate(index = 1:n()) %>%
+  split(.$index) %>%
+  map_df(generate_data)%>%
+  mutate(subid=paste(subid,age,condition,sep="_"))%>%
+  arrange(condition, subid)
+
+  
+ participant_data %>%
+  group_by(condition,age,type,subid) %>%
+  summarise(correct = mean(correct)) %>%
+  multi_boot_standard(col = "correct") %>%
+  mutate(ciw = ci_upper-ci_lower) %>%
+  group_by() %>%
+  summarise(ciw = mean(ciw))%>%
+  knitr::kable(digits = 3)
+
+```
+
+```{r}
+
+ms <- participant_data %>%
+  group_by(condition,age,type,subid) %>%
+  summarise(correct = mean(correct)) %>%
+  multi_boot_standard(col = "correct")
+
+ggplot(ms, 
+       aes(x = type, y = mean, fill = type)) +
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  facet_grid(age~ condition)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few(base_size = 12) + 
+  ylim(0,1)+
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+```
+
+
+```{r}
+
+#
+md <- participant_data %>%
+  filter(condition == "novel")
+
+
+lm <- glmer(correct ~ age * type + (1|subid), 
+      data = md,
+      family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm)
+drop1(lm, test = "Chisq")
+
+
+```
+

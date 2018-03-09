@@ -1,0 +1,233 @@
+~~~~
+var all_objects = [
+{ shape: "triangle", id:1, location: 1},  
+{ shape: "triangle", id:2, location: 2},
+{ shape: "circle", id:1, location: 2}
+]
+
+var labels = ["dax","wug"]
+
+var lexicon1 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "triangle" :
+utterance.label == "wug" ? obj.shape == "circle" : 
+true
+}
+
+var lexicon2 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "circle" :
+utterance.label == "wug" ? obj.shape == "triangle" : 
+true
+}
+
+var lexiconObjects = {
+"dax = triangle": {
+ triangle: "dax", circle: "wug"
+},
+"dax = circle": {
+ triangle: "wug", circle: "dax"
+},
+}
+
+var lexiconObject = {
+"dax = triangle": lexicon1,
+"dax = circle" : lexicon2
+}
+
+var point = function(utterance, obj){
+return obj.location == utterance.point
+}
+
+var ObjectPrior = Categorical({vs: all_objects, ps: [1,1,1] })
+
+
+var utterancePrior = function(obj, lexiconName){
+var point = flip(0.5)
+if (point) {
+ var shapesAtPointLoc = _.map(_.filter(all_objects, {location: obj.location}), "shape")
+ var possibleLabels = map(function(shape) { 
+   lexiconObjects[lexiconName][shape]
+ }, shapesAtPointLoc)
+ var label = uniformDraw(possibleLabels)
+ return {label: label, point: point ? obj.location : false}
+} else {
+ var label = uniformDraw(labels)
+ return {label: label, point: point ? obj.location : false}
+}
+}
+
+var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
+
+var pragmaticListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior);
+var obj = sample(ObjectPrior);
+// display("L1 _ " + utterance.point)
+var S1 = speaker(obj, lexiconName);
+observe(S1, utterance)
+return [lexiconName, obj.shape]
+}})
+}
+
+var speakerOptimality = 1;
+
+var speaker = function(obj, lexiconName){
+Infer({method: "enumerate", model: function(){
+var utterance = utterancePrior(obj, lexiconName);
+//   display("S1 --> "+ JSON.stringify(obj)  + " _ " + lexiconName)
+var L0 = literalListener(utterance, lexiconName);
+factor(speakerOptimality * L0.score(obj.shape))
+return utterance
+}})
+}
+
+var literalListener = function(utterance, lexiconName){
+Infer({method: "enumerate", model: function(){
+var lexicon = lexiconObject[lexiconName];
+// display("L0 --> " + JSON.stringify(utterance)  + " _ " + lexiconName)
+var obj = sample(ObjectPrior);
+if ("label" in utterance) {
+  var truthValue = lexicon(utterance, obj);
+  condition(truthValue)
+}
+if (utterance.point) {
+  var truthValuePoint = point(utterance, obj);
+  condition(truthValuePoint)
+}
+return obj.shape
+}})
+}
+
+map(function(obj){
+  display(JSON.stringify(obj))
+viz.table(speaker(obj, "dax = triangle"))
+              
+              }, all_objects)
+//viz.table(literalListener({label:"dax", point: false }, "dax = triangle"))
+
+//viz.table(speaker({ shape: "triangle", id: 2, location: 2}, "dax = circle"))
+
+//viz.table(pragmaticListener({label: "dax", point: 2 }))
+~~~~
+
+~~~~
+// factor means "re-weight (log-)probabilities by some amount"
+
+// log(x*y) = log(x) + log(y)
+// log(x * 1) = log(x) + log(1) = log(x) + 0
+// log(x * 0) = log(x) + log(0) = log(x) + (-Infinity)
+
+// Dist.score(x) == log P( x | Dist)
+
+observe(Dist, x) // same as factor(Dist.score(x))
+condition(trueVal) // same as factor(trueVal ? 0 : -Infinity)
+~~~~
+
+~~~~
+var x = {a:1, b: false}
+
+x.b ? 1 : 0
+~~~~
+
+~~~~
+var all_objects = [
+{ shape: "triangle", id: 1, location: 1},  
+{ shape: "triangle", id: 2, location: 2},
+{ shape: "circle", id: 1, location: 2},
+{ shape: "circle", id: 1, location: 1}
+]
+
+var ObjectPrior = Categorical({vs: all_objects, ps: [1,1,1,1] })
+
+
+var labels = ["dax","wug"]
+
+var lexicon1 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "triangle" :
+utterance.label == "wug" ? obj.shape == "circle" : 
+true
+}
+
+var lexicon2 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "circle" :
+utterance.label == "wug" ? obj.shape == "triangle" : 
+true
+}
+
+var lexiconObjects = {
+"dax = triangle": {
+  triangle: "dax", circle: "wug"
+},
+"dax = circle": {
+  triangle: "wug", circle: "dax"
+},
+}
+
+var lexiconObject = {
+"dax = triangle": lexicon1,
+"dax = circle" : lexicon2
+}
+
+var point = function(utterance, obj){
+return obj.location == utterance.point
+}
+
+
+var utterancePrior = function(obj, lexiconName){
+var point = flip(0.5)
+if (point) {
+  var shapesAtPointLoc = _.map(_.filter(all_objects, {location: obj.location}), "shape")
+  var possibleLabels = map(function(shape) { 
+    lexiconObjects[lexiconName][shape]
+  }, shapesAtPointLoc)
+  var label = uniformDraw(possibleLabels)
+  return {label: label, point: point ? obj.location : false}
+} else {
+  var label = uniformDraw(labels)
+  return {label: label, point: point ? obj.location : false}
+}
+}
+
+var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
+
+var pragmaticListener = function(utterance, point){
+Infer({method: "enumerate", model: function(){
+ var obj = sample(ObjectPrior);
+ var lexiconName = sample(LexiconPrior);
+//   display("L1 _ " + lexiconName)
+ var S1 = speaker(obj, lexiconName);
+ condition(obj.location == point) // this is the point
+ observe(S1, utterance)
+ return {lexicon: lexiconName, obj: obj}
+}})
+}
+
+var speakerOptimality = 1;
+
+var speaker = function(obj, lexiconName){
+Infer({method: "enumerate", model: function(){
+ var utterance = {label: uniformDraw(labels)};
+//   display("S1 --> "+ JSON.stringify(obj)  + " _ " + lexiconName)
+ var L0 = literalListener(utterance, lexiconName);
+ factor(speakerOptimality * L0.score(obj.location))
+ return utterance
+}})
+}
+
+var literalListener = function(utterance, lexiconName){
+Infer({method: "enumerate", model: function(){
+ var lexicon = lexiconObject[lexiconName];
+//   display("L0 --> " + JSON.stringify(utterance)  + " _ " + lexiconName)
+ var obj = sample(ObjectPrior);
+ if ("label" in utterance) {
+   var truthValue = lexicon(utterance, obj);
+   condition(truthValue)
+ }
+ return obj.location
+}})
+}
+
+var jointPosterior = pragmaticListener({label: "dax"}, 2)
+viz.table(jointPosterior)
+viz.table(marginalize(jointPosterior, "lexicon"))
+viz.table(marginalize(jointPosterior, "obj"))
+~~~~
