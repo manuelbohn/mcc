@@ -18,12 +18,19 @@ library(lme4)
 
 
 ```{r}
-conditions <- read.csv("kids_condition_means.csv", sep=";")
+
+### condition means based on adult data with slightly smaller effect for younger kids
+
+conditions <- tibble (
+  age = c(rep(c(2,2,4,4),3)),
+  condition = c(rep(c("pref"),4),rep(c("novel"),4),rep(c("inf"),4)),
+  type = c(rep(c("test","ctrl"),6)),
+  correct = c(0.8666667,0.5416667,0.9666667,0.6416667,0.7333333,0.4916667,0.8333333,0.5916667,0.6716667,0.5,0.7416667,0.4583333)
+)
 
 
 generate_data <- function(condition_df, n_subs = 16, n_trials = 3) {
-  tibble(count = condition_df$count,
-         condition = condition_df$condition,
+  tibble(condition = condition_df$condition,
          age = condition_df$age,
          type = condition_df$type,
          correct = rbinom( n_subs * n_trials, 1,
@@ -31,28 +38,39 @@ generate_data <- function(condition_df, n_subs = 16, n_trials = 3) {
          subid = rep(1:n_subs, n_trials))
 }
 
+### Average CI width across all condition, type and agegroup combinations.
+### For adults (n = 40), this average CI width 0.172
+### Average CI width as function of n kids: 12 = 0.261; 16 = 0.231; 24 = 0.192; 30 = 0.174; 40 = 0.150
 
-
-participant_data <- conditions %>%
+for (i in 1:100) {
+x[i] = conditions %>%
   mutate(index = 1:n()) %>%
   split(.$index) %>%
   map_df(generate_data)%>%
   mutate(subid=paste(subid,age,condition,sep="_"))%>%
-  arrange(condition, subid)
-
-  
- participant_data %>%
+  arrange(condition, subid) %>%
   group_by(condition,age,type,subid) %>%
   summarise(correct = mean(correct)) %>%
   multi_boot_standard(col = "correct") %>%
   mutate(ciw = ci_upper-ci_lower) %>%
   group_by() %>%
   summarise(ciw = mean(ciw))%>%
-  knitr::kable(digits = 3)
+  pull()
+}
+
+mean(unlist(x))
 
 ```
 
 ```{r}
+
+participant_data <- conditions %>%
+  mutate(index = 1:n()) %>%
+  split(.$index) %>%
+  map_df(generate_data)%>%
+  mutate(subid=paste(subid,age,condition,sep="_"))
+
+
 
 ms <- participant_data %>%
   group_by(condition,age,type,subid) %>%
@@ -85,7 +103,7 @@ lm <- glmer(correct ~ age * type + (1|subid),
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
 summary(lm)
-drop1(lm, test = "Chisq")
+
 
 
 ```
