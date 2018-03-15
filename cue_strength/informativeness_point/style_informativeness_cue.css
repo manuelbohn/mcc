@@ -1,0 +1,311 @@
+/* ## General styles */
+/* This stuff can be ported from experiment to experiment.*/
+
+/* We want the page to sit flush inside the browser window - that means no margins or padding. Also, use a nice-looking serif font. */
+body {
+	width: 1024px;
+	height: 768px;
+    padding: 0;
+	margin: 0;
+	font-family: Palatino Linotype, Bookman Antiqua, Palatino, serif;
+	font-size: 16px;
+	line-height: 20px;
+}
+
+/* We manage display using "slides". A slide is a <code>div</code> that takes up the entire page. Only one slide should be visible at a time. Navigation between slides is most sensibly accomplished using using buttons, rather than keyboard events. */
+.slide {
+	width: 1024px;
+	height: 768px;
+	display: none;
+	position: absolute;
+	margin: 0;
+	margin-left: 0.5%;
+	padding: 1% 2% 1% 2%;
+}
+
+input, select, button {font-family: Georgia, serif; font-size: 14px;}
+
+
+button {
+	background: url(images/button-gradient.png);
+	border: 1px solid #999;
+	border-top: 1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+	margin: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	height: 29px;
+	min-width: 70px;
+}
+button:active {
+	border-left: 1px solid #c9c9c9;
+	border-top: 1px solid #c9c9c9;
+	background: none;
+	background-color: #c9c9c9;
+    top: 50px;
+    left: 50px;
+}
+
+button[disabled] {
+	background: url(zen-button.png);
+	border: 1px solid #999;
+	border-top: 1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+	cursor: not-allowed;
+}
+
+startButton {
+	background: url(images/button-gradient.png);
+	border: 1px solid #999;
+	border-top: 1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+	margin: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	height: 35px;
+	min-width: 70px;
+   
+}
+
+startButton:active {
+	border-left: 1px solid #c9c9c9;
+	border-top: 1px solid #c9c9c9;
+	background: none;
+	background-color: #c9c9c9;
+}
+
+startButton[disabled] {
+	background: url(zen-button.png);
+	border: 1px solid #999;
+	border-top: 1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+	cursor: not-allowed;
+}
+
+nextButton {
+	background: url(images/button-gradient.png);
+	border: 1px solid #999;
+	border-top: 1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+	margin: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	height: 29px;
+	min-width: 70px;
+    position: absolute;
+    top: 530px;
+    left: 470px;
+    z-index: 2
+}
+nextButton:active {
+	border-left: 1px solid #c9c9c9;
+	border-top: 1px solid #c9c9c9;
+	background: none;
+	background-color: #c9c9c9;
+    top: 50px;
+    left: 50px;
+    position: absolute;
+    top: 530px;
+    left: 470px;
+    z-index: 2
+}
+
+nextButton[disabled] {
+	background: url(zen-button.png);
+	border: 1px solid #999;
+	border-top: 1px solid #e0e0e0;
+	border-left: 1px solid #e0e0e0;
+	cursor: not-allowed;
+}
+
+.agent {
+    position: absolute;
+    bottom: 450px;
+    left: 380px;
+    width: 280px;
+}
+
+.point_agent_r {
+    position: absolute;
+    bottom: 520px;
+    left: 410px;
+    width: 180px;
+}
+
+
+.point_agent_l {
+    position: absolute;
+    bottom: 520px;
+    left: 430px;
+    width: 180px;
+}
+
+.agent_eat {
+    margin-left: auto;
+    margin-right: auto;
+    width: 500px;
+}
+
+.hill {
+    position: absolute;
+    bottom: 230px;
+    left: 380px;
+    width: 280px;
+    z-index: 1
+}
+
+
+.animal_intro {
+    position: relative;
+    width: 150px;
+}
+
+.fruit_r {
+    position: absolute;
+    bottom: 550px;  
+    left: 660px;
+    width: 130px;
+    z-index: 2
+}
+
+.fruit_r2 {
+    position: absolute;
+    bottom: 550px;  
+    left: 804px;
+    width: 130px;
+    z-index: 1
+}
+
+
+.fruit_l {
+    position: absolute;
+    bottom: 550px;
+    left: 244px;
+    width: 130px;
+    z-index: 2
+}
+
+.fruit_l2 {
+    position: absolute;
+    bottom: 550px;
+    left: 103px;
+    width: 130px;
+    z-index: 1
+}
+
+
+
+.table_r {
+    position: absolute;
+    bottom: 300px;
+    left: 590px;
+    width: 400px;
+    z-index: 0
+}
+
+.table_l {
+    position: absolute;
+    bottom: 300px;
+    left: 30px;
+    width: 400px;
+    z-index: 0
+}
+
+
+/* ## Experiment-specific styles */
+/* This stuff will vary by experiment. */
+
+#logo-text {
+  font-weight: bold;
+}
+
+#instructions {
+  text-align: center;
+}
+
+#odd-key, #even-key {
+  background-color: #e3e3e3;
+  padding: 2px;
+  border: 1px outset #cccccc;
+  font-family: Courier New;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.block-text {
+  width: 500px;
+  text-align: justify;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
+.block-text2 {
+  width: 600px;
+  text-align: justify;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
+
+.text {
+  font-size: 40px;
+  width: 700px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  position: absolute;
+  top: 20px;
+  left: 170px;
+}
+
+.text2 {
+  font-size: 25px;
+  width: 500px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  position: absolute;
+  top: 500px;
+  left: 270px;
+}
+
+
+.dis {
+    position: absolute;
+    bottom: 440px;
+    left: 115px;
+    width: 800px;
+    z-index: -1
+}
+
+
+
+#legal {
+  margin: 0 auto;
+  margin-top: 1.5em;
+  font-size: 0.8em;
+}
+
+#number {
+  font-size: 42px;
+  font-family: Arial, sans-serif;
+  margin: 0 auto;
+  text-align: center;
+  width: 100px;
+  margin-top: 100px;
+}
+
+div#preload { display: none; }
+
+
+#myProgress {
+    width: 100%;
+    background-color: grey;
+}
+#myBar {
+    width: 1%;
+    height: 30px;
+    background-color: green;
+}
