@@ -1,4 +1,0 @@
-while kqwait even-odd.html style.css experiment.js compile
-do
-    ./compile
-done

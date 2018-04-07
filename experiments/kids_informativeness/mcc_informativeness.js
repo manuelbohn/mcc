@@ -1,5 +1,5 @@
 // preload
-var preFruits = ["duck.png","car.png","bear.png","ball.png","t1.png", "t2.png", "t3.png", "t4.png", "t5.png", "t6.png", "t7.png", "t8.png", "t9.png", "t10.png", "t11.png", "t12.png", "t13.png", "t14.png", "t15.png", "t16.png", "t17.png", "t18.png","back1.jpg","back2.jpg","back3.jpg","back4.jpg","back5.jpg","back6.jpg","back7.jpg","back8.jpg","back9.jpg","empty.png"];
+var preFruits = ["duck.png","car.png","bear.png","ball.png","t1.png", "t2.png", "t3.png", "t4.png", "t5.png", "t6.png", "t7.png", "t8.png", "t9.png", "t10.png", "t11.png", "t12.png", "t13.png", "t14.png", "t15.png", "t16.png", "t17.png", "t18.png","back1.jpg","back2.jpg","back3.jpg","back4.jpg","back5.jpg","back6.jpg","back7.jpg","back8.jpg","back9.jpg","back10.jpg","empty.png"];
 //for critical trials and fillers
 var images = new Array();
 for (i = 0; i < preFruits.length; i++) {
@@ -8,7 +8,7 @@ for (i = 0; i < preFruits.length; i++) {
 }
 
 
-var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Elephant_choice.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3"];
+var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Pig_train.mp3","Elephant_choice.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3"];
 //for critical trials and fillers
 var sound = new Array();
 for (i = 0; i < preSounds.length; i++) {
@@ -165,28 +165,28 @@ function playSound() {
 
 // Variables and randomization for the experiment
 
-var trial = ["train1","train2","finTrain",1,2,3,4,5,6]
+var trial = ["train1","train2","finTrain",1,2,3,4,5,6,7,8]
 // agent order for training
 var trainAgents = ["Elephant","Pig"]
-var allAgents = ["Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep"];
+var allAgents = ["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"];
 // randomization of agent order for test trials
-var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,6);
+var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,8);
 var agents = trainAgents.concat(testAgents);
 
 // randomizing order of control and test condition
 var trainControl = [["false","false"]];
-var testControl = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"])]);
+var testControl = shuffle([shuffle(["true","false"]),shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"])]);
 var control = trainControl.concat(testControl);
 
 // objects on tables in training and test (fruits = toys)
 var trainFruitLeft = ["car","duck"];
 var trainFruitRight = ["bear","ball"];
-var fruits = ["t1","t2","t3","t4","t5","t7","t8","t17","t10", "t11","t12","t15","t16"];
+var fruits = ["t1","t2","t3","t4","t5","t6","t7","t8","t9","t10","t11","t12","t14","t15","t16","t17"];
 // randomizing order and combiantion of test objects
-var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,6);
+var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
-var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,6);
+var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,8);
 var leftFruit = trainFruitLeft.concat(testLeftFruit);
 var rightFruit = trainFruitRight.concat(testRightFruit);
 
@@ -199,14 +199,16 @@ var agentOrient = [
     ["straight","down"],
     ["straight","down"],
     ["straight","down"],
+    ["straight","down"],
+    ["straight","down"],
     ["straight","down"]];
 
 // randomizing location of target object (i.e. single object)
 var trainInf = ["left","right"];
-var testInf = shuffle(["left","right","left","right","left","right"]);
+var testInf = shuffle(["left","right","left","right","left","right","left","right"]);
 var inf = trainInf.concat(testInf)
 
-var back = shuffle([1,2,3,4,5,6,7,8]);
+var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
 
 
 // beginning of actual experiment
@@ -248,7 +250,7 @@ var experiment = {
   end: function() {
     // Show the finish slide.
     showSlide("finished");
-    setTimeout(function() { turk.submit(experiment) }, 2000);
+    setTimeout(function() { turk.submit(experiment) }, 1000);
   },
     
    endTraining: function() {
@@ -470,8 +472,13 @@ eat2: function(event) {
     };
       
     // play choice sound
-    sourceSound("sound/"+agents[0]+"_choice.mp3");
-    playSound(); 
+    if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2"){
+        sourceSound("sound/"+agents[0]+"_train.mp3");
+        playSound();
+    } else {
+        sourceSound("sound/"+agents[0]+"_choice.mp3");
+        playSound(); 
+        };
       
     // choice can be made by clicking the objects after - possible after 8s
     setTimeout(function() {

@@ -1,5 +1,5 @@
 # MTurk credentials
 auth.json
 my-own-auth.json
-.Rapp.history
+*.Rapp.history
 stats/rsconnect/*
