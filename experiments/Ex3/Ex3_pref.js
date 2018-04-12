@@ -316,20 +316,28 @@ var experiment = {
     } else if (experiment.cond[0][0] == "train2"){
         var corrFruit_inf = "ball";
         var corrFruit_pref = "ball";
-    } else {
-    if (experiment.cond[0][2]=="left") {
-            var corrFruit_inf = leftFruit[0];
-        } else {
-            var corrFruit_inf = rightFruit[0]
+    } else {     
+    
+        if (experiment.cond[0][2]=="left") {
+            if (experiment.cond[0][3]=="left"){
+                var corrFruit_inf = leftFruit[0];
+                var corrFruit_pref = leftFruit[0];
+            } else {
+                var corrFruit_inf = leftFruit[0];
+                var corrFruit_pref = rightFruit[0];
             };
-    // select correct object from pref perspective 
-    if (experiment.cond[0][3]=="left") {
-            var corrFruit_pref = leftFruit[0];
-        } else {
-            var corrFruit_pref = rightFruit[0]
+        } else if (experiment.cond[0][2]=="right"){
+            if (experiment.cond[0][3]=="left"){
+                var corrFruit_inf = rightFruit[0];
+                var corrFruit_pref = leftFruit[0];
+            } else {
+                var corrFruit_inf = rightFruit[0]
+                var corrFruit_pref = rightFruit[0];
             };  
-    }
-       
+        };
+    };     
+        
+
     // select chosen object    
     var pick = event.target.src;
      // code correct: does name of chosen object contain the name of the correct object
