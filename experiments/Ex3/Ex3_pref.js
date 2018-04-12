@@ -775,17 +775,17 @@ if (experiment.agentOrient[0][0] == "point_l"){
                 sourceSound("sound/"+agents[0]+"_ppoint.mp3");
                 playSound();
                 if (experiment.cond[0][2] == "right"){
-                    $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                    $("#fruit_l").animate({width: "130px",opacity: '1', queue: true},1000);
-                    $("#fruit_l2").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                    $("#fruit_l2").animate({width: "130px",opacity: '1', queue: true},1000);
+                    $("#fruit_l").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                    $("#fruit_l").animate({width: "130px",opacity: '1', queue: true},1500);
+                    $("#fruit_l2").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                    $("#fruit_l2").animate({width: "130px",opacity: '1', queue: true},1500);
                 } else {
                     if (experiment.fruitPosition[0] == leftFruit[0]){
-                        $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                        $("#fruit_l").animate({width: "130px",opacity: '1', queue: true},1000);
+                        $("#fruit_l").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                        $("#fruit_l").animate({width: "130px",opacity: '1', queue: true},1500);
                     } else {
-                        $("#fruit_l2").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                        $("#fruit_l2").animate({width: "130px",opacity: '1', queue: true},1000);
+                        $("#fruit_l2").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                        $("#fruit_l2").animate({width: "130px",opacity: '1', queue: true},1500);
                     };    
                 };
         } else {
@@ -794,17 +794,17 @@ if (experiment.agentOrient[0][0] == "point_l"){
                 playSound(); 
             
                 if (experiment.cond[0][2] == "right"){
-                    $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                    $("#fruit_l").animate({width: "130px",opacity: '1', queue: true},1000);
-                    $("#fruit_l2").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                    $("#fruit_l2").animate({width: "130px",opacity: '1', queue: true},1000);
+                    $("#fruit_l").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                    $("#fruit_l").animate({width: "130px",opacity: '1', queue: true},1500);
+                    $("#fruit_l2").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                    $("#fruit_l2").animate({width: "130px",opacity: '1', queue: true},1500);
                 } else {
                     if (experiment.fruitPosition[0] == leftFruit[0]){
-                        $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                        $("#fruit_l").animate({width: "130px",opacity: '1', queue: true},1000);
+                        $("#fruit_l").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                        $("#fruit_l").animate({width: "130px",opacity: '1', queue: true},1500);
                     } else {
-                        $("#fruit_l2").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                        $("#fruit_l2").animate({width: "130px",opacity: '1', queue: true},1000);
+                        $("#fruit_l2").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                        $("#fruit_l2").animate({width: "130px",opacity: '1', queue: true},1500);
                     };    
                 };
         }
@@ -816,17 +816,17 @@ if (experiment.agentOrient[0][0] == "point_l"){
                 playSound();
             
                 if (experiment.cond[0][2] == "left"){
-                    $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                    $("#fruit_r").animate({width: "130px",opacity: '1', queue: true},1000);
-                    $("#fruit_r2").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                    $("#fruit_r2").animate({width: "130px",opacity: '1', queue: true},1000);
+                    $("#fruit_r").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                    $("#fruit_r").animate({width: "130px",opacity: '1', queue: true},1500);
+                    $("#fruit_r2").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                    $("#fruit_r2").animate({width: "130px",opacity: '1', queue: true},1500);
                 } else {
                     if (experiment.fruitPosition[0] == rightFruit[0]){
-                        $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                        $("#fruit_r").animate({width: "130px",opacity: '1', queue: true},1000);
+                        $("#fruit_r").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                        $("#fruit_r").animate({width: "130px",opacity: '1', queue: true},1500);
                         } else {
-                        $("#fruit_r2").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                        $("#fruit_r2").animate({width: "130px",opacity: '1', queue: true},1000);
+                        $("#fruit_r2").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                        $("#fruit_r2").animate({width: "130px",opacity: '1', queue: true},1500);
                         }
                 };
         } else {
@@ -835,17 +835,17 @@ if (experiment.agentOrient[0][0] == "point_l"){
                 playSound();  
             
               if (experiment.cond[0][2] == "left"){
-                    $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                    $("#fruit_r").animate({width: "130px",opacity: '1', queue: true},1000);
-                    $("#fruit_r2").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                    $("#fruit_r2").animate({width: "130px",opacity: '1', queue: true},1000);
+                    $("#fruit_r").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                    $("#fruit_r").animate({width: "130px",opacity: '1', queue: true},1500);
+                    $("#fruit_r2").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                    $("#fruit_r2").animate({width: "130px",opacity: '1', queue: true},1500);
                 } else {
                     if (experiment.fruitPosition[0] == rightFruit[0]){
-                        $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                        $("#fruit_r").animate({width: "130px",opacity: '1', queue: true},1000);
+                        $("#fruit_r").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                        $("#fruit_r").animate({width: "130px",opacity: '1', queue: true},1500);
                         } else {
-                        $("#fruit_r2").animate({width: "200px",opacity: '0.3', queue: true},1000);
-                        $("#fruit_r2").animate({width: "130px",opacity: '1', queue: true},1000);
+                        $("#fruit_r2").animate({width: "200px",opacity: '0.6', queue: true},1500);
+                        $("#fruit_r2").animate({width: "130px",opacity: '1', queue: true},1500);
                         }
                 };
         };
