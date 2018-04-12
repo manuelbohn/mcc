@@ -429,7 +429,7 @@ var experiment = {
     
       
      // specify what happens depending on test condition
-    if (experiment.cond[0] == "train1"){
+    if (experiment.cond[0][0] == "train1"){
         showAgent(agents[0],"choice");
         
         $("#text3").text(agents[0]+" is here");
@@ -442,7 +442,7 @@ var experiment = {
         choiceRightFruit("images/"+rightFruit[0]+".png");     
         choiceRightFruit2("images/empty.png");
         
-        } else if (experiment.cond[0] == "train2"){
+        } else if (experiment.cond[0][0] == "train2"){
         showAgent(agents[0],"choice");
             
         $("#text3").text(agents[0]+" is here");
