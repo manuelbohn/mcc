@@ -1,0 +1,125 @@
+var all_objects = [
+{ shape: "triangle", id:1, location: 1},  
+{ shape: "triangle", id:2, location: 2},
+{ shape: "circle", id:1, location: 2}
+]
+
+var labels = ["dax","wug"]
+
+var lexicon1 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "triangle" :
+utterance.label == "wug" ? obj.shape == "circle" : 
+true
+}
+
+var lexicon2 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "circle" :
+utterance.label == "wug" ? obj.shape == "triangle" : 
+true
+}
+
+var lexiconObjects = {
+"dax = triangle": {
+triangle: "dax", circle: "wug"
+},
+"dax = circle": {
+triangle: "wug", circle: "dax"
+},
+}
+
+var lexiconObject = {
+"dax = triangle": lexicon1,
+"dax = circle" : lexicon2
+}
+
+var point = function(utterance, obj){
+return obj.location == utterance.point
+}
+
+
+var utterancePrior = function(obj, lexiconName){
+var locationsWithShape = _.map(_.filter(all_objects, {shape: obj.shape}), "location")
+var point = uniformDraw(locationsWithShape)
+var label = lexiconObjects[lexiconName][obj.shape]
+return {label: label, point: point}
+}
+
+var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
+
+
+// Priors
+
+// No prior manipulation -> informativeness only
+// var ObjectPrior = Categorical({vs: all_objects, ps: [.5, .5, .5] }) 
+
+// Preference:
+
+// Same speaker congruent
+// var ObjectPrior = Categorical({vs: all_objects, ps: [0.0333333, 0.0333333, 0.9666667] })
+
+// Same speaker in-concgruent
+// var ObjectPrior = Categorical({vs: all_objects, ps: [0.9666667, 0.9666667, 0.0333333] })
+
+// Different speaker congruent
+// var ObjectPrior = Categorical({vs: all_objects, ps: [0.3583333, 0.3583333, 0.6416667] })
+
+// Different speaker in-concgruent
+// var ObjectPrior = Categorical({vs: all_objects, ps: [0.6416667, 0.6416667, 0.3583333] })
+
+
+// Novelty
+
+// Same speaker congruent
+// var ObjectPrior = Categorical({vs: all_objects, ps: [0.1666667, 0.1666667, 0.8333333] })
+
+// Same speaker in-concgruent
+// var ObjectPrior = Categorical({vs: all_objects, ps: [0.8333333, 0.8333333, 0.1666667] })
+
+// Different speaker congruent
+// var ObjectPrior = Categorical({vs: all_objects, ps: [0.4083333, 0.4083333, 0.5916667] })
+
+// Different speaker in-concgruent
+ var ObjectPrior = Categorical({vs: all_objects, ps: [0.5916667, 0.5916667, 0.4083333] })
+
+
+
+var pragmaticListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior);
+var obj = sample(ObjectPrior);
+var S1 = speaker(obj, lexiconName);
+observe(S1, utterance)
+return {lexicon: lexiconName, obj: obj.shape}
+}})
+}
+
+var speakerOptimality = 2.25;
+
+var speaker = function(obj, lexiconName){
+Infer({method: "enumerate", model: function(){
+var utterance = utterancePrior(obj, lexiconName);
+var L0 = literalListener(utterance);
+ factor(speakerOptimality * L0.score(obj.shape))
+return utterance
+}})
+}
+
+var literalListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior); 
+var lexicon = lexiconObject[lexiconName];
+var obj = sample(ObjectPrior);
+if ("label" in utterance) {
+ var truthValue = lexicon(utterance, obj);
+ condition(truthValue)
+}
+if (utterance.point) {
+ var truthValuePoint = point(utterance, obj);
+ condition(truthValuePoint)
+}
+return obj.shape 
+}})
+}
+
+
+viz.table(pragmaticListener({label: "dax", point: 2 }))

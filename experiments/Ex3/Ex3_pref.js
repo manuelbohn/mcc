@@ -240,10 +240,12 @@ var agentOrientations = [
 var agentOrient = shuffle(agentOrientations);
 
 
-var trainCond = [["train1"],["train2"]];
+var trainCond = [
+    ["train1","same","left","left"],
+    ["train2","same","right","right"]];
 var testCond = shuffle([
     ["sameSpInfLPrefL","same","left","left"],
-    ["difSpInfLPrefL","diff","left","left"],
+    ["diffSpInfLPrefL","diff","left","left"],
     ["sameSpInfRPrefL","same","right","left"],
     ["diffSpInfRPrefL","diff","right","left"],
     ["sameSpInfRPrefR","same","right","right"],
@@ -278,7 +280,7 @@ var experiment = {
   end: function() {
     // Show the finish slide.
     showSlide("finished");
-    setTimeout(function() { turk.submit(experiment) }, 8000);
+    setTimeout(function() { turk.submit(experiment) }, 5000);
   },
     
 // end of training  
@@ -304,8 +306,17 @@ var experiment = {
    
     $("#continue").text("Click on the animal to continue")
    // get time for reaction time       
-    var endTime = (new Date()).getTime();    
+    var endTime = (new Date()).getTime();   
+       
     // select correct object from info perspective
+       
+    if (experiment.cond[0][0] == "train1"){
+        var corrFruit_inf = "car";
+        var corrFruit_pref = "car";
+    } else if (experiment.cond[0][0] == "train2"){
+        var corrFruit_inf = "ball";
+        var corrFruit_pref = "ball";
+    } else {
     if (experiment.cond[0][2]=="left") {
             var corrFruit_inf = leftFruit[0];
         } else {
@@ -316,7 +327,8 @@ var experiment = {
             var corrFruit_pref = leftFruit[0];
         } else {
             var corrFruit_pref = rightFruit[0]
-            };   
+            };  
+    }
        
     // select chosen object    
     var pick = event.target.src;
@@ -331,7 +343,14 @@ var experiment = {
         } else {
         var correct_inf = 0
         };
-      
+    
+  // congruent or incongruent trial       
+    if (experiment.cond[0][2] == experiment.cond[0][3]){
+        var alignment = "congruent";
+    }   else {
+        var alignment = "incongruent";
+    };
+       
     // check if picked object is correct from info perspective
     if (pick.indexOf(corrFruit_pref) > -1) {
         var correct_pref =1
@@ -344,12 +363,15 @@ var experiment = {
         experiment: "pref_inf",
         trial: trial[0],
         speaker: experiment.cond[0][1],
+        alignment: alignment,
         agent: agents[0],
         altAgent: altAgents[0],
         leftFruit: leftFruit[0],
         rightFruit: rightFruit[0],
         pref: cond[0][3],
         inf: cond[0][2],
+        corrFruit_pref: corrFruit_pref,
+        corrFruit_inf: corrFruit_inf,
         pick: pick,
         correct_inf: correct_inf,
         correct_pref: correct_pref,
@@ -403,7 +425,7 @@ var experiment = {
     showSlide("choice"); 
      
     $("#text2").text("");  
-    setTimeout(function() {$("#text2").text("Click on the toy")}, 13000);
+    setTimeout(function() {$("#text2").text("Click on the toy")}, 12000);
     
       
      // specify what happens depending on test condition
@@ -592,7 +614,7 @@ var experiment = {
                 $(".fruit_r2").bind("click", experiment.eat);
             };
         };
-}, 00);
+}, 7000);
   
   },
  // sequence of events during training exposure
