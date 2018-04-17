@@ -8,6 +8,18 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
         <link type="text/css" href ="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" rel="stylesheet" />
+    
+    <script src="//uniqueturker.myleott.com/lib.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        (function(){
+            var ut_id = "3a66bc2a8662854fd9301ff9e9c527d9";
+            if (UTWorkerLimitReached(ut_id)) {
+                document.getElementById('mturk_form').style.display = 'none';
+                document.getElementsByTagName('body')[0].innerHTML = "You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.";
+            }
+        })();
+    </script>
+    
 	<link rel="stylesheet" href="Ex3_pref_style.css" />
 </head>
 
@@ -19,7 +31,7 @@
 			<img src="images/stanford.png" height="46" width="360" alt="Stanford University">
 		</div>
 		<p id='logo-text'>Stanford Language and Cognition Lab</p>
-		<p class="block-text">In this experiment, you will learn words for new toys. Your task is to figure out which word goes with which toy. The materials were designed for children. Even if they seem strange at times, we ask you to try to be as accurate as possible. You will hear sound, so please make sure your volume is turned on. The experiment takes about 5-7 minutes.</p>
+		<p class="block-text">In this experiment, you will learn words for new toys. Your task is to figure out which word goes with which toy. The materials were designed for children. Even if they seem strange at times, we ask you to try to be as accurate as possible. You will hear sound, so please make sure your volume is turned on. The experiment takes about 6-8 minutes.</p>
 		<button id="button" type="button" onClick="this.blur(); showSlide('training');move();">Press to begin</button>
             
 		<!-- Legal blurb that we're required to show. -->
