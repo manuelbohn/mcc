@@ -3,3 +3,4 @@ auth.json
 my-own-auth.json
 *.Rapp.history
 stats/rsconnect/*
+models/rsconnect/*
