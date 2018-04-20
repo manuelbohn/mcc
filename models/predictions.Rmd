@@ -2,7 +2,7 @@
 title: "MCC Predictions"
 author: "Manuel Bohn"
 date: "9 4 2018"
-output: word_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -37,28 +37,43 @@ var ObjectPrior = Categorical({vs: all_objects, ps: [0.8333333, 0.8333333, 0.166
 var ObjectPrior = Categorical({vs: all_objects, ps: [0.1666667, 0.1666667, 0.8333333] })
 
 
-```{r , echo=FALSE}
+```{r data}
 
 pred <- data.frame(
   Experiment = c("Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty","Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty","Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty"),
   Change = c("Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker"),
   Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"),
   Model = c("Full model","Full model","Full model","Full model","Full model","Full model","Full model","Full model","No prior","No prior","No prior","No prior","No prior","No prior","No prior","No prior", "Prior only","Prior only","Prior only","Prior only","Prior only","Prior only","Prior only","Prior only"),
-  corr = c(0.9999672744165804,0.03460862921907267,0.9083230583454356,0.5090645649737232,0.9930727540990627,0.20045767964927574,0.8603373265403738,0.594975610001643,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.967,0.033,0.642,0.358,0.833,0.167,0.592,0.408))
+  corr = c(0.9999672744165804,0.03460862921907267,0.9083230583454356,0.5090645649737232,0.9930727540990627,0.20045767964927574,0.8603373265403738,0.594975610001643,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.967,0.033,0.642,0.358,0.833,0.167,0.592,0.408)) 
 
-pred %>%
-  knitr::kable(digits = 3)
+```
+
+```{r plot}
+#pred %>%
+#  knitr::kable(digits = 3)
   
 ggplot(pred, 
-       aes(x = Model, y = corr, fill = Model)) +
-  geom_bar(stat="identity") + 
+       aes(x = Change, y = corr, fill = Model)) +
+  geom_bar(stat="identity",position = position_dodge()) + 
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x=" ",y="Proportion Choosing More Informative")+
-  facet_grid(Experiment ~ Change*Alignment)+
+  facet_grid(Experiment ~ Alignment)+
   theme_few(base_size = 12) + 
-  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank(),axis.title.x=element_blank())+
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
   ylim(0,1)
+```
 
+```{r MH}
+# MH?
+ggplot(pred, 
+       aes(x = Change, y = corr, fill = Alignment)) +
+  geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x=" ",y="Proportion Choosing More Informative")+
+  facet_grid(Experiment ~ Model)+
+  theme_few(base_size = 12) + 
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  ylim(0,1)
 ```
 
 At what ratio does it flip back to more informative?

@@ -1,0 +1,231 @@
+---
+title: "MCC Predictions"
+author: "Manuel Bohn"
+date: "9 4 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+```
+
+# Modeling Informativeness
+
+Speaker optimality parameter of 2.25 produces model predictions that match our empirical results. The following predictions therefore use this parameter.
+
+Prior = measured proportion this type of object is being chosen.
+
+## "Dampening"" model
+
+### Preference inconcgruent
+ObjectPrior = Categorical({vs: all_objects, ps: [0.9666667, 0.9666667, 0.0333333] })
+
+
+### Preference congruent
+ObjectPrior = Categorical({vs: all_objects, ps: [0.0333333, 0.0333333, 0.9666667] })
+
+
+### Novelty inconcgruent
+var ObjectPrior = Categorical({vs: all_objects, ps: [0.8333333, 0.8333333, 0.1666667] })
+
+
+### Novelty concgruent
+var ObjectPrior = Categorical({vs: all_objects, ps: [0.1666667, 0.1666667, 0.8333333] })
+
+
+```{r data}
+dat <- bind_rows(read_csv(file="ex3.novel.data.csv"),
+               read_csv(file="ex3.pref.data.csv")) %>%
+  mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
+```
+
+
+```{r sanity checks}
+# check if there are incongruent trials in which informativeness and prior yield the same results
+# is not the case, that's good
+dat %>%
+  filter(alignment == "incongruent") %>%
+  filter(correct_inf == correct_prior)
+
+
+# check if someone needs to be excluded because wrong in training
+# no one, that's good
+dat %>%
+  filter(trial_type == "train") %>%
+  group_by(id)%>%
+  summarise(correct_inf = mean(correct_inf)) %>%
+  filter(correct_inf == 0)
+  
+# check if someone did both experiments
+x <- dat %>%
+  filter(trial_type == "train") %>%
+  group_by(id)%>%
+  summarise(n = length(correct_inf)) %>%
+  filter(n > 2)
+
+# exclude those who dod both experiments
+data <- dat %>%
+  filter(id != x$id) %>%
+  mutate(Change = ifelse(change =="same", "Same speaker", "Different speaker"),
+         Alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"),
+         Experiment = ifelse(experiment == "pref_inf", "Preference", "Novelty"))
+
+
+```
+
+```{r plot data}
+
+p1 <- data %>%
+  filter(trial_type == "test") %>%
+  group_by(Change ,Experiment,Alignment, id) %>%
+  summarise(correct = mean(correct_inf)) 
+
+p2 <- p1 %>%
+  multi_boot_standard(col = "correct")
+
+
+ggplot() +
+  geom_jitter(data = p1, aes(x = Alignment, y = correct, col = Alignment, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p2, aes(x = Alignment, y = mean, col = Alignment,ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  facet_grid(Experiment ~ Change , scales = "free_x", space = "free_x" ) +
+  theme_few() + 
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  scale_colour_solarized()
+
+```
+
+```{r comparisons to chance}
+data %>%  
+  filter(trial_type == "test") %>%
+  group_by(change ,experiment,alignment, id) %>%
+  summarise(correct_inf = mean(correct_inf)) %>%
+  summarize(correct_inf = list(correct_inf)) %>%
+  group_by(change ,experiment,alignment) %>%
+  mutate(mean = mean(unlist(correct_inf)),
+         stat = wilcox.exact(unlist(correct_inf), mu = 0.5)$statistic,
+         p_value = wilcox.exact(unlist(correct_inf), mu = 0.5)$p.value) %>%
+  select(change ,experiment,alignment,mean,stat,p_value)%>%
+  knitr::kable(digits = 3)
+```
+
+
+```{r model}
+library(lme4)
+
+m.data <- data %>%
+  mutate(item = ifelse( change == "false", agent, altAgent))
+
+
+lm <- glmer(correct_inf ~ Experiment*Change*Alignment + (Change*Alignment|id) + (Change*Alignment|agent), 
+              data = m.data, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm)
+
+
+```
+
+
+
+```{r model predictions}
+predictions <- data.frame(
+  Experiment = c("Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty","Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty","Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty"),
+  Change = c("Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker"),
+  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"),
+  Model = c("Full model","Full model","Full model","Full model","Full model","Full model","Full model","Full model","No prior","No prior","No prior","No prior","No prior","No prior","No prior","No prior", "Prior only","Prior only","Prior only","Prior only","Prior only","Prior only","Prior only","Prior only"),
+  corr = c(0.9999672744165804,0.03460862921907267,0.9083230583454356,0.5090645649737232,0.9930727540990627,0.20045767964927574,0.8603373265403738,0.594975610001643,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.967,0.033,0.642,0.358,0.833,0.167,0.592,0.408)) 
+
+
+pred <- predictions %>%
+  group_by(Model,Experiment,Change,Alignment)%>%
+  multi_boot_standard(col = "corr")
+
+```
+
+```{r joining files}
+
+da <- data %>%
+  filter(trial_type=="test")%>%
+  mutate(Change = ifelse(change =="same", "Same speaker", "Different speaker"),
+         Alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"),
+         Experiment = ifelse(experiment == "pref_inf", "Preference", "Novelty"),
+         Model = "Data") %>%
+  group_by(Model,Experiment,Change,Alignment,id)%>%
+  summarise(correct_inf = mean(correct_inf)) %>%
+  multi_boot_standard(col = "correct_inf")
+
+
+pd <- rbind(pred,da)
+
+```
+
+
+```{r plot models and data}
+ggplot(pd, 
+       aes(x = Change, y = mean, fill = Alignment)) +
+  geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),position = position_dodge(width = 0.9))+
+  labs(x=" ",y="Proportion Choosing More Informative")+
+  facet_grid(Experiment ~ Model)+
+  theme_few(base_size = 12) + 
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  ylim(0,1)
+```
+```{r plot comparing models}
+
+library(ggpubr)
+
+plot1 <- data.frame(pd$Experiment[pd$Model=="Data"],pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Prior only"],rep("Data vs Prior only",8))
+names(plot1) = c("Experiment","Data","Model","Comp")
+plot2 <- data.frame(pd$Experiment[pd$Model=="Data"],pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Full model"],rep("Data vs Full model",8))
+names(plot2) = c("Experiment","Data","Model","Comp")
+plot3 <- data.frame(rep("Combined",8),pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Full model"],rep("Data vs Full model",8))
+names(plot3) = c("Experiment","Data","Model","Comp")
+plot4 <- data.frame(rep("Combined",8),pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Prior only"],rep("Data vs Prior only",8))
+names(plot4) = c("Experiment","Data","Model","Comp")
+
+plot <- rbind(plot3,plot4,plot1,plot2)
+
+ggplot(data = plot,aes(x = Model, y = Data, col = Comp)) +
+  geom_point()+
+  facet_grid(Experiment~Comp)+
+  stat_cor(method = "pearson", label.x = 0.4, label.y = 0.9)+
+  geom_smooth(method = "lm", se = F, col = "black")+
+  theme_few() + 
+  guides(col = F)+
+  scale_colour_solarized()
+
+
+```
+
+
+At what ratio does it flip back to more informative?
+
+```{r , echo=FALSE}
+
+pred <- data.frame(
+  Prior = c("90/10","80/20","70/30","60/40","50/50"),
+  corr = c(0.1118794400899893,0.24897738407515466,0.40911964439987003,0.5807810413750243,0.74)
+)
+
+ggplot(pred, 
+       aes(x = Prior, y = corr, fill = Prior)) +
+  geom_bar(stat="identity") + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Choosing More Informative")+
+  theme_few(base_size = 12) +
+  scale_fill_discrete(name = "Prior: less inf / more inf")+
+  ylim(0,1)+
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+
+```
+
+
