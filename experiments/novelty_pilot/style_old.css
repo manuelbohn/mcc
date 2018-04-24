@@ -3,7 +3,9 @@
 
 /* We want the page to sit flush inside the browser window - that means no margins or padding. Also, use a nice-looking serif font. */
 body {
-	padding: 0;
+    width: 972.8px;
+	height: 729px;
+    padding: 0;
 	margin: 0;
 	font-family: Palatino Linotype, Bookman Antiqua, Palatino, serif;
 	font-size: 16px;
@@ -12,17 +14,20 @@ body {
 
 /* We manage display using "slides". A slide is a <code>div</code> that takes up the entire page. Only one slide should be visible at a time. Navigation between slides is most sensibly accomplished using using buttons, rather than keyboard events. */
 .slide {
-	width: 950px;
-	height: 600px;
+	width: 970px;
+	height: 729px;
 	display: none;
 	position: absolute;
 	margin: 0;
-	margin-left: 0.5%;
-	padding: 1% 2% 1% 2%;
+}
+
+.background {
+	width: 980px;
+	height: 660px;
+    opacity: 0.3;
 }
 
 input, select, button {font-family: Georgia, serif; font-size: 14px;}
-
 
 button {
 	background: url(images/button-gradient.png);
@@ -81,30 +86,25 @@ startButton[disabled] {
 }
 
 nextButton {
-	background: url(images/button-gradient.png);
-	border: 1px solid #999;
-	border-top: 1px solid #e0e0e0;
-	border-left: 1px solid #e0e0e0;
+	background: lightgrey;
 	margin: 10px;
 	padding-left: 5px;
 	padding-right: 5px;
-	height: 29px;
-	min-width: 70px;
+	height: 50px;
+	min-width: 100px;
     position: absolute;
-    top: 530px;
-    left: 470px;
+    bottom: 0px;
+    left: 430px;
     z-index: 2
 }
+
 nextButton:active {
-	border-left: 1px solid #c9c9c9;
-	border-top: 1px solid #c9c9c9;
 	background: none;
 	background-color: #c9c9c9;
-    top: 50px;
-    left: 50px;
+    bottom: 10px;
     position: absolute;
-    top: 530px;
-    left: 470px;
+    bottom: 0px;
+    left: 430px;
     z-index: 2
 }
 
@@ -118,37 +118,37 @@ nextButton[disabled] {
 
 .agent {
     position: absolute;
-    bottom: 255px;
-    left: 380px;
-    width: 280px;
+    bottom: 245px;
+    left: 320px;
+    width: 350px;
 }
 
 .point_agent_r {
     position: absolute;
-    bottom: 255px;
-    left: 368px;
-    width: 280px;
+    bottom: 245px;
+    left: 320px;
+    width: 350px;
 }
 
 
 .point_agent_l {
     position: absolute;
-    bottom: 255px;
-    left: 392px;
-    width: 280px;
+    bottom: 245px;
+    left: 320px;
+    width: 350px;
 }
 
 .agent_eat {
     margin-left: auto;
     margin-right: auto;
-    width: 500px;
+    width: 700px;
 }
 
 .hill {
     position: absolute;
-    bottom: 70px;
-    left: 380px;
-    width: 280px;
+    bottom: 5px;
+    left: 320px;
+    width: 350px;
     z-index: 1
 }
 
@@ -160,18 +160,34 @@ nextButton[disabled] {
 
 .fruit_r {
     position: absolute;
-    bottom: 165px;  
-    left: 670px;
-    width: 250px;
+    bottom: 225px;  
+    left: 747px;
+    width: 150px;
+    z-index: 2
+}
+
+.fruit_r2 {
+    position: absolute;
+    bottom: 225px;  
+    left: 831px;
+    width: 150px;
     z-index: 1
 }
 
 
 .fruit_l {
     position: absolute;
-    bottom: 165px;
-    left: 120px;
-    width: 250px;
+    bottom: 225px;
+    left: 100px;
+    width: 150px;
+    z-index: 2
+}
+
+.fruit_l2 {
+    position: absolute;
+    bottom: 225px;
+    left: 2px;
+    width: 150px;
     z-index: 1
 }
 
@@ -179,19 +195,23 @@ nextButton[disabled] {
 
 .table_r {
     position: absolute;
-    bottom: 0px;
-    left: 590px;
-    width: 400px;
+    bottom: 80px;
+    left: 679px;
+    width: 280px;
     z-index: 0
 }
 
 .table_l {
     position: absolute;
-    bottom: 0px;
+    bottom: 80px;
     left: 30px;
-    width: 400px;
+    width: 280px;
     z-index: 0
 }
+
+
+
+
 
 
 /* ## Experiment-specific styles */
@@ -228,6 +248,13 @@ nextButton[disabled] {
   margin-bottom: 1em;
 }
 
+.block-text3 {
+  width: 600px;
+  text-align: center;
+  margin: 0 auto;
+  margin-bottom: 1em;
+}
+
 
 .text {
   font-size: 40px;
@@ -238,7 +265,7 @@ nextButton[disabled] {
   margin-bottom: 1em;
   position: absolute;
   top: 20px;
-  left: 170px;
+  left: 154px;
 }
 
 .text2 {
@@ -249,8 +276,8 @@ nextButton[disabled] {
   margin: 0 auto;
   margin-bottom: 1em;
   position: absolute;
-  top: 500px;
-  left: 270px;
+  top: 100px;
+  left: 245px;
 }
 
 

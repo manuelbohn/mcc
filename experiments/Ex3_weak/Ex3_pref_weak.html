@@ -8,6 +8,7 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
         <link type="text/css" href ="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" rel="stylesheet" />
+    
     <script src="//uniqueturker.myleott.com/lib.js" type="text/javascript"></script>
     <script type="text/javascript">
         (function(){
@@ -30,7 +31,7 @@
 			<img src="images/stanford.png" height="46" width="360" alt="Stanford University">
 		</div>
 		<p id='logo-text'>Stanford Language and Cognition Lab</p>
-		<p class="block-text">In this experiment, you will learn words for new toys. Your task is to figure out which word goes with which toy. The materials were designed for children. Even if they seem strange at times, we ask you to try to be as accurate as possible. You will hear sound, so please make sure your volume is turned on. The experiment takes about 7-9 minutes.</p>
+		<p class="block-text">In this experiment, you will learn words for new toys. Your task is to figure out which word goes with which toy. The materials were designed for children. Even if they seem strange at times, we ask you to try to be as accurate as possible. You will hear sound, so please make sure your volume is turned on. The experiment takes about 6-8 minutes.</p>
 		<button id="button" type="button" onClick="this.blur(); showSlide('training');move();">Press to begin</button>
             
 		<!-- Legal blurb that we're required to show. -->
@@ -235,100 +236,64 @@
                         <img id="hill" class="hill"  src="images/hill.png">
                             
                         <img id="Mouse_straight" class="agent"  src="images/Mouse_straight.png">
-                        <img id="Mouse_straight2" class="agent"  src="images/Mouse_straight.png">
-                        <img id="Mouse_point_l1" class="point_agent_l"  src="images/Mouse_point_l.png">
-                        <img id="Mouse_point_l2" class="point_agent_l"  src="images/Mouse_point_l.png">
-                        <img id="Mouse_point_r1" class="point_agent_r"  src="images/Mouse_point_r.png">
-                        <img id="Mouse_point_r2" class="point_agent_r"  src="images/Mouse_point_r.png">
+                        <img id="Mouse_point_l" class="point_agent_l"  src="images/Mouse_point_l.png">
+                        <img id="Mouse_point_r" class="point_agent_r"  src="images/Mouse_point_r.png">
                        <img id="Mouse_disappear" class="agent"  src="images/Mouse_disappear.png">
                             
                         <img id="Monkey_straight" class="agent"  src="images/Monkey_straight.png">
-                        <img id="Monkey_straight2" class="agent"  src="images/Monkey_straight.png">
-                        <img id="Monkey_point_l1" class="point_agent_l"  src="images/Monkey_point_l.png">
-                        <img id="Monkey_point_l2" class="point_agent_l"  src="images/Monkey_point_l.png">
-                        <img id="Monkey_point_r1" class="point_agent_r"  src="images/Monkey_point_r.png">
-                        <img id="Monkey_point_r2" class="point_agent_r"  src="images/Monkey_point_r.png">
+                        <img id="Monkey_point_l" class="point_agent_l"  src="images/Monkey_point_l.png">
+                        <img id="Monkey_point_r" class="point_agent_r"  src="images/Monkey_point_r.png">
                        <img id="Monkey_disappear" class="agent"  src="images/Monkey_disappear.png">
                                 
                         <img id="Bunny_straight" class="agent"  src="images/Bunny_straight.png">
-                        <img id="Bunny_straight2" class="agent"  src="images/Bunny_straight.png">
-                        <img id="Bunny_point_l1" class="point_agent_l"  src="images/Bunny_point_l.png">
-                        <img id="Bunny_point_l2" class="point_agent_l"  src="images/Bunny_point_l.png">
-                        <img id="Bunny_point_r1" class="point_agent_r"  src="images/Bunny_point_r.png">
-                         <img id="Bunny_point_r2" class="point_agent_r"  src="images/Bunny_point_r.png">
+                        <img id="Bunny_point_l" class="point_agent_l"  src="images/Bunny_point_l.png">
+                        <img id="Bunny_point_r" class="point_agent_r"  src="images/Bunny_point_r.png">
                        <img id="Bunny_disappear" class="agent"  src="images/Bunny_disappear.png">    
                  
                         <img id="Dog_straight" class="agent"  src="images/Dog_straight.png">
-                        <img id="Dog_straight2" class="agent"  src="images/Dog_straight.png">
-                        <img id="Dog_point_l1" class="point_agent_l"  src="images/Dog_point_l.png">
-                         <img id="Dog_point_l2" class="point_agent_l"  src="images/Dog_point_l.png">
-                        <img id="Dog_point_r1" class="point_agent_r"  src="images/Dog_point_r.png">
-                        <img id="Dog_point_r2" class="point_agent_r"  src="images/Dog_point_r.png">
+                        <img id="Dog_point_l" class="point_agent_l"  src="images/Dog_point_l.png">
+                        <img id="Dog_point_r" class="point_agent_r"  src="images/Dog_point_r.png">
                        <img id="Dog_disappear" class="agent"  src="images/Dog_disappear.png">     
                             
                         <img id="Elephant_straight" class="agent"  src="images/Elephant_straight.png">
-                        <img id="Elephant_straight2" class="agent"  src="images/Elephant_straight.png">
-                        <img id="Elephant_point_l1" class="point_agent_l"  src="images/Elephant_point_l.png">
-                        <img id="Elephant_point_l2" class="point_agent_l"  src="images/Elephant_point_l.png">
-                        <img id="Elephant_point_r1" class="point_agent_r"  src="images/Elephant_point_r.png">
-                        <img id="Elephant_point_r2" class="point_agent_r"  src="images/Elephant_point_r.png">
+                        <img id="Elephant_point_l" class="point_agent_l"  src="images/Elephant_point_l.png">
+                        <img id="Elephant_point_r" class="point_agent_r"  src="images/Elephant_point_r.png">
                        <img id="Elephant_disappear" class="agent"  src="images/Elephant_disappear.png">    
                             
                         <img id="Pig_straight" class="agent"  src="images/Pig_straight.png">
-                        <img id="Pig_straight2" class="agent"  src="images/Pig_straight.png">
-                        <img id="Pig_point_l1" class="point_agent_l"  src="images/Pig_point_l.png">
-                         <img id="Pig_point_l2" class="point_agent_l"  src="images/Pig_point_l.png">
-                        <img id="Pig_point_r1" class="point_agent_r"  src="images/Pig_point_r.png">
-                         <img id="Pig_point_r2" class="point_agent_r"  src="images/Pig_point_r.png">
+                        <img id="Pig_point_l" class="point_agent_l"  src="images/Pig_point_l.png">
+                        <img id="Pig_point_r" class="point_agent_r"  src="images/Pig_point_r.png">
                        <img id="Pig_disappear" class="agent"  src="images/Pig_disappear.png">     
                             
                         <img id="Bear_straight" class="agent"  src="images/Bear_straight.png">
-                        <img id="Bear_straight2" class="agent"  src="images/Bear_straight.png">
-                        <img id="Bear_point_l1" class="point_agent_l"  src="images/Bear_point_l.png">
-                        <img id="Bear_point_l2" class="point_agent_l"  src="images/Bear_point_l.png">
-                        <img id="Bear_point_r1" class="point_agent_r"  src="images/Bear_point_r.png">
-                        <img id="Bear_point_r2" class="point_agent_r"  src="images/Bear_point_r.png">
+                        <img id="Bear_point_l" class="point_agent_l"  src="images/Bear_point_l.png">
+                        <img id="Bear_point_r" class="point_agent_r"  src="images/Bear_point_r.png">
                        <img id="Bear_disappear" class="agent"  src="images/Bear_disappear.png">
                             
                         <img id="Beaver_straight" class="agent"  src="images/Beaver_straight.png">
-                        <img id="Beaver_straight2" class="agent"  src="images/Beaver_straight.png">
-                        <img id="Beaver_point_l1" class="point_agent_l"  src="images/Beaver_point_l.png">
-                        <img id="Beaver_point_l2" class="point_agent_l"  src="images/Beaver_point_l.png">
-                        <img id="Beaver_point_r1" class="point_agent_r"  src="images/Beaver_point_r.png">
-                        <img id="Beaver_point_r2" class="point_agent_r"  src="images/Beaver_point_r.png">
+                        <img id="Beaver_point_l" class="point_agent_l"  src="images/Beaver_point_l.png">
+                        <img id="Beaver_point_r" class="point_agent_r"  src="images/Beaver_point_r.png">
                        <img id="Beaver_disappear" class="agent"  src="images/Beaver_disappear.png">    
                             
                         <img id="Cat_straight" class="agent"  src="images/Cat_straight.png">
-                        <img id="Cat_straight2" class="agent"  src="images/Cat_straight.png">
-                        <img id="Cat_point_l1" class="point_agent_l"  src="images/Cat_point_l.png">
-                        <img id="Cat_point_l2" class="point_agent_l"  src="images/Cat_point_l.png">
-                        <img id="Cat_point_r1" class="point_agent_r"  src="images/Cat_point_r.png">
-                        <img id="Cat_point_r2" class="point_agent_r"  src="images/Cat_point_r.png">
+                        <img id="Cat_point_l" class="point_agent_l"  src="images/Cat_point_l.png">
+                        <img id="Cat_point_r" class="point_agent_r"  src="images/Cat_point_r.png">
                        <img id="Cat_disappear" class="agent"  src="images/Cat_disappear.png">    
                             
                         <img id="Sheep_straight" class="agent"  src="images/Sheep_straight.png">
-                        <img id="Sheep_straight2" class="agent"  src="images/Sheep_straight.png">
-                        <img id="Sheep_point_l1" class="point_agent_l"  src="images/Sheep_point_l.png">
-                        <img id="Sheep_point_l2" class="point_agent_l"  src="images/Sheep_point_l.png">
-                        <img id="Sheep_point_r1" class="point_agent_r"  src="images/Sheep_point_r.png">
-                        <img id="Sheep_point_r2" class="point_agent_r"  src="images/Sheep_point_r.png">
+                        <img id="Sheep_point_l" class="point_agent_l"  src="images/Sheep_point_l.png">
+                        <img id="Sheep_point_r" class="point_agent_r"  src="images/Sheep_point_r.png">
                        <img id="Sheep_disappear" class="agent"  src="images/Sheep_disappear.png">    
                             
                         <img id="Tiger_straight" class="agent"  src="images/Tiger_straight.png">
-                        <img id="Tiger_straight2" class="agent"  src="images/Tiger_straight.png">
-                        <img id="Tiger_point_l1" class="point_agent_l"  src="images/Tiger_point_l.png">
-                        <img id="Tiger_point_l2" class="point_agent_l"  src="images/Tiger_point_l.png">
-                        <img id="Tiger_point_r1" class="point_agent_r"  src="images/Tiger_point_r.png">
-                        <img id="Tiger_point_r2" class="point_agent_r"  src="images/Tiger_point_r.png">
+                        <img id="Tiger_point_l" class="point_agent_l"  src="images/Tiger_point_l.png">
+                        <img id="Tiger_point_r" class="point_agent_r"  src="images/Tiger_point_r.png">
                        <img id="Tiger_disappear" class="agent"  src="images/Tiger_disappear.png">    
                             
                         <img id="Frog_straight" class="agent"  src="images/Frog_straight.png">
-                        <img id="Frog_straight2" class="agent"  src="images/Frog_straight.png">
-                        <img id="Frog_point_l1" class="point_agent_l"  src="images/Frog_point_l.png">
-                         <img id="Frog_point_l2" class="point_agent_l"  src="images/Frog_point_l.png">
-                        <img id="Frog_point_r1" class="point_agent_r"  src="images/Frog_point_r.png">
-                        <img id="Frog_point_r2" class="point_agent_r"  src="images/Frog_point_r.png">
-                       <img id="Frog_disappear" class="agent"  src="images/Frog_disappear.png">        
+                        <img id="Frog_point_l" class="point_agent_l"  src="images/Frog_point_l.png">
+                        <img id="Frog_point_r" class="point_agent_r"  src="images/Frog_point_r.png">
+                       <img id="Frog_disappear" class="agent"  src="images/Frog_disappear.png">       
                             
                         </td>
 						<td>
@@ -481,7 +446,7 @@
         <p class="block-text">You're finished - thanks for participating</p> 
         
         <p class="block-text">
-        In this experiment we wanted to find out how people integrate different types of information they have about a speaker.</p>
+       In this experiment we wanted to find out how people integrate different types of information they have about a speaker.</p>
         
         <p class="block-text">Submitting to Mechanical Turk...</p>
 	</div>
@@ -489,7 +454,7 @@
 	<!-- Include the <a href="experiment.html">JavaScript file for the experiment</a>. As written, that script immediately executes commands, so we include it here at the end of the HTML file to ensure that resources referenced by the script actually exist. For instance, one of the immediately executed commands is <code>showSlide("instructions")</code>. If we loaded experiment.js, say, in the <code>head</code> section, <code>showSlide("instructions")</code> would fail because the <code>instructions</code> slide doesn't exist yet. It is possible to load the script in <code>head</code> but you have to ensure that any immediately executed commands, if they rely on potentially uninitialized HTML elements, are _delayed_ until the page is ready, using either [window.onload][onload] or jQuery's more robust [$(document).ready()][domReady]  -->
 	<!-- [onload]: https://developer.mozilla.org/en/DOM/window.onload -->
 	<!-- [domReady]: http://api.jquery.com/ready/ -->
-	<script src="Ex3_novel_weak.js"></script>
+	<script src="Ex3_pref_weak.js"></script>
 
 </body>
     

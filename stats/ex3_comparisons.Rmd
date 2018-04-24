@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(knitr)
 library(ggthemes)
+library(langcog)
 ```
 
 # Modeling Informativeness
@@ -61,20 +62,25 @@ dat %>%
   filter(correct_inf == 0)
   
 # check if someone did both experiments
+# yes, two people
 x <- dat %>%
   filter(trial_type == "train") %>%
   group_by(id)%>%
   summarise(n = length(correct_inf)) %>%
   filter(n > 2)
 
-# exclude those who dod both experiments
+# exclude those who did both experiments
 data <- dat %>%
-  filter(id != x$id) %>%
+  filter(!id %in% x$id) %>%
+  filter(trial_type != "train") %>%
   mutate(Change = ifelse(change =="same", "Same speaker", "Different speaker"),
          Alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"),
          Experiment = ifelse(experiment == "pref_inf", "Preference", "Novelty"))
 
 
+data %>%
+  group_by(experiment,alignment,change) %>%
+  summarise(n = length(id))
 ```
 
 ```{r plot data}
@@ -102,6 +108,8 @@ ggplot() +
 ```
 
 ```{r comparisons to chance}
+library(exactRankTests)
+
 data %>%  
   filter(trial_type == "test") %>%
   group_by(change ,experiment,alignment, id) %>%
@@ -123,7 +131,7 @@ m.data <- data %>%
   mutate(item = ifelse( change == "false", agent, altAgent))
 
 
-lm <- glmer(correct_inf ~ Experiment*Change*Alignment + (Change*Alignment|id) + (Change*Alignment|agent), 
+lm <- glmer(correct_inf ~ Experiment*Change*Alignment + (Change*Alignment|id) + (Change+Alignment|agent), 
               data = m.data, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -168,6 +176,7 @@ pd <- rbind(pred,da)
 
 
 ```{r plot models and data}
+
 ggplot(pd, 
        aes(x = Change, y = mean, fill = Alignment)) +
   geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
@@ -178,6 +187,7 @@ ggplot(pd,
   theme_few(base_size = 12) + 
   theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
   ylim(0,1)
+
 ```
 ```{r plot comparing models}
 
@@ -207,6 +217,214 @@ ggplot(data = plot,aes(x = Model, y = Data, col = Comp)) +
 ```
 
 
+
+
+```{r rsaUtils}
+library(rwebppl)
+
+rsaUtils <- '
+var all_objects = [
+{ shape: "triangle", id:1, location: 1},  
+{ shape: "triangle", id:2, location: 2},
+{ shape: "circle", id:1, location: 2}
+]
+
+var labels = ["dax","wug"]
+
+var lexicon1 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "triangle" :
+utterance.label == "wug" ? obj.shape == "circle" : 
+true
+}
+
+var lexicon2 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "circle" :
+utterance.label == "wug" ? obj.shape == "triangle" : 
+true
+}
+
+var lexiconObjects = {
+"dax = triangle": {
+triangle: "dax", circle: "wug"
+},
+"dax = circle": {
+triangle: "wug", circle: "dax"
+},
+}
+
+var lexiconObject = {
+"dax = triangle": lexicon1,
+"dax = circle" : lexicon2
+}
+
+var point = function(utterance, obj){
+return obj.location == utterance.point
+}
+
+
+var utterancePrior = function(obj, lexiconName){
+var locationsWithShape = _.map(_.filter(all_objects, {shape: obj.shape}), "location")
+var point = uniformDraw(locationsWithShape)
+var label = lexiconObjects[lexiconName][obj.shape]
+return {label: label, point: point}
+}
+
+var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
+'
+```
+
+```{r rsaModel}
+rsaModel <- 'var ObjectPrior = Categorical({vs: all_objects, ps: priorProbs })
+
+var pragmaticListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior);
+var obj = sample(ObjectPrior);
+var S1 = speaker(obj, lexiconName);
+observe(S1, utterance)
+return {lexicon: lexiconName, obj: obj.shape}
+}})
+}
+
+var speakerOptimality = 2.25;
+
+var speaker = function(obj, lexiconName){
+Infer({method: "enumerate", model: function(){
+var utterance = utterancePrior(obj, lexiconName);
+var L0 = literalListener(utterance);
+ factor(speakerOptimality * L0.score(obj.shape))
+return utterance
+}})
+}
+
+var literalListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior); 
+var lexicon = lexiconObject[lexiconName];
+var obj = sample(ObjectPrior);
+if ("label" in utterance) {
+ var truthValue = lexicon(utterance, obj);
+ condition(truthValue)
+}
+if (utterance.point) {
+ var truthValuePoint = point(utterance, obj);
+ condition(truthValuePoint)
+}
+return obj.shape 
+}})
+}
+
+
+pragmaticListener({label: "dax", point: 2 })
+'
+```
+
+```{r}
+priorProbsFromR <- list(
+  "pref_inf_same_congruent" =  c(0.0333333, 0.033333, 0.9666667),
+  "pref_inf_same_incongruent" = c(0.9666667, 0.9666667, 0.0333333),
+  "pref_inf_diff_congruent" =  c(0.3583333, 0.3583333, 0.6416667),
+  "pref_inf_diff_incongruent" = c(0.6416667, 0.6416667, 0.3583333),
+  "novel_inf_same_congruent" =  c(0.1666667, 0.1666667, 0.8333333),
+  "novel_inf_same_incongruent" = c(0.8333333, 0.8333333, 0.1666667),
+  "novel_inf_diff_congruent" =  c(0.4083333, 0.4083333, 0.5916667),
+  "novel_inf_diff_incongruent" = c(0.5916667, 0.5916667, 0.4083333)
+)
+
+
+# get model predictions from webppl
+wp.rs.all <- data.frame()
+for (conditionName in names(priorProbsFromR)) {
+  
+  priorProbs <- priorProbsFromR[[conditionName]]
+  rs.wp <- webppl(
+    program_code = paste(rsaUtils, rsaModel, sep='\n'),
+    data = priorProbs,
+    data_var = "priorProbs"
+  )
+  wp.rs.all <- bind_rows(
+    wp.rs.all, 
+    rs.wp %>% 
+      mutate(condition = conditionName,
+             Model = "Full model")
+  )
+}
+
+
+# common confition names to join by
+con <- c("pref_inf_same_congruent",
+  "pref_inf_same_incongruent",
+  "pref_inf_diff_congruent",
+  "pref_inf_diff_incongruent",
+  "novel_inf_same_congruent",
+  "novel_inf_same_incongruent",
+  "novel_inf_diff_congruent",
+  "novel_inf_diff_incongruent")
+
+#Model predictions from prior only model
+prior_only <- predictions %>%
+  filter(Model == "Prior only")%>%
+  mutate(condition = con)
+
+#Model predictions from no prior model
+no_prior <- predictions %>%
+  filter(Model == "No prior")%>%
+  mutate(condition = con)
+
+# summarizing the data
+data.summary <- data %>%
+  mutate(condition = paste(experiment,change, alignment, sep = "_")) %>%
+  group_by(condition) %>%
+  summarize(n= n(),
+            k = sum(correct_inf))
+
+# joining model predictions and data
+model_comparison <- rbind(
+  left_join(
+  wp.rs.all %>% filter(obj == "circle")%>%mutate(exp = substr(condition,1,4)) %>%select(condition,exp,Model,prob),
+  data.summary),
+  left_join(
+  no_prior%>%mutate(prob = corr, exp = substr(condition,1,4))%>%select(condition,exp,Model,prob),
+  data.summary),
+  left_join(
+  prior_only%>%mutate(prob = corr, exp = substr(condition,1,4))%>%select(condition,exp,Model,prob),
+  data.summary)
+  )
+
+# calculate how well model predicts data
+comp_model<- model_comparison%>%
+  mutate(p_data_given_model = dbinom(size = n, p = prob, x = k, log = T)) %>%
+  group_by(Model) %>%
+  summarize(log_p_data_given_model = sum(p_data_given_model))
+
+comp_model
+
+## log p (data | model)
+## bayes factor_1,2 = p (data | model_1) / p (data | model_2)
+## log bf = log p (data | model_1) - log p (data | model_2)
+
+# Bayes factors full vs other models
+bf_full_no_prior <- exp((comp_model[1,2] - comp_model[2,2]))
+bf_full_no_prior
+
+bf_full_prior_only <- exp((comp_model[1,2] - comp_model[3,2]))
+bf_full_prior_only
+
+# model comparison by experiment
+comp_model_by_exp<- model_comparison%>%
+  mutate(p_data_given_model = dbinom(size = n, p = prob, x = k, log = T)) %>%
+  group_by(Model,exp) %>%
+  summarize(log_p_data_given_model = sum(p_data_given_model))
+
+# Bayes factors full - prior only
+pref_bf_full_prior_only <- exp(comp_model_by_exp[2,3] - comp_model_by_exp[6,3])
+pref_bf_full_prior_only
+
+novel_bf_full_prior_only <- exp(comp_model_by_exp[1,3] - comp_model_by_exp[5,3])
+novel_bf_full_prior_only
+
+```
+
 At what ratio does it flip back to more informative?
 
 ```{r , echo=FALSE}
@@ -227,5 +445,3 @@ ggplot(pred,
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
 
 ```
-
-
