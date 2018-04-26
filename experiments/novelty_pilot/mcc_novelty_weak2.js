@@ -241,7 +241,7 @@ var experiment = {
   end: function() {
     // Show the finish slide.
     showSlide("finished");
-    setTimeout(function() { turk.submit(experiment) }, 8000);
+    setTimeout(function() { turk.submit(experiment) }, 5000);
   },
  
 // end of training
@@ -341,7 +341,7 @@ var experiment = {
     
     showSlide("choice"); 
    
-    setTimeout(function() {$("#text2").text("Click on the toy")}, 10000);
+    setTimeout(function() {$("#text2").text("Click on the toy")}, 9500);
     
     // show objects  
     choiceLeftFruit("images/"+leftFruit[0]+".png");
