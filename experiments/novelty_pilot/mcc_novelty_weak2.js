@@ -123,7 +123,7 @@ $("#button").click(function() {
 // Progress bar
 
 $("#progressbar").progressbar();
-$("#progressbar").progressbar( "option", "max", 10);
+$("#progressbar").progressbar( "option", "max", 12);
 
 // move progress bar
 
@@ -167,29 +167,29 @@ $.ajax({
 
 // Variables and randomization for the experiment
 
-var trial = ["train","train","finTrain",1,2,3,4,5,6]
+var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
 
 // agents for training and test
 var trainAgents = ["Elephant","Pig"]
-var allAgents = ["Mouse","Dog","Tiger","Cat","Sheep","Bear","Monkey","Frog","Bunny"];
+var allAgents = ["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"];
 
 // randomization of agent and speaker change agent order for test trials
-var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,6);
+var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,8);
 var remainingAgent = $.grep(allAgents, function(value) {
     return $.inArray(value, testAgents) < 0;});
-var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,3);
+var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,4);
 var agents = trainAgents.concat(testAgents);
 var altAgents = testAltAgent;
 
 // randomizing order of speaker change
 var trainSpeakerChange = [["false","false"]];
-var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"])]);
+var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"]),shuffle(["false","true"])]);
 var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
 // objects on tables in training and test (fruits = toys)
 var trainFruitLeft = ["car","duck"];
 var trainFruitRight = ["bear","ball"];
-var fruits = ["t1","t2","t3","t18","t5","t6","t7","t8","t17","t10", "t11","t12","t13","t15","t16"];
+var fruits = ["t1", "t2","t3","t4","t5","t6","t7","t8","t9","t10", "t11","t12","t13","t14","t15","t16","t17","t18"];
 
 // randomizing order and combiantion of test objects
 var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
@@ -217,7 +217,7 @@ var agentOrient = shuffle(agentOrientations);
 
 // randomizing location of target object (i.e. novel object)
 var trainNovel = ["left","right"];
-var testNovel = shuffle(["left","right","left","right","left","right"]);
+var testNovel = shuffle(["left","right","left","right","left","right","left","right"]);
 var novel = trainNovel.concat(testNovel)
 
 // Show the instructions slide .
@@ -341,7 +341,7 @@ var experiment = {
     
     showSlide("choice"); 
    
-    setTimeout(function() {$("#text2").text("Click on the object")}, 13000);
+    setTimeout(function() {$("#text2").text("Click on the object")}, 12000);
     
     // show objects  
     choiceLeftFruit("images/"+leftFruit[0]+".png");
@@ -371,7 +371,7 @@ var experiment = {
     
     // play choice sound only in training
     if (experiment.trial[0] == "train"){
-        sourceSound("sound/"+agents[0]+"_choice.mp3");
+        sourceSound("sound/"+agents[0]+"_train.mp3");
         playSound();
     } else { 
    // play hello/return sound and choice depending on speaker chnage condition in test trials 
@@ -396,7 +396,7 @@ var experiment = {
     setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
-}, 000);
+}, 7000);
   },
   
 // sequence of events during training exposure
@@ -502,15 +502,15 @@ var experiment = {
 // animate object when visible and pointed at  
     if (experiment.agentOrient[0][0] == "point" && experiment.novel[0] == "left") {
         setTimeout(function() {
-            $("#fruit_r").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
-            $("#fruit_r").animate({width: "250px",opacity: '1', queue: false, duration: 1000})
+            $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: false, duration: 1000});
+            $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: 1000})
         }, 1500)
     }; 
       
     if (experiment.agentOrient[0][0] == "point" && experiment.novel[0] == "right") {
         setTimeout(function() {
-            $("#fruit_l").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
-            $("#fruit_l").animate({width: "250px",opacity: '1', queue: false, duration: 1000})
+            $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: false, duration: 1000});
+            $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: 1000})
         }, 1500)
     }; 
     
@@ -539,14 +539,14 @@ var experiment = {
             sourceRightFruit("images/"+rightFruit[0]+".png");
             showRightFruit();
             $("#fruit_r").css("bottom", "460px");     
-            $("#fruit_r").animate({bottom: "165px"},{duration: 1500});
+            $("#fruit_r").animate({bottom: "250px"},{duration: 1500});
             sourceLeftFruit("images/"+leftFruit[0]+".png");
             showLeftFruit();
             setTimeout(function() { 
-            $("#fruit_r").animate({width: "300px", opacity: '0.3', queue: false, duration: "slow"});
-            $("#fruit_l").animate({width: "300px",opacity: '0.3', queue: false, duration: "slow"});
-            $("#fruit_l").animate({width: "250px",opacity: '1', queue: false, duration: "slow"});
-            $("#fruit_r").animate({width: "250px",opacity: '1', queue: false, duration: "slow"})}, 2500)
+            $("#fruit_r").animate({width: "200px", opacity: '0.3', queue: false, duration: "slow"});
+            $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: false, duration: "slow"});
+            $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: "slow"});
+            $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: "slow"})}, 2500)
             } else {
             sourceRightFruit("images/"+rightFruit[0]+".png");
             hideRightFruit();
@@ -557,14 +557,14 @@ var experiment = {
             sourceLeftFruit("images/"+leftFruit[0]+".png");
             showLeftFruit();
             $("#fruit_l").css("bottom", "460px");     
-            $("#fruit_l").animate({bottom: "165px"},{duration: 1500});
+            $("#fruit_l").animate({bottom: "250px"},{duration: 1500});
             sourceRightFruit("images/"+rightFruit[0]+".png");
             showRightFruit();
             setTimeout(function() { 
-            $("#fruit_l").animate({width: "300px", opacity: '0.3', queue: false, duration: "slow"});
-            $("#fruit_r").animate({width: "300px",opacity: '0.3', queue: false, duration: "slow"});
-            $("#fruit_r").animate({width: "250px",opacity: '1', queue: false, duration: "slow"});
-            $("#fruit_l").animate({width: "250px",opacity: '1', queue: false, duration: "slow"})}, 2500);
+            $("#fruit_l").animate({width: "200px", opacity: '0.3', queue: false, duration: "slow"});
+            $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: false, duration: "slow"});
+            $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: "slow"});
+            $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: "slow"})}, 2500);
             } else {
             sourceRightFruit("images/"+rightFruit[0]+".png");
             showRightFruit();

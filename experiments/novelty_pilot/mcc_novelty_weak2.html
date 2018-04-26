@@ -8,6 +8,21 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
         <link type="text/css" href ="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" rel="stylesheet" />
+    
+    <script src="//uniqueturker.myleott.com/lib.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        (function(){
+            var ut_id = "3a66bc2a8662854fd9301ff9e9c527d9";
+            if (UTWorkerLimitReached(ut_id)) {
+                document.getElementById('mturk_form').style.display = 'none';
+                document.getElementsByTagName('body')[0].innerHTML = "You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.";
+            }
+        })();
+    </script>   
+    
+    
+    
+    
 	<link rel="stylesheet" href="style.css" />
 </head>
     
@@ -58,7 +73,7 @@
 					
 					<tr align="center" height="50px">
 						<td>
-                            <img src="images/bear.png" style="position:absolute; TOP:394px; LEFT:345px; WIDTH:80px; z-index:1" prelaod>
+                            <img src="images/bear.png" style="position:absolute; TOP:385px; LEFT:356px; WIDTH:60px; z-index:1" prelaod>
                             <img src="images/table_l.png" style="position:absolute; TOP:390px; LEFT:310px; WIDTH:143px">
                         </td>
 						<td>
@@ -66,7 +81,7 @@
                 ready to begin</button>
                         </td>
 						<td>
-                            <img src="images/ball.png" style="position:absolute; TOP:394px; LEFT:565px; WIDTH:80px; z-index:1">
+                            <img src="images/ball.png" style="position:absolute; TOP:385px; LEFT:575; WIDTH:60px; z-index:1">
                             <img src="images/table_r.png" style="position:absolute; TOP:390px; LEFT:530px; WIDTH:143px">
                             
                         </td>
