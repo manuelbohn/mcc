@@ -341,7 +341,7 @@ var experiment = {
     
     showSlide("choice"); 
       
-    setTimeout(function() {$("#text2").text("Click on the toy")}, 12000);
+    setTimeout(function() {$("#text2").text("Click on the toy")}, 10000);
     
     // show objects  
     choiceLeftFruit("images/"+leftFruit[0]+".png");
