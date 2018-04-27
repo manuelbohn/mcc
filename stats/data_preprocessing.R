@@ -1,4 +1,4 @@
-install.packages("stringr")
+
 library(rjson)
 library(tidyr)
 library(stringr)
@@ -16,12 +16,13 @@ setwd("~/Work/MCC/git-mcc/mcc/stats/")
 
 
 # select all files from individual workers
-files <- dir("~/Work/MCC/git-mcc/cosub_novelty/anonymized-results")
+#files <- dir("~/Work/MCC/git-mcc/cosub_novelty/anonymized-results")
+files <- dir("~/Work/MCC/git-mcc/nosub_novelty_weak/production-results")
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/cosub_novelty/anonymized-results/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/nosub_novelty_weak/production-results/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    data = jd$answers$data$data
@@ -35,12 +36,12 @@ names(novel.data) = c("id","alltrial","condition","agent","altAgent","leftObject
 novel.data$pick= str_sub(novel.data$pick,73,str_length(novel.data$pick)-4)
 novel.data = novel.data[!duplicated(novel.data), ]
 novel.data = novel.data[order(id)]
-novel.data$id = paste(novel.data$id,novel.data$condition,sep="_")
+#novel.data$id = paste(novel.data$id,novel.data$condition,sep="_")
 # check resulting datafile
 str(novel.data)
 head(novel.data)
 # write csv file for further analysis
-write.csv(novel.data, file="novel.data.csv")
+write.csv(novel.data, file="novel.weak.data.csv")
 
 ################################################################################################################
 
@@ -49,12 +50,13 @@ write.csv(novel.data, file="novel.data.csv")
 ######## preference ###########
 ################################################################################################################
 
-files <- dir("~/Work/MCC/git-mcc/cosub_preference/anonymized-results")
+#files <- dir("~/Work/MCC/git-mcc/cosub_preference/anonymized-results")
+files <- dir("~/Work/MCC/git-mcc/nosub_preference_weak/production-results")
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/cosub_preference/anonymized-results/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/nosub_preference_weak/production-results/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    data = jd$answers$data$data
@@ -68,12 +70,12 @@ names(pref.data) = c("id","alltrial","condition","agent","altAgent","leftObject"
 pref.data$pick= str_sub(pref.data$pick,76,str_length(pref.data$pick)-4)
 pref.data = pref.data[!duplicated(pref.data), ]
 pref.data = pref.data[order(id)]
-pref.data $id = paste(pref.data $id, pref.data $condition,sep="_")
+#pref.data $id = paste(pref.data $id, pref.data $condition,sep="_")
 # check resulting datafile
 str(pref.data)
 head(pref.data)
 # write csv file for further analysis
-write.csv(pref.data, file="pref.data.csv")
+write.csv(pref.data, file="pref.weak.data.csv")
 
 ################################################################################################################
 
