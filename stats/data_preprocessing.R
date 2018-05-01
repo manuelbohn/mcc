@@ -17,12 +17,13 @@ setwd("~/Work/MCC/git-mcc/mcc/stats/")
 
 # select all files from individual workers
 #files <- dir("~/Work/MCC/git-mcc/cosub_novelty/anonymized-results")
-files <- dir("~/Work/MCC/git-mcc/nosub_novelty_weak/production-results")
+files <- dir("~/Work/MCC/git-mcc/nosub_novelty_weak2/production-results")
+#files <- dir("~/Work/MCC/git-mcc/nosub_novelty_weak2/sandbox-results")
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/nosub_novelty_weak/production-results/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/nosub_novelty_weak2/production-results/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    data = jd$answers$data$data
@@ -41,7 +42,7 @@ novel.data = novel.data[order(id)]
 str(novel.data)
 head(novel.data)
 # write csv file for further analysis
-write.csv(novel.data, file="novel.weak.data.csv")
+write.csv(novel.data, file="novel.weak.data2.csv")
 
 ################################################################################################################
 

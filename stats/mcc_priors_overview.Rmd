@@ -1,0 +1,75 @@
+---
+title: "MCC Prior Overview"
+author: "Manuel Bohn"
+date: "9 4 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(langcog)
+```
+
+
+```{r data}
+d1 <- read_csv(file="novel.weak.data2.csv") %>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"),
+         strength = "2_medium")
+
+x <- d1 %>%
+  filter(trial_type == "train") %>%
+  group_by(id)%>%
+  summarise(n = length(correct)) %>%
+  filter(n > 2)
+
+d1 <- d1 %>%
+  filter(!id %in% x$id)
+
+d2 <- read_csv(file="novel.weak.data.csv") %>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"),
+         strength = "1_weak")
+
+d3 <- read_csv(file="novel.data.csv") %>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"),
+         strength = "3_strong")
+
+d4 <-read_csv(file="pref.data.csv") %>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"),
+         strength = "3_strong")
+
+d5 <-read_csv(file="pref.weak.data.csv") %>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"),
+         strength = "2_medium")
+
+d <- bind_rows(d1,d2,d3,d4,d5)
+```
+
+
+```{r plot data}
+
+p1 <- d %>%
+  filter(trial_type == "test") %>%
+  group_by(strength,condition,change, id) %>%
+  summarise(correct = mean(correct)) %>%
+  multi_boot_standard(col = "correct")
+
+
+ggplot(p1, 
+       aes(x = change, y = mean, fill = change)) +
+  geom_bar(stat="identity") + 
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few(base_size = 12) + 
+  facet_grid(condition ~ strength , scales = "free_x", space = "free_x" ) +
+  ylim(0,1)+
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_fill_solarized(name="Speaker Change",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+
+```

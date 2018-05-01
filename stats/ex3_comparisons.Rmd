@@ -319,6 +319,86 @@ pragmaticListener({label: "dax", point: 2 })
 '
 ```
 
+
+```{r rsa model2}
+rsaModel2 <- 'var ObjectPrior = Categorical({vs: all_objects, ps: [0.1666667, 0.1666667, 0.8333333] })
+
+var pragmaticListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior);
+var obj = sample(ObjectPrior);
+var S1 = speaker(obj, lexiconName);
+observe(S1, utterance)
+return {lexicon: lexiconName, obj: obj.shape}
+}})
+}
+
+var speakerOptimality = 2.25;
+
+var speaker = function(obj, lexiconName){
+Infer({method: "enumerate", model: function(){
+var utterance = utterancePrior(obj, lexiconName);
+var L0 = literalListener(utterance);
+ factor(speakerOptimality * L0.score(obj.shape))
+return utterance
+}})
+}
+
+var literalListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior); 
+var lexicon = lexiconObject[lexiconName];
+var obj = sample(ObjectPrior);
+if ("label" in utterance) {
+ var truthValue = lexicon(utterance, obj);
+ condition(truthValue)
+}
+if (utterance.point) {
+ var truthValuePoint = point(utterance, obj);
+ condition(truthValuePoint)
+}
+return obj.shape 
+}})
+}
+
+// pragmaticListener({label: "dax", point: 2 })
+
+var addNoise = function(dist, noiseParam){
+   Infer({model: function(){ 
+      return flip(noiseParam) ? uniformDraw([0, 1]) : sample(dist)
+    }
+   })
+}
+
+
+var model = function(){
+   var noise = uniform(0, 1)
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 })
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+   map(data, function(d){ 
+      observe(noisyModelPredictions, d)
+    } )
+  return [noise, modelPredictions]
+}
+
+model() 
+'
+```
+
+
+```{r}
+
+obs_data <- data %>% filter (Change == "Same speaker", Alignment == "Congruent", Experiment =="Novelty") %>% select(correct_inf)
+
+bda <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, sep='\n'),
+  data = obs_data,
+  data_var = "data"
+)
+
+```
+
+
 ```{r}
 priorProbsFromR <- list(
   "pref_inf_same_congruent" =  c(0.0333333, 0.033333, 0.9666667),
@@ -330,6 +410,8 @@ priorProbsFromR <- list(
   "novel_inf_diff_congruent" =  c(0.4083333, 0.4083333, 0.5916667),
   "novel_inf_diff_incongruent" = c(0.5916667, 0.5916667, 0.4083333)
 )
+
+
 
 
 # get model predictions from webppl

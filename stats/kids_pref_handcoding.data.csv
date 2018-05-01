@@ -1,0 +1,31 @@
+;alltrial;id;age;condition;agent;altAgent;leftObject;rightObject;pick;target;trial;change;rt;correct
+1;1;180427_1_pref;4;preference;Elephant      ;NA;car;bear;car;right;train;false;0;1
+2;2;180427_1_pref;4;preference;Pig;NA;duck;ball;ball;left;train;false;0;1
+3;3;180427_1_pref;4;preference;Beaver;Elephant;t14;t10;t14;right;1;true;0;0
+4;4;180427_1_pref;4;preference;Sheep;NA;t6;t9;t9;right;2;false;0;1
+5;5;180427_1_pref;4;preference;Tiger;Bear;t7;t17;t17;left;3;true;0;0
+6;6;180427_1_pref;4;preference;Cat;NA;t4;t11;t11;right;4;false;0;1
+7;7;180427_1_pref;4;preference;Pig;NA;t3;t8;t3;left;5;false;0;1
+8;8;180427_1_pref;4;preference;Monkey;Mouse;t15;t17;t17;left;6;true;0;0
+9;9;180427_1_pref;4;preference;Frog;Dog;t13;t2;t13;right;7;true;0;0
+10;10;180427_1_pref;4;preference;Bunny;NA;t1;t16;t1;left;8;false;0;1
+11;1;180427_2_pref;3;preference;Elephant      ;NA;car;bear;car;right;train;false;0;1
+12;2;180427_2_pref;3;preference;Pig;NA;duck;ball;ball;left;train;false;0;1
+13;3;180427_2_pref;3;preference;Mouse;Pig;t5;t10;t10;left;1;true;0;0
+14;4;180427_2_pref;3;preference;Bunny;NA;t16;t6;t6;right;2;false;0;1
+15;5;180427_2_pref;3;preference;Beaver;Dog;t15;t9;t15;right;3;true;0;0
+16;6;180427_2_pref;3;preference;Monkey;NA;t1;t4;t4;left;4;false;0;0
+17;7;180427_2_pref;3;preference;Sheep;NA;t3;t14;t14;left;5;false;0;0
+18;8;180427_2_pref;3;preference;Tiger;Frog;t12;t2;t12;right;6;true;0;0
+19;9;180427_2_pref;3;preference;Cat;NA;t17;t11;t11;left;7;false;0;0
+20;10;180427_2_pref;3;preference;Bear;Elephant;t8;t7;t8;right;8;true;0;0
+21;1;180427_4_pref;2;preference;Elephant      ;NA;car;bear;car;right;train;false;0;1
+22;2;180427_4_pref;2;preference;Pig;NA;duck;ball;ball;left;train;false;0;1
+23;3;180427_4_pref;2;preference;Sheep;NA;t7;t1;t7;right;1;false;0;0
+24;4;180427_4_pref;2;preference;Cat;Monkey;t8;t9;t9;left;2;true;0;0
+25;5;180427_4_pref;2;preference;Tiger;NA;t10;t11;t10;right;3;false;0;0
+26;6;180427_4_pref;2;preference;Mouse;Bear;t16;t2;t2;right;4;true;0;1
+27;7;180427_4_pref;2;preference;Elephant      ;Bunny;t17;t14;t14;right;5;true;0;1
+28;8;180427_4_pref;2;preference;Beaver;NA;t12;t6;t6;left;6;false;0;0
+29;9;180427_4_pref;2;preference;Pig;Dog;t5;t4;t4;right;7;true;0;1
+30;10;180427_4_pref;2;preference;Frog;NA;t15;t3;t3;left;8;false;0;0
