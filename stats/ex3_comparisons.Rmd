@@ -377,9 +377,9 @@ var model = function(){
 
   var conditionOutput = map(function(conditionInfo){
 
-    var conditionSpecificData =  _.filter(allData, {Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Experiment: conditionInfo.Experiment})
+    var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
 
-   var conditionSpecificPriors =  _.filter(allPriorProbs, {Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Experiment: conditionInfo.Experiment})
+   var conditionSpecificPriors =  _.filter(allPriorProbs, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
 
    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors.priorProbs)
    var noisyModelPredictions = addNoise(modelPredictions, noise)
@@ -396,6 +396,7 @@ var model = function(){
 
  return conditionOutput
 }
+
 
 Infer({model: model, method: "MCMC", samples: 10})
 '
@@ -437,7 +438,10 @@ bda <- webppl(
 
 
 
-jsonlite::toJSON(priorProbs, pretty = T)
+
+jsonlite::toJSON(allConditions, pretty = T)
+
+jsonlite::toJSON(allPriorProbs, pretty = T)
 
 
 ```
