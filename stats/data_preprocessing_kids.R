@@ -71,7 +71,7 @@ pref.data = pref.data[order(id)]
 str(pref.data)
 head(pref.data)
 # write csv file for further analysis
-write.csv(pref.data, file="kids_pref.data.csv")
+write.csv(pref.data, file="kids_pref_handcoding.data.csv")
 
 ################################################################################################################
 

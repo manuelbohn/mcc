@@ -321,34 +321,34 @@ pragmaticListener({label: "dax", point: 2 })
 
 
 ```{r rsa model2}
-rsaModel2 <- 'var ObjectPrior = Categorical({vs: all_objects, ps: [0.1666667, 0.1666667, 0.8333333] })
+rsaModel2 <- '
 
-var pragmaticListener = function(utterance){
+var pragmaticListener = function(utterance, priorProbs){
 Infer({method: "enumerate", model: function(){
 var lexiconName = sample(LexiconPrior);
-var obj = sample(ObjectPrior);
-var S1 = speaker(obj, lexiconName);
+var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+var S1 = speaker(obj, lexiconName, priorProbs);
 observe(S1, utterance)
-return {lexicon: lexiconName, obj: obj.shape}
+return {lexicon: lexiconName, obj: obj.shape == "circle" ? 1 : 0}
 }})
 }
 
 var speakerOptimality = 2.25;
 
-var speaker = function(obj, lexiconName){
+var speaker = function(obj, lexiconName, priorProbs){
 Infer({method: "enumerate", model: function(){
 var utterance = utterancePrior(obj, lexiconName);
-var L0 = literalListener(utterance);
+var L0 = literalListener(utterance, priorProbs);
  factor(speakerOptimality * L0.score(obj.shape))
 return utterance
 }})
 }
 
-var literalListener = function(utterance){
+var literalListener = function(utterance, priorProbs){
 Infer({method: "enumerate", model: function(){
 var lexiconName = sample(LexiconPrior); 
 var lexicon = lexiconObject[lexiconName];
-var obj = sample(ObjectPrior);
+var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
 if ("label" in utterance) {
  var truthValue = lexicon(utterance, obj);
  condition(truthValue)
@@ -361,8 +361,6 @@ return obj.shape
 }})
 }
 
-// pragmaticListener({label: "dax", point: 2 })
-
 var addNoise = function(dist, noiseParam){
    Infer({model: function(){ 
       return flip(noiseParam) ? uniformDraw([0, 1]) : sample(dist)
@@ -370,31 +368,77 @@ var addNoise = function(dist, noiseParam){
    })
 }
 
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
    var noise = uniform(0, 1)
-   var modelPredictions = pragmaticListener({label: "dax", point: 2 })
+
+  var conditionOutput = map(function(conditionInfo){
+
+    var conditionSpecificData =  _.filter(allData, {Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Experiment: conditionInfo.Experiment})
+
+   var conditionSpecificPriors =  _.filter(allPriorProbs, {Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Experiment: conditionInfo.Experiment})
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors.priorProbs)
    var noisyModelPredictions = addNoise(modelPredictions, noise)
-   map(data, function(d){ 
-      observe(noisyModelPredictions, d)
-    } )
-  return [noise, modelPredictions]
+
+   map(function(d){ 
+      observe(noisyModelPredictions, d.correct_inf)
+    }, conditionSpecificData)
+
+
+  return {noisyModelPred: Math.exp(noisyModelPredictions.score(1)), noise: noise, Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment}
+
+
+}, allConditions)
+
+ return conditionOutput
 }
 
-model() 
+Infer({model: model, method: "MCMC", samples: 10})
 '
 ```
 
 
 ```{r}
 
-obs_data <- data %>% filter (Change == "Same speaker", Alignment == "Congruent", Experiment =="Novelty") %>% select(correct_inf)
+allConditions <- data %>%
+  mutate(Change = ifelse(change =="same", "Same speaker", "Different speaker"),
+         Alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"),
+         Experiment = ifelse(experiment == "pref_inf", "Preference", "Novelty")) %>%
+  group_by(Experiment,Change,Alignment)%>%
+  summarise(correct_inf = mean(correct_inf)) %>%
+  select(Change, Alignment,Experiment)
+
+allPriorProbs <- data.frame(
+  Experiment = c("Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty"),
+  Change = c("Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker"),
+  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"))
+
+allPriorProbs$priorProbs = list(
+    c(0.0333333, 0.033333, 0.9666667), 
+    c(0.9666667, 0.9666667, 0.0333333),
+    c(0.3583333, 0.3583333, 0.6416667),
+    c(0.6416667, 0.6416667, 0.3583333),
+    c(0.1666667, 0.1666667, 0.8333333),
+    c(0.8333333, 0.8333333, 0.1666667),
+    c(0.4083333, 0.4083333, 0.5916667),
+    c(0.5916667, 0.5916667, 0.4083333))
+
 
 bda <- webppl(
   program_code = paste(rsaUtils, rsaModel2, sep='\n'),
-  data = obs_data,
-  data_var = "data"
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR"
 )
+
+
+
+
+jsonlite::toJSON(priorProbs, pretty = T)
+
 
 ```
 
