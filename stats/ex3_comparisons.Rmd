@@ -329,7 +329,7 @@ var lexiconName = sample(LexiconPrior);
 var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
 var S1 = speaker(obj, lexiconName, priorProbs);
 observe(S1, utterance)
-return {lexicon: lexiconName, obj: obj.shape == "circle" ? 1 : 0}
+return obj.shape == "circle" ? 1 : 0
 }})
 }
 
@@ -377,28 +377,27 @@ var model = function(){
 
   var conditionOutput = map(function(conditionInfo){
 
-    var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
+  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
 
    var conditionSpecificPriors =  _.filter(allPriorProbs, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
 
-   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors.priorProbs)
+  //display(JSON.stringify(conditionSpecificData[0].correct_inf))
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors[0].priorProbs)
    var noisyModelPredictions = addNoise(modelPredictions, noise)
 
    map(function(d){ 
+     // display(JSON.stringify(noisyModelPredictions) + JSON.stringify(d.correct_inf))
       observe(noisyModelPredictions, d.correct_inf)
     }, conditionSpecificData)
 
 
-  return {noisyModelPred: Math.exp(noisyModelPredictions.score(1)), noise: noise, Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment}
-
+  return  [conditionInfo.Experiment + "_" + conditionInfo.Change + "_" +  conditionInfo.Alignment, Math.exp(noisyModelPredictions.score(1))]
 
 }, allConditions)
 
- return conditionOutput
+ return extend(_.fromPairs(conditionOutput), {noise: noise})
 }
-
-
-Infer({model: model, method: "MCMC", samples: 10})
 '
 ```
 
@@ -432,16 +431,53 @@ allPriorProbs$priorProbs = list(
 bda <- webppl(
   program_code = paste(rsaUtils, rsaModel2, sep='\n'),
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
-  data_var = "dataFromR"
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "MCMC", samples = 5000, burn = 2500, verbose = T)
 )
 
 
-
-
-
-jsonlite::toJSON(allConditions, pretty = T)
+jsonlite::toJSON(data, pretty = T)
 
 jsonlite::toJSON(allPriorProbs, pretty = T)
+
+filter(bda, Iteration == 1)
+
+posterior.noise <- bda %>%
+  filter(Parameter == "noise")%>%
+  summarise(noise = mean(value))
+
+posterior.predictive = bda %>%
+  filter(Parameter != "noise") %>%
+  separate(Parameter, into = c("Experiment", "Change", "Alignment"), sep="_")
+
+
+ggplot(posterior.predictive, aes(x = value))+
+  geom_histogram(binwidth = .01)+
+  facet_wrap(~Experiment+Change+Alignment, nrow = 2)
+
+
+
+noisy.model <- posterior.predictive %>%
+  mutate(Model="Noisy Model")%>%
+  group_by(Model,Experiment,Change,Alignment)%>%
+  multi_boot_standard(col = "value")
+
+
+p.com <- bind_rows(noisy.model,pd)
+
+
+ggplot(p.com, 
+       aes(x = Change, y = mean, fill = Alignment)) +
+  geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),position = position_dodge(width = 0.9))+
+  labs(x=" ",y="Proportion Choosing More Informative")+
+  facet_grid(Experiment ~ Model)+
+  theme_few(base_size = 12) + 
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  ylim(0,1)
+
 
 
 ```
