@@ -81,6 +81,7 @@ data <- dat %>%
 data %>%
   group_by(experiment,alignment,change) %>%
   summarise(n = length(id))
+
 ```
 
 ```{r plot data}
@@ -197,16 +198,20 @@ plot1 <- data.frame(pd$Experiment[pd$Model=="Data"],pd$mean[pd$Model=="Data"],pd
 names(plot1) = c("Experiment","Data","Model","Comp")
 plot2 <- data.frame(pd$Experiment[pd$Model=="Data"],pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Full model"],rep("Data vs Full model",8))
 names(plot2) = c("Experiment","Data","Model","Comp")
+plot5 <- data.frame(noisy.model$Experiment,pd$mean[pd$Model=="Data"],noisy.model$mean,rep("Data vs Noisy Model",8))
+names(plot5) = c("Experiment","Data","Model","Comp")
+
 plot3 <- data.frame(rep("Combined",8),pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Full model"],rep("Data vs Full model",8))
 names(plot3) = c("Experiment","Data","Model","Comp")
 plot4 <- data.frame(rep("Combined",8),pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Prior only"],rep("Data vs Prior only",8))
 names(plot4) = c("Experiment","Data","Model","Comp")
 
-plot <- rbind(plot3,plot4,plot1,plot2)
+
+plot <- rbind(plot1,plot2,plot5)
 
 ggplot(data = plot,aes(x = Model, y = Data, col = Comp)) +
   geom_point()+
-  facet_grid(Experiment~Comp)+
+  facet_grid(~Comp)+
   stat_cor(method = "pearson", label.x = 0.4, label.y = 0.9)+
   geom_smooth(method = "lm", se = F, col = "black")+
   theme_few() + 
@@ -436,17 +441,22 @@ bda <- webppl(
   inference_opts = list(method = "MCMC", samples = 5000, burn = 2500, verbose = T)
 )
 
+## check one iteration
+filter(bda, Iteration == 1)
+
 
 jsonlite::toJSON(data, pretty = T)
 
 jsonlite::toJSON(allPriorProbs, pretty = T)
 
-filter(bda, Iteration == 1)
-
+## distribution of noise
 posterior.noise <- bda %>%
-  filter(Parameter == "noise")%>%
-  summarise(noise = mean(value))
+  filter(Parameter == "noise")
 
+ggplot(posterior.noise, aes(x = value))+
+  geom_histogram()
+
+## distribution of model predictions
 posterior.predictive = bda %>%
   filter(Parameter != "noise") %>%
   separate(Parameter, into = c("Experiment", "Change", "Alignment"), sep="_")
@@ -454,18 +464,37 @@ posterior.predictive = bda %>%
 
 ggplot(posterior.predictive, aes(x = value))+
   geom_histogram(binwidth = .01)+
-  facet_wrap(~Experiment+Change+Alignment, nrow = 2)
+  facet_wrap(~Experiment+Change+Alignment, nrow = 2,scales = 'free')
 
+
+## Bayesian credible intervals
+
+library(coda)
+
+estimate_mode <- function(s) {
+  d <- density(s)
+  return(d$x[which.max(d$y)])
+}
+
+hdi_upper<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","upper"])
+}
+
+hdi_lower<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","lower"])
+}
 
 
 noisy.model <- posterior.predictive %>%
   mutate(Model="Noisy Model")%>%
-  group_by(Model,Experiment,Change,Alignment)%>%
-  multi_boot_standard(col = "value")
+  group_by(Model,Experiment,Change,Alignment) %>%
+  summarise(mean = estimate_mode(value), ci_lower = hdi_lower(value), ci_upper = hdi_upper(value))
 
 
+## joining noisy model predictions with other predictions
 p.com <- bind_rows(noisy.model,pd)
-
 
 ggplot(p.com, 
        aes(x = Change, y = mean, fill = Alignment)) +

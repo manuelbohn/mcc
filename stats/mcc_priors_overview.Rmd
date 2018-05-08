@@ -45,7 +45,11 @@ d5 <-read_csv(file="pref.weak.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"),
          strength = "2_medium")
 
-d <- bind_rows(d1,d2,d3,d4,d5)
+d6 <-read_csv(file="pref.weak.data2.csv") %>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"),
+         strength = "1_weak")
+
+d <- bind_rows(d1,d2,d3,d4,d5,d6)
 ```
 
 

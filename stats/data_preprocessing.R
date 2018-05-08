@@ -4,7 +4,6 @@ library(tidyr)
 library(stringr)
 library(dplyr)
 library(data.table)
-library("stringr")
 
 
 ##
@@ -52,12 +51,14 @@ write.csv(novel.data, file="novel.weak.data2.csv")
 ################################################################################################################
 
 #files <- dir("~/Work/MCC/git-mcc/cosub_preference/anonymized-results")
-files <- dir("~/Work/MCC/git-mcc/nosub_preference_weak/production-results")
+#files <- dir("~/Work/MCC/git-mcc/nosub_preference_weak/production-results")
+files <- dir("~/Work/MCC/git-mcc/nosub_preference_weak2/production-results")
+
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/nosub_preference_weak/production-results/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/nosub_preference_weak2/production-results/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    data = jd$answers$data$data
@@ -76,7 +77,7 @@ pref.data = pref.data[order(id)]
 str(pref.data)
 head(pref.data)
 # write csv file for further analysis
-write.csv(pref.data, file="pref.weak.data.csv")
+write.csv(pref.data, file="pref.weak.data2.csv")
 
 ################################################################################################################
 
