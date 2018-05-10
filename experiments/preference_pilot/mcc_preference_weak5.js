@@ -402,7 +402,7 @@ var experiment = {
     setTimeout(function() {      
     $(".fruit_r").bind("click", experiment.eat);
     $(".fruit_l").bind("click", experiment.eat);
-}, 000);
+}, 7000);
   
   },
  // sequence of events during training exposure
