@@ -506,6 +506,7 @@ var model = function(){
    map(function(d){ 
      // display(JSON.stringify(modelPredictions) + JSON.stringify(d.correct_inf))
       observe(modelPredictions, d.correct_inf)
+      // factor(modelPredictions.score(d.correct_inf))
     }, conditionSpecificData)
 
 
@@ -517,6 +518,44 @@ var model = function(){
 }
 '
 ```
+
+
+
+```{r}
+bdaModel.rsa.loglikelihood <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.allPriorProbs
+
+var model = function(){
+   var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
+
+   var conditionSpecificPriors =  _.filter(allPriorProbs, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
+
+  var regularizedPriors = normalize(map(function(i){ return Math.pow(i, priorExponent) },
+        conditionSpecificPriors[0].priorProbs))
+
+  //display(JSON.stringify(conditionSpecificData[0].correct_inf))
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, regularizedPriors)
+
+   var loglike = sum(map(function(d){ 
+      return modelPredictions.score(d.correct_inf)
+    }, conditionSpecificData))
+
+  return  loglike
+}, allConditions)
+
+ return sum(loglike)
+}
+'
+
+```
+
 
 ```{r noisy model}
 
