@@ -502,15 +502,15 @@ var experiment = {
     // animate object when visible and pointed at 
       if (experiment.agentOrient[0][0] == "point_r") {
         setTimeout(function() {
-            $("#fruit_r").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
-            $("#fruit_r").animate({width: "250px",opacity: '1', queue: false, duration: 1000})
+            $("#fruit_r").animate({width: "180px",opacity: '0.3', queue: false, duration: 1000});
+            $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: 1000})
         }, 2500)
     }; 
       
     if (experiment.agentOrient[0][0] == "point_l") {
         setTimeout(function() {
-            $("#fruit_l").animate({width: "300px",opacity: '0.3', queue: false, duration: 1000});
-            $("#fruit_l").animate({width: "250px",opacity: '1', queue: false, duration: 1000})
+            $("#fruit_l").animate({width: "180px",opacity: '0.3', queue: false, duration: 1000});
+            $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: 1000})
         }, 2500)
     }; 
     

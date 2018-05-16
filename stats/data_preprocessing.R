@@ -52,13 +52,13 @@ write.csv(novel.data, file="novel.weak.data2.csv")
 
 #files <- dir("~/Work/MCC/git-mcc/cosub_preference/anonymized-results")
 #files <- dir("~/Work/MCC/git-mcc/nosub_preference_weak/production-results")
-files <- dir("~/Work/MCC/git-mcc/nosub_preference_weak3/production-results")
+files <- dir("~/Work/MCC/git-mcc/nosub_preference_weak5/production-results")
 
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/nosub_preference_weak3/production-results/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/nosub_preference_weak5/production-results/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    data = jd$answers$data$data
@@ -67,8 +67,8 @@ for (f in files) {
 }
 
 # convert into short format, drop unnecessary columns, rename variables and sort by id
-pref.data= melt(setDT(raw), measure = patterns( "^data.condition","^data.agent","^data.altAgent","^data.leftFruit","^data.rightFruit","^data.pick","^data.pref","^data.trial","^data.speakerChange","^data.rt", "^data.correct"))
-names(pref.data) = c("id","alltrial","condition","agent","altAgent","leftObject","rightObject","pick","target","trial","change","rt","correct") 
+pref.data= melt(setDT(raw), measure = patterns( "^data.condition","^data.agent","^data.altAgent","^data.leftFruit","^data.rightFruit","^data.pick","^data.pref","^data.emo","^data.trial","^data.speakerChange","^data.rt", "^data.correct"))
+names(pref.data) = c("id","alltrial","condition","agent","altAgent","leftObject","rightObject","pick","target","emotion","trial","change","rt","correct") 
 pref.data$pick= str_sub(pref.data$pick,76,str_length(pref.data$pick)-4)
 pref.data = pref.data[!duplicated(pref.data), ]
 pref.data = pref.data[order(id)]
@@ -77,7 +77,7 @@ pref.data = pref.data[order(id)]
 str(pref.data)
 head(pref.data)
 # write csv file for further analysis
-write.csv(pref.data, file="pref.weak.data3.csv")
+write.csv(pref.data, file="pref.weak.data5.csv")
 
 ################################################################################################################
 
