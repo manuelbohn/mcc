@@ -202,7 +202,10 @@ names(plot2) = c("Experiment","Data","Model","Comp")
 plot <- rbind(plot1,plot2)
 
 ggplot(data = plot,aes(x = Model, y = Data, col = Comp)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.3)+
   geom_point()+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
   facet_grid(~Comp)+
   stat_cor(method = "pearson", label.x = 0.4, label.y = 0.9)+
   geom_smooth(method = "lm", se = F, col = "black")+
@@ -315,7 +318,6 @@ return obj.shape
 pragmaticListener({label: "dax", point: 2 })
 '
 ```
-
 
 ```{r rsa model2}
 rsaModel2 <- '
@@ -501,7 +503,7 @@ var model = function(){
   //display(JSON.stringify(conditionSpecificData[0].correct_inf))
 
     var modelPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: all_objects, ps: conditionSpecificPriors[0].priorProbs}));
+      var obj = sample( Categorical({vs: all_objects, ps: regularizedPriors}));
       return obj.shape == "circle" ? 1 : 0
     }})
 
@@ -582,7 +584,7 @@ var model = function(){
   //display(JSON.stringify(conditionSpecificData[0].correct_inf))
 
   var modelPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: all_objects, ps: conditionSpecificPriors[0].priorProbs}));
+      var obj = sample( Categorical({vs: all_objects, ps: regularizedPriors}));
       return obj.shape == "circle" ? 1 : 0
   }})
 
@@ -1022,6 +1024,7 @@ ggplot(data = plot.model,aes(x = mean, y = Data, col = Model)) +
   facet_grid(Type~Adjustment)+
   coord_fixed()+
   xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
   stat_cor(method = "pearson", label.x = 0.4, label.y = 0.9)+
   geom_smooth(method = "lm", se = F, col = "black", size =0.4)+
   theme_few() + 
@@ -1055,7 +1058,8 @@ var model = function(){
 
    var loglike = sum(map(function(d){ 
 
-  // display(JSON.stringify(modelPredictions.score(d.correct_inf)))
+  //display(JSON.stringify(modelPredictions.score(d.correct_inf)))
+  //display(JSON.stringify(conditionSpecificData))
       
   return modelPredictions.score(d.correct_inf)
     }, conditionSpecificData))
