@@ -47,7 +47,7 @@ a <- ggplot(p.com,
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),position = position_dodge(width = 0.9))+
   labs(x=" ",y="Proportion Choosing More Informative")+
   facet_grid(Experiment ~ Adjustment*Type, labeller = label_wrap_gen(width=5))+
-  theme_few(base_size = 12) + 
+  theme_few(base_size = 8) + 
   theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
   ylim(0,1)+
   theme(legend.position="bottom")
@@ -58,7 +58,7 @@ a
 ```
 
 
-## Correlations between mocel predictions and data
+## Correlations between model predictions and data
 
 ```{r, include = FALSE}
 b <-ggplot(data = plot.model,aes(x = mean, y = Data, col = Model)) +
@@ -68,7 +68,7 @@ b <-ggplot(data = plot.model,aes(x = mean, y = Data, col = Model)) +
   coord_fixed()+
   xlim(0,1)+ylim(0,1)+
   xlab("Model")+
-  stat_cor(method = "pearson", label.x = 0.4, label.y = 0.9)+
+  stat_cor(method = "pearson", label.x = 0.3, label.y = 0.9)+
   geom_smooth(method = "lm", se = F, col = "black", size =0.4)+
   theme_few() + 
   guides(col = F)+
@@ -79,35 +79,46 @@ b <-ggplot(data = plot.model,aes(x = mean, y = Data, col = Model)) +
 b
 ```
 
-## Prior only Model with Noise
+## Model descriptions
+
+### Prior only Model with Noise
 Mean noise parameter with 95% Credible Interval: `r round(mean(posterior.noise1$value),2)` [`r round(hdi_lower(posterior.noise1$value),2)` : `r round(hdi_upper(posterior.noise1$value),2)`].
 
 Model predictions: Very squashed (less extreme) compared to no adjustment predictions due to high noise parameter. 
 
-Qualitatively, predictions change for different speaker - congruent (from above chance to chance).
+Qualitatively, predictions change compared to no adjustment predictions for different speaker - congruent (from above chance to chance).
 
-## RSA Model with Noise
+4/8 predictions are qualitatively correct.
+
+
+### RSA Model with Noise
 Noise parameter: `r round(mean(posterior.noise$value),2)` [`r round(hdi_lower(posterior.noise$value),2)` : `r round(hdi_upper(posterior.noise$value),2)`]
 
 Model predictions: Slightly squashed compared to no adjustment predictions. 
 
 Qualitatively predictions do not change.
 
-## Prior only Model with regularized Priors
+8/8 predictions are qualitatively correct.
+
+### Prior only Model with regularized Priors
 Prior Exponent: `r round(mean(posterior.noise3$value),2)` [`r round(hdi_lower(posterior.noise3$value),2)` : `r round(hdi_upper(posterior.noise3$value),2)`].
 
-Model predictions: Again, very squashed (less extreme) compared to no adjustment predictions. Prior exponent parameter shows that priors are pulled towards uniform (and therefore to chance level). 
+Model predictions: Again, very squashed (less extreme) compared to no adjustment predictions. Prior exponent parameter shows that priors are pulled towards uniform (and therefore to chance level).
 
-Qualitatively, predictions change again for different speaker - congruent (from above chance to below chance).
+Qualitatively, predictions change again for different speaker - congruent (from above chance to below chance). This is somehow strange as the uniform prior prediction in this case would be chance. Why is the prediction pushed below chance? This doesn't really make sense.
 
-## RSA Model with regularized Priors
+4/8 predictions are qualitatively correct.
+
+### RSA Model with regularized Priors
 Prior Exponent: `r round(mean(posterior.noise2$value),2)` [`r round(hdi_lower(posterior.noise2$value),2)` : `r round(hdi_upper(posterior.noise2$value),2)`]
 
 Model predictions: Pulled strongly towards no prior model because priors are made more uniform. 
 
 Qualitatively, predictions change for same speaker incongruent in novelty (from below chance to chance) and for different speaker incongruent preference (at chance to above chance).
 
-## Prior only Model with Noise and regularized Priors
+6/8 predictions are qualitatively correct.
+
+### Prior only Model with Noise and regularized Priors
 Noise parameter: `r round(mean(posterior.noise5$value[posterior.noise5$Parameter =="noise"]),2)` [`r round(hdi_lower(posterior.noise5$value[posterior.noise5$Parameter =="noise"]),2)` : `r round(hdi_upper(posterior.noise5$value[posterior.noise5$Parameter =="noise"]),2)`].
 
 Prior Exponent: `r round(mean(posterior.noise5$value[posterior.noise5$Parameter =="priorExponent"]),2)` [`r round(hdi_lower(posterior.noise5$value[posterior.noise5$Parameter =="priorExponent"]),2)` : `r round(hdi_upper(posterior.noise5$value[posterior.noise5$Parameter =="priorExponent"]),2)`].
@@ -116,7 +127,9 @@ Model predictions: Slightly squashed (less extreme). More noise compared to mode
 
 No qualitative change.
 
-## RSA Model with Noise and regularized Priors
+6/8 predictions are qualitatively correct.
+
+### RSA Model with Noise and regularized Priors
 Mean noise parameter with 95% CrI: `r round(mean(posterior.noise4$value[posterior.noise4$Parameter =="noise"]),2)` [`r round(hdi_lower(posterior.noise4$value[posterior.noise4$Parameter =="noise"]),2)` : `r round(hdi_upper(posterior.noise4$value[posterior.noise4$Parameter =="noise"]),2)`].
 
 Mean priorExponent with 95% CrI: `r round(mean(posterior.noise4$value[posterior.noise4$Parameter =="priorExponent"]),2)` [`r round(hdi_lower(posterior.noise4$value[posterior.noise4$Parameter =="priorExponent"]),2)` : `r round(hdi_upper(posterior.noise4$value[posterior.noise4$Parameter =="priorExponent"]),2)`].
@@ -125,7 +138,12 @@ Model predictions: Slightly squashed (less extreme). A little less noisy compare
 
 No qualitative change.
 
+8/8 predictions are qualitatively correct.
+
 ## Comparing models
+
+Order of parameterized models makes sense when looking at the correlations and model predictions. However, the predictions from the non-parameterized models do not fit in. First, the Prior only model provided a better fit based on the previous 
+
 ```{r model predictions log likelihood, include = FALSE}
 c <- ggplot(llh.plot, aes(x = Model, y = logSumExp, fill = Model))+
   geom_bar(stat="identity", color = "black")+
@@ -135,15 +153,19 @@ c <- ggplot(llh.plot, aes(x = Model, y = logSumExp, fill = Model))+
 ```
 
 ```{r}
-llh.plot%>%
-  knitr::kable(digits = 3)
-```
-
-
-```{r}
 c
 ```
 
+Log probabilities given the data for all models (except no prior model), computed via webppl. 
 
+```{r}
+llh.plot%>%
+  knitr::kable(digits = 2)
+```
 
+Log probabilities given the data for non-parameterized models based on binomial distribution (full model = RSA).
 
+```{r}
+comp_model%>%
+  knitr::kable(digits = 2)
+```

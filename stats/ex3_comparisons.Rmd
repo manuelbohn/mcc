@@ -419,7 +419,6 @@ var model = function(){
    var conditionSpecificPriors =  _.filter(allPriorProbs, 
         {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
 
-  //display(JSON.stringify(conditionSpecificData[0].correct_inf))
 
     var priorOnlyPredictions = Infer({method: "enumerate", model: function(){
       var obj = sample( Categorical({vs: all_objects, ps: conditionSpecificPriors[0].priorProbs}));
@@ -429,7 +428,6 @@ var model = function(){
    var noisyModelPredictions = addNoise(priorOnlyPredictions, noise)
 
    map(function(d){ 
-     // display(JSON.stringify(noisyModelPredictions) + JSON.stringify(d.correct_inf))
       observe(noisyModelPredictions, d.correct_inf)
     }, conditionSpecificData)
 
@@ -1314,7 +1312,8 @@ library(matrixStats)
 
 llh.plot <- likelihood_overview %>%
   group_by(Model)%>%
-  summarize(logSumExp = logSumExp(value))%>%
+  summarize(logSumExp = logSumExp(value),
+            max = max(value))%>%
   mutate(Model = reorder(Model,logSumExp))
 
 ggplot(llh.plot, aes(x = Model, y = logSumExp, fill = Model))+
