@@ -1323,6 +1323,7 @@ ggplot(llh.plot, aes(x = Model, y = logSumExp, fill = Model))+
   theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))
 
 save.image(file="model.comparisons.RData")
+
 ```
 
 

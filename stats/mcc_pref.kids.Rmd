@@ -60,7 +60,7 @@ Plot for speaker change with 95%CI
 
 p1 <- d %>%
   filter(trial_type == "test") %>%
-  group_by(change,age, id) %>%
+  group_by(change, id) %>%
   summarise(correct = mean(correct)) 
 
 p2 <- p1 %>%
@@ -107,7 +107,8 @@ library(lme4)
 
 data_cg <- d%>%
   filter(trial_type == "test")%>%
-  mutate(choiceAgent = ifelse( change == "false", agent, altAgent))
+  mutate(choiceAgent = ifelse( change == "false", agent, altAgent),
+         age = scale(age))
 
 # maximal converging model
 lm <- glmer(correct ~ age + change + (age * change |id) + (age * change |choiceAgent), 
