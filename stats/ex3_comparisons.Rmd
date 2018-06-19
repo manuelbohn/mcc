@@ -1515,7 +1515,7 @@ likelihood_overview <- bind_rows(
 
 ggplot(likelihood_overview, aes(x = value))+
   geom_histogram()+
-  xlim(-700,-500)+
+  xlim(-200,0)+
   facet_wrap(~Model, nrow = 2)
 
 ```
