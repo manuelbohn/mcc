@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+load("model.predictions.RData")
+
 library(tidyverse)
 library(knitr)
 library(ggthemes)
@@ -38,11 +40,6 @@ rsaUtils <- '
 var all_objects = [
 { shape: "triangle", id:1, location: 1},  
 { shape: "triangle", id:2, location: 2},
-{ shape: "circle", id:1, location: 2}
-]
-
-var two_objects = [
-{ shape: "triangle", id:1, location: 1},  
 { shape: "circle", id:1, location: 2}
 ]
 
@@ -185,23 +182,20 @@ var addNoise = function(dist, noiseParam){
 '
 ```
 
-
-```{r bda model rsa noise, include = FALSE}
+```{r predictions rsa noise, include = FALSE}
 predictions.rsa.noise <-'
-var allConditions = dataFromR.allConditions
-var allData = dataFromR.allData
-var allPriorProbs = dataFromR.allPriorProbs
+var allConditions = dataFromR.newConditions
+var allData = dataFromR.predData
+var allPriorProbs = dataFromR.predPriorProbs
 
 var model = function(){
-   var noise = 0.28
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
   var conditionOutput = map(function(conditionInfo){
 
-  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
+  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Prior :"Strong"})
 
-   var conditionSpecificPriors =  _.filter(allPriorProbs, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
-
-  //display(JSON.stringify(conditionSpecificData[0].correct_inf))
+   var conditionSpecificPriors =  _.filter(allPriorProbs, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Prior :"Strong"})
 
    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors[0].priorProbs)
    var noisyModelPredictions = addNoise(modelPredictions, noise)
@@ -211,15 +205,32 @@ var model = function(){
     }, conditionSpecificData)
 
 
-  return  [conditionInfo.Experiment + "_" + conditionInfo.Change + "_" +  conditionInfo.Alignment, Math.exp(noisyModelPredictions.score(1))]
+  return  [conditionInfo.Experiment + "_" + conditionInfo.Change + "_" +  conditionInfo.Alignment+ "_" + conditionInfo.Prior, Math.exp(noisyModelPredictions.score(1))]
 
 }, allConditions)
 
- return extend(_.fromPairs(conditionOutput))
+ // return extend(_.fromPairs(conditionOutput), {noise: noise})
+
+
+// generate predictions for new conditions
+
+   var newPredictions = map(function(conditionInfo){
+
+    var newSpecificPriors =  _.filter(allPriorProbs, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Prior: conditionInfo.Prior})
+
+    var newModelPredictions = pragmaticListener({label: "dax", point: 2 }, newSpecificPriors[0].priorProbs)
+    var newNoisyModelPredictions = addNoise(newModelPredictions, noise)
+
+    return  [conditionInfo.Experiment + "_" + conditionInfo.Change + "_" +  conditionInfo.Alignment + "_" + conditionInfo.Prior, Math.exp(newNoisyModelPredictions.score(1))]
+
+  }, allConditions)
+
+  return extend(_.fromPairs(newPredictions), {noise: noise})
+
+
 }
 '
 ```
-
 
 ```{r model setup, include = FALSE}
 
@@ -227,7 +238,8 @@ var model = function(){
 strongPriorProbs <- data.frame(
   Experiment = c("Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty"),
   Change = c("Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker"),
-  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"))
+  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"),
+  Prior = rep("Strong",8))
 
 strongPriorProbs$priorProbs = list(
     c(0.0333333, 0.033333, 0.9666667), 
@@ -242,7 +254,8 @@ strongPriorProbs$priorProbs = list(
 mediumPriorProbs <- data.frame(
   Experiment = c("Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty"),
   Change = c("Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker"),
-  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"))
+  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"),
+  Prior = rep("Medium",8))
 
 mediumPriorProbs$priorProbs = list(
     c(0.1465517, 0.1465517, 0.8534483), 
@@ -256,109 +269,83 @@ mediumPriorProbs$priorProbs = list(
 
 
 weakPriorProbs <- data.frame(
-  Experiment = c("Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty"),
-  Change = c("Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker"),
-  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"))
+  Experiment = c("Novelty","Novelty","Novelty","Novelty"),
+  Change = c("Same speaker","Same speaker","Different speaker","Different speaker"),
+  Alignment = c("Congruent","Incongruent","Congruent","Incongruent"),
+  Prior = rep("Weak",4))
 
 weakPriorProbs$priorProbs = list(
-    c(0.1428571, 0.1428571, 0.8571429),
-    c(0.8571429, 0.8571429, 0.1428571),
-    c(0.4107143, 0.4107143, 0.5892857),
-    c(0.5892857, 0.5892857, 0.4107143),
-    c(0.4166667, 0.4166667, 0.5833333), 
-    c(0.5833333, 0.5833333, 0.4166667),
-    c(0.475, 0.475, 0.5250000),
-    c(0.5250000, 0.5250000, 0.475))
+  c(0.4166667, 0.4166667, 0.5833333), 
+  c(0.5833333, 0.5833333, 0.4166667),
+  c(0.475, 0.475, 0.5250000),
+  c(0.5250000, 0.5250000, 0.475))
+
+
+predPriorProbs = rbind(strongPriorProbs,mediumPriorProbs,weakPriorProbs)
+
+allPriorProbs <- strongPriorProbs %>%
+  select(-Prior)
+
+allConditions <- predPriorProbs %>%
+  filter(Prior == "Strong")%>%
+  select(-priorProbs, -Prior)
+
+newConditions <- predPriorProbs %>%
+  select(-priorProbs)
+
+predData <- data %>%
+  mutate(Prior = "Strong")
 ```
 
-
-```{r predictions rsa noise strong prior, include = FALSE}
-bda <- webppl(
+```{r predictions rsa noise, include = FALSE}
+bda.pred.noise <- webppl(
   program_code = paste(rsaUtils, rsaModel2, predictions.rsa.noise, sep='\n'),
-  data = list(allData = data, allConditions = allConditions, allPriorProbs = strongPriorProbs), 
+  data = list(allData = data, newConditions = newConditions, predPriorProbs = predPriorProbs, predData = predData), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
 )
+
+
+## distribution of noise
+posterior.noise.pred <- bda.pred.noise %>%
+  filter(Parameter %in% c("noise", "priorExponent"))
+
+ggplot(posterior.noise.pred, aes(x = value))+
+  geom_histogram()+
+  facet_wrap(~Parameter, scales = 'free')
 
 # model predictions
 
-noisy.rsa.model.strong <- bda%>%
-  separate(Parameter, into = c("Experiment", "Change", "Alignment"), sep="_")%>%
-  mutate(Model="Noisy RSA Model - Strong Prior",
-         Prior = "Strong",
+noisy.rsa.pred <- bda.pred.noise %>%
+  filter(!(Parameter %in% c("noise", "priorExponent")))  %>%
+  separate(Parameter, into = c("Experiment", "Change", "Alignment", "Prior"), sep="_")%>%
+  mutate(Model="Noisy RSA Model",
          Adjustment = "Noise",
-         Type = "RSA")%>%
-  group_by(Model,Adjustment,Type,Experiment,Change,Alignment) %>%
+         Type = "RSA",
+         Prior = relevel(as.factor(Prior), ref = "Weak"))%>%
+  group_by(Model,Prior,Adjustment,Type,Experiment,Change,Alignment) %>%
   summarise(mean = estimate_mode(value), ci_lower = hdi_lower(value), ci_upper = hdi_upper(value))
+
 
 ```
 
-
-```{r predictions rsa noise medium prior, include = FALSE}
-bda <- webppl(
-  program_code = paste(rsaUtils, rsaModel2, predictions.rsa.noise, sep='\n'),
-  data = list(allData = data, allConditions = allConditions, allPriorProbs = mediumPriorProbs), 
-  data_var = "dataFromR",
-  model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
-)
-
-# model predictions
-
-noisy.rsa.model.medium <- bda%>%
-  separate(Parameter, into = c("Experiment", "Change", "Alignment"), sep="_")%>%
-  mutate(Model="Noisy RSA Model - Medium Prior",
-         Prior = "Medium",
-         Adjustment = "Noise",
-         Type = "RSA")%>%
-  group_by(Model,Adjustment,Type,Experiment,Change,Alignment) %>%
-  summarise(mean = estimate_mode(value), ci_lower = hdi_lower(value), ci_upper = hdi_upper(value))
-
-```
-
-
-```{r predictions rsa noise weak prior, include = FALSE}
-bda <- webppl(
-  program_code = paste(rsaUtils, rsaModel2, predictions.rsa.noise, sep='\n'),
-  data = list(allData = data, allConditions = allConditions, allPriorProbs = weakPriorProbs), 
-  data_var = "dataFromR",
-  model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
-)
-
-# model predictions
-
-noisy.rsa.model.weak <- bda%>%
-  separate(Parameter, into = c("Experiment", "Change", "Alignment"), sep="_")%>%
-  mutate(Model="Noisy RSA Model - Weak Prior",
-         Prior = "Weak",
-         Adjustment = "Noise",
-         Type = "RSA")%>%
-  group_by(Model,Adjustment,Type,Experiment,Change,Alignment) %>%
-  summarise(mean = estimate_mode(value), ci_lower = hdi_lower(value), ci_upper = hdi_upper(value))
-
-```
 
 ```{r}
 
-pred <- bind_rows(
-  noisy.rsa.model.strong,
-  noisy.rsa.model.medium,
-  noisy.rsa.model.weak
-) %>% 
-  ungroup() %>%
-  mutate(Model = relevel(as.factor(Model), ref = "Noisy RSA Model - Weak Prior"))
-
-ggplot(pred, 
+ggplot(noisy.rsa.pred, 
        aes(x = Change, y = mean, fill = Alignment)) +
   geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
   geom_hline(yintercept = 0.5, lty=2)+
   geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),position = position_dodge(width = 0.9))+
   labs(x=" ",y="Proportion Choosing More Informative")+
-  facet_grid(Experiment ~ Model)+
+  facet_grid(Experiment ~ Prior)+
   theme_few(base_size = 12) + 
   theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
   ylim(0,1)
+```
+
+```{r}
+save.image(file="model.predictions.RData")
 ```
 

@@ -8,11 +8,30 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+load("model.comparisons.RData")
+
 library(tidyverse)
 library(knitr)
 library(ggthemes)
 library(langcog)
 library(rwebppl)
+library(matrixStats)
+library(coda)
+
+estimate_mode <- function(s) {
+  d <- density(s)
+  return(d$x[which.max(d$y)])
+}
+
+hdi_upper<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","upper"])
+}
+
+hdi_lower<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","lower"])
+}
 ```
 
 # Modeling Informativeness
@@ -153,7 +172,7 @@ predictions <- data.frame(
   corr = c(0.9999672744165804,0.03460862921907267,0.9083230583454356,0.5090645649737232,0.9930727540990627,0.20045767964927574,0.8603373265403738,0.594975610001643,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.967,0.033,0.642,0.358,0.833,0.167,0.592,0.408)) 
 
 
-pred <- predictions %>%
+pred2 <- predictions %>%
   group_by(Model,Experiment,Change,Alignment)%>%
   multi_boot_standard(col = "corr")
 
@@ -176,60 +195,11 @@ pd <- rbind(pred,da)
 
 ```
 
-
-```{r plot models and data}
-
-ggplot(pd, 
-       aes(x = Change, y = mean, fill = Alignment)) +
-  geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
-  geom_hline(yintercept = 0.5, lty=2)+
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),position = position_dodge(width = 0.9))+
-  labs(x=" ",y="Proportion Choosing More Informative")+
-  facet_grid(Experiment ~ Model)+
-  theme_few(base_size = 12) + 
-  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
-  ylim(0,1)
-
-```
-
-
-```{r plot comparing models}
-
-library(ggpubr)
-
-plot1 <- data.frame(pd$Experiment[pd$Model=="Data"],pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Prior only"],rep("Data vs Prior only",8))
-names(plot1) = c("Experiment","Data","Model","Comp")
-plot2 <- data.frame(pd$Experiment[pd$Model=="Data"],pd$mean[pd$Model=="Data"],pd$mean[pd$Model=="Full model"],rep("Data vs Full model",8))
-names(plot2) = c("Experiment","Data","Model","Comp")
-
-plot <- rbind(plot1,plot2)
-
-ggplot(data = plot,aes(x = Model, y = Data, col = Comp)) +
-  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.3)+
-  geom_point()+
-  coord_fixed()+
-  xlim(0,1)+ylim(0,1)+
-  facet_grid(~Comp)+
-  stat_cor(method = "pearson", label.x = 0.4, label.y = 0.9)+
-  geom_smooth(method = "lm", se = F, col = "black")+
-  theme_few() + 
-  guides(col = F)+
-  scale_colour_solarized()
-
-
-```
-
-
 ```{r rsaUtils, include = FALSE}
 rsaUtils <- '
 var all_objects = [
 { shape: "triangle", id:1, location: 1},  
 { shape: "triangle", id:2, location: 2},
-{ shape: "circle", id:1, location: 2}
-]
-
-var two_objects = [
-{ shape: "triangle", id:1, location: 1},  
 { shape: "circle", id:1, location: 2}
 ]
 
@@ -379,7 +349,6 @@ var allData = dataFromR.allData
 var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
-   var noise = 0
 
   var conditionOutput = map(function(conditionInfo){
 
@@ -396,18 +365,40 @@ var model = function(){
     }})
 
 
-   var noisyModelPredictions = addNoise(priorOnlyPredictions, noise)
-
-   map(function(d){ 
-      observe(noisyModelPredictions, d.correct_inf)
-    }, conditionSpecificData)
 
 
-  return  [conditionInfo.Experiment + "_" + conditionInfo.Change + "_" +  conditionInfo.Alignment, Math.exp(noisyModelPredictions.score(1))]
+
+  return  [conditionInfo.Experiment + "_" + conditionInfo.Change + "_" +  conditionInfo.Alignment, Math.exp(priorOnlyPredictions.score(1))]
 
 }, allConditions)
 
- return extend(_.fromPairs(conditionOutput), {noise: noise})
+ return extend(_.fromPairs(conditionOutput))
+}
+'
+```
+
+```{r bda model rsa, include = FALSE}
+bdaModel.rsa <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.allPriorProbs
+
+var model = function(){
+
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
+
+   var conditionSpecificPriors =  _.filter(allPriorProbs, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
+
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors[0].priorProbs)
+  
+  return  [conditionInfo.Experiment + "_" + conditionInfo.Change + "_" +  conditionInfo.Alignment, Math.exp(modelPredictions.score(1))]
+
+}, allConditions)
+
+ return extend(_.fromPairs(conditionOutput))
 }
 '
 ```
@@ -493,7 +484,7 @@ var allData = dataFromR.allData
 var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
-   var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+   var priorExponent = uniformDrift({a: 0, b:3, width: 0.1})
 
   var conditionOutput = map(function(conditionInfo){
 
@@ -531,7 +522,7 @@ var allData = dataFromR.allData
 var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
-   var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+   var priorExponent = uniformDrift({a: 0, b:3, width: 0.1})
 
   var conditionOutput = map(function(conditionInfo){
 
@@ -568,7 +559,7 @@ var allData = dataFromR.allData
 var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
-   var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+   var priorExponent = uniformDrift({a: 0, b:3, width: 0.1})
    var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
   var conditionOutput = map(function(conditionInfo){
@@ -607,7 +598,7 @@ var allData = dataFromR.allData
 var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
-   var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+   var priorExponent = uniformDrift({a: 0, b:3, width: 0.1})
    var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
   var conditionOutput = map(function(conditionInfo){
@@ -668,53 +659,45 @@ allPriorProbs$priorProbs = list(
     c(0.4083333, 0.4083333, 0.5916667),
     c(0.5916667, 0.5916667, 0.4083333))
 
-allPriorProbs2 <- allPriorProbs
-
-allPriorProbs2$priorProbs = list(
-    c(0.0333333, 0.9666667), 
-    c(0.9666667, 0.0333333),
-    c(0.3583333, 0.6416667),
-    c(0.6416667, 0.3583333),
-    c(0.1666667, 0.8333333),
-    c(0.8333333, 0.1666667),
-    c(0.4083333, 0.5916667),
-    c(0.5916667, 0.4083333))
 
 
 ```
 
 ```{r predictions prior, include = FALSE}
-bda0 <- webppl(
+bda_priorOnly <- webppl(
   program_code = paste(rsaUtils, rsaModel2, bdaModel.prior, sep='\n'),
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
 )
 
-
-## distribution of noise
-posterior.noise1 <- bda1 %>%
-  filter(Parameter %in% c("noise", "priorExponent"))
-
-ggplot(posterior.noise1, aes(x = value))+
-  geom_histogram()+
-  facet_wrap(~Parameter, scales = 'free')
-
-## distribution of model predictions
-posterior.predictive1 = bda0 %>%
+prior.model <- bda_priorOnly %>%
   filter(!(Parameter %in% c("noise", "priorExponent"))) %>%
-  separate(Parameter, into = c("Experiment", "Change", "Alignment"), sep="_")
-
-
-ggplot(posterior.predictive1, aes(x = value))+
-  geom_histogram(binwidth = .01)+
-  facet_wrap(~Experiment+Change+Alignment, nrow = 2,scales = 'free')
-
-prior.model <- posterior.predictive1 %>%
+  separate(Parameter, into = c("Experiment", "Change", "Alignment"), sep="_")%>%
   mutate(Model="Prior Model",
-         Adjustment = "Noise",
+         Adjustment = "None",
          Type = "Prior only")%>%
+  group_by(Model,Adjustment,Type,Experiment,Change,Alignment) %>%
+  summarise(mean = estimate_mode(value))
+
+```
+
+```{r predictions rsa, include = FALSE}
+bda_rsa <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, bdaModel.rsa, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
+)
+
+rsa.model <- bda_rsa %>%
+  filter(!(Parameter %in% c("noise", "priorExponent"))) %>%
+  separate(Parameter, into = c("Experiment", "Change", "Alignment"), sep="_") %>%
+  mutate(Model="RSA Model",
+         Adjustment = "None",
+         Type = "RSA")%>%
   group_by(Model,Adjustment,Type,Experiment,Change,Alignment) %>%
   summarise(mean = estimate_mode(value))
 
@@ -726,7 +709,7 @@ bda <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
 )
 
 
@@ -749,26 +732,6 @@ ggplot(posterior.predictive, aes(x = value))+
   facet_wrap(~Experiment+Change+Alignment, nrow = 2,scales = 'free')
 
 
-## Bayesian credible intervals
-
-library(coda)
-
-estimate_mode <- function(s) {
-  d <- density(s)
-  return(d$x[which.max(d$y)])
-}
-
-hdi_upper<- function(s){
-  m <- HPDinterval(mcmc(s))
-  return(m["var1","upper"])
-}
-
-hdi_lower<- function(s){
-  m <- HPDinterval(mcmc(s))
-  return(m["var1","lower"])
-}
-
-
 noisy.rsa.model <- posterior.predictive %>%
   mutate(Model="Noisy RSA Model",
          Adjustment = "Noise",
@@ -784,7 +747,7 @@ bda1 <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
 )
 
 
@@ -821,7 +784,7 @@ bda2 <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
 )
 
 
@@ -858,7 +821,7 @@ bda3 <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
 )
 
 
@@ -895,7 +858,7 @@ bda4 <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
 )
 
 
@@ -932,7 +895,7 @@ bda5 <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 10000, burn = 2000, verbose = T)
 )
 
 
@@ -967,10 +930,13 @@ noisy.regPrior.prior.model <- posterior.predictive5 %>%
 ```{r}
 ## joining noisy model predictions with other predictions
 no.adj.models <- pd %>%
+  filter(Model != "Full model", Model != "Prior only")%>%
   mutate(Type = ifelse(Model == "Full model","RSA",ifelse(Model == "Data","Data",ifelse(Model == "No prior","No Prior","Prior only"))),
          Adjustment = "None")
 
 p.com <- bind_rows(
+  prior.model,
+  rsa.model,
   noisy.rsa.model,
   noisy.prior.model,
   regPrior.rsa.model,
@@ -999,6 +965,8 @@ ggplot(p.com,
 ## correlations for model comparisons
 
 p.com$Data = rep(pd$mean[pd$Model=="Data"],10)
+p.com$Data_ci_low = rep(pd$ci_lower[pd$Model=="Data"],10)
+p.com$Data_ci_up = rep(pd$ci_upper[pd$Model=="Data"],10)
 
 plot.model <- p.com %>%
   filter(Model != "Data", Model != "No prior")
@@ -1008,6 +976,8 @@ plot.model$Adjustment <- ordered(plot.model$Adjustment, levels = c("None","Noise
 ggplot(data = plot.model,aes(x = mean, y = Data, col = Model)) +
   geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.3)+
   geom_point()+
+  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0)+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0)+
   facet_grid(Type~Adjustment)+
   coord_fixed()+
   xlim(0,1)+ylim(0,1)+
@@ -1069,41 +1039,6 @@ var model = function(){
 
     var priorOnlyPredictions = Infer({method: "enumerate", model: function(){
       var obj = sample( Categorical({vs: all_objects, ps: conditionSpecificPriors[0].priorProbs}));
-      return obj.shape == "circle" ? 1 : 0
-    }})
-
-var loglike = Binomial({
-        p: Math.exp(priorOnlyPredictions.score(1)), 
-        n: conditionSpecificData.length}).score(
-      sum(_.map(conditionSpecificData, "correct_inf"))
-    )
-
-  return  loglike
-}, allConditions)
-
- return sum(conditionOutput)
-}
-'
-```
-
-```{r model prior2 loglikelihood}
-prior.loglikelihood2 <-'
-var allConditions = dataFromR.allConditions
-var allData = dataFromR.allData
-var allPriorProbs = dataFromR.allPriorProbs
-
-var model = function(){
-
-  var conditionOutput = map(function(conditionInfo){
-
-  var conditionSpecificData =  _.filter(allData, 
-        {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
-
-   var conditionSpecificPriors =  _.filter(allPriorProbs, 
-        {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
-
-    var priorOnlyPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: two_objects, ps: conditionSpecificPriors[0].priorProbs}));
       return obj.shape == "circle" ? 1 : 0
     }})
 
@@ -1193,44 +1128,6 @@ var loglike = Binomial({
 '
 ```
 
-```{r model prior noise loglikelihood}
-prior.noise.loglikelihood2 <-'
-var allConditions = dataFromR.allConditions
-var allData = dataFromR.allData
-var allPriorProbs = dataFromR.allPriorProbs
-
-var model = function(){
-   var noise = uniformDrift({a: 0, b:1, width: 0.1})
-
-  var conditionOutput = map(function(conditionInfo){
-
-  var conditionSpecificData =  _.filter(allData, 
-        {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
-
-   var conditionSpecificPriors =  _.filter(allPriorProbs, 
-        {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
-
-    var priorOnlyPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: two_objects, ps: conditionSpecificPriors[0].priorProbs}));
-      return obj.shape == "circle" ? 1 : 0
-    }})
-
-   var noisyModelPredictions = addNoise(priorOnlyPredictions, noise)
-
-var loglike = Binomial({
-        p: Math.exp(noisyModelPredictions.score(1)), 
-        n: conditionSpecificData.length}).score(
-      sum(_.map(conditionSpecificData, "correct_inf"))
-    )
-
-  return  loglike
-}, allConditions)
-
- return sum(conditionOutput)
-}
-'
-```
-
 ```{r model rsa regularized prior loglikelihood}
 rsa.regPrior.loglikelihood <-'
 var allConditions = dataFromR.allConditions
@@ -1239,7 +1136,9 @@ var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
   
-  var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+  var priorExponent = uniformDrift({a: 0, b:3, width: 0.1})
+
+  var pe = []
 
   var conditionOutput = map(function(conditionInfo){
 
@@ -1258,6 +1157,8 @@ var loglike = Binomial({
       sum(_.map(conditionSpecificData, "correct_inf"))
     )
 
+loglike == -Infinity ? display(priorExponent) : null
+
   return  loglike
 }, allConditions)
 
@@ -1274,7 +1175,7 @@ var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
   
-  var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+  var priorExponent = uniformDrift({a: 0, b:3, width: 0.1})
 
   var conditionOutput = map(function(conditionInfo){
 
@@ -1311,7 +1212,7 @@ var allData = dataFromR.allData
 var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
-   var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+   var priorExponent = uniformDrift({a: 0, b:3, width: 0.1})
    var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
   var conditionOutput = map(function(conditionInfo){
@@ -1347,7 +1248,7 @@ var allData = dataFromR.allData
 var allPriorProbs = dataFromR.allPriorProbs
 
 var model = function(){
-   var priorExponent = uniformDrift({a: 0, b:5, width: 0.1})
+   var priorExponent = uniformDrift({a: 0, b:3, width: 0.1})
    var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
   var conditionOutput = map(function(conditionInfo){
@@ -1391,7 +1292,7 @@ llh.rsa <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
+  inference_opts = list(method = "forward", samples = 10000),
   chains = 3, cores = 3
 )%>%
   mutate(Model = "RSA")
@@ -1402,7 +1303,7 @@ llh.rsa.noise <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
+  inference_opts = list(method = "forward", samples = 10000),
   chains = 3, cores = 3
 )%>%
   mutate(Model = "RSA Noisy")
@@ -1413,7 +1314,7 @@ llh.rsa.regPrior <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
+  inference_opts = list(method = "forward", samples = 10000),
   chains = 3, cores = 3
 )%>%
   mutate(Model = "RSA Regularized")
@@ -1424,7 +1325,7 @@ llh.rsa.noise.regPrior <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
+  inference_opts = list(method = "forward", samples = 10000),
   chains = 3, cores = 3
 )%>%
   mutate(Model = "RSA Noisy Regularized")
@@ -1438,48 +1339,27 @@ llh.prior <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
+  inference_opts = list(method = "forward", samples = 10000),
   chains = 3, cores = 3
 )%>%
   mutate(Model = "Prior only")
-
-
-llh.prior2 <- webppl(
-  program_code = paste(rsaUtils, rsaModel2, prior.loglikelihood2, sep='\n'),
-  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs2), 
-  data_var = "dataFromR",
-  model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
-  chains = 3, cores = 3
-)%>%
-  mutate(Model = "Prior only - non normalized")
 
 llh.prior.noise <- webppl(
   program_code = paste(rsaUtils, rsaModel2, prior.noise.loglikelihood, sep='\n'),
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
+  inference_opts = list(method = "forward", samples = 10000),
   chains = 3, cores = 3
 )%>%
   mutate(Model = "Prior only Noisy")
-
-llh.prior.noise2 <- webppl(
-  program_code = paste(rsaUtils, rsaModel2, prior.noise.loglikelihood2, sep='\n'),
-  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs2), 
-  data_var = "dataFromR",
-  model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
-  chains = 3, cores = 3
-)%>%
-  mutate(Model = "Prior only Noisy - non normalized")
 
 llh.prior.regPrior <- webppl(
   program_code = paste(rsaUtils, rsaModel2, prior.regPrior.loglikelihood, sep='\n'),
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
+  inference_opts = list(method = "forward", samples = 10000),
   chains = 3, cores = 3
 )%>%
   mutate(Model = "Prior only Regularized")
@@ -1490,49 +1370,38 @@ llh.prior.noise.regPrior <- webppl(
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
   data_var = "dataFromR",
   model_var = "model",
-  inference_opts = list(method = "forward", samples = 5000),
+  inference_opts = list(method = "forward", samples = 10000),
   chains = 3, cores = 3
 ) %>%
   mutate(Model = "Prior only Noisy Regularized")
 
 ```
 
-
-
 ```{r}
 
 likelihood_overview <- bind_rows(
   llh.rsa,
   llh.prior,
-  llh.prior2,
   llh.rsa.noise,
   llh.prior.noise,
-  llh.prior.noise2,
+  llh.rsa.regPrior,
   llh.prior.regPrior,
-  llh.rsa.regPrior %>% filter(value != "-Infinity") %>% mutate(value = as.numeric(value)),
   llh.rsa.noise.regPrior,
   llh.prior.noise.regPrior)
 
 ggplot(likelihood_overview, aes(x = value))+
   geom_histogram()+
   xlim(-200,0)+
-  facet_wrap(~Model, nrow = 2)
+  facet_wrap(~Model, nrow = 2, scales = "free")
 
 ```
 
 
+
 ```{r logsum summary}
-library(matrixStats)
-
-
-getmode <- function(v) {
-   uniqv <- unique(v)
-   uniqv[which.max(tabulate(match(v, uniqv)))]
-}
-
 llh.plot <- likelihood_overview %>%
   group_by(Model)%>%
-  summarize(logP = max(value))%>%
+  summarize(logP = logSumExp(value))%>%
   mutate(Model = reorder(Model,logP))
 
 ggplot(llh.plot, aes(x = Model, y = logP, fill = Model))+
@@ -1546,6 +1415,96 @@ save.image(file="model.comparisons.RData")
 
 ```
 
+
+```{r more iterations on rsa models}
+
+llh.n.10k <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, rsa.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 10000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "RSA Noisy 10k")
+
+llh.n.20k <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, rsa.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 20000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "RSA Noisy 20k")
+
+llh.n.50k <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, rsa.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 50000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "RSA Noisy 50k")
+
+llh.nr.10k <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, rsa.regularizedPrior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 10000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "RSA Noisy Regularized 10k")
+
+
+llh.nr.20k <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, rsa.regularizedPrior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 20000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "RSA Noisy Regularized 20k")
+
+llh.nr.50k <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, rsa.regularizedPrior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 50000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "RSA Noisy Regularized 50k")
+
+
+```
+
+
+```{r}
+rsa_overview <- bind_rows(
+  llh.n.10k,
+  llh.n.20k,
+  llh.n.50k,
+  llh.nr.10k,
+  llh.nr.20k,
+  llh.nr.50k)
+
+rsa.llh.plot <- rsa_overview %>%
+  group_by(Model)%>%
+  summarize(logP = logSumExp(value))%>%
+  mutate(Model = reorder(Model,logP))
+
+ggplot(rsa.llh.plot, aes(x = Model, y = logP, fill = Model))+
+  geom_bar(stat="identity", color = "black")+
+  ggtitle("logsumexp by number of samples")+
+  theme_few()+ 
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  guides(fill = F)
+
+```
 
 
 ```{r simple BF model comparisons}
@@ -1653,26 +1612,5 @@ pref_bf_full_prior_only
 
 novel_bf_full_prior_only <- exp(comp_model_by_exp[1,3] - comp_model_by_exp[5,3])
 novel_bf_full_prior_only
-
-```
-
-At what ratio does it flip back to more informative?
-
-```{r , echo=FALSE}
-
-pred <- data.frame(
-  Prior = c("90/10","80/20","70/30","60/40","50/50"),
-  corr = c(0.1118794400899893,0.24897738407515466,0.40911964439987003,0.5807810413750243,0.74)
-)
-
-ggplot(pred, 
-       aes(x = Prior, y = corr, fill = Prior)) +
-  geom_bar(stat="identity") + 
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(x="",y="Proportion Choosing More Informative")+
-  theme_few(base_size = 12) +
-  scale_fill_discrete(name = "Prior: less inf / more inf")+
-  ylim(0,1)+
-  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
 
 ```
