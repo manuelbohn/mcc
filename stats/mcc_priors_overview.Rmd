@@ -36,11 +36,11 @@ d5 <-read_csv(file="pref.weak.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"),
          strength = "2_medium")
 
-d6 <-read_csv(file="pref.weak.data3.csv") %>%
-  mutate(trial_type = ifelse(trial == "train", "train", "test"),
-         strength = "1_weak")
+#d6 <-read_csv(file="pref.weak.data3.csv") %>%
+#  mutate(trial_type = ifelse(trial == "train", "train", "test"),
+#         strength = "1_weak")
 
-d <- bind_rows(d1,d2,d3,d4,d5,d6)
+d <- bind_rows(d1,d2,d3,d4,d5)
 
 
 # check if someone got both training trials wrong
