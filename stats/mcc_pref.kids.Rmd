@@ -20,12 +20,24 @@ d <- bind_rows(read_csv(file="kids_pref.data.csv"),
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
 # children who need to be dropped
-drop <- c("Dryrun","180426_3_pref","180502_1_pref","180503_1_pref","180503_2_pref","180504_1_pref","180511_2_pref","180511_1_pref")
+drop <- c("Dryrun",
+"180426_3_pref",
+"180427_2_pref",
+"180427_3_pref",
+"180427_4_pref",
+"180502_1_pref",
+"180503_1_pref",
+"180503_2_pref",
+"180504_1_pref",
+"180511_1_pref",
+"180511_2_pref")
 
 
 d <- d %>%
   filter(!id %in% drop)
 
+
+unique(d$id)
 ```
 
 Sanity checks.
@@ -60,7 +72,7 @@ Plot for speaker change with 95%CI
 
 p1 <- d %>%
   filter(trial_type == "test") %>%
-  group_by(change, id) %>%
+  group_by(change,age, id) %>%
   summarise(correct = mean(correct)) 
 
 p2 <- p1 %>%
@@ -111,7 +123,7 @@ data_cg <- d%>%
          age = scale(age))
 
 # maximal converging model
-lm <- glmer(correct ~ age + change + (age * change |id) + (age * change |choiceAgent), 
+lm <- glmer(correct ~ age * change + (age * change |id) + (age * change |choiceAgent), 
               data = data_cg, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 

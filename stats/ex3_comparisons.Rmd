@@ -17,6 +17,7 @@ library(langcog)
 library(rwebppl)
 library(matrixStats)
 library(coda)
+library(ggpubr)
 
 estimate_mode <- function(s) {
   d <- density(s)
@@ -172,7 +173,7 @@ predictions <- data.frame(
   corr = c(0.9999672744165804,0.03460862921907267,0.9083230583454356,0.5090645649737232,0.9930727540990627,0.20045767964927574,0.8603373265403738,0.594975610001643,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.742,0.967,0.033,0.642,0.358,0.833,0.167,0.592,0.408)) 
 
 
-pred2 <- predictions %>%
+pred <- predictions %>%
   group_by(Model,Experiment,Change,Alignment)%>%
   multi_boot_standard(col = "corr")
 
@@ -191,7 +192,28 @@ da <- data %>%
   multi_boot_standard(col = "correct_inf")
 
 
+da2 <- data %>%
+  filter(trial_type=="test")%>%
+  mutate(Change = ifelse(change =="same", "Same speaker", "Different speaker"),
+         Alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"),
+         Experiment = ifelse(experiment == "pref_inf", "Preference", "Novelty"),
+         Model = "Data") %>%
+  group_by(Model,Experiment,Change,Alignment)%>%
+  summarize(k = sum(correct_inf), n = n())%>%
+  ungroup() %>%
+  mutate(a = 1 + k,
+         b = 1 + n - k,
+         ci_lower  = qbeta(.025, a, b),
+         ci_upper = qbeta(.975, a, b),
+         mean = (a-1)/(a+b-2))%>%
+  select(-a,-b,-n,-k)
+  
+  
+
 pd <- rbind(pred,da)
+
+pd2 <- bind_rows(pred,da2)
+
 
 ```
 
@@ -721,6 +743,17 @@ ggplot(posterior.noise, aes(x = value))+
   geom_histogram()+
   facet_wrap(~Parameter, scales = 'free')
 
+
+noisy.rsa.params <- bda %>%
+  filter(Parameter %in% c("noise", "priorExponent"))  %>%
+  group_by(Parameter) %>%
+  summarise(mean = estimate_mode(value), ci_lower = hdi_lower(value), ci_upper = hdi_upper(value))
+
+noisy.rsa.params100k <- bda2 %>%
+  filter(Parameter %in% c("noise", "priorExponent"))  %>%
+  group_by(Parameter) %>%
+  summarise(mean = estimate_mode(value), ci_lower = hdi_lower(value), ci_upper = hdi_upper(value))
+
 ## distribution of model predictions
 posterior.predictive = bda %>%
   filter(!(Parameter %in% c("noise", "priorExponent"))) %>%
@@ -758,6 +791,12 @@ posterior.noise1 <- bda1 %>%
 ggplot(posterior.noise1, aes(x = value))+
   geom_histogram()+
   facet_wrap(~Parameter, scales = 'free')
+
+noisy.prior.params <- bda1 %>%
+  filter(Parameter %in% c("noise", "priorExponent"))  %>%
+  group_by(Parameter) %>%
+  summarise(mean = estimate_mode(value), ci_lower = hdi_lower(value), ci_upper = hdi_upper(value))
+
 
 ## distribution of model predictions
 posterior.predictive1 = bda1 %>%
@@ -929,7 +968,7 @@ noisy.regPrior.prior.model <- posterior.predictive5 %>%
 
 ```{r}
 ## joining noisy model predictions with other predictions
-no.adj.models <- pd %>%
+no.adj.models <- pd2 %>%
   filter(Model != "Full model", Model != "Prior only")%>%
   mutate(Type = ifelse(Model == "Full model","RSA",ifelse(Model == "Data","Data",ifelse(Model == "No prior","No Prior","Prior only"))),
          Adjustment = "None")
@@ -964,9 +1003,9 @@ ggplot(p.com,
 ```{r}
 ## correlations for model comparisons
 
-p.com$Data = rep(pd$mean[pd$Model=="Data"],10)
-p.com$Data_ci_low = rep(pd$ci_lower[pd$Model=="Data"],10)
-p.com$Data_ci_up = rep(pd$ci_upper[pd$Model=="Data"],10)
+p.com$Data = rep(pd2$mean[pd2$Model=="Data"],10)
+p.com$Data_ci_low = rep(pd2$ci_lower[pd2$Model=="Data"],10)
+p.com$Data_ci_up = rep(pd2$ci_upper[pd2$Model=="Data"],10)
 
 plot.model <- p.com %>%
   filter(Model != "Data", Model != "No prior")
@@ -982,7 +1021,7 @@ ggplot(data = plot.model,aes(x = mean, y = Data, col = Model)) +
   coord_fixed()+
   xlim(0,1)+ylim(0,1)+
   xlab("Model")+
-  stat_cor(method = "pearson", label.x = 0.4, label.y = 0.9)+
+  stat_cor(method = "pearson", label.x = 0.3, label.y = 0.9)+
   geom_smooth(method = "lm", se = F, col = "black", size =0.4)+
   theme_few() + 
   guides(col = F)+
