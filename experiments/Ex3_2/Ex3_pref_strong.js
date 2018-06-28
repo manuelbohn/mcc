@@ -368,7 +368,7 @@ var experiment = {
        
     // data collected  
       data = {
-        experiment: "pref_inf",
+        experiment: "pref_strong",
         trial: trial[0],
         speaker: experiment.cond[0][1],
         alignment: alignment,
