@@ -622,7 +622,7 @@ var experiment = {
                 $(".fruit_r2").bind("click", experiment.eat);
             };
         };
-}, 000);
+}, 7000);
   
   },
  // sequence of events during training exposure
