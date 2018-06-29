@@ -916,7 +916,7 @@ if (experiment.cond[0][2] == "right"){
   
    
 // animate object when visible and pointed at  
-    if (experiment.agentOrient[0][0].slice(0,-1) == "point_r") {
+    if (experiment.agentOrient[0][0] == "point_r") {
         setTimeout(function() {
             $("#fruit_r").animate({width: "200px",opacity: '0.3', queue: false, duration: 1000});
             $("#fruit_r").animate({width: "130px",opacity: '1', queue: false, duration: 1000});
@@ -925,7 +925,7 @@ if (experiment.cond[0][2] == "right"){
         }, 1500)
     }; 
       
-    if (experiment.agentOrient[0][0].slice(0,-1) == "point_l") {
+    if (experiment.agentOrient[0][0] == "point_l") {
         setTimeout(function() {
             $("#fruit_l").animate({width: "200px",opacity: '0.3', queue: false, duration: 1000});
             $("#fruit_l").animate({width: "130px",opacity: '1', queue: false, duration: 1000});

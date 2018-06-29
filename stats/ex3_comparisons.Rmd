@@ -1030,6 +1030,36 @@ ggplot(data = plot.model,aes(x = mean, y = Data, col = Model)) +
 
 ```
 
+```{r model no prior loglikelihood}
+no.prior.loglikelihood <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.allPriorProbs
+
+var model = function(){
+
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
+
+   var conditionSpecificPriors = [.5, .5, .5] 
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors)
+
+var loglike = Binomial({
+        p: Math.exp(modelPredictions.score(1)), 
+        n: conditionSpecificData.length}).score(
+      sum(_.map(conditionSpecificData, "correct_inf"))
+    )
+
+  return  loglike
+}, allConditions)
+
+ return sum(conditionOutput)
+}
+'
+```
+
 ```{r model rsa loglikelihood}
 rsa.loglikelihood <-'
 var allConditions = dataFromR.allConditions
@@ -1326,6 +1356,16 @@ var loglike = Binomial({
 # RSA Models
 ###################
 
+llh.no.prior <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, no.prior.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 10000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "No Prior")
+
 llh.rsa <- webppl(
   program_code = paste(rsaUtils, rsaModel2, rsa.loglikelihood, sep='\n'),
   data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
@@ -1419,6 +1459,7 @@ llh.prior.noise.regPrior <- webppl(
 ```{r}
 
 likelihood_overview <- bind_rows(
+  llh.no.prior,
   llh.rsa,
   llh.prior,
   llh.rsa.noise,
