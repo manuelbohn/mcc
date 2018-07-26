@@ -1,0 +1,123 @@
+---
+title: "MCC Informativeness Kids"
+author: "Manuel Bohn"
+date: "26 4 2018"
+output: html_document
+---
+
+```{r setup, include = F}
+###
+library(tidyverse)
+library(knitr)
+library(langcog)
+library(ggthemes)
+
+
+## importing data
+
+d <- read_csv(file="kids_inf.data.csv")%>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"))
+
+```
+
+# Sample size per age bin
+
+We reached the pre-registered sample size for 3yo, that's why I took another look at the data. See below the nr. of subjects we have so far. 
+
+```{r kids per age group,echo = F }
+
+d %>%
+  group_by(age)%>%
+  summarise(n = length(unique(subid)))%>%
+  knitr::kable(digits = 2)
+```
+
+# Plot overall
+
+We can ignore this plot for now and go straight to the plot by age bin as we are primarily interested in the 3yo.
+
+```{r plot across age, echo = F }
+p3 <- d %>%
+  filter(trial_type == "test") %>%
+  group_by(control, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p4 <- p3 %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p3, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p4, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+
+```
+
+# Plot by age group
+
+Here it seems like there is absolutely nothing for the 3yo. No difference between conditions and no performance above chance. That's bad news, especially since we have good reasons to believe that they are able to do this by that age. So it's reasonable to ask what's wrong with our setup? the next graph might give an answer to that
+
+```{r plot by age, echo= FALSE}
+p1 <- d %>%
+  filter(trial_type == "test") %>%
+  group_by(control,age, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p2 <- p1 %>%
+  multi_boot_standard(col = "correct")
+
+
+ggplot() +
+  geom_jitter(data = p1, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p2, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_wrap(~age)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+```
+
+# Plot for object picked based on position on table
+
+There was a small tendency in the adult data to pick the inner object in the control condition (55% of cases). This is understandable as the agent is closer to that object and after turning it is the one that is closer in the agent's visual field. For the 3yo, it seems like the tendency to pick the object closer to the agent is much stronger and is in fact driving their choice. The plot below shows the proportion of trials in which they picked the inner object. If position would not matter, this should be at chance in each condition. 
+
+This bias seems to be absent in 4yo, so my prediction would be that we will see the effect in the full sample, whereas in the 2yo it is more likely to go away. 
+
+```{r plot for pick, echo = F }
+
+p5 <- d%>%
+  mutate(pick_position = ifelse(targetOnTable == "inner" & correct == 1, "inner", 
+                             ifelse(targetOnTable == "outer" & correct == 1, "outer",
+                                    ifelse(targetOnTable == "inner" & correct == 0, "outer",
+                                           ifelse(targetOnTable == "outer" & correct == 0, "inner",NA)))),
+         age = factor(age),
+         control = ifelse(control == "true", "control", "test"))%>%
+  group_by(age,control)%>%
+  summarise(pick_inner = sum(pick_position == "inner")/length(pick_position))
+
+ggplot(p5, aes(x = control, y = pick_inner, fill = age))+
+  geom_bar(stat="identity", color = "black")+
+  ylim(-0.05,1.05)+
+  facet_wrap(~age)+
+  theme_few() +
+  geom_hline(yintercept = 0.5, lty=2)+
+  scale_colour_solarized()
+
+
+```
+
+
+
+

@@ -2,6 +2,9 @@
 auth.json
 my-own-auth.json
 *.Rapp.history
+*.Rproj
+*RData
 stats/rsconnect/*
 models/rsconnect/*
 
+.Rproj.user

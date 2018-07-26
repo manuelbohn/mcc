@@ -17,6 +17,14 @@ library(ggthemes)
 d <- read_csv(file="inf.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
+d%>%
+  mutate(pick_position = ifelse(targetOnTable == "inner" & correct == 1, "inner", 
+                             ifelse(targetOnTable == "outer" & correct == 1, "outer",
+                                    ifelse(targetOnTable == "inner" & correct == 0, "outer",
+                                           ifelse(targetOnTable == "outer" & correct == 0, "inner",NA)))))%>%
+  group_by(control)%>%
+  summarise(pick_inner = sum(pick_position == "inner")/length(pick_position))
+
 ```
 
 Sanity checks.

@@ -1,0 +1,914 @@
+---
+title: "MCC Ex3 Variable Priors"
+author: "Manuel Bohn"
+date: "30 6 2018"
+output: 
+  html_document:
+  toc: true
+  toc_float: true
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(langcog)
+library(rwebppl)
+library(matrixStats)
+library(coda)
+library(ggpubr)
+
+estimate_mode <- function(s) {
+  d <- density(s)
+  return(d$x[which.max(d$y)])
+}
+
+hdi_upper<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","upper"])
+}
+
+hdi_lower<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","lower"])
+}
+```
+
+# Overview of the data
+
+```{r data, include= FALSE}
+
+dat <- bind_rows(read_csv(file="ex3.2.novel.strong.data.csv"),
+               read_csv(file="ex3.2.novel.medium.data.csv"),
+               read_csv(file="ex3.2.novel.weak.data.csv"),
+               read_csv(file="ex3.2.pref.strong.data.csv"),
+               read_csv(file="ex3.2.pref.medium.data.csv")
+               ) %>%
+  mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
+```
+
+```{r sanity checks, include= FALSE}
+# check if there are incongruent trials in which informativeness and prior yield the same results
+# is not the case, that's good
+dat %>%
+  filter(alignment == "incongruent") %>%
+  filter(correct_inf == correct_prior)
+
+
+# check if someone needs to be excluded because wrong in training
+# no one, that's good
+y <- dat %>%
+  filter(trial_type == "train") %>%
+  group_by(id)%>%
+  summarise(correct_inf = mean(correct_inf)) %>%
+  filter(correct_inf == 0)
+  
+# check if someone did both experiments
+
+dat %>%
+  filter(trial_type == "train") %>%
+  group_by(id)%>%
+  summarise(n = length(correct_inf)) %>%
+  filter(n > 2)
+
+
+# exclude those who failed in training and did both experiments
+data <- dat %>%
+  filter(!id %in% y$id)%>% 
+  distinct(id, alltrial, .keep_all = TRUE) %>%
+  filter(trial_type != "train") %>%
+  mutate(Change = ifelse(change =="same", "Same speaker", "Different speaker"),
+         Alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"),
+         Experiment = ifelse(grepl("pref",experiment), "Preference", "Novelty"),
+         Prior = ifelse(prior == "weak", "Weak", ifelse(prior == "medium", "Medium", "Strong"))
+         )
+
+
+data %>%
+  group_by(Prior,Experiment,Change,Alignment) %>%
+  summarise(n = length(id))
+
+```
+
+```{r plot data, echo = FALSE}
+
+p1 <- data %>%
+  filter(trial_type == "test") %>%
+  mutate(Prior = relevel(as.factor(Prior), ref = "Weak"))%>%
+  group_by(Prior,Change ,Experiment,Alignment, id) %>%
+  summarise(correct = mean(correct_inf)) %>%
+  multi_boot_standard(col = "correct")
+
+ggplot(p1, 
+       aes(x = Change, y = mean, fill = Alignment)) +
+  geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),position = position_dodge(width = 0.9))+
+  labs(x=" ",y="Proportion Choosing More Informative")+
+  facet_grid(Experiment ~ Prior)+
+  theme_few(base_size = 12) + 
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  ylim(0,1)
+
+```
+
+```{r comparisons to chance, include= FALSE}
+library(exactRankTests)
+
+data %>%  
+  filter(trial_type == "test") %>%
+  group_by(change ,experiment,alignment, id) %>%
+  summarise(correct_inf = mean(correct_inf)) %>%
+  summarize(correct_inf = list(correct_inf)) %>%
+  group_by(change ,experiment,alignment) %>%
+  mutate(mean = mean(unlist(correct_inf)),
+         stat = wilcox.exact(unlist(correct_inf), mu = 0.5)$statistic,
+         p_value = wilcox.exact(unlist(correct_inf), mu = 0.5)$p.value) %>%
+  select(change ,experiment,alignment,mean,stat,p_value)%>%
+  knitr::kable(digits = 3)
+```
+
+## Comparing data from Time 1 and 2
+
+The strong prior manipulations in Time 2 are a replication of the first round of data collection. In general the results are very similar. Preference, different speaker, incongruent differs the most. 
+```{r comparing data to first round of data collection, include = FALSE}
+# getting data from time 1
+dat.t1 <- bind_rows(read_csv(file="ex3.novel.data.csv"),
+               read_csv(file="ex3.pref.data.csv")) %>%
+  mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))%>%
+  filter(trial_type != "train") %>%
+  distinct(id, alltrial, .keep_all = TRUE) %>%
+  mutate(Change = ifelse(change =="same", "Same speaker", "Different speaker"),
+         Alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"),
+         Experiment = ifelse(experiment == "pref_inf", "Preference", "Novelty"),
+         Time = "Time 1")
+
+# joining data files
+d.comp <- bind_rows(data%>%filter(Prior == "Strong")%>%mutate(Time = "Time 2"),dat.t1)
+
+p.comp <- d.comp%>%
+  group_by(Change,Experiment,Alignment,Time, id) %>%
+  summarise(correct = mean(correct_inf)) %>%
+  multi_boot_standard(col = "correct")
+
+```
+
+Barplot for Time 1 and 2.
+
+```{r, echo= FALSE}
+# plot
+
+ggplot(p.comp, 
+       aes(x = Change, y = mean, fill = Alignment)) +
+  geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),position = position_dodge(width = 0.9))+
+  labs(x=" ",y="Proportion Choosing More Informative")+
+  facet_grid(Experiment ~ Time)+
+  theme_few(base_size = 12) + 
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  ylim(0,1)
+```
+
+```{r correlation time 1 and 2, include = FALSE, warning = FALSE}
+# correlation
+p.cor.comp <- data.frame(Time1 = p.comp$mean[p.comp$Time == "Time 1"],
+                         Time2 = p.comp$mean[p.comp$Time == "Time 2"],
+                         ci_low1 = p.comp$ci_lower[p.comp$Time == "Time 1"],
+                         ci_low2 = p.comp$ci_lower[p.comp$Time == "Time 2"],
+                         ci_up1 = p.comp$ci_upper[p.comp$Time == "Time 1"],
+                         ci_up2 = p.comp$ci_upper[p.comp$Time == "Time 2"])
+
+```
+
+Correlation between Time 1 and 2.
+
+```{r, echo= FALSE, warning = FALSE}
+
+ggplot(data = p.cor.comp,aes(x = Time1, y = Time2)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.3)+
+  geom_point()+
+  coord_fixed()+
+  geom_errorbar(aes(ymin = ci_low2, ymax = ci_up2),width = 0)+
+  geom_errorbarh(aes(xmin = ci_low1, xmax = ci_up1), height = 0)+
+  xlim(0,1)+ylim(0,1)+
+  stat_cor(method = "pearson", label.x = 0.3, label.y = 0.9)+
+  geom_smooth(method = "lm", se = F, col = "black", size =0.4)+
+  theme_few() + 
+  guides(col = F)+
+  scale_colour_solarized()
+```
+
+# GLMMs
+
+Frequentist analysis: GLMMs for each level of prior strength. For "strong" and "medium" we find the interaction between speaker change and incongruent like in the first round of data collection. This suggests that participants differentiate between congruent and incongruent trials when it is the same speaker. The effect is considerably weaker in "medium". For "weak", this interaction is gone. This pattern makes sense and suggests that the experimental manipulations work.
+
+## GLMM strong
+
+```{r glmm strong, cache = TRUE, echo = FALSE}
+library(lme4)
+
+m.data.strong <- data %>%
+  filter(Prior == "Strong") %>%
+  mutate(item = ifelse( change == "false", agent, altAgent))
+
+
+lm.strong <- glmer(correct_inf ~ Experiment*Change*Alignment + (Change*Alignment|id) + (Change+Alignment|agent), 
+              data = m.data.strong, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm.strong)
+```
+
+## GLMM medium
+
+```{r glmm medium, cache = TRUE, echo = FALSE}
+
+m.data.medium <- data %>%
+  filter(Prior == "Medium") %>%
+  mutate(item = ifelse( change == "false", agent, altAgent))
+
+
+lm.medium <- glmer(correct_inf ~ Experiment*Change*Alignment + (Change*Alignment|id) + (Change+Alignment|agent), 
+              data = m.data.medium, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm.medium)
+```
+
+## GLMM weak (novelty only)
+
+```{r glmm weak, cache = TRUE, echo = FALSE}
+
+m.data.weak <- data %>%
+  filter(Prior == "Weak") %>%
+  mutate(item = ifelse( change == "false", agent, altAgent))
+
+
+lm.weak <- glmer(correct_inf ~ Change*Alignment + (Change*Alignment|id) + (Change+Alignment|agent), 
+              data = m.data.weak, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm.weak)
+
+```
+
+# Comparing data to model predictions
+
+```{r joining with predictions, include = FALSE}
+da <- data %>%
+  mutate(Prior = relevel(as.factor(Prior), ref = "Weak"))%>%
+  filter(trial_type=="test")%>%
+  mutate(Model = "Data") %>%
+  group_by(Model,Prior,Experiment,Change,Alignment)%>%
+  summarize(k = sum(correct_inf), n = n())%>%
+  ungroup() %>%
+  mutate(a = 1 + k,
+         b = 1 + n - k,
+         ci_lower  = qbeta(.025, a, b),
+         ci_upper = qbeta(.975, a, b),
+         mean = (a-1)/(a+b-2))%>%
+  select(-a,-b,-n,-k)
+  
+pred.ex3 <- read_csv(file = "predictions.ex3.csv") 
+
+vp.pd <- bind_rows(pred.ex3,da)
+
+```
+
+Plots for models and predictions. I did not plot the no prior model because it predicts the same for all conditions. The predictions are the ones we pre-registered. The noise parameter is therefore estimated based on the data from the first round.
+
+```{r comparing to predictions barplot, echo = FALSE,fig.width = 10}
+
+vp.pd <- vp.pd%>%
+  mutate(Prior = relevel(as.factor(Prior), ref = "Weak"),
+         Model = ifelse(Model =="Noisy RSA Model", "RSA",ifelse(Model =="Data", "Data","Prior Only")))
+
+ggplot(vp.pd, 
+       aes(x = Change, y = mean, fill = Alignment)) +
+  geom_bar(stat="identity", position = position_dodge(), color = 'black') + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper),position = position_dodge(width = 0.9))+
+  labs(x=" ",y="Proportion Choosing More Informative")+
+  facet_grid(Experiment ~ Prior*Model)+
+  theme_few() + 
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  ylim(0,1)
+
+```
+
+## Correlation between predictions and data
+
+```{r comparing to predictions correlation overall, echo = FALSE, warning= FALSE}
+## correlations for model comparisons
+
+pred.ex3$Data = rep(da$mean,2)
+pred.ex3$Data_ci_low = rep(da$ci_lower,2)
+pred.ex3$Data_ci_up = rep(da$ci_upper,2)
+
+pred.ex3 <- pred.ex3%>%
+  mutate(Prior = relevel(as.factor(Prior), ref = "Weak"))
+
+ggplot(data = pred.ex3,aes(x = mean, y = Data, col = Prior)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.3)+
+  geom_point()+
+  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0)+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0)+
+  facet_grid(~Type)+
+  #facet_grid(Type~Prior)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  stat_cor(method = "pearson", label.x = 0.3, label.y = 0.9, aes(x = mean, y = Data), inherit.aes = F)+
+  geom_smooth(method = "lm", se = F, col = "black", size =0.4)+
+  theme_few() + 
+  scale_colour_solarized()
+
+```
+
+## Correlation between predictions and data seperate for each level of prior strengths
+
+Correlation for weak prior is low because the conditions are so close to one another (see also GLMM).
+
+```{r comparing to predictions correlation, echo = FALSE, warning= FALSE, fig.width=12}
+ggplot(data = pred.ex3,aes(x = mean, y = Data, col = Prior)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.3)+
+  geom_point()+
+  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0)+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0)+
+  #facet_grid(~Type)+
+  facet_grid(Type~Prior)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  stat_cor(method = "pearson", label.x = 0.3, label.y = 0.9, aes(x = mean, y = Data), inherit.aes = F)+
+  geom_smooth(method = "lm", se = F, col = "black", size =0.4)+
+  theme_few() + 
+  scale_colour_solarized()
+
+```
+
+# BDA
+
+All models, including the no prior model, comprise a noise parameter. Surprisingly, the no prior model does better than the prior only model here. This was not the case in the previous round with only the strong priors.
+
+```{r rsaUtils, include = FALSE}
+rsaUtils <- '
+var all_objects = [
+{ shape: "triangle", id:1, location: 1},  
+{ shape: "triangle", id:2, location: 2},
+{ shape: "circle", id:1, location: 2}
+]
+
+var labels = ["dax","wug"]
+
+var lexicon1 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "triangle" :
+utterance.label == "wug" ? obj.shape == "circle" : 
+true
+}
+
+var lexicon2 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "circle" :
+utterance.label == "wug" ? obj.shape == "triangle" : 
+true
+}
+
+var lexiconObjects = {
+"dax = triangle": {
+triangle: "dax", circle: "wug"
+},
+"dax = circle": {
+triangle: "wug", circle: "dax"
+},
+}
+
+var lexiconObject = {
+"dax = triangle": lexicon1,
+"dax = circle" : lexicon2
+}
+
+var point = function(utterance, obj){
+return obj.location == utterance.point
+}
+
+
+var utterancePrior = function(obj, lexiconName){
+var locationsWithShape = _.map(_.filter(all_objects, {shape: obj.shape}), "location")
+var point = uniformDraw(locationsWithShape)
+var label = lexiconObjects[lexiconName][obj.shape]
+return {label: label, point: point}
+}
+
+var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
+'
+```
+
+```{r rsaModel, include = FALSE}
+rsaModel <- 'var ObjectPrior = Categorical({vs: all_objects, ps: priorProbs })
+
+var pragmaticListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior);
+var obj = sample(ObjectPrior);
+var S1 = speaker(obj, lexiconName);
+observe(S1, utterance)
+return {lexicon: lexiconName, obj: obj.shape}
+}})
+}
+
+var speakerOptimality = 2.25;
+
+var speaker = function(obj, lexiconName){
+Infer({method: "enumerate", model: function(){
+var utterance = utterancePrior(obj, lexiconName);
+var L0 = literalListener(utterance);
+ factor(speakerOptimality * L0.score(obj.shape))
+return utterance
+}})
+}
+
+var literalListener = function(utterance){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior); 
+var lexicon = lexiconObject[lexiconName];
+var obj = sample(ObjectPrior);
+if ("label" in utterance) {
+ var truthValue = lexicon(utterance, obj);
+ condition(truthValue)
+}
+if (utterance.point) {
+ var truthValuePoint = point(utterance, obj);
+ condition(truthValuePoint)
+}
+return obj.shape 
+}})
+}
+
+
+pragmaticListener({label: "dax", point: 2 })
+'
+```
+
+```{r rsa model2, include = FALSE}
+rsaModel2 <- '
+var pragmaticListener = function(utterance, priorProbs){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior);
+var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+var S1 = speaker(obj, lexiconName, priorProbs);
+observe(S1, utterance)
+return obj.shape == "circle" ? 1 : 0
+}})
+}
+
+var speakerOptimality = 2.25;
+
+var speaker = function(obj, lexiconName, priorProbs){
+Infer({method: "enumerate", model: function(){
+var utterance = utterancePrior(obj, lexiconName);
+var L0 = literalListener(utterance, priorProbs);
+ factor(speakerOptimality * L0.score(obj.shape))
+return utterance
+}})
+}
+
+var literalListener = function(utterance, priorProbs){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior); 
+var lexicon = lexiconObject[lexiconName];
+var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+if ("label" in utterance) {
+ var truthValue = lexicon(utterance, obj);
+ condition(truthValue)
+}
+if (utterance.point) {
+ var truthValuePoint = point(utterance, obj);
+ condition(truthValuePoint)
+}
+return obj.shape 
+}})
+}
+
+var addNoise = function(dist, noiseParam){
+   Infer({model: function(){ 
+      return flip(noiseParam) ? uniformDraw([0, 1]) : sample(dist)
+    }
+   })
+}
+'
+```
+
+```{r model setup, include = FALSE}
+
+strongPriorProbs <- data.frame(
+  Experiment = c("Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty"),
+  Change = c("Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker"),
+  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"),
+  Prior = rep("Strong",8))
+
+strongPriorProbs$priorProbs = list(
+    c(0.0333333, 0.033333, 0.9666667), 
+    c(0.9666667, 0.9666667, 0.0333333),
+    c(0.3583333, 0.3583333, 0.6416667),
+    c(0.6416667, 0.6416667, 0.3583333),
+    c(0.1666667, 0.1666667, 0.8333333),
+    c(0.8333333, 0.8333333, 0.1666667),
+    c(0.4083333, 0.4083333, 0.5916667),
+    c(0.5916667, 0.5916667, 0.4083333))
+
+mediumPriorProbs <- data.frame(
+  Experiment = c("Preference","Preference","Preference","Preference","Novelty","Novelty","Novelty","Novelty"),
+  Change = c("Same speaker","Same speaker","Different speaker","Different speaker","Same speaker","Same speaker","Different speaker","Different speaker"),
+  Alignment = c("Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent","Congruent","Incongruent"),
+  Prior = rep("Medium",8))
+
+mediumPriorProbs$priorProbs = list(
+    c(0.1465517, 0.1465517, 0.8534483), 
+    c(0.8534483, 0.8534483, 0.1465517),
+    c(0.4137931, 0.4137931, 0.5862069),
+    c(0.5862069, 0.5862069, 0.4137931),
+    c(0.2983871, 0.2983871, 0.7016129),
+    c(0.7016129, 0.7016129, 0.2983871),
+    c(0.4274194, 0.4274194, 0.5725806),
+    c(0.5725806, 0.5725806, 0.4274194))
+
+
+weakPriorProbs <- data.frame(
+  Experiment = c("Novelty","Novelty","Novelty","Novelty"),
+  Change = c("Same speaker","Same speaker","Different speaker","Different speaker"),
+  Alignment = c("Congruent","Incongruent","Congruent","Incongruent"),
+  Prior = rep("Weak",4))
+
+weakPriorProbs$priorProbs = list(
+  c(0.4166667, 0.4166667, 0.5833333), 
+  c(0.5833333, 0.5833333, 0.4166667),
+  c(0.475, 0.475, 0.5250000),
+  c(0.5250000, 0.5250000, 0.475))
+
+
+vpPriorProbs = rbind(strongPriorProbs,mediumPriorProbs,weakPriorProbs)
+
+vpAllConditions <- vpPriorProbs %>%
+  select(-priorProbs)
+
+```
+
+```{r model no prior noise loglikelihood, include = FALSE}
+vp.no.prior.noise.loglikelihood <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.allPriorProbs
+
+var model = function(){
+  var noise = uniformDrift({a: 0, b:1, width: 0.1})
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Prior : conditionInfo.Prior})
+
+   var conditionSpecificPriors = [.5, .5, .5] 
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors)
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+var loglike = Binomial({
+        p: Math.exp(noisyModelPredictions.score(1)), 
+        n: conditionSpecificData.length}).score(
+      sum(_.map(conditionSpecificData, "correct_inf"))
+    )
+
+  return  loglike
+}, allConditions)
+
+ return sum(conditionOutput)
+}
+'
+```
+
+```{r model rsa noise loglikelihood, include = FALSE}
+vp.rsa.noise.loglikelihood <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.allPriorProbs
+
+var model = function(){
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
+
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Prior : conditionInfo.Prior})
+
+   var conditionSpecificPriors =  _.filter(allPriorProbs, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Prior : conditionInfo.Prior})
+
+// display(JSON.stringify(conditionSpecificData))
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors[0].priorProbs)
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+var loglike = Binomial({
+        p: Math.exp(noisyModelPredictions.score(1)), 
+        n: conditionSpecificData.length}).score(
+      sum(_.map(conditionSpecificData, "correct_inf"))
+    )
+
+  return  loglike
+}, allConditions)
+
+ return sum(conditionOutput)
+}
+'
+```
+
+```{r model prior noise loglikelihood, include = FALSE}
+vp.prior.noise.loglikelihood <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.allPriorProbs
+
+var model = function(){
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
+
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, 
+        {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Prior : conditionInfo.Prior})
+
+   var conditionSpecificPriors =  _.filter(allPriorProbs, 
+        {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment, Prior : conditionInfo.Prior})
+
+    var priorOnlyPredictions = Infer({method: "enumerate", model: function(){
+      var obj = sample( Categorical({vs: all_objects, ps: conditionSpecificPriors[0].priorProbs}));
+      return obj.shape == "circle" ? 1 : 0
+    }})
+
+   var noisyModelPredictions = addNoise(priorOnlyPredictions, noise)
+
+var loglike = Binomial({
+        p: Math.exp(noisyModelPredictions.score(1)), 
+        n: conditionSpecificData.length}).score(
+      sum(_.map(conditionSpecificData, "correct_inf"))
+    )
+
+  return  loglike
+}, allConditions)
+
+ return sum(conditionOutput)
+}
+'
+```
+
+```{r model loglikelihoods, include = FALSE, cache = TRUE}
+###################
+# RSA Models
+###################
+
+vp.llh.no.prior.noise <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.no.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = vpAllConditions, allPriorProbs = vpPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "No Prior")
+
+
+vp.llh.rsa.noise <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.rsa.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = vpAllConditions, allPriorProbs = vpPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "Pragmatic")
+
+###################
+# Prior only models
+###################
+
+vp.llh.prior.noise <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = vpAllConditions, allPriorProbs = vpPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "Prior Only")
+
+```
+
+```{r, include = FALSE, include = FALSE}
+
+vp.likelihood_overview <- bind_rows(
+  vp.llh.no.prior.noise,
+  vp.llh.rsa.noise,
+  vp.llh.prior.noise)
+
+ggplot(vp.likelihood_overview, aes(x = value))+
+  geom_histogram()+
+  xlim(-700,0)+
+  facet_wrap(~Model, nrow = 2, scales = "free")
+
+```
+
+
+## Comparing models
+
+```{r logsum summary, echo = FALSE}
+vp.llh.plot <- vp.likelihood_overview %>%
+  group_by(Model)%>%
+  summarize(logP = logSumExp(value))%>%
+  mutate(Model = reorder(Model,logP))
+
+ggplot(vp.llh.plot, aes(x = Model, y = logP, fill = Model))+
+  geom_bar(stat="identity", color = "black")+
+  ggtitle("Log Likelihood per Model")+
+  theme_few()+ 
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  guides(fill = F)
+```
+
+## Bayes Factors
+
+```{r bayes factors, echo = FALSE}
+
+bf <- data.frame(
+  Comparison = c("Pragmatic vs. Prior only","Pragmatic vs. No prior", "No Prior vs. Prior only"),
+  BayesFactor = c(
+    exp(vp.llh.plot$logP[vp.llh.plot$Model== "Pragmatic"] - vp.llh.plot$logP[vp.llh.plot$Model== "Prior Only"]),
+    exp(vp.llh.plot$logP[vp.llh.plot$Model== "Pragmatic"] - vp.llh.plot$logP[vp.llh.plot$Model== "No Prior"]),
+    exp(vp.llh.plot$logP[vp.llh.plot$Model== "No Prior"] - vp.llh.plot$logP[vp.llh.plot$Model== "Prior Only"]))
+)
+
+
+bf%>%
+  kable(digits = 2)
+```
+
+## Model comparison by level of prior strength
+
+```{r model loglikelihoods by prior level, include = FALSE, cache = TRUE}
+###################
+# No Prior
+###################
+
+vp.llh.no.prior.noise.strong <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.no.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Strong"), allConditions = vpAllConditions%>%filter(Prior == "Strong"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Strong")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "No Prior",
+         Prior = "Strong")
+
+
+vp.llh.no.prior.noise.medium <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.no.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Medium"), allConditions = vpAllConditions%>%filter(Prior == "Medium"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Medium")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "No Prior",
+         Prior = "Medium")
+
+vp.llh.no.prior.noise.weak <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.no.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Weak"), allConditions = vpAllConditions%>%filter(Prior == "Weak"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Weak")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "No Prior",
+         Prior = "Weak")
+
+
+###################
+# RSA Model
+###################
+
+vp.llh.rsa.noise.strong <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.rsa.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Strong"), allConditions = vpAllConditions%>%filter(Prior == "Strong"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Strong")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "Pragmatic",
+         Prior = "Strong")
+
+vp.llh.rsa.noise.medium <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.rsa.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Medium"), allConditions = vpAllConditions%>%filter(Prior == "Medium"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Medium")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "Pragmatic",
+         Prior = "Medium")
+
+vp.llh.rsa.noise.weak <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.rsa.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Weak"), allConditions = vpAllConditions%>%filter(Prior == "Weak"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Weak")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "Pragmatic",
+         Prior = "Weak")
+
+###################
+# Prior only models
+###################
+
+vp.llh.prior.noise.strong <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Strong"), allConditions = vpAllConditions%>%filter(Prior == "Strong"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Strong")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "Prior Only",
+         Prior = "Strong")
+
+vp.llh.prior.noise.medium <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Medium"), allConditions = vpAllConditions%>%filter(Prior == "Medium"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Medium")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "Prior Only",
+         Prior = "Medium")
+
+vp.llh.prior.noise.weak <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, vp.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data%>%filter(Prior == "Weak"), allConditions = vpAllConditions%>%filter(Prior == "Weak"), allPriorProbs = vpPriorProbs%>%filter(Prior == "Weak")), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 5000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "Prior Only",
+         Prior = "Weak")
+
+
+
+```
+
+
+```{r, echo = FALSE}
+
+vp.likelihood_overview.variable <- bind_rows(
+  vp.llh.no.prior.noise.strong,
+  vp.llh.no.prior.noise.medium,
+  vp.llh.no.prior.noise.weak,
+  vp.llh.rsa.noise.strong,
+  vp.llh.rsa.noise.medium,
+  vp.llh.rsa.noise.weak,
+  vp.llh.prior.noise.strong,
+  vp.llh.prior.noise.medium,
+  vp.llh.prior.noise.weak)%>%
+  mutate(Prior = relevel(as.factor(Prior), ref = "Weak"),
+         Model = relevel(as.factor(Model), ref = "Prior Only"))
+
+p.llh.plot.variable <- vp.likelihood_overview.variable %>%
+  group_by(Prior, Model)%>%
+  summarize(logP = logSumExp(value))
+
+ggplot(p.llh.plot.variable, aes(x = Model, y = logP, fill = Model))+
+  geom_bar(stat="identity", color = "black")+
+  ggtitle("Log Likelihood per Model and Prior Level")+
+  theme_few()+ 
+  facet_wrap(~Prior)+
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
+  guides(fill = F)
+
+
+
+
+
+
+```
+
+Interestingly the No Prior model does better than the RSA model with weak priors, although the difference is not huge (BF = `r round(exp(p.llh.plot.variable$logP[p.llh.plot.variable$Model== "No Prior" & p.llh.plot.variable$Prior == "Weak"] - p.llh.plot.variable$logP[p.llh.plot.variable$Model== "Pragmatic" & p.llh.plot.variable$Prior == "Weak" ]),2)`).
+
+```{r, include = FALSE}
+
+save.image("mcc_model_comparison.RData")
+```
+

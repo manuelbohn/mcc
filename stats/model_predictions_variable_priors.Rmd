@@ -469,6 +469,8 @@ ggplot(prior.noise.pred,
 ```{r}
 pred.plot <- bind_rows(prior.noise.pred,noisy.rsa.pred)
 
+write.csv(pred.plot, file="predictions.ex3.csv")
+
 ggplot(pred.plot, 
        aes(x = Change, y = mean, fill = Alignment)) +
   geom_bar(stat="identity", position = position_dodge(), color = 'black') + 

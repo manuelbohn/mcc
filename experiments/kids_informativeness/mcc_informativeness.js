@@ -5,6 +5,7 @@ var images = new Array();
 for (i = 0; i < preFruits.length; i++) {
 	images[i] = new Image();
 	images[i].src = "images/" + preFruits[i];
+    images[i].id = preFruits[i];
 }
 
 
