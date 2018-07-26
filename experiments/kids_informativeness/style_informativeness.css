@@ -25,7 +25,6 @@ body {
 	width: 980px;
 	height: 660px;
     opacity: 0.3;
-    z-index: -5
 }
 
 input, select, button {font-family: Georgia, serif; font-size: 14px;}
@@ -125,10 +124,9 @@ nextButton[disabled] {
 
 .agent {
     position: absolute;
-    bottom: 280px;
+    bottom: 245px;
     left: 320px;
     width: 350px;
-    z-index: 0
 }
 
 .point_agent_r {
@@ -154,21 +152,12 @@ nextButton[disabled] {
 
 .hill {
     position: absolute;
-    bottom: 40px;
+    bottom: 5px;
     left: 320px;
     width: 350px;
     z-index: 1
 }
 
-.fence {
-    position: absolute;
-    bottom: 100px;
-    left: 0px;
-    width: 980px;
-    z-index: 2;
-    height: 250;
-    opacity: 0.98
-}
 
 .animal_intro {
     position: relative;
@@ -177,56 +166,53 @@ nextButton[disabled] {
 
 .fruit_r {
     position: absolute;
-    bottom: 215px;  
+    bottom: 225px;  
     left: 651px;
     width: 150px;
-    z-index: 4
+    z-index: 2
 }
 
 .fruit_r2 {
     position: absolute;
-    bottom: 215px;  
+    bottom: 225px;  
     left: 831px;
     width: 150px;
-    z-index: 4
+    z-index: 1
 }
 
 
 .fruit_l {
     position: absolute;
-    bottom: 215px;
+    bottom: 225px;
     left: 181px;
     width: 150px;
-    z-index: 4
+    z-index: 2
 }
-
-
-
 
 .fruit_l2 {
     position: absolute;
-    bottom: 215px;
+    bottom: 225px;
     left: 2px;
     width: 150px;
-    z-index: 4
+    z-index: 1
 }
 
 
 
 .table_r {
     position: absolute;
-    bottom: 70px;
+    bottom: 80px;
     left: 679px;
     width: 280px;
-    z-index: 3
+    z-index: 0
 }
 
 .table_l {
     position: absolute;
-    bottom: 70px;
+    bottom: 80px;
     left: 30px;
     width: 280px;
-    z-index: 3
+    z-index: 0
 }
 
 
@@ -324,4 +310,3 @@ div#preload { display: none; }
     height: 30px;
     background-color: green;
 }
-
