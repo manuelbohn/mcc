@@ -165,6 +165,17 @@ function playSound() {
 
 
 
+$("#button").click(function() {
+    //disable accept button if in turk preview mode
+    if (turk.previewMode) {
+      showSlide("instructions");
+      alert("Please accept HIT to view");
+    } else {
+      showSlide('training')
+    }
+});
+
+
 // Variables and randomization for the experiment
 
 var trial = ["train1","train2","finTrain",1,2,3,4,5,6,7,8]
