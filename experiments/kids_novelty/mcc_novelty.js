@@ -138,35 +138,35 @@ function playSound() {
 
 // Variables and randomization for the experiment
 
-var trial = ["train","train","finTrain",1,2,3,4,5,6]
+var trial = ["train","train","finTrain",1,2,3,4,5,6,7,8]
 
 // agents for training and test
 var trainAgents = ["Elephant","Pig"]
-var allAgents = ["Mouse","Dog","Tiger","Cat","Sheep","Bear","Monkey","Frog","Bunny"];
+var allAgents = ["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"];
 
 // randomization of agent and speaker change agent order for test trials
-var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,6);
+var testAgents = allAgents.sort(() => .5 - Math.random()).slice(0,8);
 var remainingAgent = $.grep(allAgents, function(value) {
     return $.inArray(value, testAgents) < 0;});
-var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,3);
+var testAltAgent = remainingAgent.sort(() => .5 - Math.random()).slice(0,4);
 var agents = trainAgents.concat(testAgents);
 var altAgents = testAltAgent;
 
 // randomizing order of speaker change
 var trainSpeakerChange = [["false","false"]];
-var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"])]);
+var testSpeakerChange = shuffle([shuffle(["true","false"]),shuffle(["false","true"]),shuffle(["false","true"]),shuffle(["false","true"])]);
 var speakerChange = trainSpeakerChange.concat(testSpeakerChange);
 
 // objects on tables in training and test (fruits = toys)
 var trainFruitLeft = ["car","duck"];
 var trainFruitRight = ["bear","ball"];
-var fruits = ["t1","t2","t3","t4","t5","t7","t8","t17","t10", "t11","t12","t15","t16"];
+var fruits = ["t1","t2","t3","t4","t5","t6","t7","t8","t9","t10","t11","t12","t14","t15","t16","t17"];
 
 // randomizing order and combiantion of test objects
-var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,6);
+var testRightFruit = fruits.sort(() => .5 - Math.random()).slice(0,8);
 var remainingFruits = $.grep(fruits, function(value) {
     return $.inArray(value, testRightFruit) < 0;});
-var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,6);
+var testLeftFruit = remainingFruits.sort(() => .5 - Math.random()).slice(0,8);
 var leftFruit = trainFruitLeft.concat(testLeftFruit);
 var rightFruit = trainFruitRight.concat(testRightFruit);
 
@@ -179,6 +179,8 @@ var agentOrientations = [
     ["straight","point_l1", "point_r1","disappear","straight2","point_l2", "point_r2","disappear","gone","down"],
     ["straight","point_r1", "point_l1","disappear","straight2","point_l2", "point_r2","disappear","gone","down"],
     ["straight","point_l1", "point_r1","disappear","straight2","point_r2", "point_l2","disappear","gone","down"],
+    ["straight","point_r1", "point_l1","disappear","straight2","point_r2", "point_l2","disappear","gone","down"],
+    ["straight","point_l1", "point_r1","disappear","straight2","point_r2", "point_l2","disappear","gone","down"],
     ["straight","point_r1", "point_l1","disappear","straight2","point_r2", "point_l2","disappear","gone","down"]];
 
 // randomize agent orientations 
@@ -186,11 +188,11 @@ var agentOrient = shuffle(agentOrientations);
 
 // randomizing location of target object (i.e. novel object)
 var trainNovel = ["left","right"];
-var testNovel = shuffle(["left","right","left","right","left","right"]);
+var testNovel = shuffle(["left","right","left","right","left","right","left","right"]);
 var novel = trainNovel.concat(testNovel)
 
 
-var back = shuffle([1,2,3,4,5,6,7,8]);
+var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
 
 // Show the instructions slide .
 showSlide("instructions");

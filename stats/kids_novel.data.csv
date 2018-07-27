@@ -1,0 +1,17 @@
+"","alltrial","subid","age","condition","agent","altAgent","leftObject","rightObject","pick","target","trial","change","rt","correct","targetObj","age_num"
+"1","1","180726_12_nov","3","novelty","Elephant","Frog","car","bear","car","left","train","false",12366,1,"car",3.04931506849315
+"2","2","180726_12_nov","3","novelty","Pig","Frog","duck","ball","ball","right","train","false",8320,1,"ball",3.04931506849315
+"3","3","180726_12_nov","3","novelty","Sheep","Frog","t7","t11","t7","right","1","true",9703,0,"t11",3.04931506849315
+"4","4","180726_12_nov","3","novelty","Bunny","Tiger","t8","t15","t15","right","2","false",13390,1,"t15",3.04931506849315
+"5","5","180726_12_nov","3","novelty","Dog","Tiger","t1","t16","t16","right","3","false",8354,1,"t16",3.04931506849315
+"6","6","180726_12_nov","3","novelty","Mouse","Tiger","t4","t10","t10","left","4","true",8398,0,"t4",3.04931506849315
+"7","7","180726_12_nov","3","novelty","Bear","Cat","t3","t17","t3","left","5","true",8304,1,"t3",3.04931506849315
+"8","8","180726_12_nov","3","novelty","Monkey",NA,"t2","t12","t2","left","6","false",11869,1,"t2",3.04931506849315
+"9","1","180726_9_nov","3","novelty","Elephant","Monkey","car","bear","car","left","train","false",11985,1,"car",3.91232876712329
+"10","2","180726_9_nov","3","novelty","Pig","Monkey","duck","ball","ball","right","train","false",10074,1,"ball",3.91232876712329
+"11","3","180726_9_nov","3","novelty","Bunny","Monkey","t1","t15","t15","right","1","false",14578,1,"t15",3.91232876712329
+"12","4","180726_9_nov","3","novelty","Sheep","Monkey","t10","t3","t3","right","2","true",12982,1,"t3",3.91232876712329
+"13","5","180726_9_nov","3","novelty","Dog","Cat","t2","t8","t8","right","3","false",13694,1,"t8",3.91232876712329
+"14","6","180726_9_nov","3","novelty","Tiger","Cat","t7","t12","t7","left","4","true",13536,1,"t7",3.91232876712329
+"15","7","180726_9_nov","3","novelty","Bear","Frog","t11","t5","t11","left","5","false",13400,1,"t11",3.91232876712329
+"16","8","180726_9_nov","3","novelty","Mouse","Frog","t16","t4","t16","left","6","true",14277,1,"t16",3.91232876712329

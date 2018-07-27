@@ -181,7 +181,7 @@ var agentOrientations = [
     ["straight","point_r", "point_l","disappear","down"],
     ["straight","point_l", "point_r","disappear","down"],
     ["straight","point_r", "point_l","disappear","down"],
-    ["straight","point_r", "point_l","disappear","down"],
+    ["straight","point_l", "point_r","disappear","down"],
     ["straight","point_r", "point_l","disappear","down"]];
 
 // randomize agent orientations 

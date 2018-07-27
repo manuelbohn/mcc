@@ -91,7 +91,11 @@ ggplot() +
 
 # Plot for object picked based on position on table
 
-There was a small tendency in the adult data to pick the inner object in the control condition (55% of cases). This is understandable as the agent is closer to that object and after turning it is the one that is closer in the agent's visual field. For the 3yo, it seems like the tendency to pick the object closer to the agent is much stronger and is in fact driving their choice. The plot below shows the proportion of trials in which they picked the inner object. If position would not matter, this should be at chance in each condition. 
+There was a small tendency in the adult data to pick the inner object in the control condition (55% of cases). This is understandable as the agent is closer to that object and after turning it is the one that is closer in the agent's visual field (see below). 
+
+![Setup as is.](../../../setup_inf.png)
+
+For the 3yo, it seems like the tendency to pick the object closer to the agent is much stronger and is in fact driving their choice. The plot below shows the proportion of trials in which they picked the inner object. If position would not matter, this should be at chance in each condition. 
 
 This bias seems to be absent in 4yo, so my prediction would be that we will see the effect in the full sample, whereas in the 2yo it is more likely to go away. 
 
