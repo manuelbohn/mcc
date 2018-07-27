@@ -30,6 +30,14 @@ d %>%
   group_by(age)%>%
   summarise(n = length(unique(subid)))%>%
   knitr::kable(digits = 2)
+
+
+d %>%
+  filter( trial == 1)%>%
+  group_by(control)%>%
+  summarise(mean = mean(correct),
+            n = length(correct))
+  
 ```
 
 # Plot overall

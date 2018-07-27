@@ -205,7 +205,7 @@ inf.data <- inf.data%>%
          subid = ifelse(subid == "180726_7_inf" & age == 4,"180726_6_inf_2", subid),
          age = ifelse(subid == "200718_4_inf",2, age),
          age = ifelse(subid == "180725_1_inf",4, age),
-         targetObj = ifelse(target == "left",leftObject, rightObject),
+         targetObj = ifelse(target == "right",rightObject, leftObject),
          correct = ifelse(pick == targetObj, 1, 0))
 
 # load subject log file

@@ -379,7 +379,7 @@ newtrial: function() {
     
     // play choice sound only in training
     if (experiment.trial[0] == "train"){
-        sourceSound("sound/"+agents[0]+"_choice.mp3");
+        sourceSound("sound/"+agents[0]+"_train.mp3");
         playSound();
     } else { 
    // play hello/return sound and choice depending on speaker chnage condition in test trials 

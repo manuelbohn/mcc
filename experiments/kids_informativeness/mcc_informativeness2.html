@@ -4,7 +4,8 @@
 <head>
 	<title>Learning words from animals</title>
 	<script src="jquery-1.11.2.min.js"></script>
-	<script src="mmturkey.js"></script>
+<!--	<script src="mmturkey.js"></script>-->
+    <script src="mmturkey-0.6.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
     <link type="text/css" href ="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" rel="stylesheet" />
@@ -16,9 +17,25 @@
     
 <div id="preload"></div>
 <!--<div id="progressbar" style="width: 200px;" align="center"></div>-->
+
+    
+    
+    <!-- The instructions slide. -->
+	<div class="slide" id="instructions">
+		<div style="width: 500px; margin: 0 auto; text-align: center; background-color: #8C1516; padding: 20px 15px 10px 10px">
+			<img src="images/stanford.png" height="46" width="360" alt="Stanford University">
+		</div>
+		<p id='logo-text'>Stanford Language and Cognition Lab</p>
+		<p class="block-text">In this experiment, you will learn words for new toys. Your task is to figure out which word goes with which toy. The materials were designed for children. Even if they seem strange at times, we ask you to try to be as accurate as possible. You will hear sound, so please make sure your volume is turned on. The experiment takes about 4-6 minutes.</p>
+		<button id="button" type="button" onClick="this.blur(); showSlide('training');">Press to begin</button>
+            
+		<!-- Legal blurb that we're required to show. -->
+		<p class="block-text" id="legal">Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the Stanford Department of Psychology. If you have questions about this research, please contact Manuel Bohn at <a href="mailto://bohn@stanford.edu">bohn@stanford.edu</a>. You must be at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.</p>
+	</div>
+    
 	<!-- The instructions slide. -->
     
-	<div class="slide" id="instructions">
+<!--	<div class="slide" id="instructions">
 		<div style="width: 500px; margin: 0 auto; text-align: center; background-color: #8C1516; padding: 20px 15px 10px 10px">
 			<img src="images/stanford.png" height="46" width="360" alt="Stanford University">
 		</div>
@@ -43,7 +60,7 @@
         </center>
 	</div>
 
-<!-- touch training -->   
+  
 <div class="slide" id="dotGame">
     <br><br><br><br><br><br><br>
     <center>
@@ -55,7 +72,7 @@
 </div>
     
 
-<div class="slide" id="trainingDot"></div> 
+<div class="slide" id="trainingDot"></div> --> 
     
     
 <!-- The training slide. -->
@@ -65,9 +82,19 @@
             <p id='logo-text'>Instructions</p>
 			<table style="width:100%">
 				<tbody>
+                     
+                    <p class="block-text">
+                          These little animals like to play with funny toys. They want the toys on the tables, but they can't reach them. You can give them the toys by clicking on them. First, they will ask for toys you already know the name for. This will make you familiar with the procedure. Later, they will name new kinds of toys and you have to find out which toys they want.
+                        </p>
+                        <p class="block-text">
+                            To move forward, press the "Next" button. Let's see if you can help them. Make sure that your volume is turned on. Press the button below to begin.</p>
+                
+                    
+                    
+                    <!--
                        <p class="block-text">
                           These little animals like to play with funny toys. They want the toys on the tables, but they can't reach them. You can give them the toys by tapping them. First, they will ask for toys you already know the name for. Later, they will name new kinds of toys and you have to find out which toys they want.
-                        </p>
+                        </p>-->
                 
 					<tr align="center" height="300px">
 						<td>
@@ -96,7 +123,12 @@
 				</tbody>
 			</table>
            
-            <startButton type="button" onClick="this.blur(); showSlide('intro')">Let's meet the animals!</startButton>
+             <startButton type="button" onClick="this.blur(); showSlide('intro')">My volume is turned up and I am 
+                ready to begin</startButton>
+            
+            
+            
+           <!-- <startButton type="button" onClick="this.blur(); showSlide('intro')">Let's meet the animals!</startButton>-->
                        
 		</div>
 	</div>
@@ -213,10 +245,22 @@
 						<td>
                             <p id='logo-text'>
                                 You finished the training
-                            </p>    
+                            </p>  
+                            
                             <p class="block-text">
                                 In the experiment, you will encounter new kinds of toys. The animals will name them for you. Try your best to find out which toy they want.
                             </p>  
+                            <p class="block-text">
+                                Proceed by clicking the button below.
+                            </p> 
+                            
+                            
+                            
+                            
+             <!--               
+                            <p class="block-text">
+                                In the experiment, you will encounter new kinds of toys. The animals will name them for you. Try your best to find out which toy they want.
+                            </p>  -->
                         </td>
 						<td></td>
 					</tr>
@@ -240,7 +284,7 @@
     <div class="slide" id="stage"> 
         <img class="background" id="background" src=""> 
         
-                        <nextButton class ="button" type="button" id="next" align="center" onclick="getTime1(); experiment.next();"></nextButton>
+                        <nextButton class ="button" type="button" id="next" align="center" onclick="getTime1(); experiment.next();">Next</nextButton>
         
                         <audio id="sound" src = "" ></audio> 
         
@@ -381,6 +425,9 @@
    <div class="slide" id="eat"> 
 		<div align="center" width="500px">
         
+            
+                  <p id="text2" class="text2">Click on the animal to continue</p>
+            
                           <img id="Mouse_eat" class="agent_eat"  src="images/Mouse_eat.png">
                           
                           <img id="Monkey_eat" class="agent_eat"  src="images/Monkey_eat.png">  
@@ -410,6 +457,7 @@
        
     
 	<!-- The finish slide. -->
+<!--
 	<div class="slide" id="finished">
 		<div style="width: 500px; margin: 0 auto; text-align: center; ">	
 		</div>
@@ -417,6 +465,20 @@
         <center>
         <p id='logo-text'>Thank you for participating!</p>
         </center>
+	</div>
+-->
+    
+    
+    
+    
+    	<div class="slide" id="finished">
+        
+        <p class="block-text">You're finished - thanks for participating</p> 
+        
+        <p class="block-text">
+        In this experiment we wanted to find out if people think that novel words go with things that are less frequent.</p>
+        
+        <p class="block-text">Submitting to Mechanical Turk...</p>
 	</div>
 
 

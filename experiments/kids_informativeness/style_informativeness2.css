@@ -68,7 +68,7 @@ startButton {
 	padding-right: 5px;
 	height: 35px;
 	min-width: 70px;
-    position: absolute;
+/*    position: absolute;*/
     bottom: 80px;
     left: 410px;
    
@@ -79,7 +79,7 @@ startButton:active {
 	border-top: 1px solid #c9c9c9;
 	background: none;
 	background-color: #c9c9c9;
-    position: absolute;
+/*    position: absolute;*/
     bottom: 80px;
     left: 410px;
 }
