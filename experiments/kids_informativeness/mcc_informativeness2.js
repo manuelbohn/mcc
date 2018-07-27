@@ -424,7 +424,8 @@ eat2: function(event) {
     
     background2("images/back"+back[0]+".jpg");
 
-    setTimeout(function() {$("#text2").text("Click on the toy")}, 10000);
+      $("#text2").text(""); 
+      setTimeout(function() {$("#text2").text("Click on the toy")}, 10000);
       
     // specify what is shown on the tables depending on training and test condition
     if (experiment.trial[0] == "train1"){
@@ -547,7 +548,9 @@ eat2: function(event) {
     };  
     
     showSlide("stage");  
-     
+    
+  
+      
     background("images/back"+back[0]+".jpg")
       
     // show agent
