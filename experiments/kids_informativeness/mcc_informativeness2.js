@@ -532,7 +532,7 @@ eat2: function(event) {
                 $(".fruit_r2").click(experiment.eat);
             };
         };
-}, 000);
+}, 7000);
   },
         
 // moving on within a trial
