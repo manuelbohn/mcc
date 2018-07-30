@@ -154,7 +154,7 @@ nextButton[disabled] {
 
 .hill {
     position: absolute;
-    bottom: 10px;
+    bottom: 90px;
     left: 340px;
     width: 310px;
     z-index: 1
