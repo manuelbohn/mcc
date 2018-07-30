@@ -463,7 +463,7 @@ eat2: function(event) {
                 } else { 
                     showAgent(agents[0],"choice")
                    
-                    $("#"+agents[0]+"_choice").animate({left: 635, bottom: 185, queue: false},1000)
+                    $("#"+agents[0]+"_choice").animate({left: 645, bottom: 185, queue: false},1000)
                    
                     $("#"+agents[0]+"_choice").animate({left: 640, bottom: 145, width: 350, queue: true},500);
                     choiceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
@@ -492,7 +492,7 @@ eat2: function(event) {
             } else { 
                     showAgent(agents[0],"choice")
                     
-                   $("#"+agents[0]+"_choice").animate({left: 635, bottom: 185, queue: false},1000)
+                   $("#"+agents[0]+"_choice").animate({left: 645, bottom: 185, queue: false},1000)
                    
                     $("#"+agents[0]+"_choice").animate({left: 640, bottom: 145, width: 350, queue: true},500);
             
@@ -532,7 +532,7 @@ eat2: function(event) {
                 $(".fruit_r2").click(experiment.eat);
             };
         };
-}, 7000);
+}, 000);
   },
         
 // moving on within a trial
