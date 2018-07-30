@@ -87,11 +87,12 @@ write.csv(pref.data, file="pref.weak.data5.csv")
 ################################################################################################################
 
 files <- dir("~/Work/MCC/git-mcc/cosub_informativeness/anonymized-results")
+files <- dir("~/Work/MCC/git-mcc/nosub_informativeness2/production-results")
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/cosub_informativeness/anonymized-results/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/nosub_informativeness2/production-results/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(workerid = jd$WorkerId, 
                    data = jd$answers$data$data
@@ -102,17 +103,23 @@ for (f in files) {
 # convert into short format, drop unnecessary columns, rename variables and sort by id
 inf.data= melt(setDT(raw), measure = patterns( "^data.condition","^data.agent","^data.leftFruit","^data.rightFruit","^data.tablePositionCorr","^data.pick","^data.inf","^data.trial","^data.control","^data.rt", "^data.correct"))
 names(inf.data) = c("id","alltrial","condition","agent","leftObject","rightObject","targetOnTable","pick","target","trial","control","rt","correct") 
-inf.data $pick= str_sub(inf.data $pick,81,str_length(inf.data $pick)-4)
+inf.data $pick= str_sub(inf.data $pick,80,str_length(inf.data $pick)-4)
 inf.data = inf.data[!duplicated(inf.data), ]
 inf.data = inf.data[order(id)]
-inf.data $id = paste(inf.data $id, inf.data $condition,sep="_")
 inf.data$trial[inf.data$trial=="train1"]="train"
 inf.data$trial[inf.data$trial=="train2"]="train"
+
+
+inf.data <- inf.data%>%
+  mutate(targetObj = ifelse(target == "right",rightObject, leftObject),
+         correct = ifelse(pick == targetObj, 1, 0))
+
+
 # check resulting datafile
 str(inf.data)
 head(inf.data)
 # write csv file for further analysis
-write.csv(inf.data, file="inf.data.csv")
+write.csv(inf.data, file="inf.2.data.csv")
 
 ################################################################################################################
 

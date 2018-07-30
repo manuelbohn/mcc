@@ -18,11 +18,11 @@ library(ggthemes)
 d <- read_csv(file="kids_inf.data.csv")%>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
+
 ```
 
 # Sample size per age bin
 
-We reached the pre-registered sample size for 3yo, that's why I took another look at the data. See below the nr. of subjects we have so far. 
 
 ```{r kids per age group,echo = F }
 
@@ -31,18 +31,11 @@ d %>%
   summarise(n = length(unique(subid)))%>%
   knitr::kable(digits = 2)
 
-
-d %>%
-  filter( trial == 1)%>%
-  group_by(control)%>%
-  summarise(mean = mean(correct),
-            n = length(correct))
-  
 ```
 
 # Plot overall
 
-We can ignore this plot for now and go straight to the plot by age bin as we are primarily interested in the 3yo.
+
 
 ```{r plot across age, echo = F }
 p3 <- d %>%

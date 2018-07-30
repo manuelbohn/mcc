@@ -424,8 +424,8 @@ eat2: function(event) {
     
     background2("images/back"+back[0]+".jpg");
 
-      $("#text2").text(""); 
-      setTimeout(function() {$("#text2").text("Click on the toy")}, 10000);
+     /* $("#text2").text(""); 
+      setTimeout(function() {$("#text2").text("Click on the toy")}, 10000);*/
       
     // specify what is shown on the tables depending on training and test condition
     if (experiment.trial[0] == "train1"){
@@ -449,7 +449,9 @@ eat2: function(event) {
                 if (experiment.inf[0] == "left") {
                     showAgent(agents[0],"choice")
                    
-                    $("#"+agents[0]+"_choice").animate({left: 0, bottom: 145, queue: false},1000);
+                    $("#"+agents[0]+"_choice").animate({left: -5, bottom: 185, queue: false},1000);
+                    
+                    $("#"+agents[0]+"_choice").animate({left: -10, bottom: 145, width: 350, queue: true},500);
                     
                     choiceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
                     choiceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
@@ -461,7 +463,9 @@ eat2: function(event) {
                 } else { 
                     showAgent(agents[0],"choice")
                    
-                    $("#"+agents[0]+"_choice").animate({left: 630, bottom: 145, queue: false},1000)
+                    $("#"+agents[0]+"_choice").animate({left: 635, bottom: 185, queue: false},1000)
+                   
+                    $("#"+agents[0]+"_choice").animate({left: 640, bottom: 145, width: 350, queue: true},500);
                     choiceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
                     choiceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
       
@@ -475,7 +479,9 @@ eat2: function(event) {
                     showAgent(agents[0],"choice")
                    
                     
-                    $("#"+agents[0]+"_choice").animate({left: 0, bottom: 145, queue: false},1000);
+                    $("#"+agents[0]+"_choice").animate({left: -5, bottom: 185, queue: false},1000);
+                    
+                    $("#"+agents[0]+"_choice").animate({left: -10, bottom: 145, width: 350, queue: true},500);
                     choiceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
                     choiceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
                     
@@ -486,7 +492,9 @@ eat2: function(event) {
             } else { 
                     showAgent(agents[0],"choice")
                     
-                $("#"+agents[0]+"_choice").animate({left: 630, bottom: 145, queue: false},1000)
+                   $("#"+agents[0]+"_choice").animate({left: 635, bottom: 185, queue: false},1000)
+                   
+                    $("#"+agents[0]+"_choice").animate({left: 640, bottom: 145, width: 350, queue: true},500);
             
                 choiceLeftFruit("images/"+leftFruit[0]+".png");
                 choiceLeftFruit2("images/empty.png");
@@ -505,7 +513,7 @@ eat2: function(event) {
     } else {
         setTimeout(function() {
             sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
-            }, 1100)
+            }, 1300)
         };
       
     // choice can be made by clicking the objects after - possible after 8s
