@@ -489,17 +489,17 @@ eat2: function(event) {
                     
                     setTimeout(function() {
             
-                   
+                   showAgent(agents[0],"choice")
                              
-                    $("#"+agents[0]+"_point_l").animate({left: -5, bottom: 185, queue: false},1000);
+                    $("#"+agents[0]+"_choice").animate({left: -5, bottom: 185, queue: false},1000);
                         
-                    }, 2000);
+                    }, 2100);
                     
                      setTimeout(function() {
                     
-                    showAgent(agents[0],"choice")
+                    
                          
-                    $("#"+agents[0]+"_choice").css({left: -5, bottom: 185} );
+                   // $("#"+agents[0]+"_choice").css({left: -5, bottom: 185} );
                          
                          
                     $("#"+agents[0]+"_choice").animate({left: -10, bottom: 145, width: 350, queue: true},500);
@@ -529,17 +529,17 @@ eat2: function(event) {
                 
             setTimeout(function() {
                 
-                
-                   $("#"+agents[0]+"_point_r").animate({left: 645, bottom: 185, queue: false},1000)
+                showAgent(agents[0],"choice") 
+                   $("#"+agents[0]+"_choice").animate({left: 645, bottom: 185, queue: false},1000)
             
-            }, 2000)
+            }, 2100)
                 
                 setTimeout(function() {
                          
-                    showAgent(agents[0],"choice")
+                   
     
                                   
-                $("#"+agents[0]+"_choice").css({left: 645, bottom: 185 });
+               // $("#"+agents[0]+"_choice").css({left: 645, bottom: 185 });
                     
                     $("#"+agents[0]+"_choice").animate({left: 640, bottom: 145, width: 350, queue: true},500);
             
@@ -562,7 +562,7 @@ eat2: function(event) {
     } else {
         setTimeout(function() {
             sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
-            }, 1800)
+            }, 1500)
         };
       
     // choice can be made by clicking the objects after - possible after 8s
