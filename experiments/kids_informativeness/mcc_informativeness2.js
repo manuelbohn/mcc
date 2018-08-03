@@ -420,6 +420,9 @@ eat2: function(event) {
 // recording the choice 
   choice: function(event) {
     
+      
+    $("#"+agents[0]+"_choice").animate({left: 335, bottom: 300, width: 310, queue: true},500);
+      
     showSlide("choice"); 
     
     background2("images/back"+back[0]+".jpg");
