@@ -163,12 +163,13 @@ write.csv(pref.data, file="kids_pref.data.csv")
 ######## informativeness ###########
 ################################################################################################################
 
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent")
 files <- dir("~/Work/MCC/git-mcc/kids_info_data")
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/kids_info_data/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(test_date= jf, 
                    data = jd$data$data
@@ -187,7 +188,9 @@ inf.data$trial[inf.data$trial=="train2"]="train"
 
 
 inf.data <- inf.data%>%
-  mutate(pick = ifelse(subid == "180405_2_inf" | subid == "180718", str_sub(pick,123,str_length(pick)-4) , str_sub(pick,51,str_length(pick)-4)))
+  mutate(pick = ifelse(subid == "180405_2_inf" | subid == "180718", str_sub(pick,123,str_length(pick)-4) , str_sub(pick,51,str_length(pick)-4)),
+         targetObj = ifelse(target == "right",rightObject, leftObject),
+         correct = ifelse(pick == targetObj, 1, 0))
 
 
 # calculating age

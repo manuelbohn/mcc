@@ -133,17 +133,17 @@ nextButton[disabled] {
 
 .point_agent_r {
     position: absolute;
-    bottom: 245px;
-    left: 320px;
-    width: 350px;
+    bottom: 300px;
+    left: 335px;
+    width: 310px;
 }
 
 
 .point_agent_l {
     position: absolute;
-    bottom: 245px;
-    left: 320px;
-    width: 350px;
+    bottom: 300px;
+    left: 335px;
+    width: 310px;
 }
 
 .agent_eat {

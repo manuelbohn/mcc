@@ -476,12 +476,35 @@ eat2: function(event) {
             } else {
                
                 if (experiment.inf[0] == "left") {
-                    showAgent(agents[0],"choice")
+                    
+                    showAgent(agents[0],"point_r")
+                    
+                    
+                    setTimeout(function() {
+            
+                    showAgent(agents[0],"point_l")
+                        
+                    }, 1000);
+                     
+                    
+                    setTimeout(function() {
+            
                    
+                             
+                    $("#"+agents[0]+"_point_l").animate({left: -5, bottom: 185, queue: false},1000);
+                        
+                    }, 2000);
                     
-                    $("#"+agents[0]+"_choice").animate({left: -5, bottom: 185, queue: false},1000);
+                     setTimeout(function() {
                     
+                    showAgent(agents[0],"choice")
+                         
+                    $("#"+agents[0]+"_choice").css({left: -5, bottom: 185} );
+                         
+                         
                     $("#"+agents[0]+"_choice").animate({left: -10, bottom: 145, width: 350, queue: true},500);
+                         
+                    }, 3000)
                     choiceLeftFruit("images/"+experiment.fruitPosition[0]+".png");
                     choiceLeftFruit2("images/"+experiment.fruitPosition.filter(function(x) { return x !== experiment.fruitPosition[0]; })+".png");
                     
@@ -490,12 +513,38 @@ eat2: function(event) {
                     
                     choiceRightFruit("images/"+rightFruit[0]+".png"); choiceRightFruit2("images/empty.png");
             } else { 
-                    showAgent(agents[0],"choice")
                     
-                   $("#"+agents[0]+"_choice").animate({left: 645, bottom: 185, queue: false},1000)
-                   
+                
+                showAgent(agents[0],"point_l")
+                    
+                    
+                setTimeout(function() {
+                         
+                    showAgent(agents[0],"point_r")
+                    
+                    
+                }, 1000)
+                
+        
+                
+            setTimeout(function() {
+                
+                
+                   $("#"+agents[0]+"_point_r").animate({left: 645, bottom: 185, queue: false},1000)
+            
+            }, 2000)
+                
+                setTimeout(function() {
+                         
+                    showAgent(agents[0],"choice")
+    
+                                  
+                $("#"+agents[0]+"_choice").css({left: 645, bottom: 185 });
+                    
                     $("#"+agents[0]+"_choice").animate({left: 640, bottom: 145, width: 350, queue: true},500);
             
+               }, 3000)
+                
                 choiceLeftFruit("images/"+leftFruit[0]+".png");
                 choiceLeftFruit2("images/empty.png");
       
@@ -513,7 +562,7 @@ eat2: function(event) {
     } else {
         setTimeout(function() {
             sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
-            }, 1300)
+            }, 1800)
         };
       
     // choice can be made by clicking the objects after - possible after 8s
@@ -532,7 +581,7 @@ eat2: function(event) {
                 $(".fruit_r2").click(experiment.eat);
             };
         };
-}, 7000);
+}, 000);
   },
         
 // moving on within a trial
