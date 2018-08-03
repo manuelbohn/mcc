@@ -429,7 +429,34 @@ eat2: function(event) {
       
     // specify what is shown on the tables depending on training and test condition
     if (experiment.trial[0] == "train1"){
-        showAgent(agents[0],"choice");
+           showAgent(agents[0],"point_r")
+                    
+                    
+                    setTimeout(function() {
+            
+                    showAgent(agents[0],"point_l")
+                        
+                    }, 1500);
+                     
+                    
+                    setTimeout(function() {
+            
+                   showAgent(agents[0],"choice")
+                             
+                    $("#"+agents[0]+"_choice").animate({left: -5, bottom: 185, queue: false},1000);
+                        
+                    }, 2100);
+                    
+                     setTimeout(function() {
+                    
+                    
+                         
+                   // $("#"+agents[0]+"_choice").css({left: -5, bottom: 185} );
+                         
+                         
+                    $("#"+agents[0]+"_choice").animate({left: -10, bottom: 145, width: 350, queue: true},500);
+                         
+                    }, 3000)
         choiceLeftFruit("images/"+leftFruit[0]+".png");
         choiceLeftFruit2("images/empty.png");
         
@@ -437,7 +464,36 @@ eat2: function(event) {
         choiceRightFruit2("images/empty.png");
         
         } else if (experiment.trial[0] == "train2"){
-        showAgent(agents[0],"choice");
+            
+          showAgent(agents[0],"point_l")
+                    
+                    
+                setTimeout(function() {
+                         
+                    showAgent(agents[0],"point_r")
+                    
+                    
+                }, 1500)
+                
+        
+                
+            setTimeout(function() {
+                
+                showAgent(agents[0],"choice") 
+                   $("#"+agents[0]+"_choice").animate({left: 645, bottom: 185, queue: false},1000)
+            
+            }, 2100)
+                
+                setTimeout(function() {
+                         
+                   
+    
+                                  
+               // $("#"+agents[0]+"_choice").css({left: 645, bottom: 185 });
+                    
+                    $("#"+agents[0]+"_choice").animate({left: 640, bottom: 145, width: 350, queue: true},500);
+            
+               }, 3000)
         choiceLeftFruit("images/empty.png");
         choiceLeftFruit2("images/"+leftFruit[0]+".png");
       
@@ -484,7 +540,7 @@ eat2: function(event) {
             
                     showAgent(agents[0],"point_l")
                         
-                    }, 1000);
+                    }, 1500);
                      
                     
                     setTimeout(function() {
@@ -523,7 +579,7 @@ eat2: function(event) {
                     showAgent(agents[0],"point_r")
                     
                     
-                }, 1000)
+                }, 1500)
                 
         
                 
@@ -558,12 +614,14 @@ eat2: function(event) {
       
     // play choice sound
     if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2"){
+        setTimeout(function() {
         sound.find(function (obj){return obj.id == agents[0]+"_train.mp3"}).play()
+         }, 1500)
     } else {
         setTimeout(function() {
             sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
             }, 1500)
-        };
+       };
       
     // choice can be made by clicking the objects after - possible after 8s
     setTimeout(function() {
