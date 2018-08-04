@@ -178,7 +178,7 @@ $("#button").click(function() {
 
 // Variables and randomization for the experiment
 
-var trial = ["train1","train2","finTrain",1,2,3,4,5,6,7,8]
+var trial = ["train1","train2","finTrain","train3",1,2,3,"train4",4,5,6]
 // agent order for training
 var trainAgents = ["Elephant","Pig"]
 var allAgents = ["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"];
@@ -431,7 +431,7 @@ eat2: function(event) {
       setTimeout(function() {$("#text2").text("Click on the toy")}, 10000);*/
       
     // specify what is shown on the tables depending on training and test condition
-    if (experiment.trial[0] == "train1"){
+    if (experiment.trial[0] == "train1" || experiment.trial[0] == "train3"){
            showAgent(agents[0],"point_r")
                     
                     
@@ -466,7 +466,7 @@ eat2: function(event) {
         choiceRightFruit("images/"+rightFruit[0]+".png");     
         choiceRightFruit2("images/empty.png");
         
-        } else if (experiment.trial[0] == "train2"){
+        } else if (experiment.trial[0] == "train2" || experiment.trial[0] == "train4"){
             
           showAgent(agents[0],"point_l")
                     
@@ -628,7 +628,7 @@ eat2: function(event) {
       
     // choice can be made by clicking the objects after - possible after 8s
     setTimeout(function() {
-        if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2") {
+        if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2" || experiment.trial[0] == "train3" || experiment.trial[0] == "train4") {
             $(".fruit_l").click(experiment.eat);
             $(".fruit_l2").click(experiment.eat);
             $(".fruit_r").click(experiment.eat);
@@ -692,6 +692,24 @@ eat2: function(event) {
         sourceRightFruit2("images/empty.png");
         showRightFruit2(); 
     } else  if (experiment.trial[0] == "train2"){
+        sourceLeftFruit("images/empty.png");
+        showLeftFruit(); 
+        sourceLeftFruit2("images/"+leftFruit[0]+".png");
+        showLeftFruit2(); 
+        sourceRightFruit("images/empty.png");
+        showRightFruit();
+        sourceRightFruit2("images/"+rightFruit[0]+".png");
+        showRightFruit2(); 
+    } else  if (experiment.trial[0] == "train3"){
+       sourceLeftFruit("images/"+leftFruit[0]+".png");
+        showLeftFruit(); 
+        sourceLeftFruit2("images/empty.png");
+        showLeftFruit2(); 
+        sourceRightFruit("images/"+rightFruit[0]+".png");
+        showRightFruit();
+        sourceRightFruit2("images/empty.png");
+        showRightFruit2(); 
+    } else  if (experiment.trial[0] == "train4"){
         sourceLeftFruit("images/empty.png");
         showLeftFruit(); 
         sourceLeftFruit2("images/"+leftFruit[0]+".png");

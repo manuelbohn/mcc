@@ -46,6 +46,8 @@ novel.data $test_date = as.Date(str_sub(novel.data $test_date,44,str_length(nove
 novel.data <- novel.data%>%
   mutate(targetObj = ifelse(target == "left",leftObject, rightObject),
          subid = ifelse(subid == "180725_9_inf","180725_9_nov", subid),
+         subid = ifelse(subid == "180727_11_inf","180727_11_nov", subid),
+         subid = ifelse(subid == "180802_1_inf","180802_1_nov", subid),
          correct = ifelse(pick == targetObj, 1, 0),
          age = ifelse(subid == "180803_9_nov",3,age)
          )
