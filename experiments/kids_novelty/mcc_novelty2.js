@@ -340,7 +340,7 @@ newtrial: function() {
     
     $(".agent_eat").unbind("click"); 
    
- 
+    $("#text3").text("");
      
     sourceRightFruit("images/empty.png");
     showRightFruit();
@@ -388,6 +388,18 @@ newtrial: function() {
     };
     
    
+    if (experiment.trial[0] == "train"){
+        $("#text3").text("")
+    } else {  
+         if (speakerChange[0][0] == "true") {
+             $("#text3").text(agents[0]+" is gone ... now "+altAgents[0]+" is here");
+         }else {
+             choiceAgent(agents[0]);
+             $("#text3").text(agents[0]+" is back");
+         };  
+    };
+      
+      
     // animate agent in test trials
      if (experiment.trial[0] == "train"){
     } else {     
@@ -409,14 +421,14 @@ newtrial: function() {
               sound.find(function (obj){return obj.id == altAgents[0]+"_hello.mp3"}).play()
       }, 0);
        setTimeout(function() {
-        sound.find(function (obj){return obj.id == altAgents[0]+"_choice.mp3"}).play();}, 2500);
+        sound.find(function (obj){return obj.id == altAgents[0]+"_choice.mp3"}).play();}, 5000);
     } else {
         setTimeout(function() {
        sound.find(function (obj){return obj.id == agents[0]+"_return.mp3"}).play()
             ;}, 0);
        setTimeout(function() {
               sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
-       ;}, 2500);
+       ;}, 5000);
             }; 
     }
       
@@ -424,7 +436,7 @@ newtrial: function() {
     setTimeout(function() {      
     $(".fruit_r").click(experiment.eat);
     $(".fruit_l").click(experiment.eat);
-}, 8000);
+}, 9000);
   },
   
 // sequence of events during training exposure
@@ -506,33 +518,33 @@ newtrial: function() {
 // commenting on objects (or their absence) on the tables depending on condition    
      if (experiment.novel[0] == "left"){
             if (experiment.agentOrient[0][0] == "point_r1"){
-            pause("next",2300); 
+            pause("next",3000); 
      sound.find(function (obj){return obj.id == agents[0]+"_point_old1.mp3"}).play()
             } else if (experiment.agentOrient[0][0] == "point_r2") {
-            pause("next",2300); 
+            pause("next",3000); 
             sourceSound("sound/"+agents[0]+"_point_old2.mp3");
             playSound();
             } else if (experiment.agentOrient[0][0] == "point_l1") {
-            pause("next",2300); 
+            pause("next",3000); 
         sound.find(function (obj){return obj.id == agents[0]+"_point_nothing.mp3"}).play()
             }else if (experiment.agentOrient[0][0] == "point_l2") {
-            pause("next",2300); 
+            pause("next",3000); 
             sourceSound("sound/"+agents[0]+"_point_nothing.mp3");
             playSound();
             };
         } else { 
             if (experiment.agentOrient[0][0] == "point_l1"){
-            pause("next",2300); 
+            pause("next",3000); 
        sound.find(function (obj){return obj.id == agents[0]+"_point_old1.mp3"}).play()
             } else if (experiment.agentOrient[0][0] == "point_l2") {
-            pause("next",2300); 
+            pause("next",3000); 
             sourceSound("sound/"+agents[0]+"_point_old2.mp3");
             playSound();
             } else if (experiment.agentOrient[0][0] == "point_r1") {
-            pause("next",2300); 
+            pause("next",3000); 
             sound.find(function (obj){return obj.id == agents[0]+"_point_nothing.mp3"}).play()
             }else if (experiment.agentOrient[0][0] == "point_r2") {
-            pause("next",2300); 
+            pause("next",3000); 
             sourceSound("sound/"+agents[0]+"_point_nothing.mp3");
             playSound();
             };
