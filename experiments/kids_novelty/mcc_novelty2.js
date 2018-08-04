@@ -421,14 +421,14 @@ newtrial: function() {
               sound.find(function (obj){return obj.id == altAgents[0]+"_hello.mp3"}).play()
       }, 0);
        setTimeout(function() {
-        sound.find(function (obj){return obj.id == altAgents[0]+"_choice.mp3"}).play();}, 6000);
+        sound.find(function (obj){return obj.id == altAgents[0]+"_choice.mp3"}).play();}, 5000);
     } else {
         setTimeout(function() {
        sound.find(function (obj){return obj.id == agents[0]+"_return.mp3"}).play()
             ;}, 0);
        setTimeout(function() {
               sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
-       ;}, 6000);
+       ;}, 5000);
             }; 
     }
       
@@ -436,7 +436,7 @@ newtrial: function() {
     setTimeout(function() {      
     $(".fruit_r").click(experiment.eat);
     $(".fruit_l").click(experiment.eat);
-}, 10000);
+}, 9000);
   },
   
 // sequence of events during training exposure
@@ -506,7 +506,7 @@ newtrial: function() {
    // play sound depending on agent orientation 
 // agent says hello
     if (experiment.agentOrient[0][0] == "straight") { 
-        pause("next",2000); 
+        pause("next",3000); 
   sound.find(function (obj){return obj.id == agents[0]+"_hello.mp3"}).play()
     };  
 // agent says hello when returning    
