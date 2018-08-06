@@ -256,13 +256,18 @@ var experiment = {
            sound.find(function (obj){return obj.id == agents[0]+"_train.mp3"}).pause();
         sound.find(function (obj){return obj.id == "end.mp3"}).play()
         
-       } else {
-       
-           sound.find(function (obj){return obj.id ==  altAgents[0]+"_choice.mp3"}).pause();
-           sound.find(function (obj){return obj.id ==  agents[0]+"_choice.mp3"}).pause();
-           sound.find(function (obj){return obj.id == "end.mp3"}).play()
-
-       }
+     } else {
+    
+         if (speakerChange[0][0] == "true"){
+             sound.find(function (obj){return obj.id ==  altAgents[0]+"_choice.mp3"}).pause();
+             
+             sound.find(function (obj){return obj.id == "end.mp3"}).play()
+         } else {
+             sound.find(function (obj){return obj.id ==  agents[0]+"_choice.mp3"}).pause();
+             sound.find(function (obj){return obj.id == "end.mp3"}).play()
+         };
+        
+     }
     
     $(".fruit_r").unbind("click");
     $(".fruit_l").unbind("click");   
@@ -416,20 +421,20 @@ newtrial: function() {
      
     } else { 
    // play hello/return sound and choice depending on speaker chnage condition in test trials 
-    if (experiment.speakerChange[0][0] == "true"){
-        setTimeout(function() {
-              sound.find(function (obj){return obj.id == altAgents[0]+"_hello.mp3"}).play()
-      }, 0);
-       setTimeout(function() {
-        sound.find(function (obj){return obj.id == altAgents[0]+"_choice.mp3"}).play();}, 4000);
-    } else {
-        setTimeout(function() {
-       sound.find(function (obj){return obj.id == agents[0]+"_return.mp3"}).play()
-            ;}, 0);
-       setTimeout(function() {
-              sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
-       ;}, 4000);
-            }; 
+        if (experiment.speakerChange[0][0] == "true"){
+            setTimeout(function() {
+                sound.find(function (obj){return obj.id == altAgents[0]+"_hello.mp3"}).play()
+            }, 0);
+            setTimeout(function() {
+                sound.find(function (obj){return obj.id == altAgents[0]+"_choice.mp3"}).play();}, 4000);
+        } else {
+            setTimeout(function() {
+                sound.find(function (obj){return obj.id == agents[0]+"_return.mp3"}).play()
+                ;}, 0);
+            setTimeout(function() {
+                sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
+                ;}, 4000);
+        }; 
     }
       
     // choice can be made by clicking the objects after - possible after 8s   
