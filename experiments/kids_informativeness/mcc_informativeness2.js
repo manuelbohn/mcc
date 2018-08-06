@@ -676,7 +676,7 @@ eat2: function(event) {
     
     // play hello sound and write name of agent
    if (experiment.agentOrient[0][0] == "straight") { 
-        pause("next",6000); 
+        pause("next",5000); 
         sound.find(function (obj){return obj.id == agents[0]+"_hello.mp3"}).play() 
     }; 
      

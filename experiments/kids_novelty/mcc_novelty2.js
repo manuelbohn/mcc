@@ -9,7 +9,7 @@ for (i = 0; i < preFruits.length; i++) {
 }
 
 
-var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Pig_train.mp3","Elephant_choice.mp3","Elephant_train.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3","end.mp3","Frog_point_nothing.mp3", "Mouse_point_nothing.mp3", "Bear_point_nothing.mp3", "Beaver_point_nothing.mp3", "Monkey_point_nothing.mp3", "Dog_point_nothing.mp3", "Cat_point_nothing.mp3", "Bunny_point_nothing.mp3", "Tiger_point_nothing.mp3", "Sheep_point_nothing.mp3","Pig_point_nothing.mp3","Pig_train.mp3","Elephant_point_nothing.mp3","Elephant_train.mp3","Frog_point_old1.mp3", "Mouse_point_old1.mp3", "Bear_point_old1.mp3", "Monkey_point_old1.mp3", "Dog_point_old1.mp3", "Cat_point_old1.mp3", "Bunny_point_old1.mp3", "Tiger_point_old1.mp3", "Sheep_point_old1.mp3","Pig_point_old1.mp3","Elephant_point_old1.mp3", "Beaver_point_old1.mp3", "Frog_return.mp3", "Mouse_return.mp3", "Bear_return.mp3", "Monkey_return.mp3", "Dog_return.mp3", "Cat_return.mp3", "Bunny_return.mp3", "Tiger_return.mp3", "Sheep_return.mp3","Pig_return.mp3","Elephant_return.mp3", "Beaver_return.mp3","ring.mp3"
+var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Elephant_choice.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3","end.mp3","Frog_point_nothing.mp3", "Mouse_point_nothing.mp3", "Bear_point_nothing.mp3", "Beaver_point_nothing.mp3", "Monkey_point_nothing.mp3", "Dog_point_nothing.mp3", "Cat_point_nothing.mp3", "Bunny_point_nothing.mp3", "Tiger_point_nothing.mp3", "Sheep_point_nothing.mp3","Pig_point_nothing.mp3","Pig_train.mp3","Elephant_point_nothing.mp3","Elephant_train.mp3","Frog_point_old1.mp3", "Mouse_point_old1.mp3", "Bear_point_old1.mp3", "Monkey_point_old1.mp3", "Dog_point_old1.mp3", "Cat_point_old1.mp3", "Bunny_point_old1.mp3", "Tiger_point_old1.mp3", "Sheep_point_old1.mp3","Pig_point_old1.mp3","Elephant_point_old1.mp3", "Beaver_point_old1.mp3", "Frog_return.mp3", "Mouse_return.mp3", "Bear_return.mp3", "Monkey_return.mp3", "Dog_return.mp3", "Cat_return.mp3", "Bunny_return.mp3", "Tiger_return.mp3", "Sheep_return.mp3","Pig_return.mp3","Elephant_return.mp3", "Beaver_return.mp3","ring.mp3"
                 ];
 //for critical trials and fillers
 var sound = new Array();
@@ -392,10 +392,10 @@ newtrial: function() {
         $("#text3").text("")
     } else {  
          if (speakerChange[0][0] == "true") {
-             $("#text3").text("Oh look, "+agents[0]+" is gone ... now "+altAgents[0]+" is here");
+             $("#text3").text(agents[0]+" is gone ... now "+altAgents[0]+" is here");
          }else {
              choiceAgent(agents[0]);
-             $("#text3").text("Oh look, "+agents[0]+" is back");
+             $("#text3").text(agents[0]+" is back");
          };  
     };
       
@@ -421,14 +421,14 @@ newtrial: function() {
               sound.find(function (obj){return obj.id == altAgents[0]+"_hello.mp3"}).play()
       }, 0);
        setTimeout(function() {
-        sound.find(function (obj){return obj.id == altAgents[0]+"_choice.mp3"}).play();}, 5000);
+        sound.find(function (obj){return obj.id == altAgents[0]+"_choice.mp3"}).play();}, 4000);
     } else {
         setTimeout(function() {
        sound.find(function (obj){return obj.id == agents[0]+"_return.mp3"}).play()
             ;}, 0);
        setTimeout(function() {
               sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
-       ;}, 5000);
+       ;}, 4000);
             }; 
     }
       
