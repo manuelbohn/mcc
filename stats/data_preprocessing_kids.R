@@ -186,7 +186,7 @@ files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent")
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/filler/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(test_date= jf, 
                    data = jd$data$data
@@ -202,8 +202,8 @@ inf.data = inf.data[!duplicated(inf.data), ]
 inf.data = inf.data[order(subid)]
 inf.data$trial[inf.data$trial=="train1"]="train"
 inf.data$trial[inf.data$trial=="train2"]="train"
-inf.data$trial[inf.data$trial=="train3"]="train"
-inf.data$trial[inf.data$trial=="train4"]="train"
+inf.data$trial[inf.data$trial=="filler1"]="filler"
+inf.data$trial[inf.data$trial=="filler2"]="filler"
 
 
 inf.data <- inf.data%>%
