@@ -653,7 +653,7 @@ eat2: function(event) {
       
     // choice can be made by clicking the objects after - possible after 8s
     setTimeout(function() {
-        if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2" || experiment.trial[0] == "filler1" || experiment.trial[0] == "filler1") {
+        if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2" || experiment.trial[0] == "filler1" || experiment.trial[0] == "filler2") {
             $(".fruit_l").click(experiment.eat);
             $(".fruit_l2").click(experiment.eat);
             $(".fruit_r").click(experiment.eat);
@@ -735,7 +735,7 @@ eat2: function(event) {
         showRightFruit();
         sourceRightFruit2("images/empty.png");
         showRightFruit2(); 
-    } else  if (experiment.trial[0] == "train2"){
+    } else  if (experiment.trial[0] == "filler2"){
         sourceLeftFruit("images/empty.png");
         showLeftFruit(); 
         sourceLeftFruit2("images/"+leftFruit[0]+".png");
