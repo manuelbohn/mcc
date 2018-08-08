@@ -449,7 +449,7 @@ eat2: function(event) {
     
       setTimeout(function() {  
           $("#text2").text("Here is a table with a "+experiment.word[0]+", how "+experiment.filler[0]+", a table with a "+experiment.word[0]+". Can you give "+experiment.agents[0]+" the "+experiment.word[0]+"?")
-      }, 3000)
+      }, 0)
 
 
      /* $("#text2").text(""); 
