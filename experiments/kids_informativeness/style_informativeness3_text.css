@@ -25,6 +25,7 @@ body {
 	width: 980px;
 	height: 660px;
     opacity: 0.3;
+    z-index: -5
 }
 
 input, select, button {font-family: Georgia, serif; font-size: 14px;}
@@ -39,7 +40,6 @@ button {
 	padding-right: 5px;
 	height: 29px;
 	min-width: 70px;
-  
 }
 button:active {
 	border-left: 1px solid #c9c9c9;
@@ -59,7 +59,7 @@ button[disabled] {
 }
 
 startButton {
-	background: url(images/button-gradient.png);
+	background: #e0e0e0;
 	border: 1px solid #999;
 	border-top: 1px solid #e0e0e0;
 	border-left: 1px solid #e0e0e0;
@@ -70,7 +70,7 @@ startButton {
 	min-width: 70px;
     position: absolute;
     bottom: 80px;
-    left: 410px;
+    left: 400px;
    
 }
 
@@ -81,7 +81,7 @@ startButton:active {
 	background-color: #c9c9c9;
     position: absolute;
     bottom: 80px;
-    left: 410px;
+    left: 400px;
 }
 
 startButton[disabled] {
@@ -125,24 +125,25 @@ nextButton[disabled] {
 
 .agent {
     position: absolute;
-    bottom: 245px;
-    left: 320px;
-    width: 350px;
+    bottom: 300px;
+    left: 335px;
+    width: 310px;
+    z-index: 0
 }
 
 .point_agent_r {
     position: absolute;
-    bottom: 245px;
-    left: 320px;
-    width: 350px;
+    bottom: 300px;
+    left: 335px;
+    width: 310px;
 }
 
 
 .point_agent_l {
     position: absolute;
-    bottom: 245px;
-    left: 320px;
-    width: 350px;
+    bottom: 300px;
+    left: 335px;
+    width: 310px;
 }
 
 .agent_eat {
@@ -153,12 +154,21 @@ nextButton[disabled] {
 
 .hill {
     position: absolute;
-    bottom: 5px;
-    left: 320px;
-    width: 350px;
+    bottom: 90px;
+    left: 340px;
+    width: 310px;
     z-index: 1
 }
 
+.fence {
+    position: absolute;
+    bottom: 100px;
+    left: 0px;
+    width: 980px;
+    z-index: 2;
+    height: 250;
+    opacity: 0.98
+}
 
 .animal_intro {
     position: relative;
@@ -167,58 +177,57 @@ nextButton[disabled] {
 
 .fruit_r {
     position: absolute;
-    bottom: 225px;  
-    left: 747px;
+    bottom: 215px;  
+    left: 651px;
     width: 150px;
-    z-index: 2
+    z-index: 4
 }
 
 .fruit_r2 {
     position: absolute;
-    bottom: 225px;  
+    bottom: 215px;  
     left: 831px;
     width: 150px;
-    z-index: 1
+    z-index: 4
 }
 
 
 .fruit_l {
     position: absolute;
-    bottom: 225px;
-    left: 100px;
+    bottom: 215px;
+    left: 181px;
     width: 150px;
-    z-index: 2
+    z-index: 4
 }
+
+
+
 
 .fruit_l2 {
     position: absolute;
-    bottom: 225px;
+    bottom: 215px;
     left: 2px;
     width: 150px;
-    z-index: 1
+    z-index: 4
 }
 
 
 
 .table_r {
     position: absolute;
-    bottom: 80px;
+    bottom: 70px;
     left: 679px;
     width: 280px;
-    z-index: 0
+    z-index: 3
 }
 
 .table_l {
     position: absolute;
-    bottom: 80px;
+    bottom: 70px;
     left: 30px;
     width: 280px;
-    z-index: 0
+    z-index: 3
 }
-
-
-
-
 
 
 /* ## Experiment-specific styles */
@@ -265,14 +274,15 @@ nextButton[disabled] {
 
 .text {
   font-size: 20px;
-  width: 400px;
-  text-align: left;
+  width: 900px;
+  text-align: center;
   font-family: Arial, sans-serif;
   margin: 0 auto;
   margin-bottom: 1em;
   position: absolute;
-  top: 30px;
-  left: 350px;
+  top: 20px;
+  left: 20px;
+    line-height: 40px;
 }
 
 .text2 {
@@ -285,18 +295,6 @@ nextButton[disabled] {
   position: absolute;
   top: 100px;
   left: 245px;
-}
-
-.text3 {
-  font-size: 1px;
-  width: 100px;
-  text-align: left;
-  font-family: Arial, sans-serif;
-  margin: 0 auto;
-  margin-bottom: 1em;
-  position: absolute;
-  top: 5px;
-  left: 5px;
 }
 
 
@@ -327,3 +325,4 @@ div#preload { display: none; }
     height: 30px;
     background-color: green;
 }
+

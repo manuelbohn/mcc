@@ -14,7 +14,7 @@ library(ggthemes)
 
 
 ## importing data
-d <- inf.data %>%
+d2 <- inf.data %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
 
@@ -24,9 +24,13 @@ Sanity checks.
 ```{r training performance}
 ## performance in training and test
 d %>%
-  group_by(age,trial_type) %>%
-  summarise(n = length(unique(subid)), 
-            correct = mean(correct)) %>%
+  group_by(age) %>%
+  summarise(n = length(unique(subid))) %>%
+  knitr::kable(digits = 3)
+
+d2 %>%
+  group_by(age) %>%
+  summarise(n = length(unique(subid))) %>%
   knitr::kable(digits = 3)
 
 ```
@@ -55,6 +59,32 @@ ggplot() +
                      breaks=c("false", "true"),
                      labels=c("No", "Yes"))
 ```
+
+```{r plot}
+
+p <- d2 %>%
+  filter(trial_type == "test") %>%
+  group_by(control, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+```
+
+
 
 Effect of target object location on table. Inner = closer to the agent, outer = further away. 
 For test this does not seem to matter. For control: If they had a tendency to pick the one closer to the agent, they should be above chance for inner and below chance for outer. Only the latter seems to be the case. Not sure why, could also be just noise. 

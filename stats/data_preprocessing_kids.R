@@ -19,10 +19,12 @@ setwd("~/Work/MCC/git-mcc/mcc/stats/")
 # select all files from individual workers
 files <- dir("~/Work/MCC/git-mcc/kids_novel_data")
 
+files <- dir("~/Work/MCC/git-mcc/kids_novel_pilot")
+
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/kids_novel_data/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/kids_novel_pilot/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(test_date= jf,
                    data = jd$data$data
@@ -36,6 +38,8 @@ names(novel.data) = c("test_date","alltrial","subid","age","condition","agent","
 novel.data$pick= str_sub(novel.data$pick,115,str_length(novel.data$pick)-4)
 novel.data = novel.data[!duplicated(novel.data), ]
 novel.data = novel.data[order(subid)]
+
+
 
 # calculating age
 novel.data $test_date = as.Date(str_sub(novel.data $test_date,44,str_length(novel.data $test_date)-11))
@@ -171,13 +175,18 @@ write.csv(pref.data, file="kids_pref.data.csv")
 ######## informativeness ###########
 ################################################################################################################
 
-files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_turning")
+
 files <- dir("~/Work/MCC/git-mcc/kids_info_data")
+
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/filler")
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_turning")
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent")
+
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/moving_turning/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/filler/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(test_date= jf, 
                    data = jd$data$data
@@ -193,6 +202,8 @@ inf.data = inf.data[!duplicated(inf.data), ]
 inf.data = inf.data[order(subid)]
 inf.data$trial[inf.data$trial=="train1"]="train"
 inf.data$trial[inf.data$trial=="train2"]="train"
+inf.data$trial[inf.data$trial=="train3"]="train"
+inf.data$trial[inf.data$trial=="train4"]="train"
 
 
 inf.data <- inf.data%>%

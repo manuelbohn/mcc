@@ -14,8 +14,9 @@ library(ggthemes)
 
 
 ## importing data
-d <- inf.data %>%
-  mutate(trial_type = ifelse(trial == "train", "train", "test"))
+d <- novel.data %>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"))%>%
+  filter(trial != "7", trial != "8")
 
 
 ```
@@ -24,7 +25,7 @@ Sanity checks.
 ```{r training performance}
 ## performance in training and test
 d %>%
-  group_by(age,trial_type) %>%
+  group_by(age,change,trial_type) %>%
   summarise(n = length(unique(subid)), 
             correct = mean(correct)) %>%
   knitr::kable(digits = 3)
@@ -35,16 +36,16 @@ d %>%
 ```{r plot}
 
 p <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(control, subid) %>%
+  filter(trial != "train") %>%
+  group_by(change, subid) %>%
   summarise(correct = mean(correct)) 
 
 p1 <- p %>%
   multi_boot_standard(col = "correct")
 
 ggplot() +
-  geom_jitter(data = p, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = p1, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_jitter(data = p, aes(x = change, y = correct, col = change, alpha = .2),width = .3,height = .01)+
+  geom_pointrange(data = p1, aes(x = change, y = mean, col = change, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +

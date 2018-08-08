@@ -9,14 +9,14 @@ for (i = 0; i < preFruits.length; i++) {
 }
 
 
-var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Pig_train.mp3","Elephant_choice.mp3","Elephant_train.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3","end.mp3"];
+/*var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Pig_train.mp3","Elephant_choice.mp3","Elephant_train.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3","end.mp3"];
 //for critical trials and fillers
 var sound = new Array();
 for (i = 0; i < preSounds.length; i++) {
 	sound[i] = new Audio();
 	sound[i].src = "sound/" + preSounds[i];
     sound[i].id = preSounds[i];
-}
+}*/
 
 // ## Helper functions
 function showSlide(id) {
@@ -228,6 +228,14 @@ var inf = trainInf.concat(testInf)
 
 var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
 
+var trainWord = ["car","ball"]
+
+var testWord = shuffle( ["ticon","kepel", "glipsa","zubi","oscot","toma","zoyar","wiso"]);
+
+var word = trainWord.concat(testWord);
+
+var filler = ["neat","interesting","funny","cool","neat","interesting","funny","cool","neat","interesting"]
+
 
 // beginning of actual experiment
 
@@ -239,6 +247,8 @@ var experiment = {
   // Parameters for this sequence.
   trial: trial,
   control: control,
+word: word,
+    filler: filler,
   agents: agents,
   agentOrient: agentOrient,
   rightFruit: rightFruit,
@@ -285,7 +295,8 @@ var experiment = {
        
     event.target.style.border = '5px solid blue';
     
-     if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2"){
+     /*if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2"){
+        
            sound.find(function (obj){return obj.id == agents[0]+"_train.mp3"}).pause();
         sound.find(function (obj){return obj.id == "end.mp3"}).play()
         
@@ -294,7 +305,7 @@ var experiment = {
         sound.find(function (obj){return obj.id ==  agents[0]+"_choice.mp3"}).pause();
         sound.find(function (obj){return obj.id == "end.mp3"}).play()
 
-       }
+       }*/
     
        
     $(".fruit_r").unbind("click");
@@ -347,8 +358,9 @@ var experiment = {
       data = {
         subid: subid,
         subage: subage,
-        condition: "informativeness",
+        condition: "informativeness pilot text",
         trial: trial[0],
+        word: word[0],
         control: control[0][0],
         agent: agents[0],
         leftFruit: leftFruit[0],
@@ -386,6 +398,9 @@ eat2: function(event) {
      
     $(".agent_eat").unbind("click"); 
    
+     
+       $("#text").text("")
+     $("#text2").text("")
    
     sourceLeftFruit("images/empty.png");
             showLeftFruit(); 
@@ -397,7 +412,9 @@ eat2: function(event) {
             showRightFruit();
      
      
-    experiment.trial.shift();   
+    experiment.trial.shift();
+     experiment.filler.shift();
+     experiment.word.shift();
     experiment.agentOrient.shift();   
     experiment.agents.shift();
     experiment.inf.shift();
@@ -426,6 +443,14 @@ eat2: function(event) {
     showSlide("choice"); 
     
     background2("images/back"+back[0]+".jpg");
+      
+        $("#text").text("")
+       $("#text2").text("")
+    
+      setTimeout(function() {  
+          $("#text2").text("Here is a table with a "+experiment.word[0]+", how "+experiment.filler[0]+", a table with a "+experiment.word[0]+". Can you give "+experiment.agents[0]+" the "+experiment.word[0]+"?")
+      }, 3000)
+
 
      /* $("#text2").text(""); 
       setTimeout(function() {$("#text2").text("Click on the toy")}, 10000);*/
@@ -616,7 +641,7 @@ eat2: function(event) {
     };
       
     // play choice sound
-    if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2"){
+/*    if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2"){
         setTimeout(function() {
         sound.find(function (obj){return obj.id == agents[0]+"_train.mp3"}).play()
          }, 1500)
@@ -624,7 +649,7 @@ eat2: function(event) {
         setTimeout(function() {
             sound.find(function (obj){return obj.id == agents[0]+"_choice.mp3"}).play()
             }, 1500)
-       };
+       };*/
       
     // choice can be made by clicking the objects after - possible after 8s
     setTimeout(function() {
@@ -642,7 +667,7 @@ eat2: function(event) {
                 $(".fruit_r2").click(experiment.eat);
             };
         };
-}, 7000);
+}, 000);
   },
         
 // moving on within a trial
@@ -668,6 +693,7 @@ eat2: function(event) {
     showSlide("stage");  
     
   
+      $("#text").text("Look, this is "+experiment.agents[0])
       
     background("images/back"+back[0]+".jpg")
       
@@ -675,10 +701,10 @@ eat2: function(event) {
     showAgent(agents[0],experiment.agentOrient[0][0]);
     
     // play hello sound and write name of agent
-   if (experiment.agentOrient[0][0] == "straight") { 
+   /*if (experiment.agentOrient[0][0] == "straight") { 
         pause("next",2000); 
         sound.find(function (obj){return obj.id == agents[0]+"_hello.mp3"}).play() 
-    }; 
+    }; */
      
     // display obejcts on table depending on training and test condition
 
