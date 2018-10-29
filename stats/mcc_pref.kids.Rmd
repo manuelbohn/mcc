@@ -166,7 +166,8 @@ d %>%
          p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
   select(change,df,t_value,p_value) %>%
   knitr::kable(digits = 3)
- 
+
+
 ```
 
 ## T-tests against chance per age bin

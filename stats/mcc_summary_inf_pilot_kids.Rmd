@@ -1,0 +1,434 @@
+---
+title: "MCC Informativeness - summary pilots kids"
+author: "Manuel Bohn"
+date: "7 2 2018"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+###
+library(tidyverse)
+library(knitr)
+library(langcog)
+library(ggthemes)
+library(jsonlite)
+
+
+## round 1 adult design
+d_round_1 <- read_csv(file="kids_inf.data.csv")%>%
+  filter(trial != "train", control == "false")%>%
+  mutate(setup = "table",
+         move = "no_move",
+         turn = "no_turn",
+         wording = "there_is_a_dax",
+         filler = "no_filler",
+         choice = "object",
+         subage = age,
+         experiment = "1_round1",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)
+
+
+## introducing filler trials
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/filler")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/filler/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_filler <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "train3",
+         trial != "train4")%>%
+  mutate(setup = "table",
+         move = "no_move",
+         turn = "no_turn",
+         wording = "there_is_a_dax",
+         filler = "filler",
+         choice = "object",
+         experiment = "2_filler",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)
+
+
+## moving agent
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_move_agent <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "train3",
+         trial != "train4")%>%
+  mutate(setup = "table",
+         move = "move",
+         turn = "no_turn",
+         wording = "there_is_a_dax",
+         filler = "no_filler",
+         choice = "object",
+         experiment = "3_move_agent",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)%>%
+  mutate(subage = ifelse(subage == "3 ", "3", subage))
+
+## moving agent, turning before starting to move
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_turning")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/moving_turning/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_move_turn <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "train3",
+         trial != "train4")%>%
+  mutate(setup = "table",
+         move = "move",
+         turn = "turn",
+         wording = "there_is_a_dax",
+         filler = "no_filler",
+         choice = "object",
+         experiment = "4_move_turn",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)
+
+## introduce new wording, spoken by experimenter
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/new_wording")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/new_wording/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_new_wording <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "filler1",
+         trial != "filler2")%>%
+  mutate(setup = "table",
+         move = "move",
+         turn = "turn",
+         wording = "Here_is_a_table_with_a_dax",
+         filler = "filler",
+         choice = "object",
+         experiment = "5_new_wording",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)%>%
+  filter(subid != "Test")
+
+
+## introducing robots, agent is looking, experimenter reads text
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/robots_look_1")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/robots_look_1/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)%>%
+    mutate(subid = jd$data$subid,
+           subage = jd$data$subage)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_robot_look <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "filler1",
+         trial != "filler2")%>%
+  mutate(setup = "robot",
+         move = "no_move",
+         turn = "no_turn",
+         wording = "Here_is_a_table_with_a_dax",
+         filler = "filler",
+         choice = "object",
+         experiment = "6_robot_look",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)%>%
+  filter(subid != "Test")
+
+## robots, agent is pointing
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/robots_point_1")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/robots_point_1/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_robot_point <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "filler1",
+         trial != "filler2")%>%
+  mutate(setup = "robot",
+         move = "no_move",
+         turn = "no_turn",
+         wording = "Here_is_a_table_with_a_dax",
+         filler = "filler",
+         choice = "object",
+         experiment = "7_robot_point",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)
+
+
+## robots talk themselves
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/robots_point_3_sound")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/robots_point_3_sound/",f,sep="")
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_robot_talk <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "filler1",
+         trial != "filler2")%>%
+  mutate(setup = "robot",
+         move = "no_move",
+         turn = "no_turn",
+         wording = "Here_is_a_table_with_a_dax",
+         filler = "filler",
+         choice = "object",
+         experiment = "8_robot_point_talk",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)
+
+## robots map onto container
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/robots_point_4_map")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/robots_point_4_map/",f,sep="")
+  jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_robot_map_container <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "filler1",
+         trial != "filler2")%>%
+  mutate(setup = "robot",
+         move = "no_move",
+         turn = "no_turn",
+         wording = "Here_is_a_table_with_a_dax",
+         filler = "filler",
+         choice = "container",
+         experiment = "9_robot_map_container",
+         subage = as.character(subage))%>%
+  select(subid,subage,setup,control,trial,move,turn,wording,filler,choice,experiment,agent,correct)
+
+
+pilot_data <- bind_rows(
+  d_round_1,
+  d_filler,
+  d_move_agent,
+  d_move_turn,
+  d_new_wording,
+  d_robot_look,
+  d_robot_point,
+  d_robot_talk,
+  d_robot_map_container
+) 
+
+
+
+```
+
+# Descriptives
+
+```{r}
+
+```
+
+
+# Overview by experiment
+
+## Experiment descriptions
+
+* 1_round1: Table setup (like adults) including control trials (4 objects)
+* 2_filler: Table setup without control trials but with filler trials
+* 3_move_agent: Table setup with agent moving in front of table before asking
+* 4_move_turn: Table setup with agent turning to the other table before moving to the target table and requesting
+* 5_new_wording: Table setup with experimenter reading out prompts. Wording changed to "Here is a table with a dax".
+* 6_robot_look: Robot setup with experimenter reading prompts. Agent looks to robot when making request. Wording (from here onwards): "This is a robot with a dax".
+* 7_robot_point: Robot setup, experimenter reading prompts. Agent points twice while labeling and before requesting.
+* 8_robot_point_talk: Robot setup, recorded request. Pointing twice to target robot before requesting.
+* 9_robot_map_container: Robot setup, recorded request. Pointing twice during labeling. Children pick container instead of object directly.
+
+```{r plot, echo = FALSE, warning = FALSE, fig.width=12}
+
+p <- pilot_data %>%
+  group_by(experiment,subage, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = 1, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = 1, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_grid(subage~experiment)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+```
+
+
+```{r plot, echo = FALSE, warning = FALSE}
+
+p <- pilot_data %>%
+  filter(subage != "2")%>%
+  group_by(experiment, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = 1, y = correct, col = experiment, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = 1, y = mean, col = experiment, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_grid(.~experiment)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+```
+
+# Model across experiments
+```{r model, cache = TRUE, warning = FALSE}
+library(lme4)
+
+lm <- glmer(correct ~ subage * setup + subage * move + subage * turn + subage * wording + subage * filler + subage * choice + (subage  | agent) + (subage | experiment) + (1 | subid), 
+              data = pilot_data, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm)
+
+```
+
+# Indivudal variations
+
+## Setup
+
+```{r, echo=FALSE}
+p <- pilot_data %>%
+  group_by(setup,subage, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = 1, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = 1, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_grid(setup~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+```
+
+
+## Wording
+
+```{r, echo=FALSE}
+p <- pilot_data %>%
+  group_by(wording,subage, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = 1, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = 1, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_grid(wording~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+```
+
+
+
+## Move (only table setup)
+
+```{r, echo=FALSE}
+p <- pilot_data %>%
+  filter(setup == "table")%>%
+  group_by(move,subage, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = 1, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = 1, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_grid(move~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+```
+
+## Filler
+
+```{r, echo=FALSE}
+p <- pilot_data %>%
+  group_by(filler,subage, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = 1, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = 1, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_grid(filler~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+```

@@ -899,8 +899,9 @@ ggplot(p.llh.plot.variable, aes(x = Model, y = logP, fill = Model))+
   guides(fill = F)
 
 
-
-
+x <- p.llh.plot.variable %>%
+  group_by(Model)%>%
+  summarize(mean = mean(logP))
 
 
 ```

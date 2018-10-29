@@ -1,46 +1,116 @@
 ---
-title: "MCC Informativeness - moving agent pilots kids"
+title: "MCC Informativeness - Pilot with Kids"
 author: "Manuel Bohn"
-date: "7 2 2018"
 output: html_document
 ---
 
-```{r setup}
+```{r setup, include = F}
 ###
 library(tidyverse)
 library(knitr)
 library(langcog)
 library(ggthemes)
-
+library(jsonlite)
 
 ## importing data
-d2 <- inf.data %>%
-  mutate(trial_type = ifelse(trial == "train", "train", "test"))
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/trees")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/trees/",f,sep="")
+  jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_trees <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "filler1",
+         trial != "filler2",
+         subage != "Test")
 
 
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/robots_point_4_map")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/robots_point_4_map/",f,sep="")
+  jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_robots <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "filler1",
+         trial != "filler2",
+         subage != "Test")
+
+
+
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/trees_left_right")
+
+raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/trees_left_right/",f,sep="")
+  jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
+  id <- as_data_frame(jd$data$data)
+  raw_data <- bind_rows(raw_data, id)
+}
+
+d_trees_left_right <- raw_data %>%
+  filter(trial != "train1",
+         trial != "train2",
+         trial != "filler1",
+         trial != "filler2",
+         subage != "Test")
 ```
 
-Sanity checks.
-```{r training performance}
-## performance in training and test
-d %>%
-  group_by(age) %>%
+# Sample
+
+## Trees
+
+```{r sample trees, echo = F}
+
+d_trees %>%
+  group_by(subage) %>%
   summarise(n = length(unique(subid))) %>%
   knitr::kable(digits = 3)
-
-d2 %>%
-  group_by(age) %>%
-  summarise(n = length(unique(subid))) %>%
-  knitr::kable(digits = 3)
-
 ```
 
-# Plot with 95%CI
-```{r plot}
+## Robots
 
-p <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(control, subid) %>%
+
+```{r sample robots, echo = F}
+
+d_robots %>%
+  group_by(subage) %>%
+  summarise(n = length(unique(subid))) %>%
+  knitr::kable(digits = 3)
+```
+
+## Trees left right
+
+```{r sample trees left right, echo = F}
+d_trees_left_right %>%
+  group_by(subage) %>%
+  summarise(n = length(unique(subid))) %>%
+  knitr::kable(digits = 3)
+```
+
+
+# Results overall
+
+## Trees
+
+Experiment: [Tree Setup](https://langcog.stanford.edu/expts/cue/exp/kids/kids_cue_barrier7_tree.html)
+
+```{r , echo = F}
+
+p <- d_trees %>%
+  group_by(control,subid) %>%
   summarise(correct = mean(correct)) 
 
 p1 <- p %>%
@@ -60,11 +130,41 @@ ggplot() +
                      labels=c("No", "Yes"))
 ```
 
-```{r plot}
+## Robots
 
-p <- d2 %>%
-  filter(trial_type == "test") %>%
-  group_by(control, subid) %>%
+Experiment: [Robot Setup](https://langcog.stanford.edu/expts/cue/exp/kids/kids_cue_barrier6.html)
+
+```{r, echo = F}
+
+p <- d_robots %>%
+  group_by(control,subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+```
+
+## Trees left right
+
+Experiment: [Trees with objects left and right](https://langcog.stanford.edu/expts/cue/exp/kids/kids_cue_barrier8_tree_left_right.html)
+
+```{r, echo = F}
+
+p <- d_trees_left_right %>%
+  group_by(control,subid) %>%
   summarise(correct = mean(correct)) 
 
 p1 <- p %>%
@@ -86,110 +186,205 @@ ggplot() +
 
 
 
-Effect of target object location on table. Inner = closer to the agent, outer = further away. 
-For test this does not seem to matter. For control: If they had a tendency to pick the one closer to the agent, they should be above chance for inner and below chance for outer. Only the latter seems to be the case. Not sure why, could also be just noise. 
-```{r inner vs outer location}
-## performance in training and test
-ms <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(targetOnTable, id) %>%
-  summarise(correct = mean(correct)) %>%
+# Results by age
+
+## Trees
+
+```{r , echo = F}
+
+p <- d_trees %>%
+  group_by( subage, control, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
   multi_boot_standard(col = "correct")
 
-ggplot(ms, 
-       aes(x = targetOnTable, y = mean, fill = targetOnTable)) +
-  geom_bar(stat="identity") + 
-  geom_linerange(aes(ymin = ci_lower, ymax = ci_upper)) + 
+ggplot() +
+  geom_jitter(data = p, aes(x = control, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = control, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
-  theme_few(base_size = 12) +
-  ylim(0,1)+
-  #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-  scale_fill_solarized(name="Trial Type",
+  theme_few() +
+  facet_wrap(~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Control",
                      breaks=c("false", "true"),
-                     labels=c("Test", "Control"))
-
+                     labels=c("No", "Yes"))
 ```
 
-Conditions by trial.
-```{r plot trials}
-ms <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(control, trial, id) %>%
-  summarise(correct = mean(correct)) %>%
+## Robots
+
+```{r , echo = F}
+
+p <- d_robots %>%
+  group_by( subage, control, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
   multi_boot_standard(col = "correct")
 
-ggplot(ms, 
-       aes(x = trial, y = mean, col = control)) +
-  geom_line(aes(group= control)) + 
-  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
-                  position = position_dodge(width = .1)) + 
+ggplot() +
+  geom_jitter(data = p, aes(x = control, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = control, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
-  theme_few() + 
-  scale_colour_solarized()
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_wrap(~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
 ```
 
-Conditions by agents.
-```{r trials per condition and agent}
-d %>%
-  filter(trial_type == "test") %>%
-  group_by(agent,control) %>%
-  summarise(n = length(agent), 
-            correct = mean(correct)) %>%
-  knitr::kable(digits = 2)
-```
+## Trees left right
 
-Agent effect. Dog seems a little strange (despite enough data) but no idea what to make of this.
-```{r plot agents}
-ms <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(control, agent, id) %>%
-  summarise(correct = mean(correct)) %>%
+```{r , echo = F}
+
+p <- d_trees_left_right %>%
+  group_by( subage, control, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
   multi_boot_standard(col = "correct")
 
-ggplot(ms, 
-       aes(x = agent, y = mean, col = control)) +
-  geom_line(aes(group= control)) + 
-  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
-                  position = position_dodge(width = .1)) + 
+ggplot() +
+  geom_jitter(data = p, aes(x = control, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = control, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
-  theme_few() + 
-  scale_colour_solarized()
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_wrap(~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
 ```
 
-T-tests against chance test and control
+# Positioning bias (top vs. bottom object more informative)
+
+## Trees
+```{r , echo = F}
+
+p <- d_trees %>%
+  group_by( subage, targetPosition, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = targetPosition, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = targetPosition, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_wrap(~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+```
+
+## Robots
+
+```{r , echo = F}
+
+p <- d_robots %>%
+  group_by( subage, targetPosition, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = targetPosition, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = targetPosition, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_wrap(~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+```
+
+## Trees left right (here it is inner vs outer object)
+
+```{r , echo = F}
+
+p <- d_trees_left_right %>%
+  group_by( subage, targetPosition, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p1 <- p %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p, aes(x = targetPosition, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p1, aes(x = targetPosition, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_wrap(~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  scale_colour_solarized(name="Control",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+```
+
+
+
 ```{r}
-## t tests against chance
-d %>%
-  filter(trial_type == "test") %>%
-  group_by(control, id) %>%
+# power analysis for cue barrier
+
+xx <- bind_rows(d_trees,
+d_trees_left_right,
+d_robots)%>%
+  filter(subage != "2")
+
+
+ power_data <- xx %>%
+  group_by(subage,subid) %>%
+  summarise(correct = mean(correct)) 
+ 
+ 
+library("lsr")
+ 
+library("pwr")
+ 
+d_robots %>%
+  group_by(subage, subid) %>%
   summarise(correct = mean(correct)) %>%
   summarise(correct = list(correct)) %>%
-  group_by(control) %>%
-  mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
+  group_by(subage) %>%
+  mutate(mean = mean(unlist(correct)),
+        df= t.test(unlist(correct), mu = 0.5)$parameter,
          t_value = t.test(unlist(correct), mu = 0.5)$statistic,
-         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(control,df,t_value,p_value) %>%
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value,
+        d = cohensD(unlist(correct), mu = 0.5)) %>%
+  select(subage,mean,df,t_value,p_value,d) %>%
   knitr::kable(digits = 3)
- 
-```
 
-Agent can be seen as an approximation for "item".
 
-```{r}
-## model
-library(lme4)
+cohensD(power_data$correct,mu = 0.5)
 
-data_inf <- d%>%
-  filter(trial_type == "test")%>%
-  mutate(trial = scale(as.numeric(trial), center = TRUE, scale=FALSE))
+pwr.t.test(d = 0.65, power = 0.8, type = "one.sample")
 
-# registered  model
-lm <- glmer(correct ~ 1 +
-              (1 |id) + (1 |agent), 
-              data = data_inf, family = binomial, 
-              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+pwr.t.test(d = 0.8, power = 0.8, type = "one.sample")
 
-summary(lm)
+pwr.t.test(d = 1.05, power = 0.8, type = "one.sample")
+
+
+
 ```
 

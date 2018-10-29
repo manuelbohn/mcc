@@ -16,16 +16,28 @@ library(ggthemes)
 
 ## importing data
 
-d<- read_csv(file="kids_novel.data.csv")%>%
+d_new <- read_csv(file="kids_novel.data.csv")%>%
+  mutate(trial_type = ifelse(trial == "train", "train", "test"))
+
+d_old <- read_csv(file="kids_novel.data.round1.csv")%>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
 # check if someone needs to be excluded because wrong in training
 # no one
-d %>%
+d_new %>%
   filter(trial_type == "train") %>%
   group_by(subid)%>%
   summarise(correct = mean(correct)) %>%
   filter(correct == 0)
+
+
+d_old %>%
+  filter(trial_type == "train") %>%
+  group_by(subid)%>%
+  summarise(correct = mean(correct)) %>%
+  filter(correct == 0)
+
+d <- bind_rows(d_new,d_old)
 
 ```
 
@@ -42,7 +54,7 @@ d %>%
 
 ## sanity checks
 d %>%
-  group_by(trial_type) %>%
+  group_by(condition,trial_type) %>%
   summarise(n = length(unique(subid)), 
             correct = mean(correct)) %>%
   knitr::kable(digits = 2)
@@ -56,7 +68,7 @@ d %>%
 ```{r kids per age group,echo = FALSE}
 
 d %>%
-  group_by(age)%>%
+  group_by(condition,age)%>%
   summarise(n = length(unique(subid)),
             age_num = mean(age_num))%>%
   knitr::kable(digits = 2)
@@ -66,12 +78,10 @@ d %>%
 
 ## Plot across age bins
 
-
-
 ```{r plot across age}
 p3 <- d %>%
   filter(trial_type == "test") %>%
-  group_by(change, subid) %>%
+  group_by(condition,change, subid) %>%
   summarise(correct = mean(correct)) 
 
 p4 <- p3 %>%
@@ -82,6 +92,7 @@ ggplot() +
   geom_pointrange(data = p4, aes(x = change, y = mean, col = change, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
+  facet_grid(condition ~.)+
   theme_few() +
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
@@ -93,12 +104,11 @@ ggplot() +
 
 ## Plot by age bin
 
-The following two plots suggest some sort of linear developmental trajectory.
 
 ```{r plot by age}
 p1 <- d %>%
   filter(trial_type == "test") %>%
-  group_by(change,age, subid) %>%
+  group_by(condition,change,age, subid) %>%
   summarise(correct = mean(correct)) 
 
 p2 <- p1 %>%
@@ -111,7 +121,7 @@ ggplot() +
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +
-  facet_wrap(~age)+
+  facet_wrap(condition~age)+
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
@@ -125,7 +135,7 @@ ggplot() +
 ```{r plot by numerical age}
 p5 <- d %>%
   filter(trial_type == "test") %>%
-  group_by(change,age_num, subid) %>%
+  group_by(condition,change,age_num, subid) %>%
   summarise(correct = mean(correct)) 
 
 ggplot(data = p5, aes(x = age_num, y = correct, col = change)) +
@@ -134,6 +144,7 @@ ggplot(data = p5, aes(x = age_num, y = correct, col = change)) +
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +
+   facet_grid(condition ~.)+
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
   #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+

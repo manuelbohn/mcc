@@ -17,14 +17,13 @@ setwd("~/Work/MCC/git-mcc/mcc/stats/")
 
 
 # select all files from individual workers
-files <- dir("~/Work/MCC/git-mcc/kids_novel_data")
+files <- dir("~/Work/MCC/git-mcc/kids_novel_data/round1/")
 
-files <- dir("~/Work/MCC/git-mcc/kids_novel_pilot")
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/kids_novel_pilot/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/kids_novel_data/round1/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(test_date= jf,
                    data = jd$data$data
@@ -35,26 +34,23 @@ for (f in files) {
 # convert into short format, drop unnecessary columns, rename variables and sort by id
 novel.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.subage","^data.condition","^data.agent","^data.altAgent","^data.leftFruit","^data.rightFruit","^data.pick","^data.novel","^data.trial","^data.speakerChange","^data.rt", "^data.correct"))
 names(novel.data) = c("test_date","alltrial","subid","age","condition","agent","altAgent","leftObject","rightObject","pick","target","trial","change","rt","correct") 
-novel.data$pick= str_sub(novel.data$pick,115,str_length(novel.data$pick)-4)
+novel.data$pick= str_sub(novel.data$pick,72,str_length(novel.data$pick)-4)
 novel.data = novel.data[!duplicated(novel.data), ]
 novel.data = novel.data[order(subid)]
 
 
 
 # calculating age
-novel.data $test_date = as.Date(str_sub(novel.data $test_date,44,str_length(novel.data $test_date)-11))
+novel.data $test_date = as.Date(str_sub(novel.data $test_date,51,str_length(novel.data $test_date)-11))
 
 
 # change subid for subjects so that they match the subject log file
 # also chnage age group for one child to match dob
 novel.data <- novel.data%>%
   mutate(targetObj = ifelse(target == "left",leftObject, rightObject),
-         subid = ifelse(subid == "180725_9_inf","180725_9_nov", subid),
-         subid = ifelse(subid == "180727_11_inf","180727_11_nov", subid),
-         subid = ifelse(subid == "180802_1_inf","180802_1_nov", subid),
-         correct = ifelse(pick == targetObj, 1, 0),
-         age = ifelse(subid == "180803_9_nov",3,age)
-         )
+         correct = ifelse(pick == targetObj, 1, 0))
+
+
 
 
 
@@ -66,7 +62,10 @@ log <- read_excel("../../MCC-subject_log.xlsx", 1)%>%
   select(subid,experimenter,keep_drop,sex,dob)
 
 # koin datasets
-novel.data <- left_join(novel.data,log, by = "subid")
+novel.data <- left_join(novel.data,log, by = "subid")%>%
+  mutate(dob = ifelse(subid == "180803_1_nov", 41727, dob),
+         dob = ifelse(subid == "180806_15_nov", 42030, dob))
+
 
 # calcualte numerical age at test
 novel.data <- novel.data %>%
@@ -89,7 +88,7 @@ novel.data <- novel.data %>%
 str(novel.data)
 head(novel.data)
 # write csv file for further analysis
-write.csv(novel.data, file="kids_novel.data.csv")
+write.csv(novel.data, file="kids_novel.data.round1.csv")
 
 ################################################################################################################
 
@@ -181,12 +180,13 @@ files <- dir("~/Work/MCC/git-mcc/kids_info_data")
 files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/filler")
 files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_turning")
 files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent")
+files <- dir("~/Work/MCC/git-mcc/kids_info_pilot/new_wording")
 
 
 #combine files into one dataframe
 raw <- data.frame()
 for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/moving_agent/",f,sep="")
+  jf <- paste("~/Work/MCC/git-mcc/kids_info_pilot/new_wording/",f,sep="")
   jd <- fromJSON(paste(readLines(jf), collapse=""))
   id <- data.frame(test_date= jf, 
                    data = jd$data$data
@@ -195,8 +195,8 @@ for (f in files) {
 }
 
 # convert into short format, drop unnecessary columns, rename variables and sort by id
-inf.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.subage","^data.condition","^data.agent","^data.leftFruit","^data.rightFruit","^data.tablePositionCorr","^data.pick","^data.inf","^data.trial","^data.control","^data.rt", "^data.correct"))
-names(inf.data) = c("test_date","alltrial","subid","age","condition","agent","leftObject","rightObject","targetOnTable","pick","target","trial","control","rt","correct") 
+inf.data= melt(setDT(raw), measure = patterns( "^data.subid","^data.subage","^data.condition","^data.word","^data.agent","^data.leftFruit","^data.rightFruit","^data.tablePositionCorr","^data.pick","^data.inf","^data.trial","^data.control","^data.rt", "^data.correct"))
+names(inf.data) = c("test_date","alltrial","subid","age","condition","word","agent","leftObject","rightObject","targetOnTable","pick","target","trial","control","rt","correct") 
 
 inf.data = inf.data[!duplicated(inf.data), ]
 inf.data = inf.data[order(subid)]

@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-load("mcc_model_comparisons.RData")
+load("mcc_model_comparison.RData")
 
 library(tidyverse)
 library(knitr)
@@ -1460,9 +1460,9 @@ llh.prior.noise.regPrior <- webppl(
 ```{r}
 
 likelihood_overview <- bind_rows(
-  llh.no.prior.noise,
-  llh.rsa.noise,
-  llh.prior.noise)
+  llh.no.prior.noise %>% mutate(Model = "No Prior"),
+  llh.rsa.noise %>% mutate(Model = "Pragmatic"),
+  llh.prior.noise %>% mutate(Model = "Prior only"))
 
 ggplot(likelihood_overview, aes(x = value))+
   geom_histogram()+
@@ -1481,7 +1481,7 @@ llh.plot <- likelihood_overview %>%
 
 ggplot(llh.plot, aes(x = Model, y = logP, fill = Model))+
   geom_bar(stat="identity", color = "black")+
-  ggtitle("logsumexp per model")+
+  ggtitle("Log Likelihood per Model")+
   theme_few()+ 
   theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
   guides(fill = F)
