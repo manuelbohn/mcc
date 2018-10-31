@@ -66,6 +66,10 @@ d_trees_left_right <- raw_data %>%
          trial != "filler1",
          trial != "filler2",
          subage != "Test")
+
+
+
+d_3 <- bind_rows(d_trees,d_trees_left_right,d_robots)
 ```
 
 # Sample
@@ -246,10 +250,14 @@ ggplot() +
 
 p <- d_trees_left_right %>%
   group_by( subage, control, subid) %>%
-  summarise(correct = mean(correct)) 
+  summarise(correct = mean(correct))%>%
+  ungroup()%>%
+  add_row(subage = "2", control = "no", correct = 0, subid = "none")
 
 p1 <- p %>%
+  group_by(subage, control)%>%
   multi_boot_standard(col = "correct")
+
 
 ggplot() +
   geom_jitter(data = p, aes(x = control, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
@@ -265,6 +273,7 @@ ggplot() +
                      breaks=c("false", "true"),
                      labels=c("No", "Yes"))
 ```
+
 
 # Positioning bias (top vs. bottom object more informative)
 

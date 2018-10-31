@@ -31,8 +31,6 @@ d_raw <-raw_data %>%
          test_date= ifelse(test_date == "18-XX-XX", "2018-10-10",test_date),
          experiment = "mcc_kids_inf_2")
 
-unique(d$subid)
-
 log <- read_excel("../../MCC-subject_log.xlsx", 1)%>%
   filter(Condition == "inf")%>%
   select(subid,experimenter,keep_drop,sex,dob)
@@ -70,8 +68,8 @@ pf2 <- pf1 %>%
 
 
 ggplot() +
-  geom_jitter(data = pf1, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = pf2, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_jitter(data = pf1, aes(x = control, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = pf2, aes(x = control, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +
@@ -101,8 +99,8 @@ p2 <- p1 %>%
 
 
 ggplot() +
-  geom_jitter(data = p1, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = p2, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_jitter(data = p1, aes(x = control, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p2, aes(x = control, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +
@@ -114,6 +112,52 @@ ggplot() +
                      breaks=c("false", "true"),
                      labels=c("No", "Yes"))
 ```
+
+# Performance by trial
+```{r plot trials}
+ms <- d %>%
+  filter(trial != "filler1",
+         trial != "filler2") %>%
+  group_by(subage, trial, subid) %>%
+  summarise(correct = mean(correct)) %>%
+  multi_boot_standard(col = "correct")
+
+ggplot(ms, 
+       aes(x = trial, y = mean, col = subage)) +
+  geom_line(aes(group= subage)) + 
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
+                  position = position_dodge(width = .1)) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  theme_few() + 
+  scale_colour_solarized()
+```
+
+
+
+## Plot with age as continuous variable
+
+```{r plot by numerical age}
+p5 <- d %>%
+  filter(trial != "filler1",
+         trial != "filler2") %>%
+  group_by(age_num, subid) %>%
+  summarise(correct = mean(correct)) 
+
+ggplot(data = p5, aes(x = age_num, y = correct)) +
+  geom_smooth(method = "loess", se = T)+
+  geom_jitter( alpha = .5, height = 0.04)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Speaker Change",
+                     breaks=c("false", "true"),
+                     labels=c("No", "Yes"))
+```
+
+
 
 # Plot overall test
 

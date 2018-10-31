@@ -622,22 +622,31 @@ var testAgentOrientations = shuffle([
 var agentOrient = trainAgentOrientations.concat(testAgentOrientations)
 
 
-
-
 var trainCond = [
     ["train1","same","left","left"],
     ["train2","same","right","right"]];
-var testCond = shuffle([
+var testCond1 = shuffle([
     ["sameSpInfLPrefL","same","left","left"],
-    ["diffSpInfLPrefL","diff","left","left"],
-    ["sameSpInfRPrefL","same","right","left"],
-    ["diffSpInfRPrefL","diff","right","left"],
-    ["sameSpInfRPrefR","same","right","right"],
     ["diffSpInfRPrefR","diff","right","right"],
+    ["sameSpInfRPrefL","same","right","left"],
+    ["diffSpInfLPrefR","diff","left","right"]])
+    
+var testCond2 = shuffle([    
+    ["sameSpInfRPrefR","same","right","right"],
+    ["diffSpInfLPrefL","diff","left","left"],
     ["sameSpInfLPrefR","same","left","right"],
-    ["diffSpInfLPrefR","diff","left","right"]]);
+    ["diffSpInfRPrefL","diff","right","left"]]);
 
-var cond = trainCond.concat(testCond)
+if (shuffle([1,2])[0] == 1){
+    
+    var cond = trainCond.concat(testCond1.concat(testCond2))
+        
+} else {
+    
+    var cond = trainCond.concat(testCond2.concat(testCond1))
+    
+}
+
 
 // randomizing location of target object (i.e. single object)
 
