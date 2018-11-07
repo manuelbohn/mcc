@@ -28,6 +28,7 @@ for (f in files) {
 d_raw <-raw_data %>%
   mutate(test_date= ifelse(test_date == "18-10-10", paste(20,test_date,sep = ""),test_date),
          subid= ifelse(subid == "101018_8_inf", "181010_8_inf",subid),
+         subid= ifelse(subid == "181031_3", "181031_3_inf",subid),
          test_date= ifelse(test_date == "18-XX-XX", "2018-10-10",test_date),
          experiment = "mcc_kids_inf_2")
 
