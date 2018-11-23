@@ -46,8 +46,7 @@ d <- left_join(d_raw,log, by = "subid")%>%
          check_age = ifelse(substr(age_num,1,1) == subage, T, F))
 
 
-pf1 %>%
-  filter(correct == 0)
+write_csv(d, "data/kids_inf_data.csv")
 
 ```
 

@@ -25,9 +25,8 @@ for (f in files) {
   raw_data <- bind_rows(raw_data, id)
 }
 
-d_raw <-raw_data
+d <-raw_data
  
-d_raw
 
 
 
@@ -49,26 +48,22 @@ d %>%
 ```{r plot by age, echo= FALSE}
 pf1 <- d %>%
       filter(trial == "filler1" | trial == "filler2")%>%
-  group_by(control,subage, subid) %>%
-  summarise(correct = mean(correct)) 
+  group_by(subage, subid) %>%
+  summarise(correct = mean(correct_inf)) 
 
 pf2 <- pf1 %>%
   multi_boot_standard(col = "correct")
 
 
 ggplot() +
-  geom_jitter(data = pf1, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = pf2, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_jitter(data = pf1, aes(x = subage, y = correct, col = subage, alpha = .2),width = .1,height = .025)+
+  geom_pointrange(data = pf2, aes(x = subage, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +
-  facet_wrap(~subage)+
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
-  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-  scale_colour_solarized(name="Control",
-                     breaks=c("false", "true"),
-                     labels=c("No", "Yes"))
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
 ```
 
 
@@ -80,55 +75,25 @@ ggplot() +
 p1 <- d %>%
   filter(trial != "filler1",
          trial != "filler2")%>%
-  group_by(control,subage, subid) %>%
-  summarise(correct = mean(correct)) 
+  group_by(speaker, alignment ,subage, subid) %>%
+  summarise(correct = mean(correct_inf)) 
 
 p2 <- p1 %>%
   multi_boot_standard(col = "correct")
 
 
 ggplot() +
-  geom_jitter(data = p1, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = p2, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_jitter(data = p1, aes(x = alignment, y = correct, col = alignment, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p2, aes(x = alignment, y = mean, col = alignment, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +
-  facet_wrap(~subage)+
+  facet_grid(subage~speaker)+
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
-  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
   scale_colour_solarized(name="Control",
                      breaks=c("false", "true"),
                      labels=c("No", "Yes"))
 ```
-
-# Plot overall test
-
-```{r plot across age, echo = F }
-p3 <- d %>%
-  filter(trial != "filler1",
-  trial != "filler2")%>%
-  group_by(control, subid) %>%
-  summarise(correct = mean(correct)) 
-
-p4 <- p3 %>%
-  multi_boot_standard(col = "correct")
-
-ggplot() +
-  geom_jitter(data = p3, aes(x = control, y = correct, col = control, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = p4, aes(x = control, y = mean, col = control, ymin = ci_lower, ymax = ci_upper),size = .8)+
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(x="",y="Proportion Expected Choice")+
-  theme_few() +
-  ylim(-0.05,1.05)+
-  guides(alpha = F)+ 
-  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-  scale_colour_solarized(name="Control",
-                     breaks=c("false", "true"),
-                     labels=c("No", "Yes"))
-
-```
-
-
 
 

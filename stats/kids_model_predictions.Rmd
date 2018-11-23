@@ -1,0 +1,238 @@
+---
+title: "MCC Kids Model Predictions"
+author: "Manuel Bohn"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(langcog)
+library(rwebppl)
+library(coda)
+
+estimate_mode <- function(s) {
+  d <- density(s)
+  return(d$x[which.max(d$y)])
+}
+
+hdi_upper<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","upper"])
+}
+
+hdi_lower<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","lower"])
+}
+
+```
+# Pretest
+
+Loading data
+
+```{r pretest data}
+
+pref_data <- read_csv(file="data/kids_pref_data.csv")%>%
+  filter(age != "2",
+         trial_type != "train")%>%
+  mutate(age_bin = factor(age),
+         experiment = "preference_pretest",
+         condition = ifelse(change == "false", "same_speaker", "different_speaker"),
+         agent = ifelse( change == "false", agent, altAgent))%>%
+  select(experiment,subid,age_bin,age_num,trial,condition,agent,correct)
+
+
+inf_data <- read_csv(file="data/kids_inf_data.csv")%>%
+  filter(subage != "2",
+         trial != "filler1",
+         trial != "filler2")%>%
+  mutate(age_bin = factor(subage),
+         experiment = "informativeness_pretest",
+         condition = ifelse(control == "no", "test", "control"))%>%
+  select(experiment,subid,age_bin,age_num,trial,condition,agent,correct)
+  
+pre_data <- bind_rows(pref_data,
+                      inf_data)
+
+```
+
+# Pretest results
+
+```{r pretest plot}
+
+pre_p1 <- pre_data %>%
+  group_by(experiment,condition,age_num,subid)%>%
+  summarise(correct = mean(correct))
+
+
+ggplot(data = pre_p1, aes(x = age_num, y = correct, col = condition)) +
+  geom_smooth(method = "lm", se = F)+
+  geom_jitter(alpha = .5, height = 0, width = 0)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  facet_wrap(~experiment)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  scale_colour_solarized()
+
+```
+
+# Model predictions
+
+## Pretest slopes
+```{r rsaUtils, include = FALSE}
+rsaUtils <- '
+var all_objects = [
+{ shape: "triangle", id:1, location: 1},  
+{ shape: "triangle", id:2, location: 2},
+{ shape: "circle", id:1, location: 2}
+]
+
+var labels = ["dax","wug"]
+
+var lexicon1 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "triangle" :
+utterance.label == "wug" ? obj.shape == "circle" : 
+true
+}
+
+var lexicon2 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "circle" :
+utterance.label == "wug" ? obj.shape == "triangle" : 
+true
+}
+
+var lexiconObjects = {
+"dax = triangle": {
+triangle: "dax", circle: "wug"
+},
+"dax = circle": {
+triangle: "wug", circle: "dax"
+},
+}
+
+var lexiconObject = {
+"dax = triangle": lexicon1,
+"dax = circle" : lexicon2
+}
+
+var point = function(utterance, obj){
+return obj.location == utterance.point
+}
+
+
+var utterancePrior = function(obj, lexiconName){
+var locationsWithShape = _.map(_.filter(all_objects, {shape: obj.shape}), "location")
+var point = uniformDraw(locationsWithShape)
+var label = lexiconObjects[lexiconName][obj.shape]
+return {label: label, point: point}
+}
+
+var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
+'
+```
+
+```{r rsa model, include = FALSE}
+
+rsaModel <- '
+
+var pragmaticListener = function(utterance, priorProbs){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior);
+var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+var S1 = speaker(obj, lexiconName, priorProbs);
+observe(S1, utterance)
+return obj.shape == "circle" ? 1 : 0
+}})
+}
+
+
+var speaker = function(obj, lexiconName, priorProbs){
+Infer({method: "enumerate", model: function(){
+var utterance = utterancePrior(obj, lexiconName);
+var L0 = literalListener(utterance, priorProbs);
+ factor(speakerOptimality * L0.score(obj.shape))
+return utterance
+}})
+}
+
+var literalListener = function(utterance, priorProbs){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior); 
+var lexicon = lexiconObject[lexiconName];
+var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+if ("label" in utterance) {
+ var truthValue = lexicon(utterance, obj);
+ condition(truthValue)
+}
+if (utterance.point) {
+ var truthValuePoint = point(utterance, obj);
+ condition(truthValuePoint)
+}
+return obj.shape 
+}})
+}
+
+var addNoise = function(dist, noiseParam){
+   Infer({model: function(){ 
+      return flip(noiseParam) ? uniformDraw([0, 1]) : sample(dist)
+    }
+   })
+}
+'
+```
+
+
+
+```{r speaker optimality slope}
+soSlopeWebppl <- '
+
+var infData = dataFromR.infData
+var priorProbs = [.5, .5, .5] 
+
+var model  = function(){
+
+  var so_slope = uniform(-5, 5)
+  var so_int = uniform(0, 20)
+
+    map(function(age){
+
+      var speakerOptimality = so_int  + so_slope * (age - infData.minage)
+      var rsaPredictions = pragmaticListener({label: "dax", point: 2 }, priorProbs) 
+      
+      observe(rsaPredictions, infData.correct)
+
+      return  [infData.experiment + "_" + infData.age_num, Math.exp(model.score(1))]
+
+    }, infData.age_num)
+
+}
+'
+```
+
+
+```{r}
+soSlope <- webppl(
+  program_code = paste(rsaUtils, rsaModel, soSlopeWebppl , sep='\n'),
+  data = list(infData = inf_data%>%mutate(minage = min(age_num))), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "MCMC", samples = 2000, burn = 500, verbose = T)
+)
+```
+
+
+
+
+```{r}
+save.image(file="kids_ex3_predictions.RData")
+```
+

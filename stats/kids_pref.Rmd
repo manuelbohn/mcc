@@ -16,23 +16,26 @@ library(ggthemes)
 
 ## importing data
 
-d_ipad <- read_csv(file="kids_pref.data.csv")
+# d_ipad <- read_csv(file="kids_pref.data.csv")
+# 
+# d_hand_code <- read.csv(file="kids_pref_handcoding.data.csv", sep = ";")%>%
+#   mutate(age_num = as.numeric(as.character(age_num)))
+# 
+# d <- bind_rows(d_ipad,d_hand_code)%>%
+#   mutate(trial_type = ifelse(trial == "train", "train", "test"))%>%
+#   filter(subid != "200718_8_pref")
+# 
+# 
+# # check if someone needs to be excluded because wrong in training
+# # no one
+# d %>%
+#   filter(trial_type == "train") %>%
+#   group_by(subid)%>%
+#   summarise(correct = mean(correct)) %>%
+#   filter(correct == 0)
 
-d_hand_code <- read.csv(file="kids_pref_handcoding.data.csv", sep = ";")%>%
-  mutate(age_num = as.numeric(as.character(age_num)))
+d <- read_csv(file="data/kids_pref_data.csv")
 
-d <- bind_rows(d_ipad,d_hand_code)%>%
-  mutate(trial_type = ifelse(trial == "train", "train", "test"))%>%
-  filter(subid != "200718_8_pref")
-
-
-# check if someone needs to be excluded because wrong in training
-# no one
-d %>%
-  filter(trial_type == "train") %>%
-  group_by(subid)%>%
-  summarise(correct = mean(correct)) %>%
-  filter(correct == 0)
 
 ```
 
