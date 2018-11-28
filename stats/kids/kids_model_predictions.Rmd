@@ -1021,3 +1021,142 @@ pref_post_same<- webppl(
 
 ```
 
+
+## MH sketching
+
+```{r}
+postPrefConWebppl <- '
+
+var levels = function(df, label){
+  return _.uniq(_.map(df, label));
+}
+var prefData = filter(dataFromR, {experiment: "preference"})
+var infData = filter(dataFromR, {experiment: "informativeness"})
+
+// make finer grained as needed
+var binned_age_range = _.range(0, 2, 0.1)
+
+var all_conditions = levels(prefData, "condition")
+
+var priorProbs = [] 
+
+var logistic = function(x) {1 / (1 + Math.exp(-x))}
+
+var model  = function(){
+
+
+  var so_slope = uniformDrift({a: -2, b: 2, width: 0.4})
+  var so_int = uniformDrift({a: -2, b: 2, width: 0.4})
+
+  map(function(row){
+
+    var age = row.age_num
+
+    var speakerOptimality = so_int  + so_slope * (age - infData[0].minage)
+    var inf_priorProbs = [.5, .5, .5] 
+
+    var rsaPredictions = pragmaticListener({label: "dax", point: 2 },
+    inf_priorProbs, speakerOptimality) 
+    
+    observe(rsaPredictions, row.correct)
+    
+    //display(rsaPredictions.score( row.correct))
+    //display(JSON.stringify(row.correct))
+    //display(JSON.stringify(rsaPredictions))
+
+  }, infData)
+
+
+  var pref_params = map(function(cndtn){
+    var conditionData = filter(prefData, {condition: cndtn})
+    
+    var pref_slope = uniformDrift({a: -2, b: 2, width: 0.4})
+    var pref_int = uniformDrift({a: -2, b: 2, width: 0.4})    
+    
+    map(function(row){
+
+      var age = row.age_num
+
+      var priorReg = logistic(pref_int + pref_slope * (age - row.minage))
+
+      var priorProbs= [1-priorReg, priorReg]
+
+      var priorPredictions = Infer({method: "enumerate", model: function(){
+      var obj = sample( Categorical({vs: prior_objects, ps: priorProbs}));
+      return obj.shape == "circle" ? 1 : 0
+      }})
+      
+      observe(priorPredictions, row.correct)
+
+     // display(JSON.stringify(priorReg))
+
+    }, conditionData)
+    
+    return {pref_int, pref_slope, condition: cndtn}
+    
+  }, all_conditions)
+  
+  var diff_speaker_params = filter(pref_params, 
+        {condition: "different_speaker"})[0]
+
+  var same_speaker_params = filter(pref_params, 
+        {condition: "same_speaker"})[0]
+        
+  var predictions_by_age = map(function(age_bin){
+    
+    var speakerOptimality = so_int  + so_slope * age_bin
+    
+    var diff_priorReg = logistic(diff_speaker_params.pref_int +
+            diff_speaker_params.pref_slope * age_bin)
+
+    var diff_priorProbs_congruent = [1-priorReg, 1-priorReg, priorReg]
+    var diff_priorProbs_incongruent = [priorReg, priorReg, 1-priorReg]
+      
+  var rsaPredictions_diff_cong = expectation(pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_congruent, speakerOptimality))
+       
+      ...
+      
+    
+        
+    var same_priorReg = logistic(same_speaker_params.pref_int +
+            same_speaker_params.pref_slope * age_bin)
+       
+    ...
+    
+    
+    return extend(diff_speaker_params, same_speaker_params, {
+      diff_priorReg,
+      same_priorReg,
+      speakerOptimality,
+      rsaPredictions_diff_cong,
+      rsaPredictions_diff_incong,
+      rsaPredictions_same_cong,
+      rsaPredictions_same_incong,
+      age_bin,
+      so_slope,
+      so_int
+    })
+    
+  }, binned_age_range)
+  
+  return predictions_by_age
+}
+'
+```
+
+
+```{r}
+postSoWebppl <- '
+
+var infData = dataFromR
+var priorProbs = [.5, .5, .5] 
+
+var model  = function(){
+
+
+
+  return extend({so_int: so_int, so_slope: so_slope})
+}
+'
+```
+
