@@ -149,7 +149,7 @@ var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 
 
 rsaModel <- '
 
-var pragmaticListener = function(utterance, priorProbs, speakerOptimality){
+var pragmaticListener = cache(function(utterance, priorProbs, speakerOptimality){
 Infer({method: "enumerate", model: function(){
 var lexiconName = sample(LexiconPrior);
 var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
@@ -157,19 +157,19 @@ var S1 = speaker(obj, lexiconName, priorProbs, speakerOptimality);
 observe(S1, utterance)
 return obj.shape == "circle" ? 1 : 0
 }})
-}
+})
 
 
-var speaker = function(obj, lexiconName, priorProbs, speakerOptimality){
+var speaker = cache(function(obj, lexiconName, priorProbs, speakerOptimality){
 Infer({method: "enumerate", model: function(){
 var utterance = utterancePrior(obj, lexiconName);
 var L0 = literalListener(utterance, priorProbs);
  factor(speakerOptimality * L0.score(obj.shape))
 return utterance
 }})
-}
+})
 
-var literalListener = function(utterance, priorProbs){
+var literalListener = cache(function(utterance, priorProbs){
 Infer({method: "enumerate", model: function(){
 var lexiconName = sample(LexiconPrior); 
 var lexicon = lexiconObject[lexiconName];
@@ -184,7 +184,7 @@ if (utterance.point) {
 }
 return obj.shape 
 }})
-}
+})
 
 var addNoise = function(dist, noiseParam){
    Infer({model: function(){ 
@@ -1019,6 +1019,16 @@ var binned_age_range = _.range(0, 2, 0.1)
 
 var all_conditions = levels(prefData, "condition")
 
+var foreach = function(fn, lst) {
+    var foreach_ = function(i) {
+        if (i < lst.length) {
+            fn(lst[i]);
+            foreach_(i + 1);
+        }
+    };
+    foreach_(0);
+};
+
 //var priorProbs = [] 
 
 var logistic = function(x) {1 / (1 + Math.exp(-x))}
@@ -1029,7 +1039,7 @@ var model  = function(){
   var so_slope = uniformDrift({a: -2, b: 2, width: 0.4})
   var so_int = uniformDrift({a: -2, b: 2, width: 0.4})
 
-  map(function(row){
+  foreach(function(row){
 
     var age = row.age_num
 
@@ -1052,7 +1062,7 @@ var inf_priorProbs = [.5, .5, .5]
     var pref_slope = uniformDrift({a: -2, b: 2, width: 0.4})
     var pref_int = uniformDrift({a: -2, b: 2, width: 0.4})    
     
-    map(function(row){
+    foreach(function(row){
 
       var age = row.age_num
 
