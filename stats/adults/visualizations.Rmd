@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-load("mcc_model_comparison.RData")
+load("../saves/mcc_model_comparison.RData")
 
 library(tidyverse)
 library(knitr)
@@ -56,14 +56,14 @@ d <- bind_rows(d1,d2) %>%
 ## pointrange plot
 p1 <- d %>%
   filter(trial_type == "test") %>%
-  mutate(control = ifelse(control == "true", "Control", "Test")) %>%
-  group_by(condition ,control, id) %>%
+  mutate(control = ifelse(control == "true", "Control", "Test"),
+         condition = factor(condition), 
+         experiment = ifelse(condition == "1", "1","2"))%>%
+  group_by(experiment,condition ,control, id) %>%
   summarise(correct = mean(correct))
 
 p2 <- p1 %>%
-  multi_boot_standard(col = "correct") %>%
-  ungroup()%>%
-  mutate(condition = as.character(condition))
+  multi_boot_standard(col = "correct")
 
 
 exp1 <- ggplot() +
@@ -132,29 +132,32 @@ exp3 <- ggplot() +
         panel.border = element_rect(color = "#268bd2", fill = NA, size = 6))
 
 
-exp12 <- ggplot() +
-  geom_rect(data = p2, aes(fill = NA), alpha = 0.4 ,xmin = -Inf,xmax = Inf, ymin = -Inf,ymax = Inf)+
+ ggplot() +
+  geom_rect(data = p2, aes(colour = experiment, size = 4), fill = NA, alpha = 1 ,xmin = -Inf,xmax = Inf, ymin = -Inf,ymax = Inf, show.legend=FALSE)+
   geom_jitter(data = p1, aes(x = control, y = correct, col = control), alpha = 0.2, width = .3,height = .025)+
   geom_pointrange(data = p2, aes(x = control, y = mean, col = control,ymin = ci_lower, ymax = ci_upper),size = 1)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Expected Choice")+
-  facet_wrap( ~ condition, labeller = as_labeller(c(`2`="Exp. 2 - Preference", `3`="Exp. 2 - Novelty", `1`="Exp. 1 - Informativeness"))) +
-  theme_few(base_size = 20) + 
+  facet_wrap( ~ condition, labeller = as_labeller(c(`2`="Exp. 2 - Preference", `3`="Exp. 2 - Novelty", `1`="Exp. 1 - Informativeness")))+
+  theme_few() + 
   ylim(-0.05,1.05)+
-  guides(alpha = F, fill = F)+ 
-  scale_color_manual(name="Condition",
-                     breaks=c("Control","Test"),
-                     values= c("#657b83","black"))+
-  scale_fill_manual(name="Condition",
-                     breaks=c("1","2","3"),
-                     values= c("#dc322f","#268bd2","#268bd2"))+
+  guides(alpha = F,size =F)+
+  scale_color_manual(name = "Condition",
+                     breaks=c("Test","Control"),
+                     values= c("#dc322f","#268bd2","#839496","black"))+
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank(),
-        panel.border = element_rect(color = "#268bd2", fill = NA, size = 6))
+        panel.border = element_blank()
+        )
 
 
 
 ```
 
+
+
+```{r}
+ggarrange(exp1,exp2,exp3, ncol = 3, nrow = 1, legend = "right", common.legend = T)
+```
 
 ```{r}
 ggsave("graphs/ex1_2.png", width = 6.5, height = 2, scale = 1.8)
@@ -463,3 +466,247 @@ ggarrange(c1, c2, ncol = 2, nrow = 1, legend = "right", common.legend = T)
 ```{r}
 ggsave("graphs/model_critique_ex3_round1_2.pdf", width = 10, height = 4, scale = 1.2)
 ```
+
+
+# kids
+
+```{r pretest data, include=FALSE}
+pref_data <- read_csv(file="../data/kids_pref_data.csv")%>%
+  filter(age != "2",
+         trial_type != "train")%>%
+  mutate(age_bin = factor(age),
+         experiment = "preference_pretest",
+         condition = ifelse(change == "false", "same_speaker", "different_speaker"),
+         agent = ifelse( change == "false", agent, altAgent),
+         minage = min(age_num))%>%
+  select(experiment,subid,age_bin,age_num,trial,condition,agent,correct,minage)
+
+
+inf_data <- read_csv(file="../data/kids_inf_data.csv")%>%
+  filter(subage != "2",
+         trial != "filler1",
+         trial != "filler2")%>%
+  mutate(age_bin = factor(subage),
+         experiment = "informativeness_pretest",
+         condition = ifelse(control == "no", "test", "control"),
+        minage = min(age_num))%>%
+  select(experiment,subid,age_bin,age_num,trial,condition,agent,correct,minage)
+  
+pre_data <- bind_rows(pref_data,
+                      inf_data)
+```
+
+
+
+```{r pretest plot so, echo = F}
+
+pre_so <- pre_data %>%
+  filter(experiment == "informativeness_pretest")%>%
+  group_by(age_num,subid)%>%
+  summarise(correct = mean(correct))
+
+
+ggplot(data = pre_so, aes(x = age_num, y = correct)) +
+  geom_jitter(alpha = 1, height = 0.1, width = 0.1, col = "grey")+
+  geom_smooth(method = "lm", se = T, col = "black",fill = "darkgreen", alpha = .4, size = 1)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="age",y="Proportion Expected Choice")+
+  theme_few(base_size = 20) +
+  #ggtitle("Informativeness data")+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  coord_fixed(ratio = 2)+
+  theme(panel.border = element_rect(color = "#dc322f", fill = NA, size = 6))
+```
+
+
+
+```{r}
+ggsave("../graphs/kids_inf2.png", width = 3, height = 3, scale = 1.5)
+```
+
+
+```{r pretest plot prior, echo = F}
+
+pre_prior <- pre_data %>%
+  filter(experiment == "preference_pretest")%>%
+  group_by(condition,age_num,subid)%>%
+  summarise(correct = mean(correct))
+
+
+ggplot(data = pre_prior, aes(x = age_num, y = correct, col = condition)) +
+  geom_jitter(alpha = 0.5, height = 0.1, width = 0.1)+
+  geom_smooth(aes(fill = condition),method = "lm", se = T, col = "black",  alpha = .5, size = 1)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="age",y="Proportion Expected Choice")+
+  theme_few(base_size = 20) +
+  #ggtitle("Preference data")+
+  ylim(0,1)+
+  guides(alpha = F)+ 
+  coord_fixed(ratio = 2)+
+  scale_color_solarized()+
+  scale_fill_solarized()+
+  theme(panel.border = element_rect(color = "#268bd2", fill = NA, size = 6),legend.position="bottom")
+
+
+
+```
+
+```{r}
+ggsave("../graphs/kids_pref.png", width = 5, height = 4, scale = 1.5)
+```
+
+```{r pretest plot prior, echo = F}
+
+
+kids_novel_data <- read_csv(file="../data/kids_novel.data.round1.csv")%>%
+  filter(age != 2)%>%
+  mutate(condition = ifelse(change == "false", "same_speaker", "different_speaker"))
+
+
+p_kids_novel <- kids_novel_data %>%
+  group_by(condition,age_num,subid)%>%
+  summarise(correct = mean(correct))
+
+
+ggplot(data = p_kids_novel, aes(x = age_num, y = correct, col = condition)) +
+  geom_jitter(alpha = 0.5, height = 0.1, width = 0.1)+
+  geom_smooth(aes(fill = condition),method = "lm", se = T, col = "black",  alpha = .5, size = 1)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="age",y="Proportion Expected Choice")+
+  theme_few(base_size = 20) +
+  #ggtitle("Preference data")+
+  ylim(0,1)+
+  guides(alpha = F)+ 
+  coord_fixed(ratio = 2)+
+  scale_color_solarized()+
+  scale_fill_solarized()+
+  theme(panel.border = element_rect(color = "#268bd2", fill = NA, size = 6),legend.position="bottom")
+
+
+
+```
+
+```{r}
+ggsave("../graphs/kids_novel.png", width = 5, height = 4, scale = 1.5)
+```
+
+### Model based speaker optimality by age 
+
+```{r plot so model pred, echo = F}
+
+plot_model_pred_so <- kids_model_pred_so%>%
+  group_by(age_bin)%>%
+  summarise(mean = mean(speakerOptimality),
+            lci = hdi_lower(speakerOptimality),
+            uci = hdi_upper(speakerOptimality))
+  
+
+
+
+
+ggplot(data = plot_model_pred_so) +
+  geom_line(data = kids_model_pred_so,aes(age_bin, speakerOptimality, group = iteration), col = "grey", alpha = 0.3) +
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci), fill = "green", alpha = .2) +
+  geom_line(aes(age_bin, mean), col = "black", size = 1, alpha = 1) + 
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  scale_y_continuous(limits=c(-4, 4), name="Speaker optimality")+
+  geom_hline(yintercept = 0, lty=2)+
+  labs(x="age",y="Proportion Expected Choice")+
+  theme_few(base_size = 20) +
+  #ggtitle("Informativeness data")+
+  ylim(-4,4)+
+  guides(alpha = F)+ 
+  coord_fixed(ratio = 1/4)+
+  theme(panel.border = element_rect(color = "#dc322f", fill = NA, size = 6))
+
+```
+
+
+```{r}
+ggsave("../graphs/kids_so_model.png", width = 3, height = 3, scale = 1.5)
+```
+
+
+```{r plot prior model pred, echo = F}
+plot_model_pred_prior <- kids_model_pred_prior%>%
+  group_by(age_bin,condition)%>%
+  summarise(mean = mean(prop_preferred),
+            lci = hdi_lower(prop_preferred),
+            uci = hdi_upper(prop_preferred))
+
+
+ggplot(data = p_kids_novel, aes(x = age_num, y = correct, col = condition)) +
+  geom_jitter(alpha = 0.5, height = 0.1, width = 0.1)+
+  geom_smooth(aes(fill = condition),method = "lm", se = T, col = "black",  alpha = .5, size = 1)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="age",y="Proportion Expected Choice")+
+  theme_few(base_size = 20) +
+  #ggtitle("Preference data")+
+  ylim(0,1)+
+  guides(alpha = F)+ 
+  coord_fixed(ratio = 2)+
+  scale_color_solarized()+
+  scale_fill_solarized()+
+  theme(panel.border = element_rect(color = "#268bd2", fill = NA, size = 6),legend.position="bottom")
+
+  
+
+ggplot(data = plot_model_pred_prior) +
+  geom_line(data = kids_model_pred_prior,aes(age_bin, prop_preferred, group = paste(iteration,condition, sep= ""), col = condition), alpha = 0.05) +
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = condition), alpha = .5) +
+  geom_line(aes(age_bin, mean, group = condition), col = "black", size = 1, alpha = 1) + 
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  scale_y_continuous(limits=c(-0.05,1.05), name="Proportion Expected Choice")+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="age",y="Proportion Expected Choice")+
+  theme_few(base_size = 20) +
+  guides(alpha = F)+ 
+  coord_fixed(ratio = 2)+
+  scale_color_solarized()+
+  scale_fill_solarized()+
+  theme(panel.border = element_rect(color = "#268bd2", fill = NA, size = 6),legend.position="bottom")
+
+
+```
+
+```{r}
+ggsave("../graphs/kids_prior_model.png", width = 5, height = 4, scale = 1.5)
+```
+
+```{r}
+model_comp_mean_ci <- bind_rows(
+#plot_model_pred%>%ungroup()%>%mutate(model = "RSA"), 
+plot_prior_only_pred%>%ungroup()%>%mutate(model = "Prior Only"),
+no_prior_plot%>%ungroup()%>%mutate(model = "No Prior")
+)
+
+model_comp <- bind_rows(
+#kids_model_pred %>%mutate(model = "RSA"),
+prior_only_model%>%mutate(model = "Prior Only"),
+no_prior_pred%>%select(-so_slope,-so_int,-speakerOptimality)%>%mutate(model = "No Prior")
+  )
+
+```
+
+
+```{r, include = F}
+ggplot(model_comp_mean_ci)+
+  geom_line(data = model_comp,aes(age_bin, prop_informative, group = paste(iteration,Speaker,model, sep= ""), col = model),  alpha = 0.01) + 
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = model), alpha = .4) +
+  geom_line(aes(age_bin, mean, col = model), size = 1, alpha = 1) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(y="proportion more informative")+
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  ylim(-0.05,1.05)+
+  facet_grid(Speaker~Alignment)+
+  theme_few(base_size = 20)+
+  scale_color_manual( values = c("#dc322f","#268bd2"))+
+  scale_fill_manual(values = c("#dc322f","#268bd2"))
+```
+
+```{r, include = F}
+ggsave("../graphs/kids_no_prior_prior_only_model_predictions.pdf", width = 9, height = 7, scale = 1.2)
+```
+
+

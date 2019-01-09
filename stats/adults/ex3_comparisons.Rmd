@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-load("mcc_model_comparison.RData")
+load("../saves/mcc_model_comparison.RData")
 
 library(tidyverse)
 library(knitr)
@@ -1096,6 +1096,38 @@ var loglike = Binomial({
 ```
 
 ```{r model no prior noise loglikelihood}
+no.prior.loglikelihood <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.allPriorProbs
+
+var model = function(){
+  var noise = uniformDrift({a: 0, b:1, width: 0.1})
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {Experiment: conditionInfo.Experiment, Change: conditionInfo.Change, Alignment: conditionInfo.Alignment})
+
+   var conditionSpecificPriors = [.5, .5, .5] 
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors)
+  var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+var loglike = Binomial({
+        p: Math.exp(modelPredictions.score(1)), 
+        n: conditionSpecificData.length}).score(
+      sum(_.map(conditionSpecificData, "correct_inf"))
+    )
+
+  return  loglike
+}, allConditions)
+
+ return sum(conditionOutput)
+}
+'
+```
+
+
+```{r model no prior noise loglikelihood}
 no.prior.noise.loglikelihood <-'
 var allConditions = dataFromR.allConditions
 var allData = dataFromR.allData
@@ -1353,19 +1385,10 @@ var loglike = Binomial({
 
 
 ```{r model loglikelihoods}
+
 ###################
 # RSA Models
 ###################
-
-llh.no.prior.noise <- webppl(
-  program_code = paste(rsaUtils, rsaModel2, no.prior.noise.loglikelihood, sep='\n'),
-  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
-  data_var = "dataFromR",
-  model_var = "model",
-  inference_opts = list(method = "forward", samples = 10000),
-  chains = 3, cores = 3
-)%>%
-  mutate(Model = "No Prior")
 
 llh.rsa <- webppl(
   program_code = paste(rsaUtils, rsaModel2, rsa.loglikelihood, sep='\n'),
@@ -1455,6 +1478,32 @@ llh.prior.noise.regPrior <- webppl(
 ) %>%
   mutate(Model = "Prior only Noisy Regularized")
 
+
+###################
+# no Prior Models
+###################
+
+llh.no.prior.noise <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, no.prior.noise.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 10000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "No Prior")
+
+llh.no.prior <- webppl(
+  program_code = paste(rsaUtils, rsaModel2, no.prior.loglikelihood, sep='\n'),
+  data = list(allData = data, allConditions = allConditions, allPriorProbs = allPriorProbs), 
+  data_var = "dataFromR",
+  model_var = "model",
+  inference_opts = list(method = "forward", samples = 10000),
+  chains = 3, cores = 3
+)%>%
+  mutate(Model = "No Prior")
+
+
 ```
 
 ```{r}
@@ -1469,6 +1518,21 @@ ggplot(likelihood_overview, aes(x = value))+
   xlim(-200,0)+
   facet_wrap(~Model, nrow = 2, scales = "free")
 
+```
+
+```{r bayes factors, echo = FALSE}
+
+bf <- data.frame(
+  Comparison = c("Pragmatic vs. Prior only","Pragmatic vs. No prior", "No Prior vs. Prior only"),
+  BayesFactor = c(
+    exp(llh.plot$logP[llh.plot$Model== "Pragmatic"] - llh.plot$logP[llh.plot$Model== "Prior only"]),
+    exp(llh.plot$logP[llh.plot$Model== "Pragmatic"] - llh.plot$logP[llh.plot$Model== "No Prior"]),
+    exp(llh.plot$logP[llh.plot$Model== "Prior only"] - llh.plot$logP[llh.plot$Model== "No Prior"]))
+)
+
+
+bf%>%
+  kable(digits = 2)
 ```
 
 
@@ -1580,6 +1644,20 @@ ggplot(rsa.llh.plot, aes(x = Model, y = logP, fill = Model))+
 ```
 
 
+```{r}
+save.image("../saves/mcc_model_comparison.RData")
+
+
+saveRDS(bf, "../saves/ex3_bf.rds")
+
+saveRDS(vp.bf, "../saves/ex4_bf.rds")
+
+
+```
+
+
+# old code .. ignore 
+
 ```{r simple BF model comparisons}
 priorProbsFromR <- list(
   "pref_inf_same_congruent" =  c(0.0333333, 0.033333, 0.9666667),
@@ -1688,7 +1766,5 @@ novel_bf_full_prior_only
 
 ```
 
-```{r}
-save.image("mcc_model_comparison.RData")
-```
+
 

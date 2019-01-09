@@ -20,15 +20,39 @@ raw_data <- data_frame()
 for (f in files) {
   jf <- paste("~/Work/MCC/git-mcc/kids_EX3/pref/",f,sep="")
   jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
-  date <- str_sub(jf,45,str_length(jf)-11)
+  date <- str_sub(jf,42,str_length(jf)-11)
   id <- as_data_frame(jd$data$data) %>% mutate(test_date = date)
   raw_data <- bind_rows(raw_data, id)
 }
 
-d <-raw_data
- 
+raw_data <- raw_data %>%
+  mutate(subid = ifelse(subid == "181128_3_ex3p....","181128_3_ex3p" , subid),
+         subid = ifelse(subid == "181128_1_ex3p.","181128_1_ex3p" , subid),
+         subid = ifelse(subid == " 181218_10_ex3p","181218_10_ex3p" , subid))
+
+raw_data%>%
+  #group_by(paste(subid,test_date))%>%
+  group_by(subid)%>%
+  summarise(n= n())
+  
+unique(raw_data$subid)
+
+log <- read_excel("../../../MCC-subject_log.xlsx", 1)%>%
+  filter(Condition == "ex3p")%>%
+  select(subid,experimenter,keep_drop,sex,dob)
+
+#unique(log$subid)
+sum(log$keep_drop == "drop")
+
+d <- left_join(raw_data,log, by = "subid")%>%
+  filter(keep_drop == "keep")%>%
+  mutate(dob = as.numeric(dob),
+         dob = as.Date(dob,origin = "1899-12-30"),
+         age_num = lubridate::time_length(difftime(test_date,dob), "years"),
+         check_age = ifelse(substr(age_num,1,1) == subage, T, F))
 
 
+unique(d$check_age)
 
 ```
 
@@ -37,8 +61,24 @@ d <-raw_data
 ```{r kids per age group,echo = F }
 
 d %>%
+  group_by(subage,subid)%>%
+  summarise(n_trials = n())%>%
+  mutate(full_data = ifelse(n_trials == 10,"yes","no"))%>%
   group_by(subage)%>%
-  summarise(n = length(unique(subid)))%>%
+  summarise(n = length(unique(subid)),
+            n_full_data = sum(full_data == "yes"))%>%
+  knitr::kable(digits = 2)
+
+```
+
+# Datapoints per cell
+
+```{r kids per age group,echo = F }
+
+d %>%
+  filter(trial != "filler1",trial != "filler2")%>%
+  group_by(subage,speaker,alignment)%>%
+  summarise(datapoints = n())%>%
   knitr::kable(digits = 2)
 
 ```
@@ -66,8 +106,6 @@ ggplot() +
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
 ```
 
-
-
 # Plot by age group
 
 ```{r plot by age, echo= FALSE}
@@ -88,7 +126,7 @@ ggplot() +
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +
-  facet_grid(subage~speaker)+
+  facet_grid(speaker~subage)+
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
   scale_colour_solarized(name="Control",
@@ -96,4 +134,61 @@ ggplot() +
                      labels=c("No", "Yes"))
 ```
 
+# Plot by age continous
+
+```{r plot by age, echo= FALSE}
+
+p3 <- d %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  group_by(speaker, alignment ,age_num, subid) %>%
+  summarise(correct = mean(correct_inf)) 
+
+ggplot(data = p3, aes(x = age_num, y = correct_inf)) +
+  geom_jitter(width = .025,height = .025, alpha = .2)+
+  geom_smooth(method = "glm", method.args = list(family = "binomial"),  se = T,  alpha = .5, size = .4)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="Age",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_grid(speaker~alignment)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+
+  coord_fixed(ratio = 2)
+
+
+```
+
+```{r model}
+
+library(lme4)
+
+dm <- d %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  mutate(age_num = scale(age_num, center = T, scale = T))
+
+
+mex3 <- glmer(correct_inf ~ age_num*speaker*alignment 
+      + (speaker*alignment | subid) 
+      + (age_num*speaker*alignment | agent), 
+      family = "binomial",
+      data = dm,
+      control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(mex3)
+```
+
+
+```{r chance_comp}
+mod <- d %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  group_by(subage,speaker,alignment) %>%
+  do(models = glmer(correct_inf ~ 1+ (1|subid),data=., family=binomial, control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))))
+
+library(broom)
+
+tidy(mod, models) %>%
+  filter(term =="(Intercept)")
+```
 

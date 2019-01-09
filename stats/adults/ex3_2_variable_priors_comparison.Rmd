@@ -737,7 +737,7 @@ ggplot(vp.llh.plot, aes(x = Model, y = logP, fill = Model))+
 
 ```{r bayes factors, echo = FALSE}
 
-bf <- data.frame(
+vp.bf <- data.frame(
   Comparison = c("Pragmatic vs. Prior only","Pragmatic vs. No prior", "No Prior vs. Prior only"),
   BayesFactor = c(
     exp(vp.llh.plot$logP[vp.llh.plot$Model== "Pragmatic"] - vp.llh.plot$logP[vp.llh.plot$Model== "Prior Only"]),
@@ -746,7 +746,7 @@ bf <- data.frame(
 )
 
 
-bf%>%
+vp.bf%>%
   kable(digits = 2)
 ```
 
@@ -910,6 +910,6 @@ Interestingly the No Prior model does better than the RSA model with weak priors
 
 ```{r, include = FALSE}
 
-save.image("mcc_model_comparison.RData")
+save.image("../saves/mcc_model_comparison.RData")
 ```
 

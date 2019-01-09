@@ -15,24 +15,24 @@ library(langcog)
 ```
 
 
-```{r data}
-d3 <- read_csv(file="novel.weak.data2.csv") %>%
+```{r data, include = F}
+d3 <- read_csv(file="../data/novel.weak.data2.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"),
          strength = "2_medium")
 
-d4 <- read_csv(file="novel.weak.data.csv") %>%
+d4 <- read_csv(file="../data/novel.weak.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"),
          strength = "1_weak")
 
-d1 <- read_csv(file="novel.data.csv") %>%
+d1 <- read_csv(file="../data/novel.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"),
          strength = "3_strong")
 
-d2 <-read_csv(file="pref.data.csv") %>%
+d2 <-read_csv(file="../data/pref.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"),
          strength = "3_strong")
 
-d5 <-read_csv(file="pref.weak.data.csv") %>%
+d5 <-read_csv(file="../data/pref.weak.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"),
          strength = "2_medium")
 
@@ -63,10 +63,12 @@ d %>%
 
 d <- d %>% 
   distinct(id, alltrial, .keep_all = TRUE)
+
+length(unique(d$id))
 ```
 
 
-```{r plot data}
+```{r plot data, echo = F}
 
 p1 <- d %>%
   filter(trial_type == "test") %>%

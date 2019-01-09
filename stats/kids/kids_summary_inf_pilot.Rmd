@@ -15,7 +15,7 @@ library(jsonlite)
 
 
 ## round 1 adult design
-d_round_1 <- read_csv(file="kids_inf.data.csv")%>%
+d_round_1 <- read_csv(file="../data/kids_inf.data.csv")%>%
   filter(trial != "train", control == "false")%>%
   mutate(setup = "table",
          move = "no_move",
@@ -283,7 +283,7 @@ pilot_data <- bind_rows(
 * 8_robot_point_talk: Robot setup, recorded request. Pointing twice to target robot before requesting.
 * 9_robot_map_container: Robot setup, recorded request. Pointing twice during labeling. Children pick container instead of object directly.
 
-```{r plot, echo = FALSE, warning = FALSE, fig.width=12}
+```{r plot, echo = FALSE, warning = FALSE, fig.width=12, fig.height=3}
 
 p <- pilot_data %>%
   group_by(experiment,subage, subid) %>%
@@ -293,15 +293,20 @@ p1 <- p %>%
   multi_boot_standard(col = "correct")
 
 ggplot() +
-  geom_jitter(data = p, aes(x = 1, y = correct, col = subage, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = p1, aes(x = 1, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_jitter(data = p, aes(x = 1, y = correct, col = subage, alpha = .2), position = position_jitterdodge(jitter.width = 0.05, jitter.height = 0.05, dodge.width = 0.5))+
+  geom_pointrange(data = p1, aes(x = 1, y = mean, col = subage, ymin = ci_lower, ymax = ci_upper),size = .8, position = position_dodge(width = 0.5))+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
-  theme_few() +
-  facet_grid(subage~experiment)+
+  theme_few(base_size = 20) +
+  facet_grid(~experiment)+
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())
+```
+
+
+```{r}
+ggsave("../graphs/kids_inf_pilot.png", width = 12, height = 3, scale = 1.5)
 ```
 
 
