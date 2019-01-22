@@ -897,11 +897,15 @@ plot_prior_only_pred%>%ungroup()%>%mutate(model = "Prior Only"),
 no_prior_plot%>%ungroup()%>%mutate(model = "No Prior")
 )
 
+#saveRDS(model_comp_mean_ci, "../saves/kids_model_comp_mean_ci.rds")
+
 model_comp <- bind_rows(
 kids_model_pred %>%mutate(model = "RSA"),
 prior_only_model%>%mutate(model = "Prior Only"),
 no_prior_pred%>%select(-so_slope,-so_int,-speakerOptimality)%>%mutate(model = "No Prior")
   )
+
+# saveRDS(model_comp, "../saves/kids_model_comp.rds")
 
 ```
 
