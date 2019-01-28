@@ -9,13 +9,14 @@ author-information: >
     \And {\large \bf Michael Henry Tessler} \\ \texttt{tessler@mit.edu} \\ Department of Brain and Cognitive Sciences \\ Massachusetts Institute of Technology
     \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
 
-abstract: 
-    "Pragmatic inferences are an integral part of language comprehension and learning. To recover the intended meaning of an utterance, listeners need to balance and integrate different sources in information. In a series of experiments, we studied how listeners integrate general expectations about speakers with expectations that are specific to the interactional history with  a particular speaker. We used a Bayesian cognitive model to formalize the integration process. In Experiment 1 and 2 we replicated findings showing that listeners make inferences based on general and speaker specific expectations. Using the empirical measurements from these experiments, we generated model predictions about how they should be integrated. We tested these predictions in Experiment 3, which combined both expectations in a single design. Experiment 4 replicated and extended Experiment 3 to a broader set of conditions. Across both experiments, listeners based their inferences on both types of expectations. Overall, model predictions and data were highly correlated. Predictions from the model incorporating both types of information described listeners’ behavior better compared to alternative models based on only one type of information. This research shows that listeners flexibly integrate different forms of social expectations across a range of contexts, a process which can be described using Bayesian cognitive models. Our approach highlights how experiments and computational models can be used in conjunction to inform theories about language use and comprehension."
+abstract: >
+    Pragmatic inferences are an integral part of language learning and comprehension. To recover the intended meaning of an utterance, listeners need to balance and integrate different sources of contextual information. In a series of experiments, we studied how listeners integrate general expectations about speakers with expectations specific to their interactional history with a particular speaker. We used a Bayesian pragmatics model to formalize the integration process. In Experiments 1 and 2, we replicated previous findings showing that listeners make inferences based on speaker-general and speaker-specific expectations. We then used the empirical measurements from these experiments to generate model predictions about how the two kinds of expectations should be integrated, which we tested in Experiment 3. Experiment 4 replicated and extended Experiment 3 to a broader set of conditions. In both experiments, listeners based their inferences on both types of expectations. We found that model performance was also consistent with this finding; with better fit for a model which incorporated both general- and specific-information compared to baselines incorporating only one type. Listeners flexibly integrate different forms of social expectations across a range of contexts, a process which can be described using Bayesian models of pragmatic reasoning. Our approach highlights how experiments and computational models can be used in conjunction to inform theories about language use and comprehension.
     
-keywords:
-    "Pragmatics; Word learning; Common ground; Bayesian models"
+keywords: >
+    Pragmatics; Word learning; Common ground; Bayesian models
     
 output: cogsci2016::cogsci_paper
+#final-submission: \cogscifinalcopy
 ---
 
 ```{r global_options, include=FALSE}
@@ -121,28 +122,27 @@ bf_ex4 <- readRDS(file = "../../stats/saves/ex4_bf.rds")
 
 # Introduction 
 
-One of the most astonishing features of natural language is that it allows us to communicate precise meanings despite the fact that each utterance is inherently ambiguous. The conventional couplings between sounds (words) and objects constrain what a speaker may mean by an utterance. However, the intended meaning of the utterance is not reducible to the words that are contained in it. For example, the same utterance (“Look, there it is!”) could be intended to refer to very different things depending on whether someone is searching for their wallet or looking for the bus stop. It takes additional pragmatic inferences to recover the intended meaning [@levinson2000presumptive].
+One of the most astonishing features of natural language is that it allows us to communicate precise meanings despite the fact that most utterances are inherently ambiguous. While the conventional mapping between sounds (words) and objects constrain what a speaker may mean by an utterance, the intended meaning of the utterance is not reducible to the words that are contained in it. It takes additional pragmatic inference to recover the intended meaning [@levinson2000presumptive].
 
-Pragmatic inferences rest on a set of expectations that interlocutors bring to the table when entering a communicative interaction. On the one hand, speakers and listeners have the general expectation that their partner communicates in an informative and relevant way [@sperber2001relevance]. Grice [-@grice1991studies] summarised this expectation via the cooperative principle: “Make your contribution such as is required, at the stage at which it occurs, by the accepted purpose or direction of the talk exchange in which you are engaged.” Importantly, the second half of the principle highlights a second type of expectation: interlocutors expect each other to produce and interpret utterances in light of the shared common ground between them [@clark1996using]. Common ground refers to bits of information that are assumed to be shared, either because they result from joint experience or were otherwise grounded [@bohn2018common]. The nature of the corresponding expectations vary with the individuals involved.
+Pragmatic inferences rest on a set of expectations that interlocutors bring to the table when entering a communicative interaction. On the one hand, speakers and listeners have the general expectation that their partner communicates in an informative and relevant way [@sperber2001relevance]. Grice [-@grice1991studies] summarised this expectation via the “Cooperative Principle”: “Make your contribution such as is required, at the stage at which it occurs, by the accepted purpose or direction of the talk exchange in which you are engaged.” Importantly, the second half of the Cooperative Principle describes a second type of expectation: interlocutors expect each other to produce and interpret utterances *in light of the shared common ground between them* [@clark1996using]. Common ground refers to bits of information that are assumed to be shared, either because they were mentioned over the course of the conversation or grounded through some form of joint experience [@bohn2018common]. Note that by its very nature, common ground may vary with the individuals involved in a particular conversation. 
 
-Both general and common ground expectations can support children’s word learning [@clark2009first; @tomasello2009constructing]. On the one hand, children have been found to learn novel words by assuming that the speaker is informative [@frank2014inferring]. That is, in the absence of any prior interaction with the speaker, children interpreted a novel word as referring to the most informative referent. On the other hand, children learn novel words by relying on common ground expectations [@akhtar1996role; @bohn2018common]. For example, when a speaker expressed preference for a particular object, children expect a novel word from the same speaker to refer to the previously preferred object [@saylor2009preschoolers].
+These same general and specific expectations can support children’s word learning [@clark2009first; @tomasello2009constructing]. On the one hand, children have been found to learn novel words by assuming speakers are generally informative [@frank2014inferring]. That is, in the absence of any prior interaction with the speaker, children interpreted a novel word as referring to the most informative referent. On the other hand, children use conversation-specific common ground expectations to decide which object a specific speaker is referring to when they use a novel word [@akhtar1996role]. For example, when a speaker expressed preference for a particular object, children expect a novel word from the same speaker to refer to the previously preferred object [@saylor2009preschoolers].
 
-But how are general and common ground expectations integrated with one another? Are pragmatic inferences strengthened additively when both support a particular interpretation? How are they weighed when they are in conflict? The rational speech act (RSA) framework [@frank2012predicting] offers a formal framework for this information integration problem. RSA models are characterized by their recursive structure in which speakers and listeners reason about each other’s interpretation of utterances in context. RSA models have been found to make accurate quantitative predictions about various forms of pragmatic language use and word learning [@goodman2016pragmatic]. However, a comprehensive treatment of how general and common ground expectations are integrated, is still missing.
+But how do listeners integrate general and common ground-related expectations during word learning? Are pragmatic inferences strengthened additively when both support a particular interpretation? How are they weighed when they are in conflict? The Rational Speech Act (RSA) framework [@frank2012predicting; @goodman2016pragmatic] offers a formal framework for addressing this information integration problem. RSA models are characterized by a recursive structure in which a pragmatic listener tries to uncover a speaker’s intended meaning by assuming the speaker chose their utterance in order to get a naive listener to recover their intended meaning.  RSA models have made accurate quantitative predictions about various forms of pragmatic language use and word learning [@goodman2016pragmatic]. However, a comprehensive treatment of how general and common ground expectations are integrated is still missing.
 
-Within RSA models, each agent in this recursion is modeled as a Bayesian reasoner; thus, information integration is treated as a process of probabilistic inference. A natural locus within these models for information integration is the tradeoff between the prior probability of a particular referent (the degree to which it is in common ground) and the likelihood of that referent given the current utterance (general pragmatic interpretation). 
+Within RSA models, each agent in this recursion is modeled as a Bayesian reasoner; thus, information integration is treated as a process of probabilistic inference. The speaker-general informativeness expectation is already encoded in the structure of the model: Speakers produce utterances to aid the listener in disambiguating referents. We operationalize speaker-specific, common ground information as the shared prior probability of referents in the context of the utterance. Thus, a natural locus for information integration within these models is the tradeoff between the prior probability of a particular referent and the likelihood of that referent given the current utterance. 
 
-Here we investigate information integration in pragmatic reasoning by experimentally manipulating speaker specific and common ground information and testing how adult listeners integrate them in a word learning scenario. In Experiment 1 and 2, we replicate earlier findings with adults and children showing that listeners expect speakers to a) produce informative utterances (Experiment 1) and b) communicate about things that are relevant to common ground (Experiment 2). Based on these results, we derive model predictions about how these two components should be integrated. In Experiment 3, we test how listeners integrate expectations and compare model predictions to empirical data. Experiment 4 replicates and extends Experiment 3 by gradually varying the strength of common ground assumptions.
-
+Here we evaluate this rational, pragmatic account of information integration. We isolate speaker-specific and common-ground information experimentally, then test how adult listeners combine them in a word learning setting. In Experiments 1 and 2, we replicate findings showing that listeners expect speakers to a) produce informative utterances (Experiment 1) and b) communicate about things that are relevant to common ground (Experiment 2). Based on these results, we generate model predictions using the RSA framework about how these two components should be integrated. In Experiment 3, we test how listeners integrate their expectations and compare model predictions to empirical data. Experiment 4 replicates and extends Experiment 3 by varying the strength of common ground assumptions.
 
 # Method
 
 ## General Design
 
-Each experiment was implemented on a website (using JavaScript and HTML) to which participants were directed. Figure \ref{fig:design} provides a schematic overview of the setup and experimental procedures. The instructions informed participants that they will see a number of animal characters asking for novel toys. Participants’ task was to identify the toy a given animal is requesting. The basic layout involved two tables with toys on them, located left and right of a little hill, on which the animal was standing. For each animal, we recorded a set of utterances (one speaker per animal) that were used throughout the experiments to provide information and make requests. At test, toys were requested using the following utterance: “Oh cool, there is a [non-word] on the table, how neat, can you give me the [non-word]?”. Participants responded by clicking on one of the toys. Each experiment started with two training trials in which animals requested familiar objects (car and ball).
+Experiments were conducted online using Amazon’s Mechanical Turk.  Figure \ref{fig:design} provides a schematic overview of the setup and experimental procedures. The instructions informed participants that they would see a number of animal characters asking for novel toys. Participants were asked to identify the toy being requested by a particular animal. The basic layout involved two tables with toys on them, located left and right of a little hill, on which the animal was standing. For each animal, we recorded a set of utterances (one speaker per animal) that were used throughout the experiments to provide information and make requests. At test, toys were requested using the following utterance: “Oh cool, there is a [non-word] on the table, how neat, can you give me the [non-word]?”. Participants responded by clicking on one of the toys. Each experiment started with two training trials in which animals requested familiar objects (car and ball).
 
-For all experiments, we pre-registered the sample size, experimental design and the statistical analysis. For Experiment 3 and 4, we also registered the model structure and predictions (see [https://osf.io/u7kxe](https://osf.io/u7kxe))
+For all experiments, we pre-registered the sample size, experimental design and the statistical analysis. For Experiment 3 and 4, we also registered the model structure and predictions (see [masked for peer review])
 
-```{r design, fig.env = "figure*", fig.pos = "h", fig.width=6, fig.height=5, fig.align = "center", set.cap.width=T, num.cols.cap=2, fig.cap = "Schematic experimental procedure. In all conditions, at test (bottom), the speaker ambiguously requested an object using a non-word (e.g. “dax”). Participants clicked on the object they thought the speaker referred to. Informativeness (Experiment 1, left) translated to making one object less frequent in context. Common ground (Experiment 2, middle) was manipulated by making one object prefered by, or new to the speaker. Experiment 3 (right) combined manipulations. When expressing e.g. preference for an object on a table with two objects (panel 3 from top), the respective object was temporally enlarged. Condition shown here: preference - same speaker - incongruent."}
+```{r design, fig.env = "figure*", fig.pos = "h", fig.width=6, fig.height=5, fig.align = "center", set.cap.width=T, num.cols.cap=2, fig.cap = "Schematic experimental procedure. In all conditions, at test (bottom), the speaker ambiguously requested an object using a non-word (e.g. “dax”). Participants clicked on the object they thought the speaker referred to. Informativeness (Experiment 1, left) translated to making one object less frequent in context. Common ground (Experiment 2, middle) was manipulated by making one object prefered by or new to the speaker. Experiment 3 (right) combined manipulations. When expressing e.g. preference for an object on a table with two objects (panel 3 from top), the respective object was temporarily enlarged. Condition shown here: preference - same speaker - incongruent. Green plus signs represent an expression of preference and red minus of dispreference (see main text for details)."}
 img <- png::readPNG("figs/method_figure.png")
 grid::grid.raster(img)
 ```
@@ -151,7 +151,7 @@ grid::grid.raster(img)
 
 ## Participants, Design and Procedure
 
-All participants were recruited from Amazon Mechanical Turk and had US IP addresses. We planned the sample size in each experiment to be 120 data points per cell. Experiment 1 had 40 participants.Informativeness was manipulated by making one object less frequent in context. In the test condition, one table contained one object of type A and the other table contained one object of type A and one of type B (see Figure 1 in red). On each trial, the animal introduced themselves, turned towards the table with the two objects and made a request. If listeners expect speakers to produce informative utterances, they should select object B. This choice follows from the counterfactual inference that if the (informative) speaker would have wanted to request A, they would have turned to the table that only contained A. On the other hand, since B is only located on the table together with A, there was no alternative way to request B in a less ambiguous way. In the control condition, both tables contained two objects, one of which was randomly determined as the correct one. No inference was therefore licenced based on the animals turning. Each participant received three trials in each condition.
+All participants were recruited from Amazon Mechanical Turk and had US IP addresses. Sample size in each experiment was planned to be 120 data points per cell. Experiment 1 had 40 participants. In the test condition, one table contained one object of type A and the other table contained one object of type A and one of type B (see Figure \ref{fig:design}, left). On each trial, the animal introduced themselves (e.g. “Hi, I’m Dog”), turned towards the table with the two objects and made a request. If listeners expect speakers to produce informative utterances, they should select object B. This choice follows from the counterfactual inference that if the (informative) speaker would have wanted to request A, they would have turned to the table that only contained A. On the other hand, since B is only located on the table together with A, there was no alternative way to request B in a less ambiguous way. In the control condition, both tables contained two objects, one of which was randomly determined as the correct one. No inference was therefore licenced. Each participant received three trials in each condition for a total of six trials, presented in a randomized order.
 
 ## Results and Discussion
 
@@ -183,9 +183,9 @@ ex1_r <- tidy(lm_ex1, effects = "fixed")%>%
          estimate = round(estimate,2))
 ```
 
-Participants selected the less frequent object above chance in the test condition (t = `r ex1t%>%filter(control == "false")%>%pull(t_value)`, *p* `r ex1t%>%filter(control == "false")%>%pull(p_value)`, see Figure \ref{fig:plotexp12}) and did so more often compared to the control condition (genreralized linear mixed model (GLMM\footnote{All models included random effects for subject and speaker (animal).}):*$\beta$* = `r ex1_r%>%filter(term == "controlfalse")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "controlfalse")%>%pull(std.error)` *p*  `r ex1_r%>%filter(term == "controlfalse")%>%pull(p.value)`). This result replicates earlier work [@frank2014inferring].
+Participants selected the less frequent object above chance in the test condition (t(`r ex1t%>%filter(control == "false")%>%pull(df)`) = `r ex1t%>%filter(control == "false")%>%pull(t_value)`, *p* `r ex1t%>%filter(control == "false")%>%pull(p_value)`, see Figure \ref{fig:plotexp12}) and did so more often compared to the control condition (genreralized linear mixed model (GLMM\footnote{All models included random effects for subject and speaker (animal).}):*$\beta$* = `r ex1_r%>%filter(term == "controlfalse")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "controlfalse")%>%pull(std.error)` *p*  `r ex1_r%>%filter(term == "controlfalse")%>%pull(p.value)`). This result replicates earlier work [@frank2014inferring] and is consistent with the hypothesis that listeners expect speakers to communicate in an informative way.
 
-```{r plotexp12, fig.env="figure", fig.pos = "H", fig.align = "center", fig.width=3.4, fig.height=2, fig.cap = "Results from Experiment 1 and 2.For preference and novelty, control refers to a different speaker (see Fig. 1). Transparent dots show data from individual particpants, solid dots represent condition means, error bars are 95 \\% CIs. Dashed line indicates performance expected by chance."}
+```{r plotexp12, fig.env="figure", fig.pos = "H", fig.align = "center", fig.width=3.4, fig.height=2, fig.cap = "Results from Experiment 1 and 2. For preference and novelty, control refers to a different speaker (see Fig. 1). Transparent dots show data from individual participants, solid dots represent condition means, error bars are 95 \\% CIs. Dashed line indicates performance expected by chance."}
 
 p1 <- dex12 %>%
   filter(trial_type == "test") %>%
@@ -216,13 +216,13 @@ p2 <- p1 %>%
 
 # Experiment 2
 
-We manipulated common ground expectations based on two ways which have succesfully been used in developmental studies [e.g. @akhtar1996role; @saylor2009preschoolers]. Speakers either expressed preference for one object or one object was new to the speaker.
+We manipulated common ground expectations based on procedures that have successfully been used in developmental studies [e.g. @akhtar1996role; @saylor2009preschoolers]. Speakers either expressed preference for one object or one object was new to the speaker.
 
 ## Participants, Design and Procedure
 
-There were 80 participants, 40 per manipulation. In the preference manipulation, each table had a different object. In the beginning, the animal appeared on the hill and introduced themselves. Next, they turned to one of the tables and expressed either that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object before turning to the other side and expressing the respective other attitude. Then, the animal disappeared. After a short period of time, either the same or a different animal appeared and requested an object while facing straight (see Figure 1 in blue). If participants took into account the information they gained about the speaker, they should select the previously preferred object if the returning animal was the same. If a different animal returned, they should choose randomly between objects.
+We collected data from 80 participants, with 40 in each condition. In the preference condition, each table had a different object. In the beginning, the animal appeared on the hill and introduced themselves. Next, they turned to one of the tables and expressed either that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object before turning to the other side and expressing the respective other attitude. Then, the animal disappeared. After a short period of time, either the same or a different animal appeared and requested an object while facing straight ahead (see Figure \ref{fig:design}, middle). If participants took into account the information they gained about the speaker, they should select the previously preferred object if the returning animal was the same. If a different animal returned, they should choose randomly between objects.
 
-In the novelty manipulation, one table was initially empty while there was an object on the other one (see Figure \ref{fig:design}). The animal turned to one of the sides and commented either on the presence (“Aha, look at that”) or the absence of an object (“Hm, nothing there”). Next, the animal quickly disappeared. The same animal re-appeared and the sequence above was repeated. When the animal disappeared for the second time, a second object appeared on the empty table while the animal was away. Like in preference, we now manipulated if the same animal or a different one would return. In case of the same animal returning, listeners could infer the referent of the subsequent request by considering that one object was new to the speaker and therefore more likely to be of interest to them. No such inference was licensed when a different animal returned because both objects were equally new to them.
+In the novelty condition, one table was initially empty while there was an object on the other table (see Figure \ref{fig:design}). The animal turned to one of the sides and commented either on the presence (“Aha, look at that”) or the absence of an object (“Hm, nothing there”). Next, the animal disappeared. The same animal re-appeared and the sequence above was repeated. When the animal disappeared for the second time, a second object appeared on the empty table while the animal was away. Like in the preference condition, we now manipulated if the same animal or a different one returned. In case of the same animal returning, listeners could infer the referent of the subsequent request by considering that one object was new to the speaker and therefore more likely to be of interest to them. However, no such inference was licensed when a different animal returned because both objects were novel.
 
 ## Results and Discussion
 
@@ -282,9 +282,9 @@ ex2nov_r <- tidy(lm_ex2nov, effects = "fixed")%>%
          estimate = round(estimate,2))
 ```
 
-Participants selected the preferred object above chance when the same animal returned (t = `r ex2tpref%>%filter(control == "false")%>%pull(t_value)`, *p* `r ex2tpref%>%filter(control == "false")%>%pull(p_value)`, see Figure \ref{fig:plotexp12}) and did so more often compared to trials in which a different animal returned (GLMM: $\beta$ = `r ex2pref_r%>%filter(term == "controlfalse")%>%pull(estimate)`, se = `r ex2pref_r%>%filter(term == "controlfalse")%>%pull(std.error)`, *p* `r ex2pref_r%>%filter(term == "controlfalse")%>%pull(p.value)`). Thus, listeners inferred the referent of the utterance by considering previous interactions with the speaker. Interestingly, participants to some extend transferred preference from one animal to the other and also selected the preferred object above chance when a different animal returned (t = `r ex2tpref%>%filter(control == "true")%>%pull(t_value)`, *p* `r ex2tpref%>%filter(control == "true")%>%pull(p_value)`). In sum, this study shows that adults make comparable infernces to children [@saylor2009preschoolers].
+Participants selected the preferred object above chance when the same animal returned (t(`r ex2tpref%>%filter(control == "false")%>%pull(df)`) = `r ex2tpref%>%filter(control == "false")%>%pull(t_value)`, *p* `r ex2tpref%>%filter(control == "false")%>%pull(p_value)`, see Figure \ref{fig:plotexp12}) and did so more often compared to trials in which a different animal returned (GLMM: $\beta$ = `r ex2pref_r%>%filter(term == "controlfalse")%>%pull(estimate)`, se = `r ex2pref_r%>%filter(term == "controlfalse")%>%pull(std.error)`, *p* `r ex2pref_r%>%filter(term == "controlfalse")%>%pull(p.value)`). Thus, listeners inferred the referent of the utterance by considering previous interactions with the speaker. Interestingly, participants transferred preference to some extent from one animal to the other and selected the preferred object above chance when a different animal returned (t(`r ex2tpref%>%filter(control == "true")%>%pull(df)`) = `r ex2tpref%>%filter(control == "true")%>%pull(t_value)`, *p* `r ex2tpref%>%filter(control == "true")%>%pull(p_value)`). In sum, this study shows that adults make comparable inferences to children [@saylor2009preschoolers].
 
-The novel object was selected above chance when the same animal returned (t = `r ex2tnov%>%filter(control == "false")%>%pull(t_value)`, *p* `r ex2tnov%>%filter(control == "false")%>%pull(p_value)`) but not when a different one appeared (t = `r ex2tnov%>%filter(control == "true")%>%pull(t_value)`, *p* `r ex2tnov%>%filter(control == "true")%>%pull(p_value)`, see Figure \ref{fig:plotexp12}). Furthermore, the two conditions differed in the expected direction ($\beta$ = `r ex2nov_r%>%filter(term == "controlfalse")%>%pull(estimate)`, se = `r ex2nov_r%>%filter(term == "controlfalse")%>%pull(std.error)`, *p* `r ex2nov_r%>%filter(term == "controlfalse")%>%pull(p.value)`). Thus, like children [@akhtar1996role], participants used their prior information about the speaker to resolve ambiguity in their utterance.
+The novel object was selected above chance when the same animal returned (t(`r ex2tnov%>%filter(control == "false")%>%pull(df)`) = `r ex2tnov%>%filter(control == "false")%>%pull(t_value)`, *p* `r ex2tnov%>%filter(control == "false")%>%pull(p_value)`) but not when a different one appeared (t(`r ex2tnov%>%filter(control == "true")%>%pull(df)`) = `r ex2tnov%>%filter(control == "true")%>%pull(t_value)`, *p* `r ex2tnov%>%filter(control == "true")%>%pull(p_value)`, see Figure \ref{fig:plotexp12}). Furthermore, the two conditions differed in the expected direction ($\beta$ = `r ex2nov_r%>%filter(term == "controlfalse")%>%pull(estimate)`, se = `r ex2nov_r%>%filter(term == "controlfalse")%>%pull(std.error)`, *p* `r ex2nov_r%>%filter(term == "controlfalse")%>%pull(p.value)`). Thus, like children [@akhtar1996role], adults used their prior information about the speaker to resolve ambiguity in the utterance.
 
 # Experiment 3
 
@@ -314,86 +314,29 @@ ggplot() +
  
 ```
 
-Experiment 1 and 2 separately measured two types of pragmatic inferences. The first was based on the expectation that speakers produce informative utterances. The second was based on the expectations that speakers produce their utterances in light of the ongoing social interaction (common ground). In Experiment 3, we combined both types of expectations to study how listeners integrate them. 
+In Experiment 3, we combined the expectations studied in Experiment 1 and 2 to study how listeners integrate them. 
 
 ## Participants, Design and Procedure
 
-A total of 121 individuals participated in the experiment. The test situation was the same as in the test condition in Experiment 1: One table with object of type A and the other with an object of type A and B. Again, the animal always turned to the table with two objects and ambiguously requested an object. In Experiment 1, the listener had no prior information about each object. In Experiment 3, however, we manipulated common ground expectations in the same way as in Experiment 2. For example, the animal would turn to the table with one object and express their dis-liking of object A, then they would turn to the other table and express their liking of object B (not using labels). Next, after quickly disappearing, the animal would reappear, turn to the table with two objects and make a request.
+A total of 121 individuals participated in the experiment. The test situation was the same as in the test condition in Experiment 1: One table with object of type A and the other with an object of type A and B. Again, the animal always turned to the table with two objects and ambiguously requested an object. In Experiment 1, the listener had no prior information about each object. In Experiment 3, however, we manipulated common ground expectations in the same way as in Experiment 2. For example, the animal would turn to the table with one object and express that they don’t like object A, then they would turn to the other table and express that they like object B. Next, after quickly disappearing, the animal would reappear, turn to the table with two objects and make a request (see Figure \ref{fig:design}, right).
 
-For each version of Experiment 2, there were 4 conditions in Experiment 3. If the preferred/novel object was the less frequent one (object B), the two expectations were congruent. If the preferred/novel object was the more frequent one (object A), expectations were incongruent. For each type of expectation alignment, we varied if the same or a different animal returned. Participants either completed the preference or novelty version and received two test trials in each of the four conditions. Before discussing the empirical results, we briefly discuss the cognitive model we used to predict expectation integration.
+For each common ground condition, there were 4 conditions in Experiment 3 resulting from the cross of congruent/incongruent informativeness with same/different speaker. If the preferred/novel object was the less frequent one (object B), the two expectations were congruent. If the preferred/novel object was the more frequent one (object A), expectations were incongruent. For each type of expectation alignment, we varied if the same or a different animal returned. Participants either completed the preference or novelty version with two test trials in each of the four conditions. Before discussing the empirical results, we briefly discuss the cognitive model we used to predict expectation integration.
 
 ## Model Predictions
 
-To derive predictions, we used a probabilistic RSA model that simulates a pragmatic listener reasoning about a cooperative speaker who is trying to refer to an object [@frank2012predicting]. The speaker chooses how to refer to the object by reasoning about a naive listener who does not know the labels for the object [@frank2014inferring]. Mathematically, the probability that the listener chooses a referent given an utterance is defined as follows:  
+To derive predictions, we used a probabilistic RSA model that simulates a pragmatic listener reasoning about a cooperative speaker who is trying to refer to an object [@frank2012predicting]. The speaker chooses how to refer to the object by reasoning about a naive listener who does not know the labels for the object [@frank2014inferring]. The conditional probability that the listener chooses a referent given an utterance is defined as follows:
 $$P_L(r_s|u)\propto P_S(u|r_s)P_S(r_s)$$
-Here, $P_S(u|r_s)$ is the likelihood that the speaker will use an utterance to refer to a specific referent. It is defined as the surprisal of an utterance given the referent for a naive listener, who interprets utterances in a literal way:
-
+Here, $P_S(u|r_s)$ is the likelihood that the speaker will use an utterance u to refer to a specific referent r. It is defined in terms of a utility function $U_S(u;s)$ consisting of the surprisal of $u$ for a naive listener $L_0$, who interprets $u$ according its literal semantics:
 $$P_S(u|r_s)\propto exp(\alpha U_S(u;s))$$
+The numerical strength of the expression above depends on $\alpha$ scalar value, α, which can be interpreted as an indicator of how rational the speaker is in choosing utterances (i.e. as alpha increases, the speaker is more likely to choose the most informative utterance).
 
-The numerical strength of the expression above depends on $\alpha$, which can be interpreted as an indicator of how rational the speaker is in choosing utterances.
+The term $P_S(r_s)$ denotes the prior probability that a speaker will refer to a given referent. This probability represents the listeners expectations about the speaker depending on the manipulation (preference or novelty) and the identity of the speaker (same or different speaker).
 
-The term $P_S(r_s)$ denotes the prior probability that a speaker will refer to a given referent. This probability represents the listeners expectations about the speaker depending on the manipulation (preference or novelty) and the identity of the speaker (same or different speaker). 
+We used the results from Experiment 1 and 2 to specify $\alpha$ as well as $P_S(r_s)$ in our model. We set $\alpha$ so that a model with uniform priors would predict the average proportion measured in Experiment 1. The prior probability for each object was set to be the proportion with which this object was chosen in Experiment 2\footnote{Proportions were measured when participants chose between two objects. However, in Experiment 3, three objects were involved. For each object we used the proportion measured in Experiment 2 as the prior probability.This approached spread out the absolute probability mass for each object but conserved the relative relation between objects.}. Based on these parameter settings, we predicted the proportion with which listeners will choose the more informative object in each of eight unique conditions mentioned above (see also Figure \ref{fig:plotexp3}). We compared the fit of this pragmatic model to two alternative models using Bayes Factors (BF). The first alternative model ignored the speaker specific expectations (uniform prior model) while the second ignored the informativeness inference (prior only model).
 
-In our model, we used the results from Experiment 1 and 2 to specify $\alpha$ as well as $P_S(r_s)$. The former was set to yield the proportion measured in Experiment 1 in a model with uniform priors. The prior probability for each object was the proportion with which this object was chosen in Experiment 2\footnote{Proportions were measured when participants chose between two objects. However, in Experiment 3, three objects were involved. For each object we used the proportion measured in Experiment 2 as the prior probability.This approached spread out the absolute probability mass for each object but conserved the relative relation between objects.}. Based on these parameter settings, we predicted the proportion with which listeners will choose the less frequent object in each unique combination of alignment and speaker identity separately for each prior manipulation (eight conditions total, see Figure \ref{fig:plotexp3}). We compared the fit of this pragmatic model to two alternative models using Bayes Factors (BF). The first alternative model ignored the speaker specific expectations (flat prior model) while the second ignored the informativeness inference (prior only model). To capture the idea that behavioral data is to some degree noisy, all models included a noise parameter, which reflects that, with a certain probability, participants respond randomly instead of in line with the intended manipulation on a given trial. Noise parameters are estimated based on the data.
+<!-- All models included a “noise parameter”, reflecting that participants may respond randomly instead of in line with the intended manipulation on a given trial. Noise parameters were estimated based on the data. -->
 
 ## Results and Discussion
-
-```{r plotmodelcomp, fig.env="figure*", fig.pos = "h", fig.width=7, fig.height=2, fig.align = "center", set.cap.width=T, num.cols.cap=2, fig.cap = "(A) Model predictions compared to data for Experiment 3 and (B) Experiment 4. (C) Data for strong prior manipualtion in Experiment 3 and 4. Error bars = 95 \\%  HDIs."}
-
-pc1 <- pred_ex3%>%
-  filter(Model == "Noisy RSA Model")%>%
-  mutate(Prior = "Strong")
-  
-c1 <-ggplot(data = pc1,aes(x = mean, y = Data, col = Prior)) +
-  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
-  geom_point(size = 2)+
-  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0,size = .5)+
-  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .5)+
-  coord_fixed()+
-  xlim(0,1)+ylim(0,1)+
-  xlab("Model")+
-  theme_few(base_size = 10) + 
-  guides(col = F)+
-  scale_colour_viridis_d()
-
-pc2 <- pred_ex4%>%
-  filter(Model == "Noisy RSA Model")
-
-c2 <- ggplot(data = pc2,aes(x = mean, y = Data, col = Prior)) +
-  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
-  geom_point(size = 2)+
-  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0,size = .5 )+
-  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .5)+
-  coord_fixed()+
-  xlim(0,1)+ylim(0,1)+
-  xlab("Model")+
-  theme_few(base_size = 10) + 
-  scale_colour_manual(values = rev(viridis::viridis(3)))
-
-pc3 <- data.frame(
-    ex3 = pc1%>%pull(Data),
-    ex3_ci_l = pc1%>%pull(Data_ci_low),
-    ex3_ci_u = pc1%>%pull(Data_ci_up),
-    ex4 = pc2%>%filter(Prior == "Strong")%>%pull(Data),
-    ex4_ci_l = pc2%>%filter(Prior == "Strong")%>%pull(Data_ci_low),
-    ex4_ci_u = pc2%>%filter(Prior == "Strong")%>%pull(Data_ci_up),
-    Prior = "Strong")
-
-c3 <- ggplot(data = pc3,aes(x = ex3, y = ex4, col = Prior)) +
-  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
-  geom_point(size = 2)+
-  geom_errorbar(aes(ymin = ex4_ci_l, ymax = ex4_ci_u),width = 0,size = .5 )+
-  geom_errorbarh(aes(xmin = ex3_ci_l, xmax = ex3_ci_u), height = 0,size = .5)+
-  coord_fixed()+
-  xlim(0,1)+ylim(0,1)+
-  xlab("Data Experiment 3")+
-  ylab("Data Experiment 4")+
-  theme_few(base_size = 10)+ 
-  scale_color_viridis_d()
-
-ggarrange(c1, c2, c3, ncol = 3, nrow = 1, legend = "right", common.legend = T , labels = c("A","B","C"), vjust = 1)
- 
-```
 
 ```{r ex3_tab, results="asis"}
 #comaprison to chance
@@ -444,23 +387,83 @@ model_comp_r <- tidy(model_comp) %>%
   
 ```
 
-Results are discussed in the form of the proportion with which listeners chose the less frequent object. For a comparison to chance within each unique condition see Figure \ref{fig:plotexp3}. Both alignment and speaker identity influenced participants’ responses  (GLMM model term: `alignment*speaker`; $\beta$ = `r lm_ex3_r%>%filter(term == "SpeakerSame speaker:AlignmentIncongruent")%>%pull(estimate)`, se = `r lm_ex3_r%>%filter(term == "SpeakerSame speaker:AlignmentIncongruent")%>%pull(std.error)`, *p* `r lm_ex3_r%>%filter(term == "SpeakerSame speaker:AlignmentIncongruent")%>%pull(p.value)`). Figure \ref{fig:plotmodelcomp} shows the mean response in each unique condition compared to the model. Model predictions and data were highly correlated (r = `r model_comp_r$estimate`, *p* `r model_comp_r$p.value`). Model fit was better in the model taking into account both types of expectations compared to the flat prior (BF = `r format(bf_ex3%>%filter(Comparison == "Pragmatic vs. No prior") %>%pull(BayesFactor),digits = 2)`) or prior only model (BF = `r format(bf_ex3%>%filter(Comparison == "Pragmatic vs. Prior only") %>%pull(BayesFactor), digits = 2)`).  
+Results are discussed in the form of the proportion with which listeners chose the more informative object (i.e., the object that would be the more informative referent when only considering speaker general information). For a comparison to chance within each unique condition see \ref{fig:plotexp3}. Combinations of alignment and speaker identity differed in how they influenced participants’ responses (GLMM model term: `alignment*speaker`; $\beta$ = `r lm_ex3_r%>%filter(term == "SpeakerSame speaker:AlignmentIncongruent")%>%pull(estimate)`, se = `r lm_ex3_r%>%filter(term == "SpeakerSame speaker:AlignmentIncongruent")%>%pull(std.error)`, *p* `r lm_ex3_r%>%filter(term == "SpeakerSame speaker:AlignmentIncongruent")%>%pull(p.value)`). Figure \ref{fig:plotmodelcomp}A and B shows the mean response in each unique condition compared to the pragmatics model. Model predictions and data were highly correlated (r = `r model_comp_r$estimate`, *p* `r model_comp_r$p.value`).Model fit was much better in the model taking into account both types of expectations compared to the uniform prior (BF = `r format(bf_ex3%>%filter(Comparison == "Pragmatic vs. No prior") %>%pull(BayesFactor),digits = 2)`) or prior only model (BF = `r format(bf_ex3%>%filter(Comparison == "Pragmatic vs. Prior only") %>%pull(BayesFactor), digits = 2)`).  
 
-Interestingly, like in Experiment 2, there was a transfer of preference in case of a speaker change. Participants were at chance in the preference - different speaker - incongruent condition (see Figure \ref{fig:plotexp3}). If preference would have been specific to a particular individual, participants should have selected the less frequent object above chance (as they did in the corresponding condition with the novelty manipulation).    
+Interestingly, as in Experiment 2, there was a transfer of preference in the case of speaker change. Participants were at chance in the preference - different speaker - incongruent condition (see Figure \ref{fig:plotexp3}). If preference would have been specific to a particular individual, participants should have selected the less frequent object above chance (as they did in the corresponding condition with the novelty manipulation). Because it takes into account the measurement from the earlier experiment, our model predicts these results; future work might explicitly model generalization across speakers.
 
 # Experiment 4
 
-In Experiment 4, we replicated and extended Experiment 3 by manipulating the strength of the common ground expectations. Our main goal was to investigate the scope of our cognitive model and we therefore limit the description of the methods and the discussion of the results to the aspects relevant to the comparison between model predictions and data. 
+In Experiment 4, we replicated and extended Experiment 3 by manipulating the strength of the common ground expectations. Our main goal was to investigate the quantitative accuracy of our cognitive model and we therefore limit the description of the methods and the discussion of the results to the aspects relevant to the comparison between model predictions and data.
 
 ## Participants, Design and Procedure
 
-This experiment had 453 participants. The structure of the experiment was the same as in Experiment 3. For each common ground expectation (preference and novelty), we intended to have a strong, a medium and a weak manipulation. The strength of each manipulation was determined by the proportion with which participants chose the preferred / novel object given the manipulation. We succeeded in this for novelty. For preference we did not find a manipulation that yielded only a weak preference.
+This experiment had 453 participants. The structure of the experiment was the same as in Experiment 3. For each common ground expectation (preference and novelty), we intended to have a strong, a medium and a weak condition. The strength of each condition was determined by the proportion with which participants chose the preferred/novel object given the manipulation. We succeeded in generating quantitative variability for novelty. For preference we piloted a number of additional manipulations but did no find one that yielded a weaker preference compared to a medium condition. 
 
-The strong manipulations were identical to Experiment 3 and the results are therefore a direct replication. For novelty, in the medium manipulation, the animal turned to each table only once before the test. In the weak manipulation, the animal only turned to the table with an object before the test. In the medium manipulation for preference, the animal only expressed liking and did so in a more subtle way (saying only: “Oh, wow”). Participants were assigned to one level of common ground expectation and completed two test trials in each of the four conditions.
+The strong manipulations were identical to Experiment 3 and the results are therefore a direct replication (see Figure \ref{fig:plotmodelcomp}C). For novelty, in the medium condition, the animal turned to each table only once before the test. In the weak condition, the animal only turned to the table with an object before the test (instead of turning to and commenting on both). In the medium condition for preference, the animal only expressed liking and did so in a more subtle way (saying only: “Oh, wow” while pointing to the object). Participants were assigned to one level of common ground expectation and completed two test trials in each of the four conditions (alignment x speaker change).
 
-Model predictions were obtained in the same way as in Experiment 3. The likelihood term of the model was identical. For the each level of common ground expectation, we measured the proportion with which participants chose the preferred / novel object in a separate experiment. Due to space limitations, we do not discuss them in any more detail here. Like in Experiment 3, the results of these experiments were used to specify the prior distribution in the model.
+Model predictions were obtained in the same way as in Experiment 3; with $\alpha$ inferred from the data and $P_S(r_s)$ measured empirically (in a set of corresponding experiments parallel to Experiment 2).
 
 ## Results and Discussion
+
+```{r plotmodelcomp, fig.env="figure*", fig.pos = "h", fig.width=7, fig.height=2, fig.align = "center", set.cap.width=T, num.cols.cap=2, fig.cap = "(A) Model predictions compared to data for Experiment 3 and (B) Experiment 4. (C) Data for strong prior manipulation in Experiment 3 and 4, providing a noise ceiling for the reliability of measurements. Error bars = 95 \\%  HDIs."}
+
+pc1 <- pred_ex3%>%
+  filter(Model == "Noisy RSA Model")%>%
+  mutate(Prior = "Strong")
+  
+c1 <-ggplot(data = pc1,aes(x = mean, y = Data, col = Prior)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 2)+
+  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0,size = .5)+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .5)+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = mean, y = Data), inherit.aes = F, size = 3)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  theme_few(base_size = 10) + 
+  guides(col = F)+
+  scale_colour_viridis_d()
+
+pc2 <- pred_ex4%>%
+  filter(Model == "Noisy RSA Model")
+
+c2 <- ggplot(data = pc2,aes(x = mean, y = Data, col = Prior)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 2)+
+  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0,size = .5 )+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .5)+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = mean, y = Data), inherit.aes = F, size = 3)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  theme_few(base_size = 10) + 
+  scale_colour_manual(values = rev(viridis::viridis(3)))
+
+pc3 <- data.frame(
+    ex3 = pc1%>%pull(Data),
+    ex3_ci_l = pc1%>%pull(Data_ci_low),
+    ex3_ci_u = pc1%>%pull(Data_ci_up),
+    ex4 = pc2%>%filter(Prior == "Strong")%>%pull(Data),
+    ex4_ci_l = pc2%>%filter(Prior == "Strong")%>%pull(Data_ci_low),
+    ex4_ci_u = pc2%>%filter(Prior == "Strong")%>%pull(Data_ci_up),
+    Prior = "Strong")
+
+c3 <- ggplot(data = pc3,aes(x = ex3, y = ex4, col = Prior)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 2)+
+  geom_errorbar(aes(ymin = ex4_ci_l, ymax = ex4_ci_u),width = 0,size = .5 )+
+  geom_errorbarh(aes(xmin = ex3_ci_l, xmax = ex3_ci_u), height = 0,size = .5)+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = ex3, y = ex4), inherit.aes = F, size = 3)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Data Experiment 3")+
+  ylab("Data Experiment 4")+
+  theme_few(base_size = 10)+ 
+  scale_color_viridis_d()
+
+ggarrange(c1, c2, c3, ncol = 3, nrow = 1, legend = "right", common.legend = T , labels = c("A","B","C"), vjust = 1)
+ 
+```
 
 ```{r ex4_results}
 repl <- cor.test(
@@ -484,27 +487,35 @@ ex4_comp_r <- tidy(ex4_comp) %>%
   
 ```
 
-As noted above, the strong prior manipulation was a direct replication of Experiment 3. Results from the two rounds of data collection were highly correlated (r = `r repl_r$estimate`, *p* `r repl_r$p.value`, see Figure \ref{fig:plotmodelcomp}C). Across levels of prior manipulation, the data from Experiment 4 were highly correlated to the corresponding model predictions (r = `r ex4_comp_r$estimate`, *p* `r ex4_comp_r$p.value`, see Figure \ref{fig:plotmodelcomp}B). Again, the pragmatic model provided a better fit compared to the flat prior (BF = `r format(bf_ex4%>%filter(Comparison == "Pragmatic vs. No prior") %>%pull(BayesFactor),digits = 2)` ) or prior only model (BF = `r format(bf_ex4%>%filter(Comparison == "Pragmatic vs. Prior only") %>%pull(BayesFactor), digits = 2)`).
+As noted above, the strong prior condition was a direct replication of Experiment 3. Results from the two rounds of data collection were highly correlated (r = `r repl_r$estimate`, *p* `r repl_r$p.value`, see Figure \ref{fig:plotmodelcomp}C). Across levels of prior manipulation, the data from Experiment 4 were highly correlated to the corresponding model predictions (r = `r ex4_comp_r$estimate`, *p* `r ex4_comp_r$p.value`, see Figure \ref{fig:plotmodelcomp}B). Again, the pragmatics model provided a much better fit compared to the flat prior (BF = `r format(bf_ex4%>%filter(Comparison == "Pragmatic vs. No prior") %>%pull(BayesFactor),digits = 2)` ) or prior only model (BF = `r format(bf_ex4%>%filter(Comparison == "Pragmatic vs. Prior only") %>%pull(BayesFactor), digits = 2)`).
 
 # Discussion
 
-Language use and learning requires balancing different types of expectations about one’s interlocutor. Here we used a Bayesian cognitive model to predict this integration process. Experiment 1 and 2 replicated earlier studies showing that adult listeners expect speakers to produce utterances in an informative way as well as in light of common ground. Next, we combined the procedures from the first two experiments to study how listeners would integrate them. We used the results from Experiment 1 and 2 to specify the model parameters that represented the two types of expectations and make parameter-free predictions about new behavior. Experiments 3 and 4 showed that both types of expectations influenced listeners inferences. In general, listener behavior accurately described by our model, suggesting that – at least in population aggregate – listeners trade off flexibly between speaker specific and general pragmatic expectations.
+Language use and learning requires balancing different types of expectations about one’s interlocutor - both expectations about how speakers behave in general and specific expectations about how a particular speaker might behave in a particular context. Here we used a computational pragmatics model to predict this integration process. Experiment 1 and 2 replicated previous studies showing that adult listeners expect speakers to produce utterances informatively and also with respect to common ground. We then combined the procedures from the first two experiments to study how listeners would integrate these two types of information. We used the results from Experiment 1 and 2 to specify model parameters that represented the two types of expectations, generating predictions about new behavior. Experiments 3 and 4 showed that both types of expectations influenced listeners inferences. In general, listener behavior was accurately described by our model, suggesting that listeners trade-off flexibly between speaker specific and general pragmatic expectations. 
 
-Notably, Experiment 3 also included situations in which the two expectations were in conflict. For example, in some trials the animal expressed preference for object A, which was also the more frequent object. In these situations, participants chose the preferred object as the referent  (see also Figure \ref{fig:plotexp3}). A simple explanation for this pattern might be that common ground manipulations were simply “stronger” in that they produced higher rates of expected choice when presented on their own (see Figure \ref{fig:plotexp12}). However, in Experiment 4 we observed the same pattern in the medium manipulation for novelty (results not discussed above, see online repository for details) even though the manipulation alone yielded numerically weaker results compared to the general expectation in Experiment 1. In each case, the pattern in the data was  predicted by the model This illustrates the conditional nature of pragmatic inference: The informativeness of an utterance critically depends on the context, including common ground. If prior interactions already single out one object as the more likely referent, subsequent considerations of informativeness take place in light of this prior information and not independent of it.
+Notably, Experiment 3 also included situations in which the two expectations were in conflict. For example, in some trials the speaker expressed preference for object A, which was also the more frequent (less informative) object. In these situations, a majority of participants chose the preferred object as the referent (see also Figure \ref{fig:plotexp3} preference--same speaker--incongruent). A simple explanation for this pattern might be that common ground manipulations were simply “stronger”, corroborated by the fact they produced higher rates of expected choice than the informativeness expectation when the two were presented in isolation (see Figure \ref{fig:plotexp12}). In Experiment 4, however, the medium manipulation for novelty yielded numerically weaker results compared to the informativeness expectation in Experiment 1, and yet participants still selected the novel object above chance when the expectations were in conflict. Why is this? 
+
+Because common ground is represented in our model as the listener’s prior distribution, speakers can reason about it in choosing their utterance.That is, in the mind of the listener, the speaker computes the effect of each utterance on a naive listener with shared common ground. Therefore, when prior interactions implicate one object as the more likely referent, the speaker reasons that this object will be the inferred referent of any semantically plausible utterance, even when the same utterance would point to a different object in the absence of prior information. 
+
+<!-- In some cases, this constraining effect of prior knowledge can lead to counterintuitive predictions from RSA models [see @degen2015wonky for discussion and model extension].  -->
 
 In our model, we treated common ground expectations as equivalent to more basic manipulations of contextual salience [e.g. in @frank2012predicting] and did not explicitly model the social-cognitive processes that give rise to these expectations. The interaction around the object prior to the test event simply increased the probability that this particular speaker will refer to the object subsequently. The same change could be brought about if one of the objects would be made perceptually more salient, for example by making it flash. In future work, it would be interesting to explore ways to model common ground expectations explicitly as well as to contrast perceptual and interactional salience.
 
-A logical next step will be to extend the work presented here to children. As outlined above, pragmatic reasoning is though to play an important role in how children learn new words. An ontogenetic study would also show to what extent the modelling approach taken here is suitable to address questions about development. Another fruitful future direction would be to experimentally manipulate expectations about speaker informativeness. For example, if a speaker repeatedly behaves in an irrational way (e.g. labels dogs as cats), listeners might be less inclined to assume that utterances containing novel words are produced in an informative way.
+<!-- Pragmatic reasoning is thought to play an important role in how children learn new words. Thus, a logical next step will be to extend the work presented here to children.  An ontogenetic study would also show to what extent the modelling approach taken here is suitable to address questions about developmental change. -->
 
 This work integrates different perspectives on the study of pragmatic inference. Previous work focused either on general or speaker specific expectations. The methodological approach taken here illustrates how computational and experimental approaches can be used in conjunction to explicate theories of language use and learning.
 
-\vspace{1em} \fbox{\parbox[b][][c]{7.3cm}{\centering Corresponding data and code are available at\ \url{https://github.com/manuelbohn/mcc}}} \vspace{1em}
+<!-- \vspace{1em} \fbox{\parbox[b][][c]{7.3cm}{\centering Corresponding data and code are available at [masked for peer review]}} \vspace{1em} -->
+
+<!-- \vspace{1em} \fbox{\parbox[b][][c]{7.3cm}{\centering Corresponding data and code are available at\ \url{https://github.com/manuelbohn/mcc}}} \vspace{1em} -->
 
 # Acknowledgements
 
-MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 749229.
+Masked for peer review.
 
-# References 
+<!-- MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 749229. -->
+
+# References
 
 \setlength{\parindent}{-0.1in} 
 \setlength{\leftskip}{0.125in}

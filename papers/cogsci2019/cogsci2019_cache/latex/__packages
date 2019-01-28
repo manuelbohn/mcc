@@ -1,5 +1,12 @@
 base
+methods
+datasets
+utils
+grDevices
+graphics
+stats
 png
+grid
 ggplot2
 xtable
 tidyverse
