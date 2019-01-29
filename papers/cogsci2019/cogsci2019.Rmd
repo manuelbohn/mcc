@@ -110,13 +110,13 @@ dex4 <- d4 %>%
 
 # loading model comparisons and predictions
 
-pred_ex3 <- readRDS(file = "../../stats/saves/model_predictions_ex3_1.rds")
+pred_ex3 <- readRDS(file = "saves/model_predictions_ex3_1.rds")
 
-pred_ex4 <- readRDS(file = "../../stats/saves/model_predictions_ex3_variable_priors.rds")
+pred_ex4 <- readRDS(file = "stats/saves/model_predictions_ex3_variable_priors.rds")
 
-bf_ex3 <- readRDS(file = "../../stats/saves/ex3_bf.rds")
+bf_ex3 <- readRDS(file = "stats/saves/ex3_bf.rds")
 
-bf_ex4 <- readRDS(file = "../../stats/saves/ex4_bf.rds")
+bf_ex4 <- readRDS(file = "stats/saves/ex4_bf.rds")
 
 ```
 
