@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-load("model.predictions.RData")
+load("../saves/mcc_model_comparison.RData")
 
 library(tidyverse)
 library(knitr)
@@ -314,7 +314,6 @@ posterior.noise.pred <- bda.pred.noise %>%
 ggplot(posterior.noise.pred, aes(x = value))+
   geom_histogram()+
   facet_wrap(~Parameter, scales = 'free')
-
 
 noisy.rsa.params.pred <- bda.pred.noise %>%
   filter(Parameter %in% c("noise", "priorExponent"))  %>%

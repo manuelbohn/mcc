@@ -77,6 +77,10 @@ b <-ggplot(data = plot.model,aes(x = mean, y = Data, col = Model)) +
 
 ```{r}
 b
+
+posterior.noise %>% 
+    group_by(Parameter) %>%
+  summarise(mean = estimate_mode(value), ci_lower = hdi_lower(value), ci_upper = hdi_upper(value))
 ```
 
 ## Model descriptions

@@ -16,10 +16,10 @@ library(ggthemes)
 
 ## importing data
 
-d_new <- read_csv(file="kids_novel.data.csv")%>%
+d_new <- read_csv(file="../data/kids_novel.data.csv")%>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
-d_old <- read_csv(file="kids_novel.data.round1.csv")%>%
+d_old <- read_csv(file="../data/kids_novel.data.round1.csv")%>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
 # check if someone needs to be excluded because wrong in training

@@ -36,6 +36,9 @@ log <- read_excel("../../../MCC-subject_log.xlsx", 1)%>%
   filter(Condition == "inf2")%>%
   select(subid,experimenter,keep_drop,sex,dob)
 
+
+sum(log$keep_drop=="drop")
+
 d <- left_join(d_raw,log, by = "subid")%>%
   filter(keep_drop == "keep")%>%
   mutate(dob = as.numeric(dob),
