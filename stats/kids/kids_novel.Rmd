@@ -126,7 +126,7 @@ ggplot() +
   guides(alpha = F)+ 
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
   scale_colour_solarized(name="Speaker Change",
-                     breaks=c("false", "true"),
+                     breaks=c(F, T),
                      labels=c("No", "Yes"))
 ```
 
@@ -139,7 +139,7 @@ p5 <- d %>%
   summarise(correct = mean(correct)) 
 
 ggplot(data = p5, aes(x = age_num, y = correct, col = change)) +
-  geom_smooth(method = "loess", se = T)+
+  geom_smooth(method = "lm", se = T)+
   geom_jitter( alpha = .5, height = 0.04)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
@@ -149,7 +149,7 @@ ggplot(data = p5, aes(x = age_num, y = correct, col = change)) +
   guides(alpha = F)+ 
   #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
   scale_colour_solarized(name="Speaker Change",
-                     breaks=c("false", "true"),
+                     breaks=c(F, T),
                      labels=c("No", "Yes"))
 ```
 

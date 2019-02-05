@@ -30,11 +30,14 @@ length(unique(raw_data$subid))
 
 d_raw <-raw_data %>%
   mutate(test_date = as.Date(test_date),
-         experiment = "mcc_kids_inf_2_2")
+         experiment = "mcc_kids_inf_2_2",
+         subid= ifelse(subid=="193101_1_inf2","190131_1_inf2",subid))
 
 log <- read_excel("../../../MCC-subject_log.xlsx", 1)%>%
   filter(Condition == "inf2")%>%
   select(subid,experimenter,keep_drop,sex,dob)
+
+length(unique(log$subid))
 
 
 sum(log$keep_drop=="drop")
@@ -49,7 +52,7 @@ d <- left_join(d_raw,log, by = "subid")%>%
 length(unique(d$subid))
 
 
-write_csv(d, "data/kids_inf_2_data.csv")
+#write_csv(d, "data/kids_inf_2_data.csv")
 
 ```
 

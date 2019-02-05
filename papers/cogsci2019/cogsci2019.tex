@@ -144,7 +144,7 @@ language use and word learning (Goodman \& Frank, 2016). However, a
 comprehensive treatment of how general and common ground expectations
 are integrated is still missing.
 
-Within RSA models, each agent in this recursion is modeled as a Bayesian
+Within RSA models, each agent in the recursion is modeled as a Bayesian
 reasoner; thus, information integration is treated as a process of
 probabilistic inference. The speaker-general informativeness expectation
 is already encoded in the structure of the model: Speakers produce
@@ -166,7 +166,10 @@ predictions using the RSA framework about how these two components
 should be integrated. In Experiment 3, we test how listeners integrate
 their expectations and compare model predictions to empirical data.
 Experiment 4 replicates and extends Experiment 3 by varying the strength
-of common ground assumptions.
+of common ground assumptions. For all experiments, we pre-registered the
+sample size, experimental design and the statistical analysis. For
+Experiment 3 and 4, we also registered the model structure and
+predictions (see {[}masked for peer review{]})
 
 \section{Method}\label{method}
 
@@ -188,11 +191,6 @@ by clicking on one of the toys. Each experiment started with two
 training trials in which animals requested familiar objects (car and
 ball).
 
-For all experiments, we pre-registered the sample size, experimental
-design and the statistical analysis. For Experiment 3 and 4, we also
-registered the model structure and predictions (see {[}masked for peer
-review{]})
-
 \begin{CodeChunk}
 \begin{figure*}[h]
 
@@ -200,7 +198,7 @@ review{]})
 
 }
 
-\caption[Schematic experimental procedure]{Schematic experimental procedure. In all conditions, at test (bottom), the speaker ambiguously requested an object using a non-word (e.g. “dax”). Participants clicked on the object they thought the speaker referred to. Informativeness (Experiment 1, left) translated to making one object less frequent in context. Common ground (Experiment 2, middle) was manipulated by making one object prefered by or new to the speaker. Green plus signs represent an expression of preference and red minus of dispreference (see main text for details). When expressing e.g. preference for an object on a table with two objects (panel 3 from top), the respective object was temporarily enlarged. Experiment 3 (right) combined manipulations. Condition shown here: preference - same speaker - incongruent.}\label{fig:design}
+\caption[Schematic experimental procedure]{Schematic experimental procedure. In all conditions, at test (bottom), the speaker ambiguously requested an object using a non-word (e.g. “dax”). Participants clicked on the object they thought the speaker referred to. Informativeness (Experiment 1, left) translated to making one object less frequent in context. Common ground (Experiment 2, middle) was manipulated by making one object prefered by or new to the speaker. Green plus signs represent utterances that expressed preference and red minus of dispreference (see main text for details). Experiment 3 (right) combined manipulations. When expressing e.g. preference for an object on a table with two objects (panel 3 from top), the respective object was temporarily enlarged. Condition for Experiment 3 shown here: preference - same speaker - incongruent.}\label{fig:design}
 \end{figure*}
 \end{CodeChunk}
 
@@ -332,17 +330,17 @@ and 2 to see how listeners integrate them.
 Procedure}\label{participants-design-and-procedure-2}
 
 A total of 121 individuals participated in the experiment. The test
-situation was the same as in the test condition in Experiment 1: One
-table with object of type A and the other with an object of type A and
-B. Again, the animal always turned to the table with two objects and
-ambiguously requested an object. In Experiment 1, the listener had no
-prior information about each object. In Experiment 3, however, we
-manipulated common ground expectations in the same way as in Experiment
-2. For example, the animal would turn to the table with one object and
-express that they don't like object A, then turn to the other table and
-express that they like object B. Next, after quickly disappearing, they
-would reappear, turn to the table with two objects and make a request
-(see Fig. \ref{fig:design}, right).
+situation was the same as in the test condition in Experiment 1 (see
+Fig. \ref{fig:design}, right): One table with object of type A and the
+other with an object of type A and B. Again, the animal always turned to
+the table with two objects and ambiguously requested an object. In
+Experiment 1, the listener had no prior information about each object.
+In Experiment 3, however, we manipulated common ground expectations in
+the same way as in Experiment 2. For example, the animal would turn to
+the table with one object and express that they don't like object A,
+then turn to the other table and express that they like object B. Next,
+after quickly disappearing, they would reappear, turn to the table with
+two objects and make a request.
 
 For each common ground condition, there were 4 conditions in Experiment
 3 resulting from the cross of congruent/incongruent informativeness with
@@ -353,8 +351,7 @@ expectations were incongruent. For each type of expectation alignment,
 we varied if the same or a different animal returned. Participants
 either completed the preference or novelty version with two test trials
 in each of the four conditions. Before discussing the empirical results,
-we briefly discuss the cognitive model we used to predict expectation
-integration.
+we briefly discuss the model we used to predict expectation integration.
 
 \subsection{Model Predictions}\label{model-predictions}
 
@@ -366,14 +363,14 @@ know the labels for the object (Frank \& Goodman, 2014). The conditional
 probability that the listener chooses a referent given an utterance is
 defined as follows: \[P_L(r_s|u)\propto P_S(u|r_s)P_S(r_s)\] Here,
 \(P_S(u|r_s)\) is the likelihood that the speaker will use an utterance
-u to refer to a specific referent r. It is defined in terms of a utility
-function \(U_S(u;s)\) consisting of the surprisal of \(u\) for a naive
-listener \(L_0\), who interprets \(u\) according its literal semantics:
-\[P_S(u|r_s)\propto exp(\alpha U_S(u;s))\] The numerical strength of the
-expression above depends on a scalar value, \(\alpha\), which can be
-interpreted as an indicator of how rational the speaker is in choosing
-utterances (i.e.~as \(\alpha\) increases, the speaker is more likely to
-choose the most informative utterance).
+\(u\) to refer to a specific referent r. It is defined in terms of a
+utility function \(U_S(u;s)\) consisting of the surprisal of \(u\) for a
+naive listener \(L_0\), who interprets \(u\) according its literal
+semantics: \[P_S(u|r_s)\propto exp(\alpha U_S(u;s))\] The numerical
+strength of the expression above depends on a scalar value, \(\alpha\),
+which can be interpreted as an indicator of how rational the speaker is
+in choosing utterances (i.e.~as \(\alpha\) increases, the speaker is
+more likely to choose the most informative utterance).
 
 The term \(P_S(r_s)\) denotes the prior probability that a speaker will
 refer to a given referent. This probability represents the listeners
@@ -404,17 +401,17 @@ random instead of following the pattern predicted by the model.
 Results are discussed in the form of the proportion with which listeners
 chose the more informative object (i.e., the object that would be the
 more informative referent when only considering speaker general
-information). For a comparison to chance within each unique condition
-see \ref{fig:plotexp3}. Combinations of alignment and speaker identity
-differed in how they influenced participants' responses (GLMM model
-term: \texttt{alignment*speaker}; \(\beta\) = -2.92, se = 0.57, \emph{p}
-\textless{} .001). Fig. \ref{fig:plotmodelcomp}A and B shows the mean
+expectations). For a comparison to chance within each unique condition
+see Fig. \ref{fig:plotexp3}. Combinations of alignment and speaker
+identity differed in how they influenced participants' responses (GLMM
+model term: \texttt{alignment*speaker}; \(\beta\) = -2.92, se = 0.57,
+\emph{p} \textless{} .001). Fig. \ref{fig:plotmodelcomp}A shows the mean
 response in each unique condition compared to the pragmatics model.
 Model predictions and data were highly correlated (r = 0.96, \emph{p}
-\textless{} .001).Model fit was much better in the model taking into
+\textless{} .001). Model fit was much better in the model taking into
 account both types of expectations compared to the uniform prior (BF =
 2e+79) or prior only model (BF = 1.8e+34). The inferred noise level in
-the pragmatics model was 0.27 (95\% HDI: 0.21 - 0.34{]}.
+the pragmatics model was 0.27 (95\% HDI: 0.21 - 0.34).
 
 Interestingly, as in Experiment 2, there was a transfer of preference in
 the case of speaker change. Participants were at chance in the
@@ -482,26 +479,25 @@ predictions (r = 0.91, \emph{p} \textless{} .001, see Fig.
 \ref{fig:plotmodelcomp}B). Again, the pragmatics model provided a much
 better fit compared to the flat prior (BF = 4.4e+74) or prior only model
 (BF = 1.8e+84). The inferred noise level in the pragmatics model was
-0.28 (95\% HDI: 0.24 - 0.32{]}.
+0.28 (95\% HDI: 0.24 - 0.32).
 
 \section{Discussion}\label{discussion}
 
 Language use and learning requires balancing different types of
-expectations about one's interlocutor - both expectations about how
-speakers behave in general and specific expectations about how a
-particular speaker might behave in a particular context. Here we used a
-Bayesian pragmatics model to predict this integration process.
-Experiment 1 and 2 replicated previous studies showing that adult
-listeners expect speakers to produce utterances informatively and also
-with respect to common ground. We then combined the procedures from the
-first two experiments to study how listeners would integrate
-expectations. We used the results from Experiment 1 and 2 to specify
-model parameters that represented the two types of expectations,
-generating predictions about new behavior. Experiments 3 and 4 showed
-that both types of expectations influenced listeners inferences.
-Overall, listener behavior was accurately described by our model,
-suggesting that listeners trade-off flexibly between speaker specific
-and general pragmatic expectations.
+expectations about one's interlocutor - expectations about how speakers
+behave in general and expectations about how a particular speaker might
+behave in a particular context. Here we used a Bayesian pragmatics model
+to predict this integration process. Experiment 1 and 2 replicated
+previous studies showing that adult listeners expect speakers to produce
+utterances informatively and also with respect to common ground. We then
+combined the procedures from the first two experiments to study how
+listeners would integrate expectations. We used the results from
+Experiment 1 and 2 to specify model parameters that represented the two
+types of expectations, generating predictions about new behavior.
+Experiments 3 and 4 showed that both types of expectations influenced
+listeners inferences. Overall, listener behavior was accurately
+described by our model, suggesting that listeners trade-off flexibly
+between speaker specific and general pragmatic expectations.
 
 Notably, Experiment 3 also included situations in which the two
 expectations were in conflict. For example, in some trials the speaker
@@ -564,11 +560,12 @@ Bohn, M., \& Koymen, B. (2018). Common ground and development.
 \emph{Child Development Perspectives}, \emph{12}(2), 104--108.
 
 \hypertarget{ref-clark2009first}{}
-Clark, E. V. (2009). \emph{First language acquisition}. Cambridge
-University Press.
+Clark, E. V. (2009). \emph{First language acquisition}. Cambridge:
+Cambridge University Press.
 
 \hypertarget{ref-clark1996using}{}
-Clark, H. H. (1996). \emph{Using language}. Cambridge University Press.
+Clark, H. H. (1996). \emph{Using language}. Cambridge: Cambridge
+University Press.
 
 \hypertarget{ref-frank2012predicting}{}
 Frank, M. C., \& Goodman, N. D. (2012). Predicting pragmatic reasoning
@@ -585,12 +582,12 @@ interpretation as probabilistic inference. \emph{Trends in Cognitive
 Sciences}, \emph{20}(11), 818--829.
 
 \hypertarget{ref-grice1991studies}{}
-Grice, H. P. (1991). \emph{Studies in the way of words}. Harvard
-University Press.
+Grice, H. P. (1991). \emph{Studies in the way of words}. Cambridge, MA:
+Harvard University Press.
 
 \hypertarget{ref-levinson2000presumptive}{}
 Levinson, S. C. (2000). \emph{Presumptive meanings: The theory of
-generalized conversational implicature}. MIT press.
+generalized conversational implicature}. Cambridge, MA: MIT press.
 
 \hypertarget{ref-saylor2009preschoolers}{}
 Saylor, M. M., Sabbagh, M. A., Fortuna, A., \& Troseth, G. (2009).
@@ -599,11 +596,11 @@ Development}, \emph{24}(2), 125--132.
 
 \hypertarget{ref-sperber2001relevance}{}
 Sperber, D., \& Wilson, D. (2001). \emph{Relevance: Communication and
-cognition} (2nd ed.). Oxford; Cambridge, MA: Blackwell Publishers.
+cognition} (2nd ed.). Cambridge, MA: Blackwell Publishers.
 
 \hypertarget{ref-tomasello2009constructing}{}
-Tomasello, M. (2009). \emph{Constructing a language}. Harvard university
-press.
+Tomasello, M. (2009). \emph{Constructing a language}. Cambridge, MA:
+Harvard University Press.
 
 \bibliographystyle{apacite}
 

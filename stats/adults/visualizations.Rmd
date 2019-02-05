@@ -36,13 +36,14 @@ hdi_lower<- function(s){
 ```{r}
 # data ex 1 and ex 2 adults
 
-d1 <- bind_rows(read_csv(file="novel.data.csv"),
-               read_csv(file="pref.data.csv")) %>%
+d1 <- bind_rows(read_csv(file="../data/novel.data.csv"),
+               read_csv(file="../data/pref.data.csv")) %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"),
-         control = ifelse(change == "true", "true" , "false"))
+         control = ifelse(change == TRUE, "true" , "false"))
 
-d2 <- read_csv(file="inf.data.csv") %>%
-  mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
+d2 <- read_csv(file="../data/inf.data.csv") %>%
+  mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"),
+         control = ifelse(control == TRUE, "true" , "false"))
 
 d <- bind_rows(d1,d2) %>%
   mutate(condition = ifelse(condition == "preference", 2, ifelse(condition == "novelty", 3,1)))
@@ -305,13 +306,9 @@ ggsave("graphs/ex12_kids.pdf", width = 6.5, height = 4, scale = 1.5)
 ```{r}
 # data ex 3 first round
 
-dat <- bind_rows(read_csv(file="ex3.novel.data.csv"),
-               read_csv(file="ex3.pref.data.csv")) %>%
+dat <- bind_rows(read_csv(file="../data/ex3.novel.data.csv"),
+               read_csv(file="../data/ex3.pref.data.csv")) %>%
   mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
-
-dat %>%
-  filter(alignment == "incongruent") %>%
-  filter(correct_inf == correct_prior)
 
 
 # check if someone needs to be excluded because wrong in training
@@ -392,16 +389,43 @@ ggplot() +
   guides(alpha = F, fill = F, col = F)+ 
   scale_fill_manual(name="Condition",
                      breaks=c("1","2","3"),
-                     values= c("#859900","#859900","#859900"))+
-  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1),
-        panel.border = element_rect(color = "#859900", fill = NA, size = 6))
+                     values= c("#859900","#859900","#859900"))
+
+
+
+pdata <- p1 %>%
+  multi_boot_standard(col = "correct")%>%
+  mutate(Model = "Data")
+
+
+
+pmd <- bind_rows(pdata, plot.model%>%
+                   filter(Model == "Noisy RSA Model")%>%
+                   ungroup()%>%
+                   mutate(Prior = "Strong",
+                          Model = "RSA Model"))
+
+
+ggplot() +
+  geom_jitter(data = p1, aes(x = Alignment, y = correct), alpha = 0.2, width = .3,height = .025)+
+  geom_pointrange(data = pmd, aes(x = Alignment, y = mean,col = Model, ymin = ci_lower, ymax = ci_upper),size = 1,  position = position_dodge(width = .5))+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Choosing More Informative")+
+  facet_grid ( ~ Experiment + Change) +
+  theme_few(base_size = 14) + 
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  scale_color_manual(name="Condition",
+                     breaks=c("Data","RSA Model"),
+                     values= c("black","#859900"))+
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))
 
 ```
 
 
 
 ```{r}
-ggsave("graphs/data_ex3_round1.pdf", width = 6.5, height = 3, scale = 1.8)
+ ggsave("../graphs/Ex3_1_data_model_pred.pdf", width = 6.5, height = 3, scale = 1.3)
 ```
 
 
@@ -422,16 +446,16 @@ c1 <-ggplot(data = pc1,aes(x = mean, y = Data, col = Prior)) +
   coord_fixed()+
   xlim(0,1)+ylim(0,1)+
   xlab("Model")+
-  ggtitle("Experiment 3")+
-  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.9, aes(x = mean, y = Data), inherit.aes = F, size = 6)+
+  #ggtitle("Experiment 3")+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = mean, y = Data), inherit.aes = F, size = 4)+
   #geom_smooth(method = "lm", se = F, col = "black", size =1)+
-  theme_few(base_size = 20) + 
+  theme_few(base_size = ) + 
   guides(col = F)+
   scale_colour_viridis_d()
 ```
 
 ```{r}
-ggsave("graphs/model_critique_ex3_round1.png", width = 4, height = 4, scale = 1)
+ggsave("../graphs/model_critique_ex3_round1.png", width = 3, height = 3, scale = 1)
 ```
 
 
@@ -461,10 +485,68 @@ c2 <- ggplot(data = pc2,aes(x = mean, y = Data, col = Prior)) +
 ggarrange(c1, c2, ncol = 2, nrow = 1, legend = "right", common.legend = T)
 ```
 
+```{r plotmodelcomp}
 
+pc1 <- plot.model%>%
+  filter(Model == "Noisy RSA Model")%>%
+  mutate(Prior = "Strong")
+  
+c1 <-ggplot(data = pc1,aes(x = mean, y = Data, col = Prior)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 2)+
+  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0,size = .5)+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .5)+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = mean, y = Data), inherit.aes = F, size = 3)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  theme_few(base_size = 12) + 
+  guides(col = F)+
+  scale_colour_viridis_d()
+
+pc2 <- pred.ex3%>%
+  filter(Model == "Noisy RSA Model")
+
+c2 <- ggplot(data = pc2,aes(x = mean, y = Data, col = Prior)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 2)+
+  geom_errorbar(aes(ymin = Data_ci_low, ymax = Data_ci_up),width = 0,size = .5 )+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .5)+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = mean, y = Data), inherit.aes = F, size = 3)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  theme_few(base_size = 12) + 
+  scale_colour_manual(values = rev(viridis::viridis(3)))
+
+pc3 <- data.frame(
+    ex3 = pc1%>%pull(Data),
+    ex3_ci_l = pc1%>%pull(Data_ci_low),
+    ex3_ci_u = pc1%>%pull(Data_ci_up),
+    ex4 = pc2%>%filter(Prior == "Strong")%>%pull(Data),
+    ex4_ci_l = pc2%>%filter(Prior == "Strong")%>%pull(Data_ci_low),
+    ex4_ci_u = pc2%>%filter(Prior == "Strong")%>%pull(Data_ci_up),
+    Prior = "Strong")
+
+c3 <- ggplot(data = pc3,aes(x = ex3, y = ex4, col = Prior)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 2)+
+  geom_errorbar(aes(ymin = ex4_ci_l, ymax = ex4_ci_u),width = 0,size = .5 )+
+  geom_errorbarh(aes(xmin = ex3_ci_l, xmax = ex3_ci_u), height = 0,size = .5)+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = ex3, y = ex4), inherit.aes = F, size = 3)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Data Experiment 3")+
+  ylab("Data Experiment 4")+
+  theme_few(base_size = 12)+ 
+  scale_color_viridis_d()
+
+ggarrange(c1, c2, c3, ncol = 3, nrow = 1, legend = "right", common.legend = T)
+ 
+```
 
 ```{r}
-ggsave("graphs/model_critique_ex3_round1_2.pdf", width = 10, height = 4, scale = 1.2)
+ggsave("../graphs/overview_ex3_4.pdf", width = 10, height = 3, scale = 1)
 ```
 
 

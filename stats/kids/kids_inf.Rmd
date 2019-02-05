@@ -34,7 +34,7 @@ d_raw <-raw_data %>%
          experiment = "mcc_kids_inf_2")
 
 
-log <- read_excel("../../MCC-subject_log.xlsx", 1)%>%
+log <- read_excel("../../../MCC-subject_log.xlsx", 1)%>%
   filter(Condition == "inf")%>%
   select(subid,experimenter,keep_drop,sex,dob)
 
