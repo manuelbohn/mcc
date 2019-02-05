@@ -339,7 +339,7 @@ prefPriorPredCon <- pref_prior_con%>%
 
 pref_prior_con <- pref_prior_con%>%
   mutate(chain = factor(Chain),
-         alignment = "congruent")
+         Alignment = "congruent")
 
 x_plot <- seq(0, 2, by = 0.1)
 model_predictions <- sapply(1:length(prefPriorPredCon$pref_int), function(idx) {
@@ -378,7 +378,7 @@ There is no information in the priors. All structure in the models further down 
 
 # Model Predictions
 
-## Model code for predictions
+## Basic RSA model predictions
 
 ```{r}
 modelPredWebppl <- '
@@ -512,6 +512,51 @@ var model  = function(){
 }
 '
 ```
+
+```{r combined model predictions}
+
+model_pred <- readRDS("../saves/kids_model_predictions.rds")
+
+# model_pred<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, modelPredWebppl , sep='\n'),
+#   data = pre_data,
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4,
+#   cores = 4,
+#   inference_opts = list(method = "MCMC", samples = 900, burn = 200, verbose = T)
+# )
+
+#saveRDS(model_pred, file = "../saves/kids_model_predictions.rds")
+
+kids_model_pred <- model_pred%>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  mutate(iteration = rep(1:3600,each = 40))%>%
+  select(-diff_priorReg,-same_priorReg,-speakerOptimality,-so_slope,-so_int)%>%
+  gather(condition, prop_informative, -iteration,-age_bin)%>%
+  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
+  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
+         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
+
+
+kids_model_pred_so <- model_pred%>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  mutate(iteration = rep(1:3600,each = 40))%>%
+  select(so_slope,so_int,age_bin,iteration,speakerOptimality)
+
+
+kids_model_pred_prior <- model_pred%>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  mutate(iteration = rep(1:3600,each = 40))%>%
+  select(age_bin,iteration,diff_priorReg,same_priorReg)%>%
+  gather(condition, prop_preferred, -iteration,-age_bin)%>%
+  mutate(condition = ifelse(condition == "diff_priorReg", "different_speaker","same_speaker"))
+
+```
+
 
 ## Noisy model predictions
 
@@ -657,259 +702,7 @@ var model  = function(){
 '
 ```
 
-
-## Sampling predictions
-
-Taking samples and munging the data. 
-
-```{r combined model predictions}
-
-model_pred <- readRDS("../saves/kids_model_predictions.rds")
-
-model_pred<- webppl(
-  program_code = paste(rsaUtils, rsaModel, modelPredWebppl , sep='\n'),
-  data = pre_data,
-  data_var = "dataFromR",
-  model_var = "model",
-  chains = 4,
-  cores = 4,
-  inference_opts = list(method = "MCMC", samples = 2000, burn = 200, verbose = T)
-)
-
-#saveRDS(model_pred, file = "../saves/kids_model_predictions.rds")
-
-kids_model_pred <- model_pred%>%
-  select(value) %>%
-  map_df(bind_rows)%>%
-  mutate(iteration = rep(1:3600,each = 40))%>%
-  select(-diff_priorReg,-same_priorReg,-speakerOptimality,-so_slope,-so_int)%>%
-  gather(condition, prop_informative, -iteration,-age_bin)%>%
-  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
-  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
-         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
-
-
-kids_model_pred_so <- model_pred%>%
-  select(value) %>%
-  map_df(bind_rows)%>%
-  mutate(iteration = rep(1:3600,each = 40))%>%
-  select(so_slope,so_int,age_bin,iteration,speakerOptimality)
-
-
-kids_model_pred_prior <- model_pred%>%
-  select(value) %>%
-  map_df(bind_rows)%>%
-  mutate(iteration = rep(1:3600,each = 40))%>%
-  select(age_bin,iteration,diff_priorReg,same_priorReg)%>%
-  gather(condition, prop_preferred, -iteration,-age_bin)%>%
-  mutate(condition = ifelse(condition == "diff_priorReg", "different_speaker","same_speaker"))
-
-```
-
-```{r noisy combined model predictions}
-
-noisy_model_pred <- readRDS("../saves/kids_noisy_model_predictions.rds")
-
-noisy_model_pred<- webppl(
-  program_code = paste(rsaUtils, rsaModel, noisyModelPredWebppl , sep='\n'),
-  data = pre_data,
-  data_var = "dataFromR",
-  model_var = "model",
-  chains = 4,
-  cores = 4,
-  inference_opts = list(method = "MCMC", samples = 2000, burn = 200, verbose = T)
-)
-
-#saveRDS(noisy_model_pred, file = "../saves/kids_noisy_model_predictions.rds")
-
-kids_noisy_model_pred <- noisy_model_pred%>%
-  select(value) %>%
-  map_df(bind_rows)%>%
-  mutate(iteration = rep(1:8000,each = 40))%>%
-  select(-diff_priorReg,-same_priorReg,-speakerOptimality,-so_slope,-so_int)%>%
-  gather(condition, prop_informative, -iteration,-age_bin,-noise)%>%
-  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
-  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
-         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
-
-```
-## Sanity checks
-
-### Model based speaker optimality by age 
-
-```{r plot so model pred, echo = F}
-
-plot_model_pred_so <- kids_model_pred_so%>%
-  group_by(age_bin)%>%
-  summarise(mean = mean(speakerOptimality),
-            lci = hdi_lower(speakerOptimality),
-            uci = hdi_upper(speakerOptimality))
-  
-
-pred_so_plot <- ggplot(data = plot_model_pred_so) +
-  geom_line(data = kids_model_pred_so,aes(age_bin, speakerOptimality, group = iteration), col = "grey", alpha = 0.3) +
-  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci), fill = "green", alpha = .2) +
-  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
-  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
-  scale_y_continuous(limits=c(-4, 4), name="Speaker optimality")+
-  ggtitle("Speaker optimality model")+
-  #facet_wrap(~chain)+
-  theme_few()+
-  coord_fixed(ratio=1/4)
-
-```
-
-
-```{r, echo = F, fig.width= 8}
-ggarrange(pred_so_plot, plot_inf)
-```
-
-Here we estimate the speaker optimality parameter that best captures the data for the different ages. The model based estimate nicely captures the developmental trend.
-
-```{r plot prior model pred, echo = F}
-plot_model_pred_prior <- kids_model_pred_prior%>%
-  group_by(age_bin,condition)%>%
-  summarise(mean = mean(prop_preferred),
-            lci = hdi_lower(prop_preferred),
-            uci = hdi_upper(prop_preferred))
-  
-
-pred_prior_plot <- ggplot(data = plot_model_pred_prior) +
-  geom_line(data = kids_model_pred_prior,aes(age_bin, prop_preferred, group = paste(iteration,condition, sep= ""), col = condition), alpha = 0.05) +
-  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = condition), alpha = .5) +
-  geom_line(aes(age_bin, mean, group = condition), col = "black", size = 0.4, alpha = 1) + 
-  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
-  scale_y_continuous(limits=c(-0.05,1.05), name="Proportion Expected Choice")+
-  geom_hline(yintercept = 0.5, lty=2)+
-  theme_few()+
-  ggtitle("Preference model")+
-  coord_fixed(ratio = 2)+
-  scale_color_solarized()+
-  scale_fill_solarized()
-
-
-```
-
-### Model based priors by age 
-
-```{r, echo= F, fig.width= 10}
-ggarrange(pred_prior_plot, plot_pref, common.legend = T, legend = "right")
-```
-
-The model accurately captures the the difference between conditions as well as the developmental trend we see in the data.  
-
-## RSA Model Predictions
-
-These are the predictions from the RSA model which takes in the age specific speaker optimality parameter and the age specific priors. The priors are converted from 2-object world into 3-object world before going into the model. This corresponds to the way we handled the priors for adults.
-
-```{r plot RSA model predictions, echo = F, fig.width= 10}
-
-  plot_model_pred <- kids_model_pred %>%
-  group_by(model,age_bin,Speaker,Alignment)%>%
-  summarise(mean = mean(prop_informative),
-            lci = hdi_lower(prop_informative),
-            uci = hdi_upper(prop_informative))
-
-pred_plot <- ggplot(plot_model_pred)+
-  #geom_line(data = kids_model_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
-  #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
-  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
-  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(y="Proportion Expected Choice")+
-  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
-  ylim(-0.05,1.05)+
-  guides(col = F)+
-  facet_grid(Speaker~Alignment)+
-  theme_few()+
-  scale_color_solarized()+
-  scale_fill_solarized()
-```
-
-```{r, echo= F, fig.width= 10, fig.height = 8}
-pred_plot
-```
-
-
-## Noisy RSA Model Predictions
-
-```{r plot RSA model predictions, echo = F, fig.width= 10}
-
-  plot_noisy_model_pred <- kids_noisy_model_pred %>%
-  group_by(model,age_bin,Speaker,Alignment)%>%
-  summarise(mean = mean(prop_informative),
-            lci = hdi_lower(prop_informative),
-            uci = hdi_upper(prop_informative))
-
-pred_noisy_plot <- ggplot(plot_noisy_model_pred)+
-  #geom_line(data = kids_model_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
-  #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
-  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
-  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(y="Proportion Expected Choice")+
-  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
-  ylim(-0.05,1.05)+
-  guides(col = F)+
-  facet_grid(Speaker~Alignment)+
-  theme_few()+
-  scale_color_solarized()+
-  scale_fill_solarized()
-```
-
-```{r, echo= F, fig.width= 10, fig.height = 8}
-pred_noisy_plot
-```
-
-
-## No Prior Model Predictions
-
-```{r, include = F}
-
-no_prior_pred <- bind_rows(
-  kids_model_pred_so%>%mutate(model = "no prior",
-                              Speaker = "same_speaker",
-                              Alignment = "congruent"),
-    kids_model_pred_so%>%mutate(model = "no prior",
-                              Speaker = "different_speaker",
-                              Alignment = "congruent"),
-    kids_model_pred_so%>%mutate(model = "no prior",
-                              Speaker = "same_speaker",
-                              Alignment = "incongruent"),
-    kids_model_pred_so%>%mutate(model = "no prior",
-                              Speaker = "different_speaker",
-                              Alignment = "incongruent")
-  ) %>%
-  mutate(prop_informative = plogis(so_int+so_slope*age_bin))
-
-
-no_prior_plot <- no_prior_pred %>%
-  group_by(model,age_bin,Speaker,Alignment)%>%
-  summarise(mean = mean(prop_informative),
-            lci = hdi_lower(prop_informative),
-            uci = hdi_upper(prop_informative))
-
-plot_no_prior <- ggplot(no_prior_plot)+
-  geom_line(data = no_prior_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
-  #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
-  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
-  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(y="Proportion Expected Choice")+
-  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
-  ylim(-0.05,1.05)+
-  guides(col = F)+
-  facet_grid(Speaker~Alignment)+
-  theme_few()+
-  scale_color_solarized()+
-  scale_fill_solarized()
-```
-
-```{r, echo = F, fig.width= 10, fig.height = 8}
-plot_no_prior
-```
-
-## Prior Only Model
+## Prior only model 
 
 ```{r prior only model}
 priorOnlyWebppl <- '
@@ -1064,6 +857,213 @@ prior_only_model <- prior_only_predictions %>%
 
 ```
 
+```{r noisy combined model predictions}
+
+noisy_model_pred <- readRDS("../saves/kids_noisy_model_predictions.rds")
+
+noisy_model_pred<- webppl(
+  program_code = paste(rsaUtils, rsaModel, noisyModelPredWebppl , sep='\n'),
+  data = pre_data,
+  data_var = "dataFromR",
+  model_var = "model",
+  chains = 4,
+  cores = 4,
+  inference_opts = list(method = "MCMC", samples = 2000, burn = 200, verbose = T)
+)
+
+#saveRDS(noisy_model_pred, file = "../saves/kids_noisy_model_predictions.rds")
+
+kids_noisy_model_pred <- noisy_model_pred%>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  mutate(iteration = rep(1:8000,each = 40))%>%
+  select(-diff_priorReg,-same_priorReg,-speakerOptimality,-so_slope,-so_int)%>%
+  gather(condition, prop_informative, -iteration,-age_bin,-noise)%>%
+  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
+  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
+         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
+
+```
+# Sanity checks
+
+### Model based speaker optimality by age 
+
+```{r plot so model pred, echo = F}
+
+plot_model_pred_so <- kids_model_pred_so%>%
+  group_by(age_bin)%>%
+  summarise(mean = mean(speakerOptimality),
+            lci = hdi_lower(speakerOptimality),
+            uci = hdi_upper(speakerOptimality))
+  
+
+pred_so_plot <- ggplot(data = plot_model_pred_so) +
+  geom_line(data = kids_model_pred_so,aes(age_bin, speakerOptimality, group = iteration), col = "grey", alpha = 0.3) +
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci), fill = "green", alpha = .2) +
+  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  scale_y_continuous(limits=c(-4, 4), name="Speaker optimality")+
+  ggtitle("Speaker optimality model")+
+  #facet_wrap(~chain)+
+  theme_few()+
+  coord_fixed(ratio=1/4)
+
+```
+
+
+```{r, echo = F, fig.width= 8}
+ggarrange(pred_so_plot, plot_inf)
+```
+
+Here we estimate the speaker optimality parameter that best captures the data for the different ages. The model based estimate nicely captures the developmental trend.
+
+```{r plot prior model pred, echo = F}
+plot_model_pred_prior <- kids_model_pred_prior%>%
+  group_by(age_bin,condition)%>%
+  summarise(mean = mean(prop_preferred),
+            lci = hdi_lower(prop_preferred),
+            uci = hdi_upper(prop_preferred))
+  
+
+pred_prior_plot <- ggplot(data = plot_model_pred_prior) +
+  geom_line(data = kids_model_pred_prior,aes(age_bin, prop_preferred, group = paste(iteration,condition, sep= ""), col = condition), alpha = 0.05) +
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = condition), alpha = .5) +
+  geom_line(aes(age_bin, mean, group = condition), col = "black", size = 0.4, alpha = 1) + 
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  scale_y_continuous(limits=c(-0.05,1.05), name="Proportion Expected Choice")+
+  geom_hline(yintercept = 0.5, lty=2)+
+  theme_few()+
+  ggtitle("Preference model")+
+  coord_fixed(ratio = 2)+
+  scale_color_solarized()+
+  scale_fill_solarized()
+
+
+```
+
+### Model based priors by age 
+
+```{r, echo= F, fig.width= 10}
+ggarrange(pred_prior_plot, plot_pref, common.legend = T, legend = "right")
+```
+
+The model accurately captures the the difference between conditions as well as the developmental trend we see in the data.  
+
+# Visualizing model predictions
+
+## RSA Model Predictions
+
+These are the predictions from the RSA model which takes in the age specific speaker optimality parameter and the age specific priors. The priors are converted from 2-object world into 3-object world before going into the model. This corresponds to the way we handled the priors for adults.
+
+```{r plot RSA model predictions, echo = F, fig.width= 10}
+
+  plot_model_pred <- kids_model_pred %>%
+  group_by(model,age_bin,Speaker,Alignment)%>%
+  summarise(mean = mean(prop_informative),
+            lci = hdi_lower(prop_informative),
+            uci = hdi_upper(prop_informative))
+
+pred_plot <- ggplot(plot_model_pred)+
+  #geom_line(data = kids_model_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
+  #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
+  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(y="Proportion Expected Choice")+
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  ylim(-0.05,1.05)+
+  guides(col = F)+
+  facet_grid(Speaker~Alignment)+
+  theme_few()+
+  scale_color_solarized()+
+  scale_fill_solarized()
+```
+
+```{r, echo= F, fig.width= 10, fig.height = 8}
+pred_plot
+```
+
+
+## Noisy RSA Model Predictions
+
+```{r plot RSA model predictions, echo = F, fig.width= 10}
+
+  plot_noisy_model_pred <- kids_noisy_model_pred %>%
+  group_by(model,age_bin,Speaker,Alignment)%>%
+  summarise(mean = mean(prop_informative),
+            lci = hdi_lower(prop_informative),
+            uci = hdi_upper(prop_informative))
+
+pred_noisy_plot <- ggplot(plot_noisy_model_pred)+
+  #geom_line(data = kids_model_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
+  #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
+  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(y="Proportion Expected Choice")+
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  ylim(-0.05,1.05)+
+  guides(col = F)+
+  facet_grid(Speaker~Alignment)+
+  theme_few()+
+  scale_color_solarized()+
+  scale_fill_solarized()
+```
+
+```{r, echo= F, fig.width= 10, fig.height = 8}
+pred_noisy_plot
+```
+
+
+## No Prior Model Predictions
+
+```{r, include = F}
+
+no_prior_pred <- bind_rows(
+  kids_model_pred_so%>%mutate(model = "no prior",
+                              Speaker = "same_speaker",
+                              Alignment = "congruent"),
+    kids_model_pred_so%>%mutate(model = "no prior",
+                              Speaker = "different_speaker",
+                              Alignment = "congruent"),
+    kids_model_pred_so%>%mutate(model = "no prior",
+                              Speaker = "same_speaker",
+                              Alignment = "incongruent"),
+    kids_model_pred_so%>%mutate(model = "no prior",
+                              Speaker = "different_speaker",
+                              Alignment = "incongruent")
+  ) %>%
+  mutate(prop_informative = plogis(so_int+so_slope*age_bin))
+
+
+no_prior_plot <- no_prior_pred %>%
+  group_by(model,age_bin,Speaker,Alignment)%>%
+  summarise(mean = mean(prop_informative),
+            lci = hdi_lower(prop_informative),
+            uci = hdi_upper(prop_informative))
+
+plot_no_prior <- ggplot(no_prior_plot)+
+  geom_line(data = no_prior_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
+  #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
+  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(y="Proportion Expected Choice")+
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  ylim(-0.05,1.05)+
+  guides(col = F)+
+  facet_grid(Speaker~Alignment)+
+  theme_few()+
+  scale_color_solarized()+
+  scale_fill_solarized()
+```
+
+```{r, echo = F, fig.width= 10, fig.height = 8}
+plot_no_prior
+```
+
+## Prior Only Model
+
 ```{r plot prior only model predictions, include= F}
 
 plot_prior_only_pred <- prior_only_model %>%
@@ -1150,42 +1150,51 @@ library(jsonlite)
 library(readxl)
 
 ## importing data
-files <- dir("~/Work/MCC/git-mcc/kids_EX3/pref/")
+d <- read_csv(file="../data/kids_ex3_data.csv")
 
-raw_data <- data_frame()
-for (f in files) {
-  jf <- paste("~/Work/MCC/git-mcc/kids_EX3/pref/",f,sep="")
-  jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
-  date <- str_sub(jf,42,str_length(jf)-11)
-  id <- as_data_frame(jd$data$data) %>% mutate(test_date = date)
-  raw_data <- bind_rows(raw_data, id)
-}
+# files <- dir("~/Work/MCC/git-mcc/kids_EX3/pref/")
+# 
+# raw_data <- data_frame()
+# for (f in files) {
+#   jf <- paste("~/Work/MCC/git-mcc/kids_EX3/pref/",f,sep="")
+#   jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
+#   date <- str_sub(jf,42,str_length(jf)-11)
+#   id <- as_data_frame(jd$data$data) %>% mutate(test_date = date)
+#   raw_data <- bind_rows(raw_data, id)
+# }
+# 
+# raw_data <- raw_data %>%
+#   mutate(subid = ifelse(subid == "181128_3_ex3p....","181128_3_ex3p" , subid),
+#          subid = ifelse(subid == "181128_1_ex3p.","181128_1_ex3p" , subid),
+#          subid = ifelse(subid == " 181218_10_ex3p","181218_10_ex3p" , subid))
+# 
+# raw_data%>%
+#   #group_by(paste(subid,test_date))%>%
+#   group_by(subid)%>%
+#   summarise(n= n())
+#   
+# unique(raw_data$subid)
+# 
+# log <- read_excel("../../../MCC-subject_log.xlsx", 1)%>%
+#   filter(Condition == "ex3p")%>%
+#   select(subid,experimenter,keep_drop,sex,dob)
+# 
+# #unique(log$subid)
+# sum(log$keep_drop == "drop")
+# 
+# d <- left_join(raw_data,log, by = "subid")%>%
+#   filter(keep_drop == "keep")%>%
+#   mutate(dob = as.numeric(dob),
+#          dob = as.Date(dob,origin = "1899-12-30"),
+#          age_num = lubridate::time_length(difftime(test_date,dob), "years"),
+#          check_age = ifelse(substr(age_num,1,1) == subage, T, F),
+#          Speaker = ifelse(speaker == "same", "same_speaker", "different_speaker"),
+#          Alignment = alignment)%>%
+#   select(-speaker,-alignment)
+# 
+# 
+# #write_csv(d, "../data/kids_ex3_data.csv")
 
-raw_data <- raw_data %>%
-  mutate(subid = ifelse(subid == "181128_3_ex3p....","181128_3_ex3p" , subid),
-         subid = ifelse(subid == "181128_1_ex3p.","181128_1_ex3p" , subid),
-         subid = ifelse(subid == " 181218_10_ex3p","181218_10_ex3p" , subid))
-
-raw_data%>%
-  #group_by(paste(subid,test_date))%>%
-  group_by(subid)%>%
-  summarise(n= n())
-  
-unique(raw_data$subid)
-
-log <- read_excel("../../../MCC-subject_log.xlsx", 1)%>%
-  filter(Condition == "ex3p")%>%
-  select(subid,experimenter,keep_drop,sex,dob)
-
-#unique(log$subid)
-sum(log$keep_drop == "drop")
-
-d <- left_join(raw_data,log, by = "subid")%>%
-  filter(keep_drop == "keep")%>%
-  mutate(dob = as.numeric(dob),
-         dob = as.Date(dob,origin = "1899-12-30"),
-         age_num = lubridate::time_length(difftime(test_date,dob), "years"),
-         check_age = ifelse(substr(age_num,1,1) == subage, T, F))
 
 ```
 
@@ -1195,10 +1204,8 @@ d <- left_join(raw_data,log, by = "subid")%>%
 p_data <- d %>%
   filter(trial != "filler1",
          trial != "filler2")%>%
-  mutate(age_bin = age_num - 3,
-         Speaker = ifelse(speaker == "same", "same_speaker", "different_speaker"),
-         Alignment = alignment)%>%
-  group_by(Speaker, alignment ,age_bin, subid)
+  mutate(age_bin = age_num - 3)%>%
+  group_by(Speaker, Alignment ,age_bin, subid)
 
 ggplot(model_comp_mean_ci)+
   geom_jitter(data = p_data, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
@@ -1222,8 +1229,6 @@ ggplot(model_comp_mean_ci)+
 data <- d %>%
   filter(trial != "filler1",
          trial != "filler2")%>%
-  mutate(Speaker = ifelse(speaker == "same", "same_speaker", "different_speaker"),
-         Alignment = alignment)%>%
   group_by(Speaker, Alignment ,subage) %>%
   summarize(k = sum(correct_inf), n = n())%>%
   ungroup() %>%
