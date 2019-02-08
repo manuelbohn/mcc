@@ -181,7 +181,7 @@ p3 <- d %>%
 
 ggplot(data = p3, aes(x = age_num, y = correct_inf)) +
   geom_jitter(width = .025,height = .025, alpha = .2)+
-  geom_smooth(method = "loess",  se = T,  alpha = .5, size = .4, span = 2)+
+    geom_smooth(col = "black", size = 0.8, method = "glm", method.args = list(family = "binomial"), se = T,  alpha = .7)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="Age",y="Proportion more informative")+
   theme_few() +

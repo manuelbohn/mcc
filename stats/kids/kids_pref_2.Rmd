@@ -12,95 +12,62 @@ library(tidyverse)
 library(knitr)
 library(langcog)
 library(ggthemes)
+library(jsonlite)
+library(readxl)
 
 
 ## importing data
+files <- dir("~/Work/MCC/git-mcc/kids_pref_data_2/")
 
-# d_ipad <- read_csv(file="kids_pref.data.csv")
-# 
-# d_hand_code <- read.csv(file="kids_pref_handcoding.data.csv", sep = ";")%>%
-#   mutate(age_num = as.numeric(as.character(age_num)))
-# 
-# d <- bind_rows(d_ipad,d_hand_code)%>%
-#   mutate(trial_type = ifelse(trial == "train", "train", "test"))%>%
-#   filter(subid != "200718_8_pref")
-# 
-# 
-# # check if someone needs to be excluded because wrong in training
-# # no one
-# d %>%
-#   filter(trial_type == "train") %>%
-#   group_by(subid)%>%
-#   summarise(correct = mean(correct)) %>%
-#   filter(correct == 0)
-
-d <- read_csv(file="../data/kids_pref_data.csv")
+ raw_data <- data_frame()
+for (f in files) {
+  jf <- paste("~/Work/MCC/git-mcc/kids_pref_data_2/",f,sep="")
+  jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
+  date <- str_sub(jf,45,str_length(jf)-11)
+  id <- as_data_frame(jd$data$data) %>% mutate(test_date = date)
+  raw_data <- bind_rows(raw_data, id)
+}
 
 
-```
+length(unique(raw_data$subid))
 
-# Subjects
+d_raw <-raw_data %>%
+  mutate(test_date = as.Date(test_date),
+         experiment = "mcc_kids_pref_2")
 
-There was one additional 4yo in the data set, whom I excluded to get the pre-registered sample size of 45 total. For the modeling we might want to include her as that gives us a tiny bit more precision.
+log <- read_excel("../../../MCC-subject_log.xlsx", 1)%>%
+  filter(Condition == "pref2")%>%
+  select(subid,experimenter,keep_drop,sex,dob)
 
-## Overall
-
-All training trials were answered correctly, suggesting that children generally understood the procedure. Sex is not included in the data set but the sex ration is fairly balances across age bins (47 to 60% girls).
-
-```{r sanity checks, echo = FALSE,warning = FALSE, message = FALSE}
+length(unique(log$subid))
 
 
-## sanity checks
-d %>%
-  group_by(trial_type) %>%
-  summarise(n = length(unique(subid)), 
-            correct = mean(correct)) %>%
-  knitr::kable(digits = 2)
+sum(log$keep_drop=="drop")
+
+d <- left_join(d_raw,log, by = "subid")%>%
+  filter(keep_drop == "keep")%>%
+  mutate(dob = as.numeric(dob),
+         dob = as.Date(dob,origin = "1899-12-30"),
+         age_num = lubridate::time_length(difftime(test_date,dob), "years"),
+         check_age = ifelse(substr(age_num,1,1) == subage, T, F))
+
+length(unique(d$subid))
 
 
 ```
 
-## By age bin
+# Sample size per age bin
 
-Just to check if we got the planned sample size of 15 per bin.
-
-```{r kids per age group,echo = FALSE}
+```{r kids per age group,echo = F }
 
 d %>%
-  group_by(age)%>%
-  summarise(n = length(unique(subid)),
-            age_num = mean(age_num))%>%
+  group_by(subage)%>%
+  summarise(n = length(unique(subid)))%>%
   knitr::kable(digits = 2)
+
 ```
 
 # Plots
-
-## Plot across age bins
-
-Medium overall effect of speaker change.
-
-```{r plot across age}
-p3 <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(change, subid) %>%
-  summarise(correct = mean(correct)) 
-
-p4 <- p3 %>%
-  multi_boot_standard(col = "correct")
-
-ggplot() +
-  geom_jitter(data = p3, aes(x = change, y = correct, col = change, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = p4, aes(x = change, y = mean, col = change, ymin = ci_lower, ymax = ci_upper),size = .8)+
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(x="",y="Proportion Expected Choice")+
-  theme_few() +
-  ylim(-0.05,1.05)+
-  guides(alpha = F)+ 
-  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-  scale_colour_solarized(name="Speaker Change",
-                     breaks=c("false", "true"),
-                     labels=c("No", "Yes"))
-```
 
 ## Plot by age bin
 
@@ -108,8 +75,8 @@ The following two plots suggest some sort of linear developmental trajectory.
 
 ```{r plot by age}
 p1 <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(change,age, subid) %>%
+  filter(trial != "train") %>%
+  group_by(speakerChange,subage, subid) %>%
   summarise(correct = mean(correct)) 
 
 p2 <- p1 %>%
@@ -117,12 +84,12 @@ p2 <- p1 %>%
 
 
 ggplot() +
-  geom_jitter(data = p1, aes(x = change, y = correct, col = change, alpha = .2),width = .3,height = .025)+
-  geom_pointrange(data = p2, aes(x = change, y = mean, col = change, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_jitter(data = p1, aes(x = speakerChange, y = correct, col = speakerChange, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p2, aes(x = speakerChange, y = mean, col = speakerChange, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
   theme_few() +
-  facet_wrap(~age)+
+  facet_wrap(~subage)+
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
