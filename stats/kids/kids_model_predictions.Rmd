@@ -53,7 +53,9 @@ pref_data <- read_csv(file="../data/kids_pref_data.csv")%>%
   select(experiment,subid,age_bin,age_num,trial,condition,agent,correct,minage)
 
 
-inf_data <- read_csv(file="../data/kids_inf_data.csv")%>%
+inf_data <- bind_rows(
+  read_csv(file="../data/kids_inf_data.csv"),
+  read_csv(file="../data/kids_inf_2_data.csv"))%>%
   filter(subage != "2",
          trial != "filler1",
          trial != "filler2")%>%
