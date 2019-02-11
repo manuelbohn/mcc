@@ -70,7 +70,8 @@ pre_data <- bind_rows(pref_data,
 
 
 ex3_data <- read_csv(file="../data/kids_ex3_data.csv")%>%
-  filter(trial != "filler1",trial != "filler2")
+  filter(trial != "filler1",trial != "filler2")%>%
+  mutate(binned_age=cut(age_num, breaks=seq.int(3, 5, 0.05), labels=seq.int(0, 1.95, 0.05)))
 
 ```
 
@@ -187,6 +188,19 @@ return {label: label, point: point}
 }
 
 var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
+
+var foreach = function(fn, lst) {
+    var foreach_ = function(i) {
+        if (i < lst.length) {
+            fn(lst[i]);
+            foreach_(i + 1);
+        }
+    };
+    foreach_(0);
+};
+
+var logistic = function(x) {1 / (1 + Math.exp(-x))}
+
 '
 ```
 
@@ -515,19 +529,9 @@ var ex3Data = dataFromR.ex3data
 var modelParams = dataFromR.modelParams
 
 
-    display(JSON.stringify(ex3Data))
+    //display(JSON.stringify(ex3Data))
 
-var foreach = function(fn, lst) {
-    var foreach_ = function(i) {
-        if (i < lst.length) {
-            fn(lst[i]);
-            foreach_(i + 1);
-        }
-    };
-    foreach_(0);
-};
 
-var logistic = function(x) {1 / (1 + Math.exp(-x))}
 
 
 var predict_by_age = function(age_bin){
@@ -580,11 +584,7 @@ predictions_by_age
 model_pred<- webppl(
   program_code = paste(rsaUtils, rsaModel, modelPredWebppl , sep='\n'),
   data = list(ex3data = ex3_data, modelParams = model_params_by_age),
-  data_var = "dataFromR",
-  model_var = "predict_by_age",
-  chains = 1,
-  cores = 4,
-  inference_opts = list(method = "MCMC", samples = 10, burn = 1, verbose = T)
+  data_var = "dataFromR"
 )
 
 #saveRDS(model_pred, file = "../saves/kids_model_predictions.rds")
@@ -592,8 +592,80 @@ model_pred<- webppl(
 
 ```
 
-
 ## Noisy model predictions
+
+```{r}
+ageConditions <- data.frame(
+  age_bin = rep(seq.int(0, 1.95, 0.05),4),
+  Speaker = c(rep("same_speaker",80),rep("different_speaker",80)),
+  Alignment = c(rep("congruent",40),rep("incongruent",40),rep("congruent",40),rep("incongruent",40)))
+```
+
+
+```{r}
+noisyModelPredWebppl <- '
+
+var levels = function(df, label){
+  return _.uniq(_.map(df, label));
+}
+
+var ex3Data = dataFromR.ex3data
+var modelParams = dataFromR.modelParams
+var ageConditions = dataFromR.ageConditions
+
+var predict_by_age = function(age_bin){
+
+  var model = function(){
+    var noise = uniformDrift({a: 0, b:1, width: 0.1})
+
+    var conditionOutput = map(function(conditionInfo){
+
+   var ageConditionSpecificData =  _.filter(ex3Data, {age: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
+
+    var speakerOptimality = age_bin.so_map
+    
+    var diff_priorReg = age_bin.diff_priorReg_map
+
+    var diff_priorProbs_congruent = [1-diff_priorReg, 1-diff_priorReg, diff_priorReg]
+
+    var diff_priorProbs_incongruent = [diff_priorReg, diff_priorReg, 1-diff_priorReg]
+      
+    var rsaPredictions_diff_cong = pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_congruent,   speakerOptimality)
+
+    var noisyRsaPredictions_diff_cong = expectation(addNoise(rsaPredictions_diff_cong, noise))
+
+    map(function(d){ 
+      observe(noisyRsaPredictions_diff_cong, d.correct_inf)
+    }, ageConditionSpecificData)
+
+
+  return  [conditionInfo.age_bin + "_" + conditionInfo.Speaker + "_" +  conditionInfo.Alignment, Math.exp(noisyRsaPredictions_diff_cong.score(1))]
+
+}, ageConditions)
+
+}
+
+var predictions_by_age = map(predict_by_age, modelParams)
+
+predictions_by_age
+
+'
+```
+
+
+```{r}
+noisy_model_pred<- webppl(
+  program_code = paste(rsaUtils, rsaModel, noisyModelPredWebppl , sep='\n'),
+  data =list(ex3data = ex3_data, modelParams = model_params_by_age, ageConditions = ageConditions),
+  data_var = "dataFromR",
+  model_var = "model",
+  chains = 1,
+  cores = 4,
+  inference_opts = list(method = "MCMC", samples = 10, burn = 2, verbose = T)
+)
+
+
+```
 
 ```{r}
 noisyModelPredWebppl <- '
