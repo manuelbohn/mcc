@@ -6,6 +6,6 @@ my-own-auth.json
 *RData
 stats/rsconnect/*
 models/rsconnect/*
-stats/saves/*
+
 
 .Rproj.user
