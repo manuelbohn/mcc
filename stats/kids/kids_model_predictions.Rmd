@@ -613,15 +613,14 @@ var ex3Data = dataFromR.ex3data
 var modelParams = dataFromR.modelParams
 var ageConditions = dataFromR.ageConditions
 
-var predict_by_age = function(age_bin){
+var model = function(){
+  var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
-  var model = function(){
-    var noise = uniformDrift({a: 0, b:1, width: 0.1})
+  var predict_by_age = function(age_bin){
 
     var conditionOutput = map(function(conditionInfo){
 
-   var ageConditionSpecificData =  _.filter(ex3Data, {age: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
-
+   var ageConditionSpecificData =  _.filter(ex3Data, {binned_age: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
     var speakerOptimality = age_bin.so_map
     
     var diff_priorReg = age_bin.diff_priorReg_map
@@ -632,22 +631,23 @@ var predict_by_age = function(age_bin){
       
     var rsaPredictions_diff_cong = pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_congruent,   speakerOptimality)
 
-    var noisyRsaPredictions_diff_cong = expectation(addNoise(rsaPredictions_diff_cong, noise))
+    var noisyRsaPredictions_diff_cong = addNoise(rsaPredictions_diff_cong, noise)
 
     map(function(d){ 
-      observe(noisyRsaPredictions_diff_cong, d.correct_inf)
+    observe(noisyRsaPredictions_diff_cong, d.correct_inf)
     }, ageConditionSpecificData)
-
-
+  // display(conditionInfo.age_bin + "_" + conditionInfo.Speaker + "_" +  conditionInfo.Alignment)
+  // display(Math.exp(noisyRsaPredictions_diff_cong.score(1)))
+  
   return  [conditionInfo.age_bin + "_" + conditionInfo.Speaker + "_" +  conditionInfo.Alignment, Math.exp(noisyRsaPredictions_diff_cong.score(1))]
 
-}, ageConditions)
+  }, ageConditions)
 
+  }
+  var predictions_by_age = map(predict_by_age, modelParams)
+  display(JSON.stringify(predictions_by_age))
+  return predictions_by_age
 }
-
-var predictions_by_age = map(predict_by_age, modelParams)
-
-predictions_by_age
 
 '
 ```
@@ -656,11 +656,13 @@ predictions_by_age
 ```{r}
 noisy_model_pred<- webppl(
   program_code = paste(rsaUtils, rsaModel, noisyModelPredWebppl , sep='\n'),
-  data =list(ex3data = ex3_data, modelParams = model_params_by_age, ageConditions = ageConditions),
+  data =list(ex3data = ex3_data %>% mutate(binned_age = as.numeric(as.character(binned_age))), 
+             modelParams = model_params_by_age, 
+             ageConditions = ageConditions),
   data_var = "dataFromR",
   model_var = "model",
   chains = 1,
-  cores = 4,
+  cores = 1,
   inference_opts = list(method = "MCMC", samples = 10, burn = 2, verbose = T)
 )
 
