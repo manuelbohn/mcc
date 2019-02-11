@@ -531,9 +531,6 @@ var modelParams = dataFromR.modelParams
 
     //display(JSON.stringify(ex3Data))
 
-
-
-
 var predict_by_age = function(age_bin){
 
     //display(JSON.stringify(age_bin))
@@ -589,7 +586,13 @@ model_pred<- webppl(
 
 #saveRDS(model_pred, file = "../saves/kids_model_predictions.rds")
 
-
+kids_model_pred <- model_pred %>%
+  mutate(age_bin = age_bin.age_bin)%>%
+  select(rsaPredictions_diff_cong,rsaPredictions_diff_incong,rsaPredictions_same_cong,rsaPredictions_same_incong,age_bin)%>%
+  gather(condition, prop_informative, -age_bin)%>%
+  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
+  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
+         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
 ```
 
 ## Noisy model predictions
@@ -610,21 +613,23 @@ var levels = function(df, label){
 }
 
 var ex3Data = dataFromR.ex3data
-var modelParams = dataFromR.modelParams
+var modelParams = dataFromR.modelParams[0]
 var ageConditions = dataFromR.ageConditions
 
-var predict_by_age = function(age_bin){
-
-  var model = function(){
+var model = function(){
     var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
     var conditionOutput = map(function(conditionInfo){
 
-   var ageConditionSpecificData =  _.filter(ex3Data, {age: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
+   var ageConditionSpecificData =  _.filter(ex3Data, {binned_age: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
 
-    var speakerOptimality = age_bin.so_map
+   var ageSpecificParams =  _.filter(modelParams, {age_bin: conditionInfo.age_bin})
+
+    display(JSON.stringify(ageSpecificParams))
+
+    var speakerOptimality = ageSpecificParams.so_map
     
-    var diff_priorReg = age_bin.diff_priorReg_map
+    var diff_priorReg = ageSpecificParams.diff_priorReg_map
 
     var diff_priorProbs_congruent = [1-diff_priorReg, 1-diff_priorReg, diff_priorReg]
 
@@ -644,11 +649,6 @@ var predict_by_age = function(age_bin){
 }, ageConditions)
 
 }
-
-var predictions_by_age = map(predict_by_age, modelParams)
-
-predictions_by_age
-
 '
 ```
 
@@ -806,6 +806,7 @@ return _.fromPairs(predictions_by_age.concat([
 }
 '
 ```
+
 ```{r noisy combined model predictions}
 
 noisy_model_pred <- readRDS("../saves/kids_noisy_model_predictions.rds")
@@ -1070,11 +1071,11 @@ These are the predictions from the RSA model which takes in the age specific spe
             lci = hdi_lower(prop_informative),
             uci = hdi_upper(prop_informative))
 
-pred_plot <- ggplot(plot_model_pred)+
+ggplot(kids_model_pred)+
   #geom_line(data = kids_model_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
   #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
-  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
-  geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
+  #geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
+  geom_line(aes(age_bin, prop_informative), col = "black", size = 0.4, alpha = 1) + 
   geom_hline(yintercept = 0.5, lty=2)+
   labs(y="Proportion Expected Choice")+
   scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
@@ -1247,77 +1248,19 @@ pred_plot
 
 # Model vs data
 
-```{r import data, include = F}
-###
-library(tidyverse)
-library(knitr)
-library(langcog)
-library(ggthemes)
-library(jsonlite)
-library(readxl)
-
-## importing data
-ex3_data <- read_csv(file="../data/kids_ex3_data.csv")
-
-# files <- dir("~/Work/MCC/git-mcc/kids_EX3/pref/")
-# 
-# raw_data <- data_frame()
-# for (f in files) {
-#   jf <- paste("~/Work/MCC/git-mcc/kids_EX3/pref/",f,sep="")
-#   jd <- jsonlite::fromJSON(paste(readLines(jf), collapse=""))
-#   date <- str_sub(jf,42,str_length(jf)-11)
-#   id <- as_data_frame(jd$data$data) %>% mutate(test_date = date)
-#   raw_data <- bind_rows(raw_data, id)
-# }
-# 
-# raw_data <- raw_data %>%
-#   mutate(subid = ifelse(subid == "181128_3_ex3p....","181128_3_ex3p" , subid),
-#          subid = ifelse(subid == "181128_1_ex3p.","181128_1_ex3p" , subid),
-#          subid = ifelse(subid == " 181218_10_ex3p","181218_10_ex3p" , subid))
-# 
-# raw_data%>%
-#   #group_by(paste(subid,test_date))%>%
-#   group_by(subid)%>%
-#   summarise(n= n())
-#   
-# unique(raw_data$subid)
-# 
-# log <- read_excel("../../../MCC-subject_log.xlsx", 1)%>%
-#   filter(Condition == "ex3p")%>%
-#   select(subid,experimenter,keep_drop,sex,dob)
-# 
-# #unique(log$subid)
-# sum(log$keep_drop == "drop")
-# 
-# d <- left_join(raw_data,log, by = "subid")%>%
-#   filter(keep_drop == "keep")%>%
-#   mutate(dob = as.numeric(dob),
-#          dob = as.Date(dob,origin = "1899-12-30"),
-#          age_num = lubridate::time_length(difftime(test_date,dob), "years"),
-#          check_age = ifelse(substr(age_num,1,1) == subage, T, F),
-#          Speaker = ifelse(speaker == "same", "same_speaker", "different_speaker"),
-#          Alignment = alignment)%>%
-#   select(-speaker,-alignment)
-# 
-# 
-# #write_csv(d, "../data/kids_ex3_data.csv")
-
-
-```
-
 ## Plot comparing model and data by continous age
 ```{r comparison plot by age, echo= FALSE}
 
-p_data <- d %>%
+p_data <- ex3_data %>%
   filter(trial != "filler1",
          trial != "filler2")%>%
   mutate(age_bin = age_num - 3)%>%
   group_by(Speaker, Alignment ,age_bin, subid)
 
-ggplot(model_comp_mean_ci)+
-  geom_jitter(data = p_data, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
-  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = model), alpha = .4) +
-  geom_line(aes(age_bin, mean, col = model), size = 1, alpha = 1, linetype = 2) + 
+ggplot(kids_model_pred)+
+  #geom_jitter(data = p_data, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
+  #geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = model), alpha = .4) +
+  geom_line(aes(age_bin, prop_informative, col = model), size = 1, alpha = 1, linetype = 1) + 
   geom_smooth(data = p_data, aes(x = age_bin, y = correct_inf), col = "black", size = 0.6, method = "glm", method.args = list(family = "binomial"),  se = T,  alpha = .5, size = .4)+
   #geom_hline(yintercept = 0.5, lty=2)+
   labs(y="proportion more informative")+
