@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include= FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+
 ###
 library(tidyverse)
 library(knitr)
@@ -71,8 +72,6 @@ d %>%
 
 ## Plot by age bin
 
-The following two plots suggest some sort of linear developmental trajectory.
-
 ```{r plot by age}
 p1 <- d %>%
   filter(trial != "train") %>%
@@ -102,12 +101,12 @@ ggplot() +
 
 ```{r plot by numerical age}
 p5 <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(change,age_num, subid) %>%
+  filter(trial != "train") %>%
+  group_by(speakerChange,age_num, subid) %>%
   summarise(correct = mean(correct)) 
 
-ggplot(data = p5, aes(x = age_num, y = correct, col = change)) +
-  geom_smooth(method = "loess", se = T)+
+ggplot(data = p5, aes(x = age_num, y = correct, col = speakerChange)) +
+  geom_smooth(method = "lm", se = T)+
   geom_jitter( alpha = .5, height = 0.04)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Expected Choice")+
