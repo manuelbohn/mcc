@@ -16,7 +16,7 @@ keywords: >
     Pragmatics; Word learning; Common ground; Bayesian models
     
 output: cogsci2016::cogsci_paper
-#final-submission: \cogscifinalcopy
+final-submission: \cogscifinalcopy
 ---
 
 ```{r global_options, include=FALSE}
@@ -503,13 +503,13 @@ This work integrates different perspectives on the study of pragmatic inference.
 
 <!-- \vspace{1em} \fbox{\parbox[b][][c]{7.3cm}{\centering Corresponding data and code are available at [masked for peer review]}} \vspace{1em} -->
 
-<!-- \vspace{1em} \fbox{\parbox[b][][c]{7.3cm}{\centering Corresponding data and code are available at\ \url{https://github.com/manuelbohn/mcc}}} \vspace{1em} -->
+\vspace{1em} \fbox{\parbox[b][][c]{7.3cm}{\centering Corresponding data and code are available at\ \url{https://github.com/manuelbohn/mcc}}} \vspace{1em} -->
 
 # Acknowledgements
 
 Masked for peer review.
 
-<!-- MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 749229. -->
+MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 749229.
 
 # References
 

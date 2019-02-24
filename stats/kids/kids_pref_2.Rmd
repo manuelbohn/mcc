@@ -1,7 +1,6 @@
 ---
-title: "MCC Preference Kids"
+title: "MCC Preference Kids - Replication"
 author: "Manuel Bohn"
-date: "23 7 2018"
 output: html_document
 ---
 
@@ -54,6 +53,7 @@ d <- left_join(d_raw,log, by = "subid")%>%
 
 length(unique(d$subid))
 
+#write_csv(d, "../data/kids_pref_2_data.csv")
 
 ```
 
@@ -65,14 +65,39 @@ d %>%
   group_by(subage)%>%
   summarise(n = length(unique(subid)))%>%
   knitr::kable(digits = 2)
-
 ```
 
 # Plots
 
+## Plot across age bins
+
+```{r plot across age,echo = F}
+p3 <- d %>%
+  filter(trial != "train") %>%
+  group_by(speakerChange,subid) %>%
+  summarise(correct = mean(correct)) 
+
+p4 <- p3 %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p3, aes(x = speakerChange, y = correct, col = speakerChange, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p4, aes(x = speakerChange, y = mean, col = speakerChange, ymin = ci_lower, ymax = ci_upper),size = .8)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Speaker Change",
+                     breaks=c("false", "true"),
+                     labels=c("Same Speaker", "Different Speaker"))
+```
+
+
 ## Plot by age bin
 
-```{r plot by age}
+```{r plot by age,echo = F}
 p1 <- d %>%
   filter(trial != "train") %>%
   group_by(speakerChange,subage, subid) %>%
@@ -94,12 +119,12 @@ ggplot() +
   theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
   scale_colour_solarized(name="Speaker Change",
                      breaks=c("false", "true"),
-                     labels=c("No", "Yes"))
+                     labels=c("Same Speaker", "Different Speaker"))
 ```
 
 ## Plot with age as continuous variable
 
-```{r plot by numerical age}
+```{r plot by numerical age,echo = F}
 p5 <- d %>%
   filter(trial != "train") %>%
   group_by(speakerChange,age_num, subid) %>%
@@ -116,63 +141,41 @@ ggplot(data = p5, aes(x = age_num, y = correct, col = speakerChange)) +
   #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
   scale_colour_solarized(name="Speaker Change",
                      breaks=c("false", "true"),
-                     labels=c("No", "Yes"))
+                     labels=c("Same Speaker", "Different Speaker"))
 ```
 
 # Inference
 
-## T-tests against chance across age bins
-```{r}
-## t tests against chance
-d %>%
-  filter(trial_type == "test") %>%
-  group_by(change, subid) %>%
-  summarise(correct = mean(correct)) %>%
-  summarise(correct = list(correct)) %>%
-  group_by(change) %>%
-  mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
-         t_value = t.test(unlist(correct), mu = 0.5)$statistic,
-         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(change,df,t_value,p_value) %>%
-  knitr::kable(digits = 3)
-
-
-```
-
 ## T-tests against chance per age bin
-```{r}
+```{r,echo = F}
 ## t tests against chance
 d %>%
-  filter(trial_type == "test") %>%
-  group_by(age,change, subid) %>%
+  filter(trial != "train") %>%
+  group_by(subage,speakerChange, subid) %>%
   summarise(correct = mean(correct)) %>%
   summarise(correct = list(correct)) %>%
-  group_by(age,change) %>%
+  group_by(subage,speakerChange) %>%
   mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
          t_value = t.test(unlist(correct), mu = 0.5)$statistic,
          p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(age,change,df,t_value,p_value) %>%
+  select(subage,speakerChange,df,t_value,p_value) %>%
   knitr::kable(digits = 3)
  
 ```
 
 ## GLMM
 
-With age as continuous variable. We pre-registered the model with an interaction between age and change as a random slope for subject: `(change * age| subid)`. However, including age here seems unnecessary since each subject has only one age. I therefore took the interaction out in the model below.
-
-Results mirror what we see in the plots above: increasing effect of speaker change across development.
-
-```{r}
+```{r, warning= F, message=F, }
 ## model
 library(lme4)
 
 lm_data <- d%>%
-  filter(trial_type == "test")%>%
-  mutate(choiceAgent = ifelse( change == "false", agent, altAgent),
+  filter(trial != "train")%>%
+  mutate(choiceAgent = ifelse( speakerChange == "false", agent, altAgent),
          age_num = scale(age_num, center = TRUE, scale = TRUE))
 
 # maximal converging model
-lm <- glmer(correct ~ age_num * change + (change | subid) + (age_num * change | choiceAgent), 
+lm <- glmer(correct ~ age_num * speakerChange + (speakerChange | subid) + (age_num * speakerChange | choiceAgent), 
               data = lm_data, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -180,48 +183,92 @@ summary(lm)
 
 ```
 
-# Additional plots
+# Joining round 1 and round 2
 
-To check for trial and item effects.
+```{r,include= F}
 
-## Conditions by trial
-```{r plot trials}
-ms <- d %>%
-  filter(trial_type == "test") %>%
-  group_by(change, trial, subid) %>%
-  summarise(correct = mean(correct)) %>%
-  multi_boot_standard(col = "correct")
 
-ggplot(ms, 
-       aes(x = trial, y = mean, col = change)) +
-  geom_line(aes(group= change)) + 
-  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
-                  position = position_dodge(width = .1)) + 
-  geom_hline(yintercept = 0.5, lty=2)+
-  theme_few() + 
-  scale_colour_solarized()
+d1 <- read_csv(file="../data/kids_pref_data.csv")%>%
+  filter(age != "2")%>%
+  mutate(speakerChange = ifelse(change == F, "false", "true"),
+         subage = as.character(age))
+
+d_sum <- bind_rows(d,d1)%>%
+    filter(trial != "train")
+  
+```
+## sample size
+```{r,echo = F}
+d_sum %>%
+  group_by(subage)%>%
+  summarise(n = length(unique(subid)))%>%
+  knitr::kable(digits = 2)
 ```
 
-## By agent
-```{r plot agents}
-ms <- d %>%
-  filter(trial_type == "test") %>%
-  mutate(choiceAgent = ifelse( change == "false", agent, altAgent)) %>%
-  group_by(change, choiceAgent, subid) %>%
-  summarise(correct = mean(correct)) %>%
+## Plot by age bin
+
+```{r plot by age sum ,echo = F}
+p_sum1 <- d_sum %>%
+  filter(trial != "train") %>%
+  group_by(speakerChange,subage, subid) %>%
+  summarise(correct = mean(correct)) 
+
+p_sum2 <- p_sum1 %>%
   multi_boot_standard(col = "correct")
 
-ggplot(ms, 
-       aes(x = choiceAgent, y = mean, col = change)) +
-  geom_line(aes(group= change)) + 
-  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), 
-                  position = position_dodge(width = .1)) + 
+
+ggplot() +
+  geom_jitter(data = p_sum1, aes(x = speakerChange, y = correct, col = speakerChange, alpha = .2),width = .3,height = .025)+
+  geom_pointrange(data = p_sum2, aes(x = speakerChange, y = mean, col = speakerChange, ymin = ci_lower, ymax = ci_upper),size = .8)+
   geom_hline(yintercept = 0.5, lty=2)+
-  theme_few() + 
-  scale_colour_solarized()
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  facet_wrap(~subage)+
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Speaker Change",
+                     breaks=c("false", "true"),
+                     labels=c("Same Speaker", "Different Speaker"))
 ```
 
+## Plot with age as continuous variable
 
+```{r plot by numerical age sum ,echo = F}
+p_sum3 <- d_sum %>%
+  filter(trial != "train") %>%
+  group_by(speakerChange,age_num, subid) %>%
+  summarise(correct = mean(correct)) 
 
+ggplot(data = p_sum3, aes(x = age_num, y = correct, col = speakerChange)) +
+  geom_smooth(method = "lm", se = T)+
+  geom_jitter( alpha = .5, height = 0.04)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Proportion Expected Choice")+
+  theme_few() +
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  scale_colour_solarized(name="Speaker Change",
+                     breaks=c("false", "true"),
+                     labels=c("Same Speaker", "Different Speaker"))
+```
+## GLMM
 
+```{r, warning=F,message=F}
+## model
+library(lme4)
 
+lm_sum_data <- d_sum%>%
+  filter(trial != "train")%>%
+  mutate(choiceAgent = ifelse( speakerChange == "false", agent, altAgent),
+         age_num = scale(age_num, center = TRUE, scale = TRUE))
+
+# maximal converging model
+lm_sum <- glmer(correct ~ age_num * speakerChange + (speakerChange | subid) + (age_num * speakerChange | choiceAgent), 
+              data = lm_sum_data, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+summary(lm_sum)
+
+```

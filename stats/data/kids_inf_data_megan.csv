@@ -1,0 +1,763 @@
+subid,subage,trial,correct,test_date,experimenter,keep_drop,sex,dob,English,parent1_ed,parent2_ed,language_status,age_num,check_age
+190116_2_inf2,3,1,0,2019-01-16,MM,keep,M,2015-05-28,100,Four Year College,Four Year College,mono_ling,3.6410958904109587,TRUE
+190116_2_inf2,3,2,1,2019-01-16,MM,keep,M,2015-05-28,100,Four Year College,Four Year College,mono_ling,3.6410958904109587,TRUE
+190116_2_inf2,3,3,0,2019-01-16,MM,keep,M,2015-05-28,100,Four Year College,Four Year College,mono_ling,3.6410958904109587,TRUE
+190116_2_inf2,3,4,0,2019-01-16,MM,keep,M,2015-05-28,100,Four Year College,Four Year College,mono_ling,3.6410958904109587,TRUE
+190116_2_inf2,3,5,0,2019-01-16,MM,keep,M,2015-05-28,100,Four Year College,Four Year College,mono_ling,3.6410958904109587,TRUE
+190116_2_inf2,3,6,1,2019-01-16,MM,keep,M,2015-05-28,100,Four Year College,Four Year College,mono_ling,3.6410958904109587,TRUE
+190116_3_inf2,3,1,1,2019-01-16,MM,keep,M,2015-08-13,100,Four Year College,Four Year College,mono_ling,3.43013698630137,TRUE
+190116_3_inf2,3,2,1,2019-01-16,MM,keep,M,2015-08-13,100,Four Year College,Four Year College,mono_ling,3.43013698630137,TRUE
+190116_3_inf2,3,3,0,2019-01-16,MM,keep,M,2015-08-13,100,Four Year College,Four Year College,mono_ling,3.43013698630137,TRUE
+190116_3_inf2,3,4,1,2019-01-16,MM,keep,M,2015-08-13,100,Four Year College,Four Year College,mono_ling,3.43013698630137,TRUE
+190116_3_inf2,3,5,0,2019-01-16,MM,keep,M,2015-08-13,100,Four Year College,Four Year College,mono_ling,3.43013698630137,TRUE
+190116_3_inf2,3,6,1,2019-01-16,MM,keep,M,2015-08-13,100,Four Year College,Four Year College,mono_ling,3.43013698630137,TRUE
+190116_4_inf2,3,1,0,2019-01-16,MM,keep,F,2015-02-19,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9095890410958902,TRUE
+190116_4_inf2,3,2,1,2019-01-16,MM,keep,F,2015-02-19,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9095890410958902,TRUE
+190116_4_inf2,3,3,1,2019-01-16,MM,keep,F,2015-02-19,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9095890410958902,TRUE
+190116_4_inf2,3,4,1,2019-01-16,MM,keep,F,2015-02-19,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9095890410958902,TRUE
+190116_4_inf2,3,5,1,2019-01-16,MM,keep,F,2015-02-19,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9095890410958902,TRUE
+190116_4_inf2,3,6,0,2019-01-16,MM,keep,F,2015-02-19,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9095890410958902,TRUE
+190116_5_inf2,3,1,1,2019-01-16,MM,keep,F,2015-03-15,100,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190116_5_inf2,3,2,0,2019-01-16,MM,keep,F,2015-03-15,100,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190116_5_inf2,3,3,1,2019-01-16,MM,keep,F,2015-03-15,100,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190116_5_inf2,3,4,0,2019-01-16,MM,keep,F,2015-03-15,100,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190116_5_inf2,3,5,1,2019-01-16,MM,keep,F,2015-03-15,100,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190116_5_inf2,3,6,0,2019-01-16,MM,keep,F,2015-03-15,100,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190116_6_inf2,3,1,0,2019-01-16,MM,keep,F,2015-11-24,90-95,Some college,Graduate Degree,mono_ling,3.147945205479452,TRUE
+190116_6_inf2,3,2,1,2019-01-16,MM,keep,F,2015-11-24,90-95,Some college,Graduate Degree,mono_ling,3.147945205479452,TRUE
+190116_6_inf2,3,3,1,2019-01-16,MM,keep,F,2015-11-24,90-95,Some college,Graduate Degree,mono_ling,3.147945205479452,TRUE
+190116_6_inf2,3,4,0,2019-01-16,MM,keep,F,2015-11-24,90-95,Some college,Graduate Degree,mono_ling,3.147945205479452,TRUE
+190116_6_inf2,3,5,0,2019-01-16,MM,keep,F,2015-11-24,90-95,Some college,Graduate Degree,mono_ling,3.147945205479452,TRUE
+190116_6_inf2,3,6,0,2019-01-16,MM,keep,F,2015-11-24,90-95,Some college,Graduate Degree,mono_ling,3.147945205479452,TRUE
+190116_7_inf2,4,1,1,2019-01-16,MM,keep,F,2014-10-17,90-95,Graduate Degree,Graduate Degree,mono_ling,4.252054794520548,TRUE
+190116_7_inf2,4,2,1,2019-01-16,MM,keep,F,2014-10-17,90-95,Graduate Degree,Graduate Degree,mono_ling,4.252054794520548,TRUE
+190116_7_inf2,4,3,1,2019-01-16,MM,keep,F,2014-10-17,90-95,Graduate Degree,Graduate Degree,mono_ling,4.252054794520548,TRUE
+190116_7_inf2,4,4,1,2019-01-16,MM,keep,F,2014-10-17,90-95,Graduate Degree,Graduate Degree,mono_ling,4.252054794520548,TRUE
+190116_7_inf2,4,5,1,2019-01-16,MM,keep,F,2014-10-17,90-95,Graduate Degree,Graduate Degree,mono_ling,4.252054794520548,TRUE
+190116_7_inf2,4,6,1,2019-01-16,MM,keep,F,2014-10-17,90-95,Graduate Degree,Graduate Degree,mono_ling,4.252054794520548,TRUE
+190116_8_inf2,3,1,0,2019-01-16,MM,keep,F,2015-02-24,90-95,Some college,Four Year College,mono_ling,3.8958904109589043,TRUE
+190116_8_inf2,3,2,1,2019-01-16,MM,keep,F,2015-02-24,90-95,Some college,Four Year College,mono_ling,3.8958904109589043,TRUE
+190116_8_inf2,3,3,0,2019-01-16,MM,keep,F,2015-02-24,90-95,Some college,Four Year College,mono_ling,3.8958904109589043,TRUE
+190116_8_inf2,3,4,1,2019-01-16,MM,keep,F,2015-02-24,90-95,Some college,Four Year College,mono_ling,3.8958904109589043,TRUE
+190116_8_inf2,3,5,1,2019-01-16,MM,keep,F,2015-02-24,90-95,Some college,Four Year College,mono_ling,3.8958904109589043,TRUE
+190116_8_inf2,3,6,0,2019-01-16,MM,keep,F,2015-02-24,90-95,Some college,Four Year College,mono_ling,3.8958904109589043,TRUE
+190116_9_inf2,4,1,0,2019-01-16,MM,keep,F,2015-01-10,100,Some college,Four Year College,mono_ling,4.019178082191781,TRUE
+190116_9_inf2,4,2,0,2019-01-16,MM,keep,F,2015-01-10,100,Some college,Four Year College,mono_ling,4.019178082191781,TRUE
+190116_9_inf2,4,3,0,2019-01-16,MM,keep,F,2015-01-10,100,Some college,Four Year College,mono_ling,4.019178082191781,TRUE
+190116_9_inf2,4,4,1,2019-01-16,MM,keep,F,2015-01-10,100,Some college,Four Year College,mono_ling,4.019178082191781,TRUE
+190116_9_inf2,4,5,0,2019-01-16,MM,keep,F,2015-01-10,100,Some college,Four Year College,mono_ling,4.019178082191781,TRUE
+190116_9_inf2,4,6,1,2019-01-16,MM,keep,F,2015-01-10,100,Some college,Four Year College,mono_ling,4.019178082191781,TRUE
+190118_1_inf2,3,1,1,2019-01-18,MM,keep,M,2015-06-15,100,Graduate Degree,Graduate Degree,mono_ling,3.5972602739726027,TRUE
+190118_1_inf2,3,2,0,2019-01-18,MM,keep,M,2015-06-15,100,Graduate Degree,Graduate Degree,mono_ling,3.5972602739726027,TRUE
+190118_1_inf2,3,3,0,2019-01-18,MM,keep,M,2015-06-15,100,Graduate Degree,Graduate Degree,mono_ling,3.5972602739726027,TRUE
+190118_1_inf2,3,4,1,2019-01-18,MM,keep,M,2015-06-15,100,Graduate Degree,Graduate Degree,mono_ling,3.5972602739726027,TRUE
+190118_1_inf2,3,5,1,2019-01-18,MM,keep,M,2015-06-15,100,Graduate Degree,Graduate Degree,mono_ling,3.5972602739726027,TRUE
+190118_1_inf2,3,6,0,2019-01-18,MM,keep,M,2015-06-15,100,Graduate Degree,Graduate Degree,mono_ling,3.5972602739726027,TRUE
+190118_2_inf2,4,1,0,2019-01-18,MM,keep,M,2014-12-21,90-95,Graduate Degree,Graduate Degree,mono_ling,4.079452054794521,TRUE
+190118_2_inf2,4,2,1,2019-01-18,MM,keep,M,2014-12-21,90-95,Graduate Degree,Graduate Degree,mono_ling,4.079452054794521,TRUE
+190118_2_inf2,4,3,0,2019-01-18,MM,keep,M,2014-12-21,90-95,Graduate Degree,Graduate Degree,mono_ling,4.079452054794521,TRUE
+190118_2_inf2,4,4,1,2019-01-18,MM,keep,M,2014-12-21,90-95,Graduate Degree,Graduate Degree,mono_ling,4.079452054794521,TRUE
+190118_2_inf2,4,5,1,2019-01-18,MM,keep,M,2014-12-21,90-95,Graduate Degree,Graduate Degree,mono_ling,4.079452054794521,TRUE
+190118_2_inf2,4,6,1,2019-01-18,MM,keep,M,2014-12-21,90-95,Graduate Degree,Graduate Degree,mono_ling,4.079452054794521,TRUE
+190118_3_inf2,4,1,1,2019-01-18,MM,keep,F,2014-12-15,75,Graduate Degree,Graduate Degree,bi_ling,4.095890410958904,TRUE
+190118_3_inf2,4,2,0,2019-01-18,MM,keep,F,2014-12-15,75,Graduate Degree,Graduate Degree,bi_ling,4.095890410958904,TRUE
+190118_3_inf2,4,3,0,2019-01-18,MM,keep,F,2014-12-15,75,Graduate Degree,Graduate Degree,bi_ling,4.095890410958904,TRUE
+190118_3_inf2,4,4,1,2019-01-18,MM,keep,F,2014-12-15,75,Graduate Degree,Graduate Degree,bi_ling,4.095890410958904,TRUE
+190118_3_inf2,4,5,1,2019-01-18,MM,keep,F,2014-12-15,75,Graduate Degree,Graduate Degree,bi_ling,4.095890410958904,TRUE
+190118_3_inf2,4,6,0,2019-01-18,MM,keep,F,2014-12-15,75,Graduate Degree,Graduate Degree,bi_ling,4.095890410958904,TRUE
+190118_4_inf2,4,1,0,2019-01-18,MM,keep,F,2014-12-20,100,Some Graduate school,Graduate Degree,mono_ling,4.082191780821918,TRUE
+190118_4_inf2,4,2,1,2019-01-18,MM,keep,F,2014-12-20,100,Some Graduate school,Graduate Degree,mono_ling,4.082191780821918,TRUE
+190118_4_inf2,4,3,0,2019-01-18,MM,keep,F,2014-12-20,100,Some Graduate school,Graduate Degree,mono_ling,4.082191780821918,TRUE
+190118_4_inf2,4,4,0,2019-01-18,MM,keep,F,2014-12-20,100,Some Graduate school,Graduate Degree,mono_ling,4.082191780821918,TRUE
+190118_4_inf2,4,5,0,2019-01-18,MM,keep,F,2014-12-20,100,Some Graduate school,Graduate Degree,mono_ling,4.082191780821918,TRUE
+190118_4_inf2,4,6,0,2019-01-18,MM,keep,F,2014-12-20,100,Some Graduate school,Graduate Degree,mono_ling,4.082191780821918,TRUE
+190121_1_inf2,4,1,1,2019-01-21,MM,keep,F,2014-06-05,90-95,Some college,Some college,mono_ling,4.632876712328767,TRUE
+190121_1_inf2,4,2,0,2019-01-21,MM,keep,F,2014-06-05,90-95,Some college,Some college,mono_ling,4.632876712328767,TRUE
+190121_1_inf2,4,3,1,2019-01-21,MM,keep,F,2014-06-05,90-95,Some college,Some college,mono_ling,4.632876712328767,TRUE
+190121_1_inf2,4,4,0,2019-01-21,MM,keep,F,2014-06-05,90-95,Some college,Some college,mono_ling,4.632876712328767,TRUE
+190121_1_inf2,4,5,1,2019-01-21,MM,keep,F,2014-06-05,90-95,Some college,Some college,mono_ling,4.632876712328767,TRUE
+190121_1_inf2,4,6,0,2019-01-21,MM,keep,F,2014-06-05,90-95,Some college,Some college,mono_ling,4.632876712328767,TRUE
+190121_2_inf2,3,1,0,2019-01-21,MM,keep,F,2015-12-01,90-95,Graduate Degree,some college,mono_ling,3.1424657534246574,TRUE
+190121_2_inf2,3,2,1,2019-01-21,MM,keep,F,2015-12-01,90-95,Graduate Degree,some college,mono_ling,3.1424657534246574,TRUE
+190121_2_inf2,3,3,0,2019-01-21,MM,keep,F,2015-12-01,90-95,Graduate Degree,some college,mono_ling,3.1424657534246574,TRUE
+190121_2_inf2,3,4,1,2019-01-21,MM,keep,F,2015-12-01,90-95,Graduate Degree,some college,mono_ling,3.1424657534246574,TRUE
+190121_2_inf2,3,5,1,2019-01-21,MM,keep,F,2015-12-01,90-95,Graduate Degree,some college,mono_ling,3.1424657534246574,TRUE
+190121_2_inf2,3,6,0,2019-01-21,MM,keep,F,2015-12-01,90-95,Graduate Degree,some college,mono_ling,3.1424657534246574,TRUE
+190121_3_inf2,3,1,1,2019-01-21,MM,drop,F,2015-02-13,50,Four Year College,Four Year College,bi_ling,3.9397260273972603,TRUE
+190121_3_inf2,3,2,1,2019-01-21,MM,drop,F,2015-02-13,50,Four Year College,Four Year College,bi_ling,3.9397260273972603,TRUE
+190121_3_inf2,3,3,0,2019-01-21,MM,drop,F,2015-02-13,50,Four Year College,Four Year College,bi_ling,3.9397260273972603,TRUE
+190121_3_inf2,3,4,1,2019-01-21,MM,drop,F,2015-02-13,50,Four Year College,Four Year College,bi_ling,3.9397260273972603,TRUE
+190121_3_inf2,3,5,0,2019-01-21,MM,drop,F,2015-02-13,50,Four Year College,Four Year College,bi_ling,3.9397260273972603,TRUE
+190121_3_inf2,3,6,0,2019-01-21,MM,drop,F,2015-02-13,50,Four Year College,Four Year College,bi_ling,3.9397260273972603,TRUE
+190121_4_inf2,3,1,0,2019-01-21,MM,keep,F,2015-07-29,75,Decline to state,Decline to state,bi_ling,3.484931506849315,TRUE
+190121_4_inf2,3,2,1,2019-01-21,MM,keep,F,2015-07-29,75,Decline to state,Decline to state,bi_ling,3.484931506849315,TRUE
+190121_4_inf2,3,3,0,2019-01-21,MM,keep,F,2015-07-29,75,Decline to state,Decline to state,bi_ling,3.484931506849315,TRUE
+190121_4_inf2,3,4,1,2019-01-21,MM,keep,F,2015-07-29,75,Decline to state,Decline to state,bi_ling,3.484931506849315,TRUE
+190121_4_inf2,3,5,1,2019-01-21,MM,keep,F,2015-07-29,75,Decline to state,Decline to state,bi_ling,3.484931506849315,TRUE
+190121_4_inf2,3,6,0,2019-01-21,MM,keep,F,2015-07-29,75,Decline to state,Decline to state,bi_ling,3.484931506849315,TRUE
+190125_1_inf2,3,1,0,2019-01-25,MM,keep,F,2015-02-14,100,Graduate Degree,Four Year College,mono_ling,3.947945205479452,TRUE
+190125_1_inf2,3,2,0,2019-01-25,MM,keep,F,2015-02-14,100,Graduate Degree,Four Year College,mono_ling,3.947945205479452,TRUE
+190125_1_inf2,3,3,0,2019-01-25,MM,keep,F,2015-02-14,100,Graduate Degree,Four Year College,mono_ling,3.947945205479452,TRUE
+190125_1_inf2,3,4,1,2019-01-25,MM,keep,F,2015-02-14,100,Graduate Degree,Four Year College,mono_ling,3.947945205479452,TRUE
+190125_1_inf2,3,5,0,2019-01-25,MM,keep,F,2015-02-14,100,Graduate Degree,Four Year College,mono_ling,3.947945205479452,TRUE
+190125_1_inf2,3,6,0,2019-01-25,MM,keep,F,2015-02-14,100,Graduate Degree,Four Year College,mono_ling,3.947945205479452,TRUE
+190125_2_inf2,3,1,0,2019-01-25,MM,keep,F,2015-08-25,100,Four Year College,some college,mono_ling,3.421917808219178,TRUE
+190125_2_inf2,3,2,0,2019-01-25,MM,keep,F,2015-08-25,100,Four Year College,some college,mono_ling,3.421917808219178,TRUE
+190125_2_inf2,3,3,0,2019-01-25,MM,keep,F,2015-08-25,100,Four Year College,some college,mono_ling,3.421917808219178,TRUE
+190125_2_inf2,3,4,0,2019-01-25,MM,keep,F,2015-08-25,100,Four Year College,some college,mono_ling,3.421917808219178,TRUE
+190125_2_inf2,3,5,1,2019-01-25,MM,keep,F,2015-08-25,100,Four Year College,some college,mono_ling,3.421917808219178,TRUE
+190125_2_inf2,3,6,1,2019-01-25,MM,keep,F,2015-08-25,100,Four Year College,some college,mono_ling,3.421917808219178,TRUE
+190125_3_inf2,4,1,1,2019-01-25,MM,keep,F,2014-12-01,100,Some college,some college,mono_ling,4.153424657534247,TRUE
+190125_3_inf2,4,2,1,2019-01-25,MM,keep,F,2014-12-01,100,Some college,some college,mono_ling,4.153424657534247,TRUE
+190125_3_inf2,4,3,1,2019-01-25,MM,keep,F,2014-12-01,100,Some college,some college,mono_ling,4.153424657534247,TRUE
+190125_3_inf2,4,4,1,2019-01-25,MM,keep,F,2014-12-01,100,Some college,some college,mono_ling,4.153424657534247,TRUE
+190125_3_inf2,4,5,0,2019-01-25,MM,keep,F,2014-12-01,100,Some college,some college,mono_ling,4.153424657534247,TRUE
+190125_3_inf2,4,6,0,2019-01-25,MM,keep,F,2014-12-01,100,Some college,some college,mono_ling,4.153424657534247,TRUE
+190131_1_inf2,3,1,1,2019-01-31,MM,keep,M,2015-05-31,100,Graduate Degree,some college,mono_ling,3.673972602739726,TRUE
+190131_1_inf2,3,2,0,2019-01-31,MM,keep,M,2015-05-31,100,Graduate Degree,some college,mono_ling,3.673972602739726,TRUE
+190131_1_inf2,3,3,0,2019-01-31,MM,keep,M,2015-05-31,100,Graduate Degree,some college,mono_ling,3.673972602739726,TRUE
+190131_1_inf2,3,4,0,2019-01-31,MM,keep,M,2015-05-31,100,Graduate Degree,some college,mono_ling,3.673972602739726,TRUE
+190131_1_inf2,3,5,1,2019-01-31,MM,keep,M,2015-05-31,100,Graduate Degree,some college,mono_ling,3.673972602739726,TRUE
+190131_1_inf2,3,6,1,2019-01-31,MM,keep,M,2015-05-31,100,Graduate Degree,some college,mono_ling,3.673972602739726,TRUE
+190131_2_inf2,3,1,1,2019-01-31,MM,keep,F,2015-10-21,100,Some college,some college,mono_ling,3.282191780821918,TRUE
+190131_2_inf2,3,2,0,2019-01-31,MM,keep,F,2015-10-21,100,Some college,some college,mono_ling,3.282191780821918,TRUE
+190131_2_inf2,3,3,1,2019-01-31,MM,keep,F,2015-10-21,100,Some college,some college,mono_ling,3.282191780821918,TRUE
+190131_2_inf2,3,4,1,2019-01-31,MM,keep,F,2015-10-21,100,Some college,some college,mono_ling,3.282191780821918,TRUE
+190131_2_inf2,3,5,0,2019-01-31,MM,keep,F,2015-10-21,100,Some college,some college,mono_ling,3.282191780821918,TRUE
+190131_2_inf2,3,6,0,2019-01-31,MM,keep,F,2015-10-21,100,Some college,some college,mono_ling,3.282191780821918,TRUE
+190131_3_inf2,3,1,0,2019-01-31,MM,drop,F,2015-09-22,100,Four Year College,Four Year College,mono_ling,3.361643835616438,TRUE
+190131_3_inf2,3,2,1,2019-01-31,MM,drop,F,2015-09-22,100,Four Year College,Four Year College,mono_ling,3.361643835616438,TRUE
+190131_3_inf2,3,3,1,2019-01-31,MM,drop,F,2015-09-22,100,Four Year College,Four Year College,mono_ling,3.361643835616438,TRUE
+190131_3_inf2,3,4,1,2019-01-31,MM,drop,F,2015-09-22,100,Four Year College,Four Year College,mono_ling,3.361643835616438,TRUE
+190131_3_inf2,3,5,1,2019-01-31,MM,drop,F,2015-09-22,100,Four Year College,Four Year College,mono_ling,3.361643835616438,TRUE
+190131_3_inf2,3,6,0,2019-01-31,MM,drop,F,2015-09-22,100,Four Year College,Four Year College,mono_ling,3.361643835616438,TRUE
+190131_4_inf2,3,1,0,2019-01-31,MM,keep,F,2015-02-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9835616438356163,TRUE
+190131_4_inf2,3,2,1,2019-01-31,MM,keep,F,2015-02-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9835616438356163,TRUE
+190131_4_inf2,3,3,0,2019-01-31,MM,keep,F,2015-02-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9835616438356163,TRUE
+190131_4_inf2,3,4,0,2019-01-31,MM,keep,F,2015-02-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9835616438356163,TRUE
+190131_4_inf2,3,5,1,2019-01-31,MM,keep,F,2015-02-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9835616438356163,TRUE
+190131_4_inf2,3,6,0,2019-01-31,MM,keep,F,2015-02-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.9835616438356163,TRUE
+190131_5_inf2,4,1,1,2019-01-31,MM,keep,M,2015-01-31,90-95,Graduate Degree,Four Year College,mono_ling,4.002739726027397,TRUE
+190131_5_inf2,4,2,1,2019-01-31,MM,keep,M,2015-01-31,90-95,Graduate Degree,Four Year College,mono_ling,4.002739726027397,TRUE
+190131_5_inf2,4,3,1,2019-01-31,MM,keep,M,2015-01-31,90-95,Graduate Degree,Four Year College,mono_ling,4.002739726027397,TRUE
+190131_5_inf2,4,4,0,2019-01-31,MM,keep,M,2015-01-31,90-95,Graduate Degree,Four Year College,mono_ling,4.002739726027397,TRUE
+190131_5_inf2,4,5,1,2019-01-31,MM,keep,M,2015-01-31,90-95,Graduate Degree,Four Year College,mono_ling,4.002739726027397,TRUE
+190131_5_inf2,4,6,0,2019-01-31,MM,keep,M,2015-01-31,90-95,Graduate Degree,Four Year College,mono_ling,4.002739726027397,TRUE
+190131_6_inf2,4,1,1,2019-01-31,MM,keep,M,2014-05-01,100,Graduate Degree,some college,mono_ling,4.756164383561644,TRUE
+190131_6_inf2,4,2,1,2019-01-31,MM,keep,M,2014-05-01,100,Graduate Degree,some college,mono_ling,4.756164383561644,TRUE
+190131_6_inf2,4,3,1,2019-01-31,MM,keep,M,2014-05-01,100,Graduate Degree,some college,mono_ling,4.756164383561644,TRUE
+190131_6_inf2,4,4,1,2019-01-31,MM,keep,M,2014-05-01,100,Graduate Degree,some college,mono_ling,4.756164383561644,TRUE
+190131_6_inf2,4,5,1,2019-01-31,MM,keep,M,2014-05-01,100,Graduate Degree,some college,mono_ling,4.756164383561644,TRUE
+190131_6_inf2,4,6,0,2019-01-31,MM,keep,M,2014-05-01,100,Graduate Degree,some college,mono_ling,4.756164383561644,TRUE
+190201_2_inf2,4,1,0,2019-02-01,MM,keep,M,2014-04-08,100,Graduate Degree,Four Year College,mono_ling,4.821917808219178,TRUE
+190201_2_inf2,4,2,0,2019-02-01,MM,keep,M,2014-04-08,100,Graduate Degree,Four Year College,mono_ling,4.821917808219178,TRUE
+190201_2_inf2,4,3,1,2019-02-01,MM,keep,M,2014-04-08,100,Graduate Degree,Four Year College,mono_ling,4.821917808219178,TRUE
+190201_2_inf2,4,4,0,2019-02-01,MM,keep,M,2014-04-08,100,Graduate Degree,Four Year College,mono_ling,4.821917808219178,TRUE
+190201_2_inf2,4,5,1,2019-02-01,MM,keep,M,2014-04-08,100,Graduate Degree,Four Year College,mono_ling,4.821917808219178,TRUE
+190201_2_inf2,4,6,1,2019-02-01,MM,keep,M,2014-04-08,100,Graduate Degree,Four Year College,mono_ling,4.821917808219178,TRUE
+190201_8_inf2,4,1,0,2019-02-01,MM,keep,F,2014-02-18,75,Graduate Degree,Graduate Degree,bi_ling,4.956164383561644,TRUE
+190201_8_inf2,4,2,0,2019-02-01,MM,keep,F,2014-02-18,75,Graduate Degree,Graduate Degree,bi_ling,4.956164383561644,TRUE
+190201_8_inf2,4,3,1,2019-02-01,MM,keep,F,2014-02-18,75,Graduate Degree,Graduate Degree,bi_ling,4.956164383561644,TRUE
+190201_8_inf2,4,4,1,2019-02-01,MM,keep,F,2014-02-18,75,Graduate Degree,Graduate Degree,bi_ling,4.956164383561644,TRUE
+190201_8_inf2,4,5,1,2019-02-01,MM,keep,F,2014-02-18,75,Graduate Degree,Graduate Degree,bi_ling,4.956164383561644,TRUE
+190201_8_inf2,4,6,1,2019-02-01,MM,keep,F,2014-02-18,75,Graduate Degree,Graduate Degree,bi_ling,4.956164383561644,TRUE
+190208_4_inf2,3,1,0,2019-02-08,MM,drop,F,2015-04-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190208_4_inf2,3,2,1,2019-02-08,MM,drop,F,2015-04-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190208_4_inf2,3,3,0,2019-02-08,MM,drop,F,2015-04-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190208_4_inf2,3,4,1,2019-02-08,MM,drop,F,2015-04-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190208_4_inf2,3,5,0,2019-02-08,MM,drop,F,2015-04-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190208_4_inf2,3,6,1,2019-02-08,MM,drop,F,2015-04-07,90-95,Graduate Degree,Graduate Degree,mono_ling,3.8438356164383563,TRUE
+190208_5_inf2,4,1,1,2019-02-08,MM,keep,F,2015-02-08,100,Four Year College,Four Year College,mono_ling,4.002739726027397,TRUE
+190208_5_inf2,4,2,0,2019-02-08,MM,keep,F,2015-02-08,100,Four Year College,Four Year College,mono_ling,4.002739726027397,TRUE
+190208_5_inf2,4,3,0,2019-02-08,MM,keep,F,2015-02-08,100,Four Year College,Four Year College,mono_ling,4.002739726027397,TRUE
+190208_5_inf2,4,4,0,2019-02-08,MM,keep,F,2015-02-08,100,Four Year College,Four Year College,mono_ling,4.002739726027397,TRUE
+190208_5_inf2,4,5,0,2019-02-08,MM,keep,F,2015-02-08,100,Four Year College,Four Year College,mono_ling,4.002739726027397,TRUE
+190208_5_inf2,4,6,1,2019-02-08,MM,keep,F,2015-02-08,100,Four Year College,Four Year College,mono_ling,4.002739726027397,TRUE
+190208_6_inf2,3,1,0,2019-02-08,MM,keep,F,2015-05-23,100,Four Year College,Four Year College,mono_ling,3.717808219178082,TRUE
+190208_6_inf2,3,2,0,2019-02-08,MM,keep,F,2015-05-23,100,Four Year College,Four Year College,mono_ling,3.717808219178082,TRUE
+190208_6_inf2,3,3,0,2019-02-08,MM,keep,F,2015-05-23,100,Four Year College,Four Year College,mono_ling,3.717808219178082,TRUE
+190208_6_inf2,3,4,1,2019-02-08,MM,keep,F,2015-05-23,100,Four Year College,Four Year College,mono_ling,3.717808219178082,TRUE
+190208_6_inf2,3,5,0,2019-02-08,MM,keep,F,2015-05-23,100,Four Year College,Four Year College,mono_ling,3.717808219178082,TRUE
+190208_6_inf2,3,6,1,2019-02-08,MM,keep,F,2015-05-23,100,Four Year College,Four Year College,mono_ling,3.717808219178082,TRUE
+190208_7_inf2,4,1,1,2019-02-08,MM,keep,F,2014-06-27,100,Four Year College,Graduate Degree,mono_ling,4.6219178082191785,TRUE
+190208_7_inf2,4,2,1,2019-02-08,MM,keep,F,2014-06-27,100,Four Year College,Graduate Degree,mono_ling,4.6219178082191785,TRUE
+190208_7_inf2,4,3,1,2019-02-08,MM,keep,F,2014-06-27,100,Four Year College,Graduate Degree,mono_ling,4.6219178082191785,TRUE
+190208_7_inf2,4,4,0,2019-02-08,MM,keep,F,2014-06-27,100,Four Year College,Graduate Degree,mono_ling,4.6219178082191785,TRUE
+190208_7_inf2,4,5,1,2019-02-08,MM,keep,F,2014-06-27,100,Four Year College,Graduate Degree,mono_ling,4.6219178082191785,TRUE
+190208_7_inf2,4,6,0,2019-02-08,MM,keep,F,2014-06-27,100,Four Year College,Graduate Degree,mono_ling,4.6219178082191785,TRUE
+190208_8_inf2,4,1,1,2019-02-08,MM,keep,M,2014-04-28,75,Graduate Degree,Graduate Degree,bi_ling,4.786301369863014,TRUE
+190208_8_inf2,4,2,1,2019-02-08,MM,keep,M,2014-04-28,75,Graduate Degree,Graduate Degree,bi_ling,4.786301369863014,TRUE
+190208_8_inf2,4,3,1,2019-02-08,MM,keep,M,2014-04-28,75,Graduate Degree,Graduate Degree,bi_ling,4.786301369863014,TRUE
+190208_8_inf2,4,4,1,2019-02-08,MM,keep,M,2014-04-28,75,Graduate Degree,Graduate Degree,bi_ling,4.786301369863014,TRUE
+190208_8_inf2,4,5,1,2019-02-08,MM,keep,M,2014-04-28,75,Graduate Degree,Graduate Degree,bi_ling,4.786301369863014,TRUE
+190208_8_inf2,4,6,1,2019-02-08,MM,keep,M,2014-04-28,75,Graduate Degree,Graduate Degree,bi_ling,4.786301369863014,TRUE
+190208_9_inf2,4,1,1,2019-02-08,MM,keep,M,2015-02-08,100,"NA","NA",mono_ling,4.002739726027397,TRUE
+190208_9_inf2,4,2,0,2019-02-08,MM,keep,M,2015-02-08,100,"NA","NA",mono_ling,4.002739726027397,TRUE
+190208_9_inf2,4,3,0,2019-02-08,MM,keep,M,2015-02-08,100,"NA","NA",mono_ling,4.002739726027397,TRUE
+190208_9_inf2,4,4,0,2019-02-08,MM,keep,M,2015-02-08,100,"NA","NA",mono_ling,4.002739726027397,TRUE
+190208_9_inf2,4,5,1,2019-02-08,MM,keep,M,2015-02-08,100,"NA","NA",mono_ling,4.002739726027397,TRUE
+190208_9_inf2,4,6,0,2019-02-08,MM,keep,M,2015-02-08,100,"NA","NA",mono_ling,4.002739726027397,TRUE
+180912_14_inf,4,1,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,2,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,3,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,4,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,5,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,6,0,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+101018_1_inf,4,1,0,2018-10-10,MM,keep,F,2013-10-23,100,Graduate Degree,Graduate Degree,mono_ling,4.967123287671233,TRUE
+101018_1_inf,4,2,1,2018-10-10,MM,keep,F,2013-10-23,100,Graduate Degree,Graduate Degree,mono_ling,4.967123287671233,TRUE
+101018_1_inf,4,3,1,2018-10-10,MM,keep,F,2013-10-23,100,Graduate Degree,Graduate Degree,mono_ling,4.967123287671233,TRUE
+101018_1_inf,4,4,1,2018-10-10,MM,keep,F,2013-10-23,100,Graduate Degree,Graduate Degree,mono_ling,4.967123287671233,TRUE
+101018_1_inf,4,5,1,2018-10-10,MM,keep,F,2013-10-23,100,Graduate Degree,Graduate Degree,mono_ling,4.967123287671233,TRUE
+101018_1_inf,4,6,1,2018-10-10,MM,keep,F,2013-10-23,100,Graduate Degree,Graduate Degree,mono_ling,4.967123287671233,TRUE
+181010_2_inf,3,1,0,2018-10-10,MM,keep,M,2015-07-06,100,Graduate Degree,Graduate Degree,mono_ling,3.265753424657534,TRUE
+181010_2_inf,3,2,0,2018-10-10,MM,keep,M,2015-07-06,100,Graduate Degree,Graduate Degree,mono_ling,3.265753424657534,TRUE
+181010_2_inf,3,3,1,2018-10-10,MM,keep,M,2015-07-06,100,Graduate Degree,Graduate Degree,mono_ling,3.265753424657534,TRUE
+181010_2_inf,3,4,0,2018-10-10,MM,keep,M,2015-07-06,100,Graduate Degree,Graduate Degree,mono_ling,3.265753424657534,TRUE
+181010_2_inf,3,5,1,2018-10-10,MM,keep,M,2015-07-06,100,Graduate Degree,Graduate Degree,mono_ling,3.265753424657534,TRUE
+181010_2_inf,3,6,0,2018-10-10,MM,keep,M,2015-07-06,100,Graduate Degree,Graduate Degree,mono_ling,3.265753424657534,TRUE
+181010_3_inf,3,1,0,2018-10-10,MM,keep,F,2015-04-25,90-95,Graduate Degree,Four Year College,mono_ling,3.463013698630137,TRUE
+181010_3_inf,3,2,0,2018-10-10,MM,keep,F,2015-04-25,90-95,Graduate Degree,Four Year College,mono_ling,3.463013698630137,TRUE
+181010_3_inf,3,3,1,2018-10-10,MM,keep,F,2015-04-25,90-95,Graduate Degree,Four Year College,mono_ling,3.463013698630137,TRUE
+181010_3_inf,3,4,0,2018-10-10,MM,keep,F,2015-04-25,90-95,Graduate Degree,Four Year College,mono_ling,3.463013698630137,TRUE
+181010_3_inf,3,5,1,2018-10-10,MM,keep,F,2015-04-25,90-95,Graduate Degree,Four Year College,mono_ling,3.463013698630137,TRUE
+181010_3_inf,3,6,1,2018-10-10,MM,keep,F,2015-04-25,90-95,Graduate Degree,Four Year College,mono_ling,3.463013698630137,TRUE
+181010_4_inf,3,1,1,2018-10-10,MM,keep,F,2015-03-22,90-95,Some college,High School,mono_ling,3.5561643835616437,TRUE
+181010_4_inf,3,2,1,2018-10-10,MM,keep,F,2015-03-22,90-95,Some college,High School,mono_ling,3.5561643835616437,TRUE
+181010_4_inf,3,3,0,2018-10-10,MM,keep,F,2015-03-22,90-95,Some college,High School,mono_ling,3.5561643835616437,TRUE
+181010_4_inf,3,4,1,2018-10-10,MM,keep,F,2015-03-22,90-95,Some college,High School,mono_ling,3.5561643835616437,TRUE
+181010_4_inf,3,5,1,2018-10-10,MM,keep,F,2015-03-22,90-95,Some college,High School,mono_ling,3.5561643835616437,TRUE
+181010_4_inf,3,6,0,2018-10-10,MM,keep,F,2015-03-22,90-95,Some college,High School,mono_ling,3.5561643835616437,TRUE
+181010_5_inf,2,1,0,2018-10-10,MM,keep,M,2016-04-19,100,Four Year College,Four Year College,mono_ling,2.4767123287671233,TRUE
+181010_5_inf,2,2,0,2018-10-10,MM,keep,M,2016-04-19,100,Four Year College,Four Year College,mono_ling,2.4767123287671233,TRUE
+181010_5_inf,2,3,0,2018-10-10,MM,keep,M,2016-04-19,100,Four Year College,Four Year College,mono_ling,2.4767123287671233,TRUE
+181010_5_inf,2,4,1,2018-10-10,MM,keep,M,2016-04-19,100,Four Year College,Four Year College,mono_ling,2.4767123287671233,TRUE
+181010_5_inf,2,5,1,2018-10-10,MM,keep,M,2016-04-19,100,Four Year College,Four Year College,mono_ling,2.4767123287671233,TRUE
+181010_5_inf,2,6,0,2018-10-10,MM,keep,M,2016-04-19,100,Four Year College,Four Year College,mono_ling,2.4767123287671233,TRUE
+181010_6_inf,3,1,0,2018-10-10,MM,keep,F,2015-03-20,100,Graduate Degree,Four Year College,mono_ling,3.5616438356164384,TRUE
+181010_6_inf,3,2,1,2018-10-10,MM,keep,F,2015-03-20,100,Graduate Degree,Four Year College,mono_ling,3.5616438356164384,TRUE
+181010_6_inf,3,3,0,2018-10-10,MM,keep,F,2015-03-20,100,Graduate Degree,Four Year College,mono_ling,3.5616438356164384,TRUE
+181010_6_inf,3,4,1,2018-10-10,MM,keep,F,2015-03-20,100,Graduate Degree,Four Year College,mono_ling,3.5616438356164384,TRUE
+181010_6_inf,3,5,1,2018-10-10,MM,keep,F,2015-03-20,100,Graduate Degree,Four Year College,mono_ling,3.5616438356164384,TRUE
+181010_6_inf,3,6,1,2018-10-10,MM,keep,F,2015-03-20,100,Graduate Degree,Four Year College,mono_ling,3.5616438356164384,TRUE
+181010_7_inf,2,1,1,2018-10-10,MM,keep,F,2016-03-08,100,Graduate Degree,Some college,mono_ling,2.591780821917808,TRUE
+181010_7_inf,2,2,1,2018-10-10,MM,keep,F,2016-03-08,100,Graduate Degree,Some college,mono_ling,2.591780821917808,TRUE
+181010_7_inf,2,3,0,2018-10-10,MM,keep,F,2016-03-08,100,Graduate Degree,Some college,mono_ling,2.591780821917808,TRUE
+181010_7_inf,2,4,1,2018-10-10,MM,keep,F,2016-03-08,100,Graduate Degree,Some college,mono_ling,2.591780821917808,TRUE
+181010_7_inf,2,5,0,2018-10-10,MM,keep,F,2016-03-08,100,Graduate Degree,Some college,mono_ling,2.591780821917808,TRUE
+181010_7_inf,2,6,0,2018-10-10,MM,keep,F,2016-03-08,100,Graduate Degree,Some college,mono_ling,2.591780821917808,TRUE
+181010_8_inf,2,1,0,2018-10-10,MM,keep,M,2015-12-31,75,Four Year College,Some college,bi_ling,2.778082191780822,TRUE
+181010_8_inf,2,2,1,2018-10-10,MM,keep,M,2015-12-31,75,Four Year College,Some college,bi_ling,2.778082191780822,TRUE
+181010_8_inf,2,3,0,2018-10-10,MM,keep,M,2015-12-31,75,Four Year College,Some college,bi_ling,2.778082191780822,TRUE
+181010_8_inf,2,4,1,2018-10-10,MM,keep,M,2015-12-31,75,Four Year College,Some college,bi_ling,2.778082191780822,TRUE
+181010_8_inf,2,5,0,2018-10-10,MM,keep,M,2015-12-31,75,Four Year College,Some college,bi_ling,2.778082191780822,TRUE
+181010_8_inf,2,6,0,2018-10-10,MM,keep,M,2015-12-31,75,Four Year College,Some college,bi_ling,2.778082191780822,TRUE
+181010_9_inf,2,1,0,2018-10-10,MM,keep,F,2016-06-27,100,Some college,Some college,mono_ling,2.287671232876712,TRUE
+181010_9_inf,2,2,0,2018-10-10,MM,keep,F,2016-06-27,100,Some college,Some college,mono_ling,2.287671232876712,TRUE
+181010_9_inf,2,3,1,2018-10-10,MM,keep,F,2016-06-27,100,Some college,Some college,mono_ling,2.287671232876712,TRUE
+181010_9_inf,2,4,1,2018-10-10,MM,keep,F,2016-06-27,100,Some college,Some college,mono_ling,2.287671232876712,TRUE
+181010_9_inf,2,5,0,2018-10-10,MM,keep,F,2016-06-27,100,Some college,Some college,mono_ling,2.287671232876712,TRUE
+181010_9_inf,2,6,0,2018-10-10,MM,keep,F,2016-06-27,100,Some college,Some college,mono_ling,2.287671232876712,TRUE
+181010_10_inf,4,1,1,2018-10-10,MM,keep,M,2014-05-19,100,Four Year College,Four Year College,mono_ling,4.397260273972603,TRUE
+181010_10_inf,4,2,0,2018-10-10,MM,keep,M,2014-05-19,100,Four Year College,Four Year College,mono_ling,4.397260273972603,TRUE
+181010_10_inf,4,3,1,2018-10-10,MM,keep,M,2014-05-19,100,Four Year College,Four Year College,mono_ling,4.397260273972603,TRUE
+181010_10_inf,4,4,1,2018-10-10,MM,keep,M,2014-05-19,100,Four Year College,Four Year College,mono_ling,4.397260273972603,TRUE
+181010_10_inf,4,5,0,2018-10-10,MM,keep,M,2014-05-19,100,Four Year College,Four Year College,mono_ling,4.397260273972603,TRUE
+181010_10_inf,4,6,1,2018-10-10,MM,keep,M,2014-05-19,100,Four Year College,Four Year College,mono_ling,4.397260273972603,TRUE
+181010_11_inf,2,1,1,2018-10-10,MM,keep,F,2015-11-27,100,Some college,Some college,mono_ling,2.871232876712329,TRUE
+181010_11_inf,2,2,1,2018-10-10,MM,keep,F,2015-11-27,100,Some college,Some college,mono_ling,2.871232876712329,TRUE
+181010_11_inf,2,3,1,2018-10-10,MM,keep,F,2015-11-27,100,Some college,Some college,mono_ling,2.871232876712329,TRUE
+181010_11_inf,2,4,1,2018-10-10,MM,keep,F,2015-11-27,100,Some college,Some college,mono_ling,2.871232876712329,TRUE
+181010_11_inf,2,5,1,2018-10-10,MM,keep,F,2015-11-27,100,Some college,Some college,mono_ling,2.871232876712329,TRUE
+181010_11_inf,2,6,0,2018-10-10,MM,keep,F,2015-11-27,100,Some college,Some college,mono_ling,2.871232876712329,TRUE
+181010_12_inf,2,1,0,2018-10-10,MM,keep,F,2016-07-21,90-95,"NA","NA",mono_ling,2.221917808219178,TRUE
+181010_12_inf,2,2,0,2018-10-10,MM,keep,F,2016-07-21,90-95,"NA","NA",mono_ling,2.221917808219178,TRUE
+181010_12_inf,2,3,0,2018-10-10,MM,keep,F,2016-07-21,90-95,"NA","NA",mono_ling,2.221917808219178,TRUE
+181010_12_inf,2,4,0,2018-10-10,MM,keep,F,2016-07-21,90-95,"NA","NA",mono_ling,2.221917808219178,TRUE
+181010_12_inf,2,5,1,2018-10-10,MM,keep,F,2016-07-21,90-95,"NA","NA",mono_ling,2.221917808219178,TRUE
+181010_12_inf,2,6,0,2018-10-10,MM,keep,F,2016-07-21,90-95,"NA","NA",mono_ling,2.221917808219178,TRUE
+181010_13_inf,4,1,1,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,2,1,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,3,0,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,4,0,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,5,1,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,6,1,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,1,1,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,2,1,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,3,0,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,4,0,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,5,1,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181010_13_inf,4,6,1,2018-10-10,MM,keep,F,2014-06-14,90-95,"NA","NA",mono_ling,4.326027397260274,TRUE
+181017_1_inf,4,1,1,2018-10-17,MM,keep,F,2014-08-21,90-95,Four Year College,Four Year College,mono_ling,4.158904109589041,TRUE
+181017_1_inf,4,2,1,2018-10-17,MM,keep,F,2014-08-21,90-95,Four Year College,Four Year College,mono_ling,4.158904109589041,TRUE
+181017_1_inf,4,3,1,2018-10-17,MM,keep,F,2014-08-21,90-95,Four Year College,Four Year College,mono_ling,4.158904109589041,TRUE
+181017_1_inf,4,4,1,2018-10-17,MM,keep,F,2014-08-21,90-95,Four Year College,Four Year College,mono_ling,4.158904109589041,TRUE
+181017_1_inf,4,5,0,2018-10-17,MM,keep,F,2014-08-21,90-95,Four Year College,Four Year College,mono_ling,4.158904109589041,TRUE
+181017_1_inf,4,6,0,2018-10-17,MM,keep,F,2014-08-21,90-95,Four Year College,Four Year College,mono_ling,4.158904109589041,TRUE
+181017_2_inf,2,1,0,2018-10-17,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.356164383561644,TRUE
+181017_2_inf,2,2,0,2018-10-17,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.356164383561644,TRUE
+181017_2_inf,2,3,0,2018-10-17,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.356164383561644,TRUE
+181017_2_inf,2,4,0,2018-10-17,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.356164383561644,TRUE
+181017_2_inf,2,5,1,2018-10-17,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.356164383561644,TRUE
+181017_2_inf,2,6,1,2018-10-17,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.356164383561644,TRUE
+181017_3_inf,4,1,1,2018-10-17,MM,drop,F,2014-09-30,90-95,Graduate Degree,Some college,mono_ling,4.049315068493151,TRUE
+181017_3_inf,4,2,1,2018-10-17,MM,drop,F,2014-09-30,90-95,Graduate Degree,Some college,mono_ling,4.049315068493151,TRUE
+181017_3_inf,4,3,0,2018-10-17,MM,drop,F,2014-09-30,90-95,Graduate Degree,Some college,mono_ling,4.049315068493151,TRUE
+181017_3_inf,4,4,0,2018-10-17,MM,drop,F,2014-09-30,90-95,Graduate Degree,Some college,mono_ling,4.049315068493151,TRUE
+181017_3_inf,4,5,1,2018-10-17,MM,drop,F,2014-09-30,90-95,Graduate Degree,Some college,mono_ling,4.049315068493151,TRUE
+181017_3_inf,4,6,0,2018-10-17,MM,drop,F,2014-09-30,90-95,Graduate Degree,Some college,mono_ling,4.049315068493151,TRUE
+181017_4_inf,3,1,1,2018-10-17,MM,keep,F,2015-02-24,100,Some Graduate school,Some college,mono_ling,3.6465753424657534,TRUE
+181017_4_inf,3,2,0,2018-10-17,MM,keep,F,2015-02-24,100,Some Graduate school,Some college,mono_ling,3.6465753424657534,TRUE
+181017_4_inf,3,3,0,2018-10-17,MM,keep,F,2015-02-24,100,Some Graduate school,Some college,mono_ling,3.6465753424657534,TRUE
+181017_4_inf,3,4,0,2018-10-17,MM,keep,F,2015-02-24,100,Some Graduate school,Some college,mono_ling,3.6465753424657534,TRUE
+181017_4_inf,3,5,0,2018-10-17,MM,keep,F,2015-02-24,100,Some Graduate school,Some college,mono_ling,3.6465753424657534,TRUE
+181017_4_inf,3,6,0,2018-10-17,MM,keep,F,2015-02-24,100,Some Graduate school,Some college,mono_ling,3.6465753424657534,TRUE
+181017_5_inf,2,1,0,2018-10-17,MM,keep,M,2016-01-17,100,"NA","NA",mono_ling,2.750684931506849,TRUE
+181017_5_inf,2,2,1,2018-10-17,MM,keep,M,2016-01-17,100,"NA","NA",mono_ling,2.750684931506849,TRUE
+181017_5_inf,2,3,1,2018-10-17,MM,keep,M,2016-01-17,100,"NA","NA",mono_ling,2.750684931506849,TRUE
+181017_5_inf,2,4,1,2018-10-17,MM,keep,M,2016-01-17,100,"NA","NA",mono_ling,2.750684931506849,TRUE
+181017_5_inf,2,5,0,2018-10-17,MM,keep,M,2016-01-17,100,"NA","NA",mono_ling,2.750684931506849,TRUE
+181017_5_inf,2,6,1,2018-10-17,MM,keep,M,2016-01-17,100,"NA","NA",mono_ling,2.750684931506849,TRUE
+181017_2_inf,4,1,1,2018-10-19,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.361643835616438,FALSE
+181017_2_inf,4,2,0,2018-10-19,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.361643835616438,FALSE
+181017_2_inf,4,3,0,2018-10-19,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.361643835616438,FALSE
+181017_2_inf,4,4,0,2018-10-19,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.361643835616438,FALSE
+181017_2_inf,4,5,1,2018-10-19,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.361643835616438,FALSE
+181017_2_inf,4,6,1,2018-10-19,MM,drop,F,2016-06-09,90-95,Some college,Some college,mono_ling,2.361643835616438,FALSE
+181019_3_inf,3,1,0,2018-10-19,MM,keep,M,2015-02-16,100,Graduate Degree,Graduate Degree,mono_ling,3.673972602739726,TRUE
+181019_3_inf,3,2,1,2018-10-19,MM,keep,M,2015-02-16,100,Graduate Degree,Graduate Degree,mono_ling,3.673972602739726,TRUE
+181019_3_inf,3,3,0,2018-10-19,MM,keep,M,2015-02-16,100,Graduate Degree,Graduate Degree,mono_ling,3.673972602739726,TRUE
+181019_3_inf,3,4,1,2018-10-19,MM,keep,M,2015-02-16,100,Graduate Degree,Graduate Degree,mono_ling,3.673972602739726,TRUE
+181019_3_inf,3,5,1,2018-10-19,MM,keep,M,2015-02-16,100,Graduate Degree,Graduate Degree,mono_ling,3.673972602739726,TRUE
+181019_3_inf,3,6,0,2018-10-19,MM,keep,M,2015-02-16,100,Graduate Degree,Graduate Degree,mono_ling,3.673972602739726,TRUE
+181019_4_inf,2,1,0,2018-10-19,MM,keep,F,2016-05-31,75,Four Year College,Graduate Degree,bi_ling,2.3863013698630136,TRUE
+181019_4_inf,2,2,1,2018-10-19,MM,keep,F,2016-05-31,75,Four Year College,Graduate Degree,bi_ling,2.3863013698630136,TRUE
+181019_4_inf,2,3,1,2018-10-19,MM,keep,F,2016-05-31,75,Four Year College,Graduate Degree,bi_ling,2.3863013698630136,TRUE
+181019_4_inf,2,4,1,2018-10-19,MM,keep,F,2016-05-31,75,Four Year College,Graduate Degree,bi_ling,2.3863013698630136,TRUE
+181019_4_inf,2,5,1,2018-10-19,MM,keep,F,2016-05-31,75,Four Year College,Graduate Degree,bi_ling,2.3863013698630136,TRUE
+181019_4_inf,2,6,0,2018-10-19,MM,keep,F,2016-05-31,75,Four Year College,Graduate Degree,bi_ling,2.3863013698630136,TRUE
+181019_5_inf,3,1,1,2018-10-19,MM,keep,F,2015-05-31,100,High School,High School,mono_ling,3.389041095890411,TRUE
+181019_5_inf,3,2,0,2018-10-19,MM,keep,F,2015-05-31,100,High School,High School,mono_ling,3.389041095890411,TRUE
+181019_5_inf,3,3,0,2018-10-19,MM,keep,F,2015-05-31,100,High School,High School,mono_ling,3.389041095890411,TRUE
+181019_5_inf,3,4,1,2018-10-19,MM,keep,F,2015-05-31,100,High School,High School,mono_ling,3.389041095890411,TRUE
+181019_5_inf,3,5,0,2018-10-19,MM,keep,F,2015-05-31,100,High School,High School,mono_ling,3.389041095890411,TRUE
+181019_5_inf,3,6,0,2018-10-19,MM,keep,F,2015-05-31,100,High School,High School,mono_ling,3.389041095890411,TRUE
+181019_6_inf,4,1,0,2018-10-19,MM,keep,F,2014-08-08,75,Some college,Some college,bi_ling,4.2,TRUE
+181019_6_inf,4,2,1,2018-10-19,MM,keep,F,2014-08-08,75,Some college,Some college,bi_ling,4.2,TRUE
+181019_6_inf,4,3,1,2018-10-19,MM,keep,F,2014-08-08,75,Some college,Some college,bi_ling,4.2,TRUE
+181019_6_inf,4,4,1,2018-10-19,MM,keep,F,2014-08-08,75,Some college,Some college,bi_ling,4.2,TRUE
+181019_6_inf,4,5,0,2018-10-19,MM,keep,F,2014-08-08,75,Some college,Some college,bi_ling,4.2,TRUE
+181019_6_inf,4,6,0,2018-10-19,MM,keep,F,2014-08-08,75,Some college,Some college,bi_ling,4.2,TRUE
+181019_7_inf,2,1,0,2018-10-19,MM,keep,F,2016-08-12,100,Graduate Degree,some graduate school,mono_ling,2.186301369863014,TRUE
+181019_7_inf,2,2,1,2018-10-19,MM,keep,F,2016-08-12,100,Graduate Degree,some graduate school,mono_ling,2.186301369863014,TRUE
+181019_7_inf,2,3,1,2018-10-19,MM,keep,F,2016-08-12,100,Graduate Degree,some graduate school,mono_ling,2.186301369863014,TRUE
+181019_7_inf,2,4,0,2018-10-19,MM,keep,F,2016-08-12,100,Graduate Degree,some graduate school,mono_ling,2.186301369863014,TRUE
+181019_7_inf,2,5,0,2018-10-19,MM,keep,F,2016-08-12,100,Graduate Degree,some graduate school,mono_ling,2.186301369863014,TRUE
+181019_7_inf,2,6,1,2018-10-19,MM,keep,F,2016-08-12,100,Graduate Degree,some graduate school,mono_ling,2.186301369863014,TRUE
+181019_8_inf,4,1,0,2018-10-19,MM,keep,F,2014-04-02,100,Some college,some graduate school,mono_ling,4.550684931506849,TRUE
+181019_8_inf,4,2,0,2018-10-19,MM,keep,F,2014-04-02,100,Some college,some graduate school,mono_ling,4.550684931506849,TRUE
+181019_8_inf,4,3,1,2018-10-19,MM,keep,F,2014-04-02,100,Some college,some graduate school,mono_ling,4.550684931506849,TRUE
+181019_8_inf,4,4,0,2018-10-19,MM,keep,F,2014-04-02,100,Some college,some graduate school,mono_ling,4.550684931506849,TRUE
+181019_8_inf,4,5,1,2018-10-19,MM,keep,F,2014-04-02,100,Some college,some graduate school,mono_ling,4.550684931506849,TRUE
+181019_8_inf,4,6,0,2018-10-19,MM,keep,F,2014-04-02,100,Some college,some graduate school,mono_ling,4.550684931506849,TRUE
+181019_9_inf,2,1,0,2018-10-19,MM,keep,F,2016-04-26,75,Some college,High School,bi_ling,2.4821917808219176,TRUE
+181019_9_inf,2,2,1,2018-10-19,MM,keep,F,2016-04-26,75,Some college,High School,bi_ling,2.4821917808219176,TRUE
+181019_9_inf,2,3,1,2018-10-19,MM,keep,F,2016-04-26,75,Some college,High School,bi_ling,2.4821917808219176,TRUE
+181019_9_inf,2,4,0,2018-10-19,MM,keep,F,2016-04-26,75,Some college,High School,bi_ling,2.4821917808219176,TRUE
+181019_9_inf,2,5,0,2018-10-19,MM,keep,F,2016-04-26,75,Some college,High School,bi_ling,2.4821917808219176,TRUE
+181019_9_inf,2,6,0,2018-10-19,MM,keep,F,2016-04-26,75,Some college,High School,bi_ling,2.4821917808219176,TRUE
+181019_10_inf,4,1,1,2018-10-19,MM,keep,F,2013-12-27,100,Four Year College,Four Year College,mono_ling,4.813698630136987,TRUE
+181019_10_inf,4,2,1,2018-10-19,MM,keep,F,2013-12-27,100,Four Year College,Four Year College,mono_ling,4.813698630136987,TRUE
+181019_10_inf,4,3,1,2018-10-19,MM,keep,F,2013-12-27,100,Four Year College,Four Year College,mono_ling,4.813698630136987,TRUE
+181019_10_inf,4,4,1,2018-10-19,MM,keep,F,2013-12-27,100,Four Year College,Four Year College,mono_ling,4.813698630136987,TRUE
+181019_10_inf,4,5,1,2018-10-19,MM,keep,F,2013-12-27,100,Four Year College,Four Year College,mono_ling,4.813698630136987,TRUE
+181019_10_inf,4,6,1,2018-10-19,MM,keep,F,2013-12-27,100,Four Year College,Four Year College,mono_ling,4.813698630136987,TRUE
+181024_1_inf,3,1,0,2018-10-24,MM,keep,F,2015-03-25,75,Graduate Degree,Graduate Degree,bi_ling,3.5863013698630137,TRUE
+181024_1_inf,3,2,1,2018-10-24,MM,keep,F,2015-03-25,75,Graduate Degree,Graduate Degree,bi_ling,3.5863013698630137,TRUE
+181024_1_inf,3,3,0,2018-10-24,MM,keep,F,2015-03-25,75,Graduate Degree,Graduate Degree,bi_ling,3.5863013698630137,TRUE
+181024_1_inf,3,4,0,2018-10-24,MM,keep,F,2015-03-25,75,Graduate Degree,Graduate Degree,bi_ling,3.5863013698630137,TRUE
+181024_1_inf,3,5,0,2018-10-24,MM,keep,F,2015-03-25,75,Graduate Degree,Graduate Degree,bi_ling,3.5863013698630137,TRUE
+181024_1_inf,3,6,0,2018-10-24,MM,keep,F,2015-03-25,75,Graduate Degree,Graduate Degree,bi_ling,3.5863013698630137,TRUE
+181024_2_inf,3,1,0,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,Four Year College,mono_ling,3.4438356164383563,TRUE
+181024_2_inf,3,2,0,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,Four Year College,mono_ling,3.4438356164383563,TRUE
+181024_2_inf,3,3,1,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,Four Year College,mono_ling,3.4438356164383563,TRUE
+181024_2_inf,3,4,1,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,Four Year College,mono_ling,3.4438356164383563,TRUE
+181024_2_inf,3,5,1,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,Four Year College,mono_ling,3.4438356164383563,TRUE
+181024_2_inf,3,6,0,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,Four Year College,mono_ling,3.4438356164383563,TRUE
+181024_3_inf,2,1,0,2018-10-24,MM,keep,F,2016-02-07,100,Some college,Four Year College,mono_ling,2.712328767123288,TRUE
+181024_3_inf,2,2,1,2018-10-24,MM,keep,F,2016-02-07,100,Some college,Four Year College,mono_ling,2.712328767123288,TRUE
+181024_3_inf,2,3,0,2018-10-24,MM,keep,F,2016-02-07,100,Some college,Four Year College,mono_ling,2.712328767123288,TRUE
+181024_3_inf,2,4,0,2018-10-24,MM,keep,F,2016-02-07,100,Some college,Four Year College,mono_ling,2.712328767123288,TRUE
+181024_3_inf,2,5,0,2018-10-24,MM,keep,F,2016-02-07,100,Some college,Four Year College,mono_ling,2.712328767123288,TRUE
+181024_3_inf,2,6,1,2018-10-24,MM,keep,F,2016-02-07,100,Some college,Four Year College,mono_ling,2.712328767123288,TRUE
+181024_4_inf,3,1,1,2018-10-24,MM,keep,M,2015-05-04,75,Graduate Degree,Graduate Degree,bi_ling,3.4767123287671233,TRUE
+181024_4_inf,3,2,0,2018-10-24,MM,keep,M,2015-05-04,75,Graduate Degree,Graduate Degree,bi_ling,3.4767123287671233,TRUE
+181024_4_inf,3,3,0,2018-10-24,MM,keep,M,2015-05-04,75,Graduate Degree,Graduate Degree,bi_ling,3.4767123287671233,TRUE
+181024_4_inf,3,4,1,2018-10-24,MM,keep,M,2015-05-04,75,Graduate Degree,Graduate Degree,bi_ling,3.4767123287671233,TRUE
+181024_4_inf,3,5,1,2018-10-24,MM,keep,M,2015-05-04,75,Graduate Degree,Graduate Degree,bi_ling,3.4767123287671233,TRUE
+181024_4_inf,3,6,1,2018-10-24,MM,keep,M,2015-05-04,75,Graduate Degree,Graduate Degree,bi_ling,3.4767123287671233,TRUE
+181024_5_inf,3,1,1,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,some college,mono_ling,3.4438356164383563,TRUE
+181024_5_inf,3,2,0,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,some college,mono_ling,3.4438356164383563,TRUE
+181024_5_inf,3,3,0,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,some college,mono_ling,3.4438356164383563,TRUE
+181024_5_inf,3,4,1,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,some college,mono_ling,3.4438356164383563,TRUE
+181024_5_inf,3,5,1,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,some college,mono_ling,3.4438356164383563,TRUE
+181024_5_inf,3,6,1,2018-10-24,MM,keep,M,2015-05-16,100,Four Year College,some college,mono_ling,3.4438356164383563,TRUE
+181024_6_inf,2,1,0,2018-10-24,MM,keep,F,2016-02-25,100,Four Year College,Four Year College,mono_ling,2.663013698630137,TRUE
+181024_6_inf,2,2,1,2018-10-24,MM,keep,F,2016-02-25,100,Four Year College,Four Year College,mono_ling,2.663013698630137,TRUE
+181024_6_inf,2,3,1,2018-10-24,MM,keep,F,2016-02-25,100,Four Year College,Four Year College,mono_ling,2.663013698630137,TRUE
+181024_6_inf,2,4,0,2018-10-24,MM,keep,F,2016-02-25,100,Four Year College,Four Year College,mono_ling,2.663013698630137,TRUE
+181024_6_inf,2,5,0,2018-10-24,MM,keep,F,2016-02-25,100,Four Year College,Four Year College,mono_ling,2.663013698630137,TRUE
+181024_6_inf,2,6,1,2018-10-24,MM,keep,F,2016-02-25,100,Four Year College,Four Year College,mono_ling,2.663013698630137,TRUE
+181024_7_inf,3,1,1,2018-10-24,MM,keep,M,2015-06-04,25,Some college,some college,bi_ling,3.3917808219178083,TRUE
+181024_7_inf,3,2,0,2018-10-24,MM,keep,M,2015-06-04,25,Some college,some college,bi_ling,3.3917808219178083,TRUE
+181024_7_inf,3,3,1,2018-10-24,MM,keep,M,2015-06-04,25,Some college,some college,bi_ling,3.3917808219178083,TRUE
+181024_7_inf,3,4,0,2018-10-24,MM,keep,M,2015-06-04,25,Some college,some college,bi_ling,3.3917808219178083,TRUE
+181024_7_inf,3,5,1,2018-10-24,MM,keep,M,2015-06-04,25,Some college,some college,bi_ling,3.3917808219178083,TRUE
+181024_7_inf,3,6,0,2018-10-24,MM,keep,M,2015-06-04,25,Some college,some college,bi_ling,3.3917808219178083,TRUE
+181024_8_inf,2,1,0,2018-10-24,MM,keep,M,2016-07-03,90-95,Graduate Degree,some college,mono_ling,2.3095890410958906,TRUE
+181024_8_inf,2,2,0,2018-10-24,MM,keep,M,2016-07-03,90-95,Graduate Degree,some college,mono_ling,2.3095890410958906,TRUE
+181024_8_inf,2,3,1,2018-10-24,MM,keep,M,2016-07-03,90-95,Graduate Degree,some college,mono_ling,2.3095890410958906,TRUE
+181024_8_inf,2,4,1,2018-10-24,MM,keep,M,2016-07-03,90-95,Graduate Degree,some college,mono_ling,2.3095890410958906,TRUE
+181024_8_inf,2,5,1,2018-10-24,MM,keep,M,2016-07-03,90-95,Graduate Degree,some college,mono_ling,2.3095890410958906,TRUE
+181024_8_inf,2,6,1,2018-10-24,MM,keep,M,2016-07-03,90-95,Graduate Degree,some college,mono_ling,2.3095890410958906,TRUE
+181024_9_inf,3,1,0,2018-10-24,MM,keep,F,2015-01-22,100,Graduate Degree,Four Year College,mono_ling,3.756164383561644,TRUE
+181024_9_inf,3,2,0,2018-10-24,MM,keep,F,2015-01-22,100,Graduate Degree,Four Year College,mono_ling,3.756164383561644,TRUE
+181024_9_inf,3,3,0,2018-10-24,MM,keep,F,2015-01-22,100,Graduate Degree,Four Year College,mono_ling,3.756164383561644,TRUE
+181024_9_inf,3,4,0,2018-10-24,MM,keep,F,2015-01-22,100,Graduate Degree,Four Year College,mono_ling,3.756164383561644,TRUE
+181024_9_inf,3,5,1,2018-10-24,MM,keep,F,2015-01-22,100,Graduate Degree,Four Year College,mono_ling,3.756164383561644,TRUE
+181024_9_inf,3,6,1,2018-10-24,MM,keep,F,2015-01-22,100,Graduate Degree,Four Year College,mono_ling,3.756164383561644,TRUE
+181024_10_inf,2,1,0,2018-10-24,MM,keep,M,2016-04-29,90-95,Four Year College,Four Year College,mono_ling,2.4876712328767123,TRUE
+181024_10_inf,2,2,0,2018-10-24,MM,keep,M,2016-04-29,90-95,Four Year College,Four Year College,mono_ling,2.4876712328767123,TRUE
+181024_10_inf,2,3,0,2018-10-24,MM,keep,M,2016-04-29,90-95,Four Year College,Four Year College,mono_ling,2.4876712328767123,TRUE
+181024_10_inf,2,4,1,2018-10-24,MM,keep,M,2016-04-29,90-95,Four Year College,Four Year College,mono_ling,2.4876712328767123,TRUE
+181024_10_inf,2,5,0,2018-10-24,MM,keep,M,2016-04-29,90-95,Four Year College,Four Year College,mono_ling,2.4876712328767123,TRUE
+181024_10_inf,2,6,1,2018-10-24,MM,keep,M,2016-04-29,90-95,Four Year College,Four Year College,mono_ling,2.4876712328767123,TRUE
+181024_11_inf,3,1,1,2018-10-24,MM,keep,F,2015-01-12,90-95,High School,High School,mono_ling,3.7835616438356166,TRUE
+181024_11_inf,3,2,1,2018-10-24,MM,keep,F,2015-01-12,90-95,High School,High School,mono_ling,3.7835616438356166,TRUE
+181024_11_inf,3,3,0,2018-10-24,MM,keep,F,2015-01-12,90-95,High School,High School,mono_ling,3.7835616438356166,TRUE
+181024_11_inf,3,4,1,2018-10-24,MM,keep,F,2015-01-12,90-95,High School,High School,mono_ling,3.7835616438356166,TRUE
+181024_11_inf,3,5,0,2018-10-24,MM,keep,F,2015-01-12,90-95,High School,High School,mono_ling,3.7835616438356166,TRUE
+181024_11_inf,3,6,1,2018-10-24,MM,keep,F,2015-01-12,90-95,High School,High School,mono_ling,3.7835616438356166,TRUE
+181024_12_inf,3,1,0,2018-10-24,MM,keep,F,2015-03-02,100,Four Year College,Graduate Degree,mono_ling,3.649315068493151,TRUE
+181024_12_inf,3,2,0,2018-10-24,MM,keep,F,2015-03-02,100,Four Year College,Graduate Degree,mono_ling,3.649315068493151,TRUE
+181024_12_inf,3,3,0,2018-10-24,MM,keep,F,2015-03-02,100,Four Year College,Graduate Degree,mono_ling,3.649315068493151,TRUE
+181024_12_inf,3,4,0,2018-10-24,MM,keep,F,2015-03-02,100,Four Year College,Graduate Degree,mono_ling,3.649315068493151,TRUE
+181024_12_inf,3,5,1,2018-10-24,MM,keep,F,2015-03-02,100,Four Year College,Graduate Degree,mono_ling,3.649315068493151,TRUE
+181024_12_inf,3,6,1,2018-10-24,MM,keep,F,2015-03-02,100,Four Year College,Graduate Degree,mono_ling,3.649315068493151,TRUE
+181024_13_inf,3,1,1,2018-10-24,MM,keep,F,2015-04-16,75,Some college,High School,bi_ling,3.526027397260274,TRUE
+181024_13_inf,3,2,0,2018-10-24,MM,keep,F,2015-04-16,75,Some college,High School,bi_ling,3.526027397260274,TRUE
+181024_13_inf,3,3,0,2018-10-24,MM,keep,F,2015-04-16,75,Some college,High School,bi_ling,3.526027397260274,TRUE
+181024_13_inf,3,4,0,2018-10-24,MM,keep,F,2015-04-16,75,Some college,High School,bi_ling,3.526027397260274,TRUE
+181024_13_inf,3,5,1,2018-10-24,MM,keep,F,2015-04-16,75,Some college,High School,bi_ling,3.526027397260274,TRUE
+181024_13_inf,3,6,1,2018-10-24,MM,keep,F,2015-04-16,75,Some college,High School,bi_ling,3.526027397260274,TRUE
+181024_14_inf,3,1,1,2018-10-24,MM,keep,F,2015-10-24,75,Four Year College,Four Year College,bi_ling,3.0027397260273974,TRUE
+181024_14_inf,3,2,1,2018-10-24,MM,keep,F,2015-10-24,75,Four Year College,Four Year College,bi_ling,3.0027397260273974,TRUE
+181024_14_inf,3,3,0,2018-10-24,MM,keep,F,2015-10-24,75,Four Year College,Four Year College,bi_ling,3.0027397260273974,TRUE
+181024_14_inf,3,4,1,2018-10-24,MM,keep,F,2015-10-24,75,Four Year College,Four Year College,bi_ling,3.0027397260273974,TRUE
+181024_14_inf,3,5,1,2018-10-24,MM,keep,F,2015-10-24,75,Four Year College,Four Year College,bi_ling,3.0027397260273974,TRUE
+181024_14_inf,3,6,0,2018-10-24,MM,keep,F,2015-10-24,75,Four Year College,Four Year College,bi_ling,3.0027397260273974,TRUE
+181031_2_inf,2,1,0,2018-10-31,MM,keep,F,2016-10-11,90-95,Four Year College,Four Year College,mono_ling,2.0547945205479454,TRUE
+181031_2_inf,2,2,1,2018-10-31,MM,keep,F,2016-10-11,90-95,Four Year College,Four Year College,mono_ling,2.0547945205479454,TRUE
+181031_2_inf,2,3,1,2018-10-31,MM,keep,F,2016-10-11,90-95,Four Year College,Four Year College,mono_ling,2.0547945205479454,TRUE
+181031_2_inf,2,4,0,2018-10-31,MM,keep,F,2016-10-11,90-95,Four Year College,Four Year College,mono_ling,2.0547945205479454,TRUE
+181031_2_inf,2,5,0,2018-10-31,MM,keep,F,2016-10-11,90-95,Four Year College,Four Year College,mono_ling,2.0547945205479454,TRUE
+181031_2_inf,2,6,0,2018-10-31,MM,keep,F,2016-10-11,90-95,Four Year College,Four Year College,mono_ling,2.0547945205479454,TRUE
+181031_3_inf,4,1,0,2018-10-31,MM,keep,M,2014-04-22,75,Some Graduate school,Four Year College,bi_ling,4.528767123287671,TRUE
+181031_3_inf,4,2,1,2018-10-31,MM,keep,M,2014-04-22,75,Some Graduate school,Four Year College,bi_ling,4.528767123287671,TRUE
+181031_3_inf,4,3,1,2018-10-31,MM,keep,M,2014-04-22,75,Some Graduate school,Four Year College,bi_ling,4.528767123287671,TRUE
+181031_3_inf,4,4,1,2018-10-31,MM,keep,M,2014-04-22,75,Some Graduate school,Four Year College,bi_ling,4.528767123287671,TRUE
+181031_3_inf,4,5,1,2018-10-31,MM,keep,M,2014-04-22,75,Some Graduate school,Four Year College,bi_ling,4.528767123287671,TRUE
+181031_3_inf,4,6,1,2018-10-31,MM,keep,M,2014-04-22,75,Some Graduate school,Four Year College,bi_ling,4.528767123287671,TRUE
+181107_1_inf,4,1,0,2018-11-07,MM,keep,F,2014-02-23,100,Graduate Degree,Four Year College,mono_ling,4.706849315068493,TRUE
+181107_1_inf,4,2,1,2018-11-07,MM,keep,F,2014-02-23,100,Graduate Degree,Four Year College,mono_ling,4.706849315068493,TRUE
+181107_1_inf,4,3,1,2018-11-07,MM,keep,F,2014-02-23,100,Graduate Degree,Four Year College,mono_ling,4.706849315068493,TRUE
+181107_1_inf,4,4,1,2018-11-07,MM,keep,F,2014-02-23,100,Graduate Degree,Four Year College,mono_ling,4.706849315068493,TRUE
+181107_1_inf,4,5,1,2018-11-07,MM,keep,F,2014-02-23,100,Graduate Degree,Four Year College,mono_ling,4.706849315068493,TRUE
+181107_1_inf,4,6,1,2018-11-07,MM,keep,F,2014-02-23,100,Graduate Degree,Four Year College,mono_ling,4.706849315068493,TRUE
+181107_2_inf,4,1,0,2018-11-07,MM,keep,M,2014-05-25,90-95,Graduate Degree,Four Year College,mono_ling,4.457534246575342,TRUE
+181107_2_inf,4,2,1,2018-11-07,MM,keep,M,2014-05-25,90-95,Graduate Degree,Four Year College,mono_ling,4.457534246575342,TRUE
+181107_2_inf,4,3,0,2018-11-07,MM,keep,M,2014-05-25,90-95,Graduate Degree,Four Year College,mono_ling,4.457534246575342,TRUE
+181107_2_inf,4,4,0,2018-11-07,MM,keep,M,2014-05-25,90-95,Graduate Degree,Four Year College,mono_ling,4.457534246575342,TRUE
+181107_2_inf,4,5,1,2018-11-07,MM,keep,M,2014-05-25,90-95,Graduate Degree,Four Year College,mono_ling,4.457534246575342,TRUE
+181107_2_inf,4,6,1,2018-11-07,MM,keep,M,2014-05-25,90-95,Graduate Degree,Four Year College,mono_ling,4.457534246575342,TRUE
+181107_3_inf,4,1,0,2018-11-07,MM,keep,M,2014-07-20,100,Some Graduate school,Four Year College,mono_ling,4.304109589041096,TRUE
+181107_3_inf,4,2,0,2018-11-07,MM,keep,M,2014-07-20,100,Some Graduate school,Four Year College,mono_ling,4.304109589041096,TRUE
+181107_3_inf,4,3,0,2018-11-07,MM,keep,M,2014-07-20,100,Some Graduate school,Four Year College,mono_ling,4.304109589041096,TRUE
+181107_3_inf,4,4,1,2018-11-07,MM,keep,M,2014-07-20,100,Some Graduate school,Four Year College,mono_ling,4.304109589041096,TRUE
+181107_3_inf,4,5,0,2018-11-07,MM,keep,M,2014-07-20,100,Some Graduate school,Four Year College,mono_ling,4.304109589041096,TRUE
+181107_3_inf,4,6,0,2018-11-07,MM,keep,M,2014-07-20,100,Some Graduate school,Four Year College,mono_ling,4.304109589041096,TRUE
+181107_5_inf,4,1,1,2018-11-07,MM,keep,F,2013-11-08,100,Graduate Degree,some graduate school,mono_ling,5,FALSE
+181107_5_inf,4,2,0,2018-11-07,MM,keep,F,2013-11-08,100,Graduate Degree,some graduate school,mono_ling,5,FALSE
+181107_5_inf,4,3,0,2018-11-07,MM,keep,F,2013-11-08,100,Graduate Degree,some graduate school,mono_ling,5,FALSE
+181107_5_inf,4,4,1,2018-11-07,MM,keep,F,2013-11-08,100,Graduate Degree,some graduate school,mono_ling,5,FALSE
+181107_5_inf,4,5,1,2018-11-07,MM,keep,F,2013-11-08,100,Graduate Degree,some graduate school,mono_ling,5,FALSE
+181107_5_inf,4,6,0,2018-11-07,MM,keep,F,2013-11-08,100,Graduate Degree,some graduate school,mono_ling,5,FALSE
+181107_6_inf,4,1,1,2018-11-07,MM,keep,F,2014-04-08,100,Four Year College,Four Year College,mono_ling,4.586301369863014,TRUE
+181107_6_inf,4,2,1,2018-11-07,MM,keep,F,2014-04-08,100,Four Year College,Four Year College,mono_ling,4.586301369863014,TRUE
+181107_6_inf,4,3,1,2018-11-07,MM,keep,F,2014-04-08,100,Four Year College,Four Year College,mono_ling,4.586301369863014,TRUE
+181107_6_inf,4,4,1,2018-11-07,MM,keep,F,2014-04-08,100,Four Year College,Four Year College,mono_ling,4.586301369863014,TRUE
+181107_6_inf,4,5,1,2018-11-07,MM,keep,F,2014-04-08,100,Four Year College,Four Year College,mono_ling,4.586301369863014,TRUE
+181107_6_inf,4,6,1,2018-11-07,MM,keep,F,2014-04-08,100,Four Year College,Four Year College,mono_ling,4.586301369863014,TRUE
+181107_7_inf,4,1,1,2018-11-07,MM,keep,M,2014-03-18,75,Four Year College,Graduate Degree,bi_ling,4.6438356164383565,TRUE
+181107_7_inf,4,2,0,2018-11-07,MM,keep,M,2014-03-18,75,Four Year College,Graduate Degree,bi_ling,4.6438356164383565,TRUE
+181107_7_inf,4,3,0,2018-11-07,MM,keep,M,2014-03-18,75,Four Year College,Graduate Degree,bi_ling,4.6438356164383565,TRUE
+181107_7_inf,4,4,0,2018-11-07,MM,keep,M,2014-03-18,75,Four Year College,Graduate Degree,bi_ling,4.6438356164383565,TRUE
+181107_7_inf,4,5,1,2018-11-07,MM,keep,M,2014-03-18,75,Four Year College,Graduate Degree,bi_ling,4.6438356164383565,TRUE
+181107_7_inf,4,6,1,2018-11-07,MM,keep,M,2014-03-18,75,Four Year College,Graduate Degree,bi_ling,4.6438356164383565,TRUE
+180907_1_inf,4,1,0,2018-09-07,MM,keep,F,2013-12-09,100,Graduate Degree,Four Year College,mono_ling,4.747945205479452,TRUE
+180907_1_inf,4,2,1,2018-09-07,MM,keep,F,2013-12-09,100,Graduate Degree,Four Year College,mono_ling,4.747945205479452,TRUE
+180907_1_inf,4,3,1,2018-09-07,MM,keep,F,2013-12-09,100,Graduate Degree,Four Year College,mono_ling,4.747945205479452,TRUE
+180907_1_inf,4,4,0,2018-09-07,MM,keep,F,2013-12-09,100,Graduate Degree,Four Year College,mono_ling,4.747945205479452,TRUE
+180907_1_inf,4,5,1,2018-09-07,MM,keep,F,2013-12-09,100,Graduate Degree,Four Year College,mono_ling,4.747945205479452,TRUE
+180907_1_inf,4,6,1,2018-09-07,MM,keep,F,2013-12-09,100,Graduate Degree,Four Year College,mono_ling,4.747945205479452,TRUE
+180907_2_inf,3,1,1,2018-09-07,MM,keep,M,2015-06-30,100,Graduate Degree,Graduate Degree,mono_ling,3.191780821917808,TRUE
+180907_2_inf,3,2,1,2018-09-07,MM,keep,M,2015-06-30,100,Graduate Degree,Graduate Degree,mono_ling,3.191780821917808,TRUE
+180907_2_inf,3,3,1,2018-09-07,MM,keep,M,2015-06-30,100,Graduate Degree,Graduate Degree,mono_ling,3.191780821917808,TRUE
+180907_2_inf,3,4,1,2018-09-07,MM,keep,M,2015-06-30,100,Graduate Degree,Graduate Degree,mono_ling,3.191780821917808,TRUE
+180907_2_inf,3,5,1,2018-09-07,MM,keep,M,2015-06-30,100,Graduate Degree,Graduate Degree,mono_ling,3.191780821917808,TRUE
+180907_2_inf,3,6,1,2018-09-07,MM,keep,M,2015-06-30,100,Graduate Degree,Graduate Degree,mono_ling,3.191780821917808,TRUE
+180907_3_inf,2,1,1,2018-09-07,MM,keep,F,2016-03-05,100,Four Year College,some college,mono_ling,2.5095890410958903,TRUE
+180907_3_inf,2,2,1,2018-09-07,MM,keep,F,2016-03-05,100,Four Year College,some college,mono_ling,2.5095890410958903,TRUE
+180907_3_inf,2,3,1,2018-09-07,MM,keep,F,2016-03-05,100,Four Year College,some college,mono_ling,2.5095890410958903,TRUE
+180907_3_inf,2,4,1,2018-09-07,MM,keep,F,2016-03-05,100,Four Year College,some college,mono_ling,2.5095890410958903,TRUE
+180907_3_inf,2,5,1,2018-09-07,MM,keep,F,2016-03-05,100,Four Year College,some college,mono_ling,2.5095890410958903,TRUE
+180907_3_inf,2,6,1,2018-09-07,MM,keep,F,2016-03-05,100,Four Year College,some college,mono_ling,2.5095890410958903,TRUE
+180907_4_inf,2,1,1,2018-09-07,MM,keep,F,2015-09-11,100,Graduate Degree,Four Year College,mono_ling,2.9917808219178084,TRUE
+180907_4_inf,2,2,1,2018-09-07,MM,keep,F,2015-09-11,100,Graduate Degree,Four Year College,mono_ling,2.9917808219178084,TRUE
+180907_4_inf,2,3,0,2018-09-07,MM,keep,F,2015-09-11,100,Graduate Degree,Four Year College,mono_ling,2.9917808219178084,TRUE
+180907_4_inf,2,4,1,2018-09-07,MM,keep,F,2015-09-11,100,Graduate Degree,Four Year College,mono_ling,2.9917808219178084,TRUE
+180907_4_inf,2,5,0,2018-09-07,MM,keep,F,2015-09-11,100,Graduate Degree,Four Year College,mono_ling,2.9917808219178084,TRUE
+180907_4_inf,2,6,1,2018-09-07,MM,keep,F,2015-09-11,100,Graduate Degree,Four Year College,mono_ling,2.9917808219178084,TRUE
+180907_5_inf,4,1,0,2018-09-07,MM,keep,F,2014-02-13,100,Graduate Degree,Four Year College,mono_ling,4.567123287671233,TRUE
+180907_5_inf,4,2,0,2018-09-07,MM,keep,F,2014-02-13,100,Graduate Degree,Four Year College,mono_ling,4.567123287671233,TRUE
+180907_5_inf,4,3,1,2018-09-07,MM,keep,F,2014-02-13,100,Graduate Degree,Four Year College,mono_ling,4.567123287671233,TRUE
+180907_5_inf,4,4,1,2018-09-07,MM,keep,F,2014-02-13,100,Graduate Degree,Four Year College,mono_ling,4.567123287671233,TRUE
+180907_5_inf,4,5,1,2018-09-07,MM,keep,F,2014-02-13,100,Graduate Degree,Four Year College,mono_ling,4.567123287671233,TRUE
+180907_5_inf,4,6,0,2018-09-07,MM,keep,F,2014-02-13,100,Graduate Degree,Four Year College,mono_ling,4.567123287671233,TRUE
+180907_6_inf,2,1,1,2018-09-07,MM,keep,M,2016-06-11,100,Four Year College,Four Year College,mono_ling,2.241095890410959,TRUE
+180907_6_inf,2,2,0,2018-09-07,MM,keep,M,2016-06-11,100,Four Year College,Four Year College,mono_ling,2.241095890410959,TRUE
+180907_6_inf,2,3,0,2018-09-07,MM,keep,M,2016-06-11,100,Four Year College,Four Year College,mono_ling,2.241095890410959,TRUE
+180907_6_inf,2,4,1,2018-09-07,MM,keep,M,2016-06-11,100,Four Year College,Four Year College,mono_ling,2.241095890410959,TRUE
+180907_6_inf,2,5,1,2018-09-07,MM,keep,M,2016-06-11,100,Four Year College,Four Year College,mono_ling,2.241095890410959,TRUE
+180907_6_inf,2,6,1,2018-09-07,MM,keep,M,2016-06-11,100,Four Year College,Four Year College,mono_ling,2.241095890410959,TRUE
+180907_7_inf,2,1,1,2018-09-07,MM,keep,F,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_7_inf,2,2,0,2018-09-07,MM,keep,F,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_7_inf,2,3,1,2018-09-07,MM,keep,F,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_7_inf,2,4,0,2018-09-07,MM,keep,F,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_7_inf,2,5,1,2018-09-07,MM,keep,F,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_7_inf,2,6,0,2018-09-07,MM,keep,F,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_8_inf,2,1,1,2018-09-07,MM,keep,M,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_8_inf,2,2,1,2018-09-07,MM,keep,M,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_8_inf,2,3,0,2018-09-07,MM,keep,M,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_8_inf,2,4,1,2018-09-07,MM,keep,M,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_8_inf,2,5,0,2018-09-07,MM,keep,M,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_8_inf,2,6,0,2018-09-07,MM,keep,M,2016-03-11,100,Four Year College,Four Year College,mono_ling,2.493150684931507,TRUE
+180907_10_inf,3,1,1,2018-09-07,MM,keep,F,2015-01-09,75,some college,some college,bi_ling,3.663013698630137,TRUE
+180907_10_inf,3,2,1,2018-09-07,MM,keep,F,2015-01-09,75,some college,some college,bi_ling,3.663013698630137,TRUE
+180907_10_inf,3,3,1,2018-09-07,MM,keep,F,2015-01-09,75,some college,some college,bi_ling,3.663013698630137,TRUE
+180907_10_inf,3,4,1,2018-09-07,MM,keep,F,2015-01-09,75,some college,some college,bi_ling,3.663013698630137,TRUE
+180907_10_inf,3,5,1,2018-09-07,MM,keep,F,2015-01-09,75,some college,some college,bi_ling,3.663013698630137,TRUE
+180907_10_inf,3,6,1,2018-09-07,MM,keep,F,2015-01-09,75,some college,some college,bi_ling,3.663013698630137,TRUE
+180907_11_inf,3,1,1,2018-09-07,MM,keep,F,2015-07-09,90-95,Four Year College,Four Year College,mono_ling,3.1671232876712327,TRUE
+180907_11_inf,3,2,1,2018-09-07,MM,keep,F,2015-07-09,90-95,Four Year College,Four Year College,mono_ling,3.1671232876712327,TRUE
+180907_11_inf,3,3,0,2018-09-07,MM,keep,F,2015-07-09,90-95,Four Year College,Four Year College,mono_ling,3.1671232876712327,TRUE
+180907_11_inf,3,4,0,2018-09-07,MM,keep,F,2015-07-09,90-95,Four Year College,Four Year College,mono_ling,3.1671232876712327,TRUE
+180907_11_inf,3,5,0,2018-09-07,MM,keep,F,2015-07-09,90-95,Four Year College,Four Year College,mono_ling,3.1671232876712327,TRUE
+180907_11_inf,3,6,1,2018-09-07,MM,keep,F,2015-07-09,90-95,Four Year College,Four Year College,mono_ling,3.1671232876712327,TRUE
+180907_12_inf,3,1,1,2018-09-07,MM,keep,F,2015-01-30,100,some college,some college,mono_ling,3.6054794520547944,TRUE
+180907_12_inf,3,2,1,2018-09-07,MM,keep,F,2015-01-30,100,some college,some college,mono_ling,3.6054794520547944,TRUE
+180907_12_inf,3,3,0,2018-09-07,MM,keep,F,2015-01-30,100,some college,some college,mono_ling,3.6054794520547944,TRUE
+180907_12_inf,3,4,1,2018-09-07,MM,keep,F,2015-01-30,100,some college,some college,mono_ling,3.6054794520547944,TRUE
+180907_12_inf,3,5,0,2018-09-07,MM,keep,F,2015-01-30,100,some college,some college,mono_ling,3.6054794520547944,TRUE
+180907_12_inf,3,6,0,2018-09-07,MM,keep,F,2015-01-30,100,some college,some college,mono_ling,3.6054794520547944,TRUE
+180907_13_inf,3,1,0,2018-09-07,MM,keep,F,2015-07-14,90-95,Graduate Degree,Graduate Degree,mono_ling,3.1534246575342464,TRUE
+180907_13_inf,3,2,1,2018-09-07,MM,keep,F,2015-07-14,90-95,Graduate Degree,Graduate Degree,mono_ling,3.1534246575342464,TRUE
+180907_13_inf,3,3,1,2018-09-07,MM,keep,F,2015-07-14,90-95,Graduate Degree,Graduate Degree,mono_ling,3.1534246575342464,TRUE
+180907_13_inf,3,4,1,2018-09-07,MM,keep,F,2015-07-14,90-95,Graduate Degree,Graduate Degree,mono_ling,3.1534246575342464,TRUE
+180907_13_inf,3,5,0,2018-09-07,MM,keep,F,2015-07-14,90-95,Graduate Degree,Graduate Degree,mono_ling,3.1534246575342464,TRUE
+180907_13_inf,3,6,1,2018-09-07,MM,keep,F,2015-07-14,90-95,Graduate Degree,Graduate Degree,mono_ling,3.1534246575342464,TRUE
+180907_14_inf,3,1,1,2018-09-07,MM,keep,M,2014-11-22,100,"NA","NA",mono_ling,3.7945205479452055,TRUE
+180907_14_inf,3,2,0,2018-09-07,MM,keep,M,2014-11-22,100,"NA","NA",mono_ling,3.7945205479452055,TRUE
+180907_14_inf,3,3,1,2018-09-07,MM,keep,M,2014-11-22,100,"NA","NA",mono_ling,3.7945205479452055,TRUE
+180907_14_inf,3,4,0,2018-09-07,MM,keep,M,2014-11-22,100,"NA","NA",mono_ling,3.7945205479452055,TRUE
+180907_14_inf,3,5,1,2018-09-07,MM,keep,M,2014-11-22,100,"NA","NA",mono_ling,3.7945205479452055,TRUE
+180907_14_inf,3,6,1,2018-09-07,MM,keep,M,2014-11-22,100,"NA","NA",mono_ling,3.7945205479452055,TRUE
+180907_15_inf,3,1,0,2018-09-07,MM,keep,F,2014-11-23,90-95,Graduate Degree,High School,mono_ling,3.791780821917808,TRUE
+180907_15_inf,3,2,0,2018-09-07,MM,keep,F,2014-11-23,90-95,Graduate Degree,High School,mono_ling,3.791780821917808,TRUE
+180907_15_inf,3,3,0,2018-09-07,MM,keep,F,2014-11-23,90-95,Graduate Degree,High School,mono_ling,3.791780821917808,TRUE
+180907_15_inf,3,4,0,2018-09-07,MM,keep,F,2014-11-23,90-95,Graduate Degree,High School,mono_ling,3.791780821917808,TRUE
+180907_15_inf,3,5,1,2018-09-07,MM,keep,F,2014-11-23,90-95,Graduate Degree,High School,mono_ling,3.791780821917808,TRUE
+180907_15_inf,3,6,1,2018-09-07,MM,keep,F,2014-11-23,90-95,Graduate Degree,High School,mono_ling,3.791780821917808,TRUE
+180816_2_inf,4,1,1,2018-08-16,MM,keep,M,2014-06-10,100,Four Year College,Graduate Degree,mono_ling,4.186301369863013,TRUE
+180816_2_inf,4,1,1,2018-08-16,MM,keep,M,2014-06-10,100,Four Year College,Graduate Degree,mono_ling,4.186301369863013,TRUE
+180816_2_inf,4,3,1,2018-08-16,MM,keep,M,2014-06-10,100,Four Year College,Graduate Degree,mono_ling,4.186301369863013,TRUE
+180816_2_inf,4,4,1,2018-08-16,MM,keep,M,2014-06-10,100,Four Year College,Graduate Degree,mono_ling,4.186301369863013,TRUE
+180816_2_inf,4,4,1,2018-08-16,MM,keep,M,2014-06-10,100,Four Year College,Graduate Degree,mono_ling,4.186301369863013,TRUE
+180816_2_inf,4,6,1,2018-08-16,MM,keep,M,2014-06-10,100,Four Year College,Graduate Degree,mono_ling,4.186301369863013,TRUE
+180816_4_inf,4,1,1,2018-08-16,MM,keep,M,2014-03-31,100,Four Year College,Four Year College,mono_ling,4.380821917808219,TRUE
+180816_4_inf,4,2,0,2018-08-16,MM,keep,M,2014-03-31,100,Four Year College,Four Year College,mono_ling,4.380821917808219,TRUE
+180816_4_inf,4,3,0,2018-08-16,MM,keep,M,2014-03-31,100,Four Year College,Four Year College,mono_ling,4.380821917808219,TRUE
+180816_4_inf,4,4,1,2018-08-16,MM,keep,M,2014-03-31,100,Four Year College,Four Year College,mono_ling,4.380821917808219,TRUE
+180816_4_inf,4,5,1,2018-08-16,MM,keep,M,2014-03-31,100,Four Year College,Four Year College,mono_ling,4.380821917808219,TRUE
+180816_4_inf,4,6,0,2018-08-16,MM,keep,M,2014-03-31,100,Four Year College,Four Year College,mono_ling,4.380821917808219,TRUE
+180816_5_inf,4,1,1,2018-08-16,MM,keep,F,2014-06-17,75,Graduate Degree,Graduate Degree,bi_ling,4.167123287671233,TRUE
+180816_5_inf,4,2,1,2018-08-16,MM,keep,F,2014-06-17,75,Graduate Degree,Graduate Degree,bi_ling,4.167123287671233,TRUE
+180816_5_inf,4,3,0,2018-08-16,MM,keep,F,2014-06-17,75,Graduate Degree,Graduate Degree,bi_ling,4.167123287671233,TRUE
+180816_5_inf,4,4,0,2018-08-16,MM,keep,F,2014-06-17,75,Graduate Degree,Graduate Degree,bi_ling,4.167123287671233,TRUE
+180816_5_inf,4,5,0,2018-08-16,MM,keep,F,2014-06-17,75,Graduate Degree,Graduate Degree,bi_ling,4.167123287671233,TRUE
+180816_5_inf,4,6,1,2018-08-16,MM,keep,F,2014-06-17,75,Graduate Degree,Graduate Degree,bi_ling,4.167123287671233,TRUE
+180816_6_inf,4,1,1,2018-08-16,MM,keep,M,2014-07-29,100,Four Year College,Four Year College,mono_ling,4.052054794520548,TRUE
+180816_6_inf,4,2,1,2018-08-16,MM,keep,M,2014-07-29,100,Four Year College,Four Year College,mono_ling,4.052054794520548,TRUE
+180816_6_inf,4,3,1,2018-08-16,MM,keep,M,2014-07-29,100,Four Year College,Four Year College,mono_ling,4.052054794520548,TRUE
+180816_6_inf,4,4,1,2018-08-16,MM,keep,M,2014-07-29,100,Four Year College,Four Year College,mono_ling,4.052054794520548,TRUE
+180816_6_inf,4,5,1,2018-08-16,MM,keep,M,2014-07-29,100,Four Year College,Four Year College,mono_ling,4.052054794520548,TRUE
+180816_6_inf,4,5,1,2018-08-16,MM,keep,M,2014-07-29,100,Four Year College,Four Year College,mono_ling,4.052054794520548,TRUE
+180816_7_inf,2,1,0,2018-08-16,MM,keep,M,2015-09-10,100,Graduate Degree,Graduate Degree,mono_ling,2.9342465753424656,TRUE
+180816_7_inf,2,1,0,2018-08-16,MM,keep,M,2015-09-10,100,Graduate Degree,Graduate Degree,mono_ling,2.9342465753424656,TRUE
+180816_7_inf,2,1,0,2018-08-16,MM,keep,M,2015-09-10,100,Graduate Degree,Graduate Degree,mono_ling,2.9342465753424656,TRUE
+180816_7_inf,2,4,0,2018-08-16,MM,keep,M,2015-09-10,100,Graduate Degree,Graduate Degree,mono_ling,2.9342465753424656,TRUE
+180816_7_inf,2,4,0,2018-08-16,MM,keep,M,2015-09-10,100,Graduate Degree,Graduate Degree,mono_ling,2.9342465753424656,TRUE
+180816_7_inf,2,4,0,2018-08-16,MM,keep,M,2015-09-10,100,Graduate Degree,Graduate Degree,mono_ling,2.9342465753424656,TRUE
+180822_1_inf,2,1,0,2018-08-22,MM,keep,M,2016-03-08,90-95,"NA","NA",mono_ling,2.4575342465753423,TRUE
+180822_1_inf,2,2,0,2018-08-22,MM,keep,M,2016-03-08,90-95,"NA","NA",mono_ling,2.4575342465753423,TRUE
+180822_1_inf,2,3,0,2018-08-22,MM,keep,M,2016-03-08,90-95,"NA","NA",mono_ling,2.4575342465753423,TRUE
+180822_1_inf,2,4,1,2018-08-22,MM,keep,M,2016-03-08,90-95,"NA","NA",mono_ling,2.4575342465753423,TRUE
+180822_1_inf,2,5,0,2018-08-22,MM,keep,M,2016-03-08,90-95,"NA","NA",mono_ling,2.4575342465753423,TRUE
+180822_1_inf,2,6,0,2018-08-22,MM,keep,M,2016-03-08,90-95,"NA","NA",mono_ling,2.4575342465753423,TRUE
+180822_2_inf,3,1,1,2018-08-22,MM,keep,F,2014-12-07,100,High School,High School,mono_ling,3.7095890410958905,TRUE
+180822_2_inf,3,2,0,2018-08-22,MM,keep,F,2014-12-07,100,High School,High School,mono_ling,3.7095890410958905,TRUE
+180822_2_inf,3,3,0,2018-08-22,MM,keep,F,2014-12-07,100,High School,High School,mono_ling,3.7095890410958905,TRUE
+180822_2_inf,3,4,1,2018-08-22,MM,keep,F,2014-12-07,100,High School,High School,mono_ling,3.7095890410958905,TRUE
+180822_2_inf,3,5,0,2018-08-22,MM,keep,F,2014-12-07,100,High School,High School,mono_ling,3.7095890410958905,TRUE
+180822_2_inf,3,6,1,2018-08-22,MM,keep,F,2014-12-07,100,High School,High School,mono_ling,3.7095890410958905,TRUE
+180822_3_inf,2,1,1,2018-08-22,MM,keep,M,2014-01-09,100,Graduate Degree,Graduate Degree,mono_ling,4.619178082191781,FALSE
+180822_3_inf,2,2,0,2018-08-22,MM,keep,M,2014-01-09,100,Graduate Degree,Graduate Degree,mono_ling,4.619178082191781,FALSE
+180822_3_inf,2,3,1,2018-08-22,MM,keep,M,2014-01-09,100,Graduate Degree,Graduate Degree,mono_ling,4.619178082191781,FALSE
+180822_3_inf,2,4,0,2018-08-22,MM,keep,M,2014-01-09,100,Graduate Degree,Graduate Degree,mono_ling,4.619178082191781,FALSE
+180822_3_inf,2,5,1,2018-08-22,MM,keep,M,2014-01-09,100,Graduate Degree,Graduate Degree,mono_ling,4.619178082191781,FALSE
+180822_3_inf,2,6,0,2018-08-22,MM,keep,M,2014-01-09,100,Graduate Degree,Graduate Degree,mono_ling,4.619178082191781,FALSE
+180822_4_inf,4,1,1,2018-08-22,MM,keep,M,2014-05-17,90-95,Four Year College,"NA",mono_ling,4.2684931506849315,TRUE
+180822_4_inf,4,2,1,2018-08-22,MM,keep,M,2014-05-17,90-95,Four Year College,"NA",mono_ling,4.2684931506849315,TRUE
+180822_4_inf,4,3,1,2018-08-22,MM,keep,M,2014-05-17,90-95,Four Year College,"NA",mono_ling,4.2684931506849315,TRUE
+180822_4_inf,4,4,0,2018-08-22,MM,keep,M,2014-05-17,90-95,Four Year College,"NA",mono_ling,4.2684931506849315,TRUE
+180822_4_inf,4,5,1,2018-08-22,MM,keep,M,2014-05-17,90-95,Four Year College,"NA",mono_ling,4.2684931506849315,TRUE
+180822_4_inf,4,6,1,2018-08-22,MM,keep,M,2014-05-17,90-95,Four Year College,"NA",mono_ling,4.2684931506849315,TRUE
+180822_5_inf,3,1,1,2018-08-22,MM,keep,F,2014-10-10,100,Graduate Degree,Four Year College,mono_ling,3.8684931506849316,TRUE
+180822_5_inf,3,2,0,2018-08-22,MM,keep,F,2014-10-10,100,Graduate Degree,Four Year College,mono_ling,3.8684931506849316,TRUE
+180822_5_inf,3,3,1,2018-08-22,MM,keep,F,2014-10-10,100,Graduate Degree,Four Year College,mono_ling,3.8684931506849316,TRUE
+180822_5_inf,3,4,1,2018-08-22,MM,keep,F,2014-10-10,100,Graduate Degree,Four Year College,mono_ling,3.8684931506849316,TRUE
+180822_5_inf,3,5,0,2018-08-22,MM,keep,F,2014-10-10,100,Graduate Degree,Four Year College,mono_ling,3.8684931506849316,TRUE
+180822_5_inf,3,6,1,2018-08-22,MM,keep,F,2014-10-10,100,Graduate Degree,Four Year College,mono_ling,3.8684931506849316,TRUE
+180822_6_inf,3,1,1,2018-08-22,MM,keep,F,2015-07-08,100,Four Year College,Four Year College,mono_ling,3.126027397260274,TRUE
+180822_6_inf,3,2,1,2018-08-22,MM,keep,F,2015-07-08,100,Four Year College,Four Year College,mono_ling,3.126027397260274,TRUE
+180822_6_inf,3,3,1,2018-08-22,MM,keep,F,2015-07-08,100,Four Year College,Four Year College,mono_ling,3.126027397260274,TRUE
+180822_6_inf,3,4,0,2018-08-22,MM,keep,F,2015-07-08,100,Four Year College,Four Year College,mono_ling,3.126027397260274,TRUE
+180822_6_inf,3,5,1,2018-08-22,MM,keep,F,2015-07-08,100,Four Year College,Four Year College,mono_ling,3.126027397260274,TRUE
+180822_6_inf,3,6,1,2018-08-22,MM,keep,F,2015-07-08,100,Four Year College,Four Year College,mono_ling,3.126027397260274,TRUE
+180822_7_inf,4,1,1,2018-08-22,MM,keep,M,2014-03-12,100,"NA","NA",mono_ling,4.449315068493151,TRUE
+180822_7_inf,4,2,1,2018-08-22,MM,keep,M,2014-03-12,100,"NA","NA",mono_ling,4.449315068493151,TRUE
+180822_7_inf,4,3,1,2018-08-22,MM,keep,M,2014-03-12,100,"NA","NA",mono_ling,4.449315068493151,TRUE
+180822_7_inf,4,4,1,2018-08-22,MM,keep,M,2014-03-12,100,"NA","NA",mono_ling,4.449315068493151,TRUE
+180822_7_inf,4,5,1,2018-08-22,MM,keep,M,2014-03-12,100,"NA","NA",mono_ling,4.449315068493151,TRUE
+180822_7_inf,4,6,0,2018-08-22,MM,keep,M,2014-03-12,100,"NA","NA",mono_ling,4.449315068493151,TRUE
+180822_8_inf,4,1,1,2018-08-22,MM,keep,F,2014-05-08,90-95,Graduate Degree,Four Year College,mono_ling,4.293150684931507,TRUE
+180822_8_inf,4,2,0,2018-08-22,MM,keep,F,2014-05-08,90-95,Graduate Degree,Four Year College,mono_ling,4.293150684931507,TRUE
+180822_8_inf,4,3,0,2018-08-22,MM,keep,F,2014-05-08,90-95,Graduate Degree,Four Year College,mono_ling,4.293150684931507,TRUE
+180822_8_inf,4,4,0,2018-08-22,MM,keep,F,2014-05-08,90-95,Graduate Degree,Four Year College,mono_ling,4.293150684931507,TRUE
+180822_8_inf,4,5,1,2018-08-22,MM,keep,F,2014-05-08,90-95,Graduate Degree,Four Year College,mono_ling,4.293150684931507,TRUE
+180822_8_inf,4,6,1,2018-08-22,MM,keep,F,2014-05-08,90-95,Graduate Degree,Four Year College,mono_ling,4.293150684931507,TRUE
+180823_3_inf,3,1,1,2018-08-23,MM,keep,M,2014-09-19,100,Graduate Degree,Graduate Degree,mono_ling,3.9287671232876713,TRUE
+180823_3_inf,3,2,0,2018-08-23,MM,keep,M,2014-09-19,100,Graduate Degree,Graduate Degree,mono_ling,3.9287671232876713,TRUE
+180823_3_inf,3,3,1,2018-08-23,MM,keep,M,2014-09-19,100,Graduate Degree,Graduate Degree,mono_ling,3.9287671232876713,TRUE
+180823_3_inf,3,4,1,2018-08-23,MM,keep,M,2014-09-19,100,Graduate Degree,Graduate Degree,mono_ling,3.9287671232876713,TRUE
+180823_3_inf,3,5,1,2018-08-23,MM,keep,M,2014-09-19,100,Graduate Degree,Graduate Degree,mono_ling,3.9287671232876713,TRUE
+180823_3_inf,3,6,1,2018-08-23,MM,keep,M,2014-09-19,100,Graduate Degree,Graduate Degree,mono_ling,3.9287671232876713,TRUE
+180823_5_inf,3,1,1,2018-08-23,MM,keep,M,2014-11-22,100,Graduate Degree,Graduate Degree,mono_ling,3.7534246575342465,TRUE
+180823_5_inf,3,2,0,2018-08-23,MM,keep,M,2014-11-22,100,Graduate Degree,Graduate Degree,mono_ling,3.7534246575342465,TRUE
+180823_5_inf,3,3,1,2018-08-23,MM,keep,M,2014-11-22,100,Graduate Degree,Graduate Degree,mono_ling,3.7534246575342465,TRUE
+180823_5_inf,3,4,1,2018-08-23,MM,keep,M,2014-11-22,100,Graduate Degree,Graduate Degree,mono_ling,3.7534246575342465,TRUE
+180823_5_inf,3,5,0,2018-08-23,MM,keep,M,2014-11-22,100,Graduate Degree,Graduate Degree,mono_ling,3.7534246575342465,TRUE
+180823_5_inf,3,6,1,2018-08-23,MM,keep,M,2014-11-22,100,Graduate Degree,Graduate Degree,mono_ling,3.7534246575342465,TRUE
+180823_7_inf,3,1,1,2018-08-23,MM,keep,F,2015-07-21,100,Graduate Degree,Some college,mono_ling,3.0931506849315067,TRUE
+180823_7_inf,3,2,1,2018-08-23,MM,keep,F,2015-07-21,100,Graduate Degree,Some college,mono_ling,3.0931506849315067,TRUE
+180823_7_inf,3,3,0,2018-08-23,MM,keep,F,2015-07-21,100,Graduate Degree,Some college,mono_ling,3.0931506849315067,TRUE
+180823_7_inf,3,4,0,2018-08-23,MM,keep,F,2015-07-21,100,Graduate Degree,Some college,mono_ling,3.0931506849315067,TRUE
+180823_7_inf,3,5,0,2018-08-23,MM,keep,F,2015-07-21,100,Graduate Degree,Some college,mono_ling,3.0931506849315067,TRUE
+180823_7_inf,3,6,0,2018-08-23,MM,keep,F,2015-07-21,100,Graduate Degree,Some college,mono_ling,3.0931506849315067,TRUE
+180823_10_inf,3,1,1,2018-08-23,MM,keep,F,2015-01-27,100,Four Year College,Four Year College,mono_ling,3.5726027397260274,TRUE
+180823_10_inf,3,2,0,2018-08-23,MM,keep,F,2015-01-27,100,Four Year College,Four Year College,mono_ling,3.5726027397260274,TRUE
+180823_10_inf,3,3,1,2018-08-23,MM,keep,F,2015-01-27,100,Four Year College,Four Year College,mono_ling,3.5726027397260274,TRUE
+180823_10_inf,3,4,0,2018-08-23,MM,keep,F,2015-01-27,100,Four Year College,Four Year College,mono_ling,3.5726027397260274,TRUE
+180823_10_inf,3,5,1,2018-08-23,MM,keep,F,2015-01-27,100,Four Year College,Four Year College,mono_ling,3.5726027397260274,TRUE
+180823_10_inf,3,6,0,2018-08-23,MM,keep,F,2015-01-27,100,Four Year College,Four Year College,mono_ling,3.5726027397260274,TRUE
+180912_1_inf,3,1,0,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_1_inf,3,2,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_1_inf,3,3,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_1_inf,3,4,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_1_inf,3,5,0,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_1_inf,3,6,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_2_inf,3,1,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_2_inf,3,2,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_2_inf,3,3,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_2_inf,3,4,0,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_2_inf,3,5,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_2_inf,3,6,1,2018-09-12,MM,keep,F,2014-11-29,100,"NA","NA",mono_ling,3.789041095890411,TRUE
+180912_3_inf,4,1,1,2018-09-12,MM,keep,M,2015-05-14,100,some college,some college,mono_ling,3.334246575342466,FALSE
+180912_3_inf,4,2,1,2018-09-12,MM,keep,M,2015-05-14,100,some college,some college,mono_ling,3.334246575342466,FALSE
+180912_3_inf,4,3,1,2018-09-12,MM,keep,M,2015-05-14,100,some college,some college,mono_ling,3.334246575342466,FALSE
+180912_3_inf,4,4,0,2018-09-12,MM,keep,M,2015-05-14,100,some college,some college,mono_ling,3.334246575342466,FALSE
+180912_3_inf,4,5,1,2018-09-12,MM,keep,M,2015-05-14,100,some college,some college,mono_ling,3.334246575342466,FALSE
+180912_3_inf,4,6,1,2018-09-12,MM,keep,M,2015-05-14,100,some college,some college,mono_ling,3.334246575342466,FALSE
+180912_4_inf,3,1,0,2018-09-12,MM,keep,F,2015-02-24,90-95,Four Year College,some college,mono_ling,3.5506849315068494,TRUE
+180912_4_inf,3,2,1,2018-09-12,MM,keep,F,2015-02-24,90-95,Four Year College,some college,mono_ling,3.5506849315068494,TRUE
+180912_4_inf,3,3,1,2018-09-12,MM,keep,F,2015-02-24,90-95,Four Year College,some college,mono_ling,3.5506849315068494,TRUE
+180912_4_inf,3,4,1,2018-09-12,MM,keep,F,2015-02-24,90-95,Four Year College,some college,mono_ling,3.5506849315068494,TRUE
+180912_4_inf,3,5,1,2018-09-12,MM,keep,F,2015-02-24,90-95,Four Year College,some college,mono_ling,3.5506849315068494,TRUE
+180912_4_inf,3,6,1,2018-09-12,MM,keep,F,2015-02-24,90-95,Four Year College,some college,mono_ling,3.5506849315068494,TRUE
+180912_5_inf,3,1,1,2018-09-12,MM,keep,M,2015-05-31,90-95,Graduate Degree,Graduate Degree,mono_ling,3.287671232876712,TRUE
+180912_5_inf,3,2,0,2018-09-12,MM,keep,M,2015-05-31,90-95,Graduate Degree,Graduate Degree,mono_ling,3.287671232876712,TRUE
+180912_5_inf,3,3,1,2018-09-12,MM,keep,M,2015-05-31,90-95,Graduate Degree,Graduate Degree,mono_ling,3.287671232876712,TRUE
+180912_5_inf,3,4,0,2018-09-12,MM,keep,M,2015-05-31,90-95,Graduate Degree,Graduate Degree,mono_ling,3.287671232876712,TRUE
+180912_5_inf,3,5,1,2018-09-12,MM,keep,M,2015-05-31,90-95,Graduate Degree,Graduate Degree,mono_ling,3.287671232876712,TRUE
+180912_5_inf,3,6,1,2018-09-12,MM,keep,M,2015-05-31,90-95,Graduate Degree,Graduate Degree,mono_ling,3.287671232876712,TRUE
+180912_7_inf,4,1,1,2018-09-12,MM,keep,M,2014-05-07,100,Graduate Degree,some college,mono_ling,4.353424657534247,TRUE
+180912_7_inf,4,2,0,2018-09-12,MM,keep,M,2014-05-07,100,Graduate Degree,some college,mono_ling,4.353424657534247,TRUE
+180912_7_inf,4,3,1,2018-09-12,MM,keep,M,2014-05-07,100,Graduate Degree,some college,mono_ling,4.353424657534247,TRUE
+180912_7_inf,4,4,0,2018-09-12,MM,keep,M,2014-05-07,100,Graduate Degree,some college,mono_ling,4.353424657534247,TRUE
+180912_7_inf,4,5,0,2018-09-12,MM,keep,M,2014-05-07,100,Graduate Degree,some college,mono_ling,4.353424657534247,TRUE
+180912_7_inf,4,6,1,2018-09-12,MM,keep,M,2014-05-07,100,Graduate Degree,some college,mono_ling,4.353424657534247,TRUE
+180912_8_inf,3,1,1,2018-09-12,MM,keep,F,2015-03-27,90-95,Four Year College,some college,mono_ling,3.4657534246575343,TRUE
+180912_8_inf,3,2,1,2018-09-12,MM,keep,F,2015-03-27,90-95,Four Year College,some college,mono_ling,3.4657534246575343,TRUE
+180912_8_inf,3,3,1,2018-09-12,MM,keep,F,2015-03-27,90-95,Four Year College,some college,mono_ling,3.4657534246575343,TRUE
+180912_8_inf,3,4,0,2018-09-12,MM,keep,F,2015-03-27,90-95,Four Year College,some college,mono_ling,3.4657534246575343,TRUE
+180912_8_inf,3,5,0,2018-09-12,MM,keep,F,2015-03-27,90-95,Four Year College,some college,mono_ling,3.4657534246575343,TRUE
+180912_8_inf,3,6,1,2018-09-12,MM,keep,F,2015-03-27,90-95,Four Year College,some college,mono_ling,3.4657534246575343,TRUE
+180912_9_inf,4,1,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_9_inf,4,2,0,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_9_inf,4,3,0,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_9_inf,4,4,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_9_inf,4,5,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_9_inf,4,6,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_10_inf,4,1,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_10_inf,4,2,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_10_inf,4,3,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_10_inf,4,4,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_10_inf,4,5,0,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_10_inf,4,6,1,2018-09-12,MM,keep,F,2014-02-20,100,"NA","NA",mono_ling,4.561643835616438,TRUE
+180912_12_inf,3,1,1,2018-09-12,MM,keep,M,2015-01-29,100,Graduate Degree,Graduate Degree,mono_ling,3.621917808219178,TRUE
+180912_12_inf,3,2,0,2018-09-12,MM,keep,M,2015-01-29,100,Graduate Degree,Graduate Degree,mono_ling,3.621917808219178,TRUE
+180912_12_inf,3,3,1,2018-09-12,MM,keep,M,2015-01-29,100,Graduate Degree,Graduate Degree,mono_ling,3.621917808219178,TRUE
+180912_12_inf,3,4,1,2018-09-12,MM,keep,M,2015-01-29,100,Graduate Degree,Graduate Degree,mono_ling,3.621917808219178,TRUE
+180912_12_inf,3,5,1,2018-09-12,MM,keep,M,2015-01-29,100,Graduate Degree,Graduate Degree,mono_ling,3.621917808219178,TRUE
+180912_12_inf,3,6,0,2018-09-12,MM,keep,M,2015-01-29,100,Graduate Degree,Graduate Degree,mono_ling,3.621917808219178,TRUE
+180912_13_inf,3,1,0,2018-09-12,MM,keep,F,2014-11-20,90-95,Graduate Degree,Four Year College,mono_ling,3.813698630136986,TRUE
+180912_13_inf,3,2,1,2018-09-12,MM,keep,F,2014-11-20,90-95,Graduate Degree,Four Year College,mono_ling,3.813698630136986,TRUE
+180912_13_inf,3,3,1,2018-09-12,MM,keep,F,2014-11-20,90-95,Graduate Degree,Four Year College,mono_ling,3.813698630136986,TRUE
+180912_13_inf,3,4,0,2018-09-12,MM,keep,F,2014-11-20,90-95,Graduate Degree,Four Year College,mono_ling,3.813698630136986,TRUE
+180912_13_inf,3,5,0,2018-09-12,MM,keep,F,2014-11-20,90-95,Graduate Degree,Four Year College,mono_ling,3.813698630136986,TRUE
+180912_13_inf,3,6,1,2018-09-12,MM,keep,F,2014-11-20,90-95,Graduate Degree,Four Year College,mono_ling,3.813698630136986,TRUE
+180912_14_inf,4,1,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,2,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,3,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,4,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,5,1,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE
+180912_14_inf,4,6,0,2018-09-12,MM,keep,F,2013-11-12,100,"NA","NA",mono_ling,4.835616438356165,TRUE

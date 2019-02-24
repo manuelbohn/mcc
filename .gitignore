@@ -4,8 +4,9 @@ my-own-auth.json
 *.Rapp.history
 *.Rproj
 *RData
-stats/rsconnect/*
+stats/kids/rsconnect/*
+stats/adults/rsconnect/*
 models/rsconnect/*
-
+stats/rsconnect/*
 
 .Rproj.user

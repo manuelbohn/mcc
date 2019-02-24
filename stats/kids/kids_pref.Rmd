@@ -202,7 +202,7 @@ library(lme4)
 
 lm_data <- d%>%
   filter(trial_type == "test")%>%
-  mutate(choiceAgent = ifelse( change == "false", agent, altAgent),
+  mutate(choiceAgent = ifelse( change == F, agent, altAgent),
          age_num = scale(age_num, center = TRUE, scale = TRUE))
 
 # maximal converging model
