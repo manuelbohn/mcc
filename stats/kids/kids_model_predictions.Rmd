@@ -1214,7 +1214,9 @@ ex3_data_param <- ex3_data%>%
                                                  list(c(diff_prior,diff_prior,1-diff_prior))
  
                                    ))))%>%
-  select(Speaker,age_num,Alignment,so,priorProbs,correct_inf)
+  ungroup()%>%
+  mutate(min_age = min(age_num))%>%
+  select(Speaker,age_num,min_age,Alignment,so,priorProbs,correct_inf)
 
 ```
 
@@ -1226,7 +1228,7 @@ noisyModelPredWebppl <-'
 var allData = dataFromR.ex3data
 
 var model = function(){
-  
+
   var noise = uniformDrift({a: 0, b: 1, width: 0.1})  
 
   var output = map(function(row){
@@ -1292,12 +1294,14 @@ var allData = dataFromR.ex3data
 
 var model = function(){
   
-  var noise_slope = uniformDrift({a: -2, b: 2, width: 0.2})
-  var noise_int = uniformDrift({a: -2, b: 2, width: 0.2})    
+  var noise_slope = uniformDrift({a: -2, b: 2, width: 0.4})
+  var noise_int = uniformDrift({a: -2, b: 2, width: 0.4})    
 
   var output = map(function(row){
 
-    var noise = logistic(noise_int + noise_slope * (row.age_num))
+    var noise = logistic(noise_int + noise_slope * (row.age_num-row.min_age))
+
+    //display(JSON.stringify(noise))
 
     var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.priorProbs,row.so)
 
@@ -1345,9 +1349,26 @@ dev_noisy_pred <- dev_noisy_model_pred %>%
             ci_upper =hdi_upper(value))%>%
   ungroup()%>%
   mutate(age = as.numeric(age))
+```
+
+```{r}
+
+x <- data_frame(
+  age = rep(seq(0,2, by = 0.05),8),
+  param = c(rep("-2/-2",41),rep("-2/-1",41),rep("-1/-1",41),rep("-1/0",41),rep("0/-1",41),rep("1/1",41),rep("2/1",41),rep("2/2",41)),
+  int = c(rep(-2,41),rep(-2,41),rep(-1,41),rep(-1,41),rep(0,41),rep(1,41),rep(2,41),rep(2,41)),
+  slope = c(rep(-2,41),rep(-1,41),rep(-1,41),rep(0,41),rep(-1,41),rep(1,41),rep(1,41),rep(2,41))
+) %>%
+  mutate(y = plogis(int + slope *age))
+
+ggplot(x, aes(x = age, y= y,col = param))+
+  geom_line()+
+  ylim(0,1)
+
 
 
 ```
+
 
 ## Plot comparing noisy model and data by continous age
 ```{r comparison plot by age, echo= FALSE}
