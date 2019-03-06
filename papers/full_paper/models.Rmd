@@ -1,0 +1,563 @@
+---
+title: "MCC Model Predictions"
+author: "Manuel Bohn"
+date: "15 6 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(langcog)
+library(rwebppl)
+library(coda)
+
+estimate_mode <- function(s) {
+  d <- density(s)
+  return(d$x[which.max(d$y)])
+}
+
+hdi_upper<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","upper"])
+}
+
+hdi_lower<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","lower"])
+}
+
+```
+
+# Adults
+
+## Model utensils code
+
+```{r rsaUtils, include = FALSE}
+rsaUtils <- '
+var all_objects = [
+{ shape: "triangle", id:1, location: 1},  
+{ shape: "triangle", id:2, location: 2},
+{ shape: "circle", id:1, location: 2}
+]
+
+var labels = ["dax","wug"]
+
+var lexicon1 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "triangle" :
+utterance.label == "wug" ? obj.shape == "circle" : 
+true
+}
+
+var lexicon2 = function(utterance, obj){
+utterance.label == "dax" ? obj.shape == "circle" :
+utterance.label == "wug" ? obj.shape == "triangle" : 
+true
+}
+
+var lexiconObjects = {
+"dax = triangle": {
+triangle: "dax", circle: "wug"
+},
+"dax = circle": {
+triangle: "wug", circle: "dax"
+},
+}
+
+var lexiconObject = {
+"dax = triangle": lexicon1,
+"dax = circle" : lexicon2
+}
+
+var point = function(utterance, obj){
+return obj.location == utterance.point
+}
+
+
+var utterancePrior = function(obj, lexiconName){
+var locationsWithShape = _.map(_.filter(all_objects, {shape: obj.shape}), "location")
+var point = uniformDraw(locationsWithShape)
+var label = lexiconObjects[lexiconName][obj.shape]
+return {label: label, point: point}
+}
+
+var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
+
+var speakerOptimality = 2.25;
+
+var addNoise = function(dist, noiseParam){
+   Infer({model: function(){ 
+      return flip(noiseParam) ? uniformDraw([0, 1]) : sample(dist)
+    }
+   })
+}
+'
+```
+
+## Pragmatic RSA model code 
+
+```{r rsaModel}
+rsaModel <- '
+var pragmaticListener = function(utterance, priorProbs){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior);
+var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+var S1 = speaker(obj, lexiconName, priorProbs);
+observe(S1, utterance)
+return obj.shape == "circle" ? 1 : 0
+}})
+}
+
+var speaker = function(obj, lexiconName, priorProbs){
+Infer({method: "enumerate", model: function(){
+var utterance = utterancePrior(obj, lexiconName);
+var L0 = literalListener(utterance, priorProbs);
+ factor(speakerOptimality * L0.score(obj.shape))
+return utterance
+}})
+}
+
+var literalListener = function(utterance, priorProbs){
+Infer({method: "enumerate", model: function(){
+var lexiconName = sample(LexiconPrior); 
+var lexicon = lexiconObject[lexiconName];
+var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+if ("label" in utterance) {
+ var truthValue = lexicon(utterance, obj);
+ condition(truthValue)
+}
+if (utterance.point) {
+ var truthValuePoint = point(utterance, obj);
+ condition(truthValuePoint)
+}
+return obj.shape 
+}})
+}
+'
+```
+
+## Adult model predictions
+
+### Experiment 4
+
+#### Model parameters and data
+```{r ex4 data}
+# load data  from experiment 4 to infer noise parameter
+adult_ex4_data <-read_csv(file="../../stats/data/adult_ex4.csv") 
+```
+
+```{r}
+# load data from prior strength manipulation experiments to set priors
+
+adult_ex4_prior_data <-read_csv(file="../../stats/data/adult_ex4_prior.csv") 
+```
+
+
+
+```{r model setup, include = FALSE}
+
+# create datafiles with model parameters
+
+strongPrior <- data.frame(
+  common_ground_manipulation = c("preference","preference","preference","preference","novelty","novelty","novelty","novelty"),
+  speaker = c("same_speaker","same_speaker","different_speaker","different_speaker","same_speaker","same_speaker","different_speaker","different_speaker"),
+  alignment = c("congruent","incongruent","congruent","incongruent","congruent","incongruent","congruent","incongruent"),
+  prior_manipulation = rep("strong",8))
+
+strong_prior_pref_same <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "preference",
+         prior_manipulation == "strong",
+         speaker == "same_speaker")%>%
+  summarise(prior = mean(correct))
+
+strong_prior_pref_diff <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "preference",
+         prior_manipulation == "strong",
+         speaker == "different_speaker")%>%
+  summarise(prior = mean(correct))
+
+strong_prior_novel_same <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "novelty",
+         prior_manipulation == "strong",
+         speaker == "same_speaker")%>%
+  summarise(prior = mean(correct))
+
+strong_prior_novel_diff <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "novelty",
+         prior_manipulation == "strong",
+         speaker == "different_speaker")%>%
+  summarise(prior = mean(correct))
+
+strongPrior$prior = list(
+    c(1-strong_prior_pref_same$prior,1-strong_prior_pref_same$prior,strong_prior_pref_same$prior), 
+    c(strong_prior_pref_same$prior,strong_prior_pref_same$prior,1-strong_prior_pref_same$prior), 
+    c(1-strong_prior_pref_diff$prior,1-strong_prior_pref_diff$prior,strong_prior_pref_diff$prior), 
+    c(strong_prior_pref_diff$prior,strong_prior_pref_diff$prior,1-strong_prior_pref_diff$prior),
+    c(1-strong_prior_novel_same$prior,1-strong_prior_novel_same$prior,strong_prior_novel_same$prior), 
+    c(strong_prior_novel_same$prior,strong_prior_novel_same$prior,1-strong_prior_novel_same$prior), 
+    c(1-strong_prior_novel_diff$prior,1-strong_prior_novel_diff$prior,strong_prior_novel_diff$prior), 
+    c(strong_prior_novel_diff$prior,strong_prior_novel_diff$prior,1-strong_prior_novel_diff$prior))
+
+mediumPrior <- data.frame(
+  common_ground_manipulation = c("preference","preference","preference","preference","novelty","novelty","novelty","novelty"),
+  speaker = c("same_speaker","same_speaker","different_speaker","different_speaker","same_speaker","same_speaker","different_speaker","different_speaker"),
+  alignment = c("congruent","incongruent","congruent","incongruent","congruent","incongruent","congruent","incongruent"),
+  prior_manipulation = rep("medium",8))
+
+medium_prior_pref_same <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "preference",
+         prior_manipulation == "medium",
+         speaker == "same_speaker")%>%
+  summarise(prior = mean(correct))
+
+medium_prior_pref_diff <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "preference",
+         prior_manipulation == "medium",
+         speaker == "different_speaker")%>%
+  summarise(prior = mean(correct))
+
+medium_prior_novel_same <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "novelty",
+         prior_manipulation == "medium",
+         speaker == "same_speaker")%>%
+  summarise(prior = mean(correct))
+
+medium_prior_novel_diff <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "novelty",
+         prior_manipulation == "medium",
+         speaker == "different_speaker")%>%
+  summarise(prior = mean(correct))
+
+mediumPrior$prior = list(
+    c(1-medium_prior_pref_same$prior,1-medium_prior_pref_same$prior,medium_prior_pref_same$prior), 
+    c(medium_prior_pref_same$prior,medium_prior_pref_same$prior,1-medium_prior_pref_same$prior), 
+    c(1-medium_prior_pref_diff$prior,1-medium_prior_pref_diff$prior,medium_prior_pref_diff$prior), 
+    c(medium_prior_pref_diff$prior,medium_prior_pref_diff$prior,1-medium_prior_pref_diff$prior),
+    c(1-medium_prior_novel_same$prior,1-medium_prior_novel_same$prior,medium_prior_novel_same$prior), 
+    c(medium_prior_novel_same$prior,medium_prior_novel_same$prior,1-medium_prior_novel_same$prior), 
+    c(1-medium_prior_novel_diff$prior,1-medium_prior_novel_diff$prior,medium_prior_novel_diff$prior), 
+    c(medium_prior_novel_diff$prior,medium_prior_novel_diff$prior,1-medium_prior_novel_diff$prior))
+
+
+weakPrior <- data.frame(
+  common_ground_manipulation = c("novelty","novelty","novelty","novelty"),
+  speaker = c("same_speaker","same_speaker","different_speaker","different_speaker"),
+  alignment = c("congruent","incongruent","congruent","incongruent"),
+  prior_manipulation = rep("weak",4))
+
+weak_prior_novel_same <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "novelty",
+         prior_manipulation == "weak",
+         speaker == "same_speaker")%>%
+  summarise(prior = mean(correct))
+
+weak_prior_novel_diff <- adult_ex4_prior_data %>%
+  filter(common_ground_manipulation == "novelty",
+         prior_manipulation == "weak",
+         speaker == "different_speaker")%>%
+  summarise(prior = mean(correct))
+
+weakPrior$prior = list(
+    c(1-weak_prior_novel_same$prior,1-weak_prior_novel_same$prior,weak_prior_novel_same$prior), 
+    c(weak_prior_novel_same$prior,weak_prior_novel_same$prior,1-weak_prior_novel_same$prior), 
+    c(1-weak_prior_novel_diff$prior,1-weak_prior_novel_diff$prior,weak_prior_novel_diff$prior), 
+    c(weak_prior_novel_diff$prior,weak_prior_novel_diff$prior,1-weak_prior_novel_diff$prior))
+
+# combining all priors into one data frame
+predPrior = rbind(strongPrior,mediumPrior,weakPrior)
+
+# data frame to keep track of unique conditions
+allConditions <- predPrior %>%
+  select(-prior)
+
+```
+
+
+#### Pragmatic model predictions
+
+```{r model rsa noise, include = FALSE}
+predictions.rsa <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.predPrior
+
+var model = function(){
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
+
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment, prior_manipulation : conditionInfo.prior_manipulation})
+
+   var conditionSpecificPriors =  _.filter(allPriorProbs, {common_ground_manipulation: conditionInfo.common_ground_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment, prior_manipulation : conditionInfo.prior_manipulation})
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors[0].prior)
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+   map(function(d){ 
+      observe(noisyModelPredictions, d.correct_inf)
+    }, conditionSpecificData)
+
+
+  return  [conditionInfo.common_ground_manipulation + "/" + conditionInfo.speaker + "/" +  conditionInfo.alignment+ "/" + conditionInfo.prior_manipulation, Math.exp(noisyModelPredictions.score(1))]
+
+}, allConditions)
+
+  return extend(_.fromPairs(conditionOutput), {noise: noise})
+
+}
+'
+```
+
+```{r predictions pragmatic model, include = FALSE}
+
+# ex4_pragm_model <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, predictions.rsa, sep='\n'),
+#   data = list(allData = adult_ex4_data, allConditions = allConditions, predPrior = predPrior), 
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   inference_opts = list(method = "MCMC", samples = 2000, burn = 500, verbose = T)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_pragm_model.rds")
+
+ex4_pragm_model <- readRDS("../../stats/saves/ex4_pragm_model.rds")
+
+# model predictions
+ex4_pragm_model_pred <- ex4_pragm_model %>%
+  filter(!(Parameter %in% c("noise")))  %>%
+  separate(Parameter, into = c("common_ground_manipulation", "speaker", "alignment", "prior_manipulation"), sep="/")%>%
+  mutate(model="pragmatic",
+         prior_manipulation = relevel(as.factor(prior_manipulation), ref = "weak"))
+
+
+## noise parameter
+ex4_pragm_model_noise <- ex4_pragm_model %>%
+  filter(Parameter %in% c("noise"))  %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
+
+```
+
+#### Prior only model predictions
+
+```{r model prior only , include = FALSE}
+predictions.prior.only <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.predPrior
+
+var model = function(){
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
+
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment, prior_manipulation : conditionInfo.prior_manipulation})
+
+   var conditionSpecificPriors =  _.filter(allPriorProbs, {common_ground_manipulation: conditionInfo.common_ground_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment, prior_manipulation : conditionInfo.prior_manipulation})
+
+  var modelPredictions = Infer({method: "enumerate", model: function(){
+      var obj = sample( Categorical({vs: all_objects, ps: conditionSpecificPriors[0].prior}));
+      return obj.shape == "circle" ? 1 : 0
+  }})
+
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+   map(function(d){ 
+      observe(noisyModelPredictions, d.correct_inf)
+    }, conditionSpecificData)
+
+
+  return  [conditionInfo.common_ground_manipulation + "/" + conditionInfo.speaker + "/" +  conditionInfo.alignment+ "/" + conditionInfo.prior_manipulation, Math.exp(noisyModelPredictions.score(1))]
+
+}, allConditions)
+
+return extend(_.fromPairs(conditionOutput), {noise: noise})
+
+}
+'
+```
+
+```{r predictions prior only model, include = FALSE}
+
+# ex4_prior_only_model <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, predictions.prior.only, sep='\n'),
+#   data = list(allData = adult_ex4_data, allConditions = allConditions, predPrior = predPrior),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   inference_opts = list(method = "MCMC", samples = 2000, burn = 500, verbose = T)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_prior_only_model.rds")
+
+ex4_prior_only_model <- readRDS("../../stats/saves/ex4_prior_only_model.rds")
+
+# model predictions
+ex4_prior_only_model_pred <- ex4_prior_only_model %>%
+  filter(!(Parameter %in% c("noise")))  %>%
+  separate(Parameter, into = c("common_ground_manipulation", "speaker", "alignment", "prior_manipulation"), sep="/")%>%
+  mutate(model="prior_only",
+         prior_manipulation = relevel(as.factor(prior_manipulation), ref = "weak"))
+
+
+## noise parameter
+ex4_prior_only_model_noise <- ex4_prior_only_model %>%
+  filter(Parameter %in% c("noise"))  %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
+
+```
+
+```{r model flat prior, include = FALSE}
+predictions.flat.prior <-'
+var allConditions = dataFromR.allConditions
+var allData = dataFromR.allData
+var allPriorProbs = dataFromR.predPrior
+
+var model = function(){
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
+
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment, prior_manipulation : conditionInfo.prior_manipulation})
+
+   var conditionSpecificPriors = [.5, .5, .5] 
+
+   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors)
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+   map(function(d){ 
+      observe(noisyModelPredictions, d.correct_inf)
+    }, conditionSpecificData)
+
+
+  return  [conditionInfo.common_ground_manipulation + "/" + conditionInfo.speaker + "/" +  conditionInfo.alignment+ "/" + conditionInfo.prior_manipulation, Math.exp(noisyModelPredictions.score(1))]
+
+}, allConditions)
+
+  return extend(_.fromPairs(conditionOutput), {noise: noise})
+
+}
+'
+```
+
+
+```{r predictions prior only model, include = FALSE}
+
+# ex4_flat_prior_model <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, predictions.flat.prior, sep='\n'),
+#   data = list(allData = adult_ex4_data, allConditions = allConditions, predPrior = predPrior),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   inference_opts = list(method = "MCMC", samples = 2000, burn = 500, verbose = T)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_flat_prior_model.rds")
+
+ex4_flat_prior_model <- readRDS("../../stats/saves/ex4_flat_prior_model.rds")
+
+# model predictions
+ex4_flat_prior_model_pred <- ex4_flat_prior_model %>%
+  filter(!(Parameter %in% c("noise")))  %>%
+  separate(Parameter, into = c("common_ground_manipulation", "speaker", "alignment", "prior_manipulation"), sep="/")%>%
+  mutate(model="flat_prior",
+         prior_manipulation = relevel(as.factor(prior_manipulation), ref = "weak"))
+
+
+## noise parameter
+ex4_flat_prior_model_noise <- ex4_flat_prior_model %>%
+  filter(Parameter %in% c("noise"))  %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
+
+```
+
+
+
+```{r}
+# combine model predictions with data 
+
+# summarize data 
+adult_ex4_data_summary <- adult_ex4_data %>%
+  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "weak"))%>%
+  mutate(model = "data") %>%
+  group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
+  summarize(k = sum(correct_inf), n = n())%>%
+  ungroup() %>%
+  mutate(a = 1 + k,
+         b = 1 + n - k,
+         ci_lower  = qbeta(.025, a, b),
+         ci_upper = qbeta(.975, a, b),
+         mean = (a-1)/(a+b-2))%>%
+  select(-a,-b,-n,-k)
+
+# summarize model predictions
+ex_4_model_pred <- bind_rows(
+  ex4_pragm_model_pred,
+  ex4_prior_only_model_pred,
+  ex4_flat_prior_model_pred
+)%>%
+  group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment) %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value), 
+            ci_upper = hdi_upper(value))
+
+# combine model predictions and data
+
+ex_4_pred <- bind_rows(
+  ex_4_model_pred,
+  adult_ex4_data_summary
+)
+
+```
+
+#### Plot model predictions and data
+
+```{r plot ex4 model predictions and data}
+ggplot(data = ex_4_pred, aes(x = alignment, y = mean, col = model)) +
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), size = .4,  position = position_dodge(width = .5), pch = 5)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Choosing More Informative")+
+  facet_grid ( prior_manipulation ~ common_ground_manipulation + speaker) +
+  theme_few() + 
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  scale_color_manual(name="Model",
+                     breaks=c("data","pragmatic","flat_prior","prior_only"),
+                     values= c("black","#859900","#6c71c4","#b58900"))+
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))
+```
+
+#### Correlation plot model predictions and data
+
+```{r plot }
+## correlation round 1
+
+ex_4_cor_plot <- ex_4_pred %>%
+  ungroup()%>%
+  filter(model != "data") %>%
+  mutate(data_mean = rep(ex_4_pred%>%filter(model == "data")%>%pull(mean),3),
+         data_ci_lower = rep(ex_4_pred%>%filter(model == "data")%>%pull(ci_lower),3),
+         data_ci_upper = rep(ex_4_pred%>%filter(model == "data")%>%pull(ci_upper),3))
+  
+
+
+ggplot(data = ex_4_cor_plot,aes(x = mean, y = data_mean, col = prior_manipulation)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = 1)+
+  geom_point(size = 3)+
+  geom_errorbar(aes(ymin = data_ci_lower, ymax = data_ci_upper),width = 0,size = 1)+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = 1)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  ylab("Data")+
+  facet_grid ( ~ model) +
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = mean, y = data_mean), inherit.aes = F, size = 3)+
+  theme_few(base_size = ) + 
+  scale_colour_ptol()
+```
+
+
+

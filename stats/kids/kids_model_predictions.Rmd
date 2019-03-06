@@ -42,13 +42,13 @@ hdi_lower<- function(s){
 
 ```{r pretest data, include=FALSE}
 
-pref_data <- read_csv(file="../data/kids_pref_data.csv")%>%
-  filter(age != "2",
-         trial_type != "train")%>%
+pref_data <- bind_rows(read_csv(file="../data/kids_pref_data.csv")%>%filter(age != "2")%>%mutate(speakerChange = change),
+                       read_csv(file="../data/kids_pref_2_data.csv"))%>%
+  filter(trial != "train")%>%
   mutate(age_bin = factor(age),
          experiment = "preference_pretest",
-         condition = ifelse(change == F | change == "false", "same_speaker", "different_speaker"),
-         agent = ifelse( change == F | change == "false", agent, altAgent),
+         condition = ifelse(speakerChange == F | speakerChange == "false", "same_speaker", "different_speaker"),
+         agent = ifelse( speakerChange == F | speakerChange == "false", agent, altAgent),
          minage = min(age_num))%>%
   select(experiment,subid,age_bin,age_num,trial,condition,agent,correct,minage)
 
@@ -70,8 +70,7 @@ pre_data <- bind_rows(pref_data,
 
 
 ex3_data <- read_csv(file="../data/kids_ex3_data.csv")%>%
-  filter(trial != "filler1",trial != "filler2")%>%
-  mutate(binned_age=cut(age_num, breaks=seq.int(3, 5, 0.05), labels=seq.int(0, 1.95, 0.05)))
+  filter(trial != "filler1",trial != "filler2")
 
 ```
 
@@ -111,9 +110,9 @@ plot_pref <- ggplot(data = pre_prior, aes(x = age_num, y = correct, col = condit
   geom_jitter(alpha = 0.5, height = 0.1, width = 0.1)+
   geom_smooth(aes(fill = condition),method = "lm", se = T, col = "black",  alpha = .5, size = .4)+
   geom_hline(yintercept = 0.5, lty=2)+
-  labs(x="",y="Proportion Expected Choice")+
+  labs(x="",y="Proportion Preferred Choice")+
   theme_few() +
-  ggtitle("Preference data")+
+  #ggtitle("Preference data")+
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
   coord_fixed(ratio = 2)+
@@ -124,9 +123,23 @@ plot_pref <- ggplot(data = pre_prior, aes(x = age_num, y = correct, col = condit
 
 ```
 
+
+```{r}
+
+ggsave("../graphs/ex_2_kids_pref.png", width = 2, height = 2, scale = 2)
+
+```
+
+
 ```{r, echo = F, fig.width= 8}
 ggarrange(plot_inf, plot_pref, widths = c(1.29,2))
 ```
+
+
+
+
+
+
 
 ## RSA model
 
@@ -377,8 +390,6 @@ plot_prior_con_mean <- plot_pref_prior_con%>%
   summarise(y_plot = mean(y_plot))
 
 
-
-
 pref_prior_plot <- ggplot(plot_pref_prior_con) + 
   geom_line(aes(x_plot, y_plot, group = iteration), col = "grey",alpha = 0.2) +
   #geom_ribbon(data = plot_prior_mean, aes(x =x_plot, ymin = ci_lower, ymax = ci_upper), fill = "red", alpha = 0.5) +
@@ -391,18 +402,15 @@ pref_prior_plot <- ggplot(plot_pref_prior_con) +
   theme_few()
 ```
 
-
 ```{r, echo = F, fig.width= 8}
 ggarrange(so_prior_plot, pref_prior_plot)
 ```
 
 There is no information in the priors. All structure in the models further down comes from the data
 
-# Model Predictions
+# Model Predictions Across age bins
 
-## Across age bins
-
-### RSA model predictions across age bins
+## RSA model predictions across age bins
 
 ```{r}
 modelPredAcrossWebppl <- '
@@ -507,7 +515,7 @@ var model  = function(){
 Taking samples and munging the data. 
 
 ```{r combined model predictions}
-model_pred_across <- readRDS("../saves/kids_model_predictions.rds")
+model_pred_across <- readRDS("../saves/kids_model_predictions_across.rds")
 
 model_pred_across<- webppl(
   program_code = paste(rsaUtils, rsaModel, modelPredAcrossWebppl , sep='\n'),
@@ -524,558 +532,30 @@ saveRDS(model_pred, file = "../saves/kids_model_predictions.rds")
 kids_model_pred_across <- model_pred_across%>%
   select(value) %>%
   map_df(bind_rows)%>%
-  mutate(iteration = rep(1:3600,each = 40))%>%
+  mutate(iteration = rep(1:3400,each = 40))%>%
   select(-diff_priorReg,-same_priorReg,-speakerOptimality,-so_slope,-so_int)%>%
   gather(condition, prop_informative, -iteration,-age_bin)%>%
   separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
   mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
          Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
 
-kids_model_pred_so <- model_pred%>%
+kids_model_pred_so <- model_pred_across%>%
   select(value) %>%
   map_df(bind_rows)%>%
-  mutate(iteration = rep(1:3600,each = 40))%>%
+  mutate(iteration = rep(1:3400,each = 40))%>%
   select(so_slope,so_int,age_bin,iteration,speakerOptimality)
 
-kids_model_pred_prior <- model_pred%>%
+kids_model_pred_prior <- model_pred_across%>%
   select(value) %>%
   map_df(bind_rows)%>%
-  mutate(iteration = rep(1:3600,each = 40))%>%
+  mutate(iteration = rep(1:3400,each = 40))%>%
   select(age_bin,iteration,diff_priorReg,same_priorReg)%>%
   gather(condition, prop_preferred, -iteration,-age_bin)%>%
   mutate(condition = ifelse(condition == "diff_priorReg", "different_speaker","same_speaker"))
 
 ```
 
-## By age bin with noise
-
-### Model parameters by age bin
-
-```{r}
-paramModelWebppl <- '
-
-var levels = function(df, label){
-  return _.uniq(_.map(df, label));
-}
-var prefData = _.filter(dataFromR, {experiment: "preference_pretest"})
-var infData = _.filter(dataFromR, {experiment: "informativeness_pretest"})
-// make finer grained as needed
-var binned_age_range = _.range(0, 2, 0.05)
-var all_conditions = levels(prefData, "condition")
-var foreach = function(fn, lst) {
-    var foreach_ = function(i) {
-        if (i < lst.length) {
-            fn(lst[i]);
-            foreach_(i + 1);
-        }
-    };
-    foreach_(0);
-};
-var logistic = function(x) {1 / (1 + Math.exp(-x))}
-var model  = function(){
-  var so_slope = uniformDrift({a: -2, b: 2, width: 0.4})
-  var so_int = uniformDrift({a: -2, b: 2, width: 0.4})
-  foreach(function(row){
-    var age = row.age_num
-    var speakerOptimality = so_int  + so_slope * (age - infData[0].minage)
-    
-    var inf_priorProbs = [.5, .5, .5] 
-    var rsaPredictions = pragmaticListener({label: "dax", point: 2 },
-    inf_priorProbs, speakerOptimality) 
-    
-    observe(rsaPredictions, row.correct)
-  }, infData)
-  var pref_params = map(function(cndtn){
-    var conditionData = _.filter(prefData, {condition: cndtn})
-    
-    var pref_slope = uniformDrift({a: -2, b: 2, width: 0.4})
-    var pref_int = uniformDrift({a: -2, b: 2, width: 0.4})    
-    
-    foreach(function(row){
-      var age = row.age_num
-      var priorReg = logistic(pref_int + pref_slope * (age - row.minage))
-      var priorProbs= [1-priorReg, priorReg]
-      var priorPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: prior_objects, ps: priorProbs}));
-      return obj.shape == "circle" ? 1 : 0
-      }})
-      
-      observe(priorPredictions, row.correct)
-    }, conditionData)
-    
-    return {pref_int, pref_slope, condition: cndtn}
-    
-  }, all_conditions)
-  
-  var diff_speaker_params = _.filter(pref_params, 
-        {condition: "different_speaker"})[0]
-  var same_speaker_params = _.filter(pref_params, 
-        {condition: "same_speaker"})[0]
-        
-  var predictions_by_age = map(function(age_bin){
-    
-    var speakerOptimality = so_int  + so_slope * age_bin
-    
-    var diff_priorReg = logistic(diff_speaker_params.pref_int +
-            diff_speaker_params.pref_slope * age_bin)
-
-    var same_priorReg = logistic(same_speaker_params.pref_int +
-            same_speaker_params.pref_slope * age_bin)
-
-    return extend(
-      {
-      diff_priorReg,
-      same_priorReg,
-      speakerOptimality,
-      age_bin,
-
-    })
-    
-  }, binned_age_range)
-  
-  return predictions_by_age
-}
-'
-```
-
-```{r}
-params_by_age<- readRDS("../saves/params_by_age.rds")
-
-# params_by_age<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, paramModelWebppl , sep='\n'),
-#   data = pre_data,
-#   data_var = "dataFromR",
-#   model_var = "model",
-#   chains = 4,
-#   cores = 4,
-#   inference_opts = list(method = "MCMC", samples = 2000, burn = 200, verbose = T)
-# )
-# 
-# saveRDS(params_by_age, file = "../saves/params_by_age.rds")
-
-model_params_by_age <- params_by_age%>%
-  select(value) %>%
-  map_df(bind_rows)%>%
-  group_by(age_bin)%>%
-  summarise(so_map = estimate_mode(speakerOptimality),
-            diff_priorReg_map = estimate_mode(diff_priorReg),
-            same_priorReg_map = estimate_mode(same_priorReg))
-
-
-
-```
-
-### RSA model predictions by age bin 
-
-```{r}
-modelPredWebppl <- '
-
-var levels = function(df, label){
-  return _.uniq(_.map(df, label));
-}
-
-var ex3Data = dataFromR.ex3data
-var modelParams = dataFromR.modelParams
-
-
-    //display(JSON.stringify(ex3Data))
-
-var predict_by_age = function(age_bin){
-
-    //display(JSON.stringify(age_bin))
-
-    var speakerOptimality = age_bin.so_map
-    
-    var diff_priorReg = age_bin.diff_priorReg_map
-
-    var diff_priorProbs_congruent = [1-diff_priorReg, 1-diff_priorReg, diff_priorReg]
-
-    var diff_priorProbs_incongruent = [diff_priorReg, diff_priorReg, 1-diff_priorReg]
-      
-    var rsaPredictions_diff_cong = expectation(pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_congruent,   speakerOptimality))
-
-    var rsaPredictions_diff_incong = expectation(pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_incongruent, speakerOptimality))
-      
-    var same_priorReg =age_bin.same_priorReg_map
-
-    var same_priorProbs_congruent = [1-same_priorReg, 1-same_priorReg, same_priorReg]
-
-    var same_priorProbs_incongruent = [same_priorReg, same_priorReg, 1-same_priorReg]
-
-    var rsaPredictions_same_cong = expectation(pragmaticListener({label: "dax", point: 2 }, same_priorProbs_congruent, speakerOptimality))
-
-    var rsaPredictions_same_incong = expectation(pragmaticListener({label: "dax", point: 2 }, same_priorProbs_incongruent, speakerOptimality))
-
-  return extend(
-      {rsaPredictions_diff_cong,
-      rsaPredictions_diff_incong,
-      rsaPredictions_same_cong,
-      rsaPredictions_same_incong,
-      age_bin
-    })
-
- }
-
-var predictions_by_age = map(predict_by_age, modelParams)
-
-predictions_by_age
-
-'
-```
-
-```{r combined model predictions}
-
-#model_pred <- readRDS("../saves/kids_model_predictions.rds")
-
-model_pred<- webppl(
-  program_code = paste(rsaUtils, rsaModel, modelPredWebppl , sep='\n'),
-  data = list(ex3data = ex3_data, modelParams = model_params_by_age),
-  data_var = "dataFromR"
-)
-
-#saveRDS(model_pred, file = "../saves/kids_model_predictions.rds")
-
-kids_model_pred <- model_pred %>%
-  mutate(age_bin = age_bin.age_bin)%>%
-  select(rsaPredictions_diff_cong,rsaPredictions_diff_incong,rsaPredictions_same_cong,rsaPredictions_same_incong,age_bin)%>%
-  gather(condition, prop_informative, -age_bin)%>%
-  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
-  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
-         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
-```
-
-### Noisy RSA predictions by age bin
-
-```{r}
-ageConditions <- data.frame(
-  age_bin = rep(seq.int(0, 1.95, 0.05),4),
-  Speaker = c(rep("same_speaker",80),rep("different_speaker",80)),
-  Alignment = c(rep("congruent",40),rep("incongruent",40),rep("congruent",40),rep("incongruent",40)))
-
-ageParams <- data.frame(
-  age_bin = rep(seq.int(0, 1.95, 0.05),4),
-  Speaker = c(rep("same_speaker",80),rep("different_speaker",80)),
-  Alignment = c(rep("congruent",40),rep("incongruent",40),rep("congruent",40),rep("incongruent",40)),
-  SpeakOpt = rep(model_params_by_age$so_map,4))
-
-listPrior <- data.frame(
-  a = 1:length(ageParams$age_bin),
-  ob1 = c(1- model_params_by_age$same_priorReg_map,
-          model_params_by_age$same_priorReg_map,
-          1- model_params_by_age$diff_priorReg_map,
-          model_params_by_age$diff_priorReg_map),
-  ob2 = c(1- model_params_by_age$same_priorReg_map,
-          model_params_by_age$same_priorReg_map,
-          1- model_params_by_age$diff_priorReg_map,
-          model_params_by_age$diff_priorReg_map),
-  ob3 = c(model_params_by_age$same_priorReg_map,
-          1- model_params_by_age$same_priorReg_map,
-          model_params_by_age$diff_priorReg_map,
-          1- model_params_by_age$diff_priorReg_map))%>%
-  group_by(a)%>%
-  mutate(list = list(c(ob1,ob2,ob3)))%>%
-  pull(list)
-
-
-ageParams$priorP <- listPrior
-
-```
-
-
-
-```{r}
-noisyModelPredWebppl <-'
-var allConditions = dataFromR.ageConditions
-var allData = dataFromR.ex3data
-var allParams = dataFromR.ageParams
-
-var model = function(){
-   var noise = uniformDrift({a: 0, b:1, width: 0.1})
-
-  var conditionOutput = map(function(conditionInfo){
-
-  var conditionSpecificData =  _.filter(allData, {binned_age: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
-
-      var ageConditionSpecificParams =  _.filter(allParams, {age_bin: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
-
-    //display(JSON.stringify(ageConditionSpecificParams[0].priorProbs))
-
-   var modelPredictions = pragmaticListener({label: "dax", point: 2 }, ageConditionSpecificParams[0].priorProbs,   ageConditionSpecificParams[0].SpeakOpt)
-
-   var noisyModelPredictions = addNoise(modelPredictions, noise)
-
-   map(function(d){ 
-     // display(JSON.stringify(noisyModelPredictions) + JSON.stringify(d.correct_inf))
-      observe(noisyModelPredictions, d.correct_inf)
-    }, conditionSpecificData)
-
-
-  return  [conditionInfo.age_bin + "-" + conditionInfo.Speaker + "-" +  conditionInfo.Alignment, Math.exp(noisyModelPredictions.score(1))]
-
-}, allConditions)
-
- return extend(_.fromPairs(conditionOutput), {noise: noise})
-}
-'
-```
-
-
-
-
-
-```{r}
-noisyModelPredWebppl <- '
-var levels = function(df, label){
-  return _.uniq(_.map(df, label));
-}
-
-var ex3Data = dataFromR.ex3data
-var ageConditions = dataFromR.ageConditions
-var ageParams = dataFromR.ageParams
-
-display(JSON.stringify(ageParams))
-
-
-var model = function(){
-  var noise = uniformDrift({a: 0, b:1, width: 0.1})
- // var predict_by_age = function(age_bin){
-
-    var conditionOutput = map(function(conditionInfo){
-
-   var ageConditionSpecificData =  _.filter(ex3Data, {binned_age: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
-    
-   var ageConditionSpecificParams =  _.filter(ageParams, {binned_age: conditionInfo.age_bin, Speaker: conditionInfo.Speaker, Alignment: conditionInfo.Alignment})
-
- display(JSON.stringify(ageConditionSpecificParams))
-      
-    var rsaPredictions = pragmaticListener({label: "dax", point: 2 }, ageConditionSpecificParams[0].Prior,   ageConditionSpecificParams[0].SpeakOpt)
-
-    var noisyRsaPredictions_diff_cong = addNoise(rsaPredictions_diff_cong, noise)
-    map(function(d){ 
-    observe(noisyRsaPredictions_diff_cong, d.correct_inf)
-    }, ageConditionSpecificData)
-  // display(conditionInfo.age_bin + "_" + conditionInfo.Speaker + "_" +  conditionInfo.Alignment)
-  // display(Math.exp(noisyRsaPredictions_diff_cong.score(1)))
-  
-  return  [conditionInfo.age_bin + "_" + conditionInfo.Speaker + "_" +  conditionInfo.Alignment, Math.exp(noisyRsaPredictions_diff_cong.score(1))]
-  }, ageConditions)
-//  }
-//  var predictions_by_age = map(predict_by_age, modelParams)
-  //display(JSON.stringify(predictions_by_age))
-//  return predictions_by_age
-}
-'
-```
-
-
-
-```{r}
-noisy_model_pred<- webppl(
-  program_code = paste(rsaUtils, rsaModel, noisyModelPredWebppl , sep='\n'),
-  data =list(ex3data = ex3_data %>% mutate(binned_age = as.numeric(as.character(binned_age))), 
-             ageConditions = ageConditions,
-             ageParams = ageParams),
-  data_var = "dataFromR",
-  model_var = "model",
-  chains = 4,
-  cores = 4,
-  inference_opts = list(method = "MCMC", samples = 1000, burn = 200, verbose = T)
-)
-
-
-
-posterior.noise <- noisy_model_pred %>%
-  filter(Parameter %in% c("noise", "priorExponent"))
-
-ggplot(posterior.noise, aes(x = value))+
-  geom_histogram()+
-  facet_wrap(~Parameter, scales = 'free')
-
-
-
-posterior.predictive <- noisy_model_pred %>%
-  filter(!(Parameter %in% c("noise", "priorExponent"))) %>%
-  separate(Parameter, into = c("age_bin", "Speaker", "Alignment"), sep="-")%>%
-  group_by(age_bin,Alignment,Speaker) %>%
-  summarise(mean = estimate_mode(value), 
-            ci_lower = hdi_lower(value), 
-            ci_upper =hdi_upper(value))%>%
-  ungroup()%>%
-  mutate(age_bin = as.numeric(age_bin))
-
-
-```
-
-```{r}
-noisyModelPredWebppl <- '
-
-var levels = function(df, label){
-  return _.uniq(_.map(df, label));
-}
-var prefData = _.filter(dataFromR, {experiment: "preference_pretest"})
-var infData = _.filter(dataFromR, {experiment: "informativeness_pretest"})
-
-// make finer grained as needed
-var binned_age_range = _.range(0, 2, 0.05)
-
-var all_conditions = levels(prefData, "condition")
-
-var foreach = function(fn, lst) {
-    var foreach_ = function(i) {
-        if (i < lst.length) {
-            fn(lst[i]);
-            foreach_(i + 1);
-        }
-    };
-    foreach_(0);
-};
-
-var logistic = function(x) {1 / (1 + Math.exp(-x))}
-
-var model  = function(){
-  
-  // global parameters
-
-  var noise = uniformDrift({a: 0, b:1, width: 0.1})
-
-  var so_slope = uniformDrift({a: -2, b: 2, width: 0.4})
-  var so_int = uniformDrift({a: -2, b: 2, width: 0.4})
-
-  foreach(function(row){
-
-    var age = row.age_num
-
-    var speakerOptimality = so_int  + so_slope * (age - infData[0].minage)
-    
-    var inf_priorProbs = [.5, .5, .5] 
-
-    var rsaPredictions = pragmaticListener({label: "dax", point: 2 },
-    inf_priorProbs, speakerOptimality) 
-    
-    observe(rsaPredictions, row.correct)
-
-  }, infData)
-
-  var pref_params = map(function(cndtn){
-
-    var conditionData = _.filter(prefData, {condition: cndtn})
-    
-    var pref_slope = uniformDrift({a: -2, b: 2, width: 0.4})
-    var pref_int = uniformDrift({a: -2, b: 2, width: 0.4})    
-    
-    foreach(function(row){
-
-      var age = row.age_num
-
-      var priorReg = logistic(pref_int + pref_slope * (age - row.minage))
-
-      var priorProbs= [1-priorReg, priorReg]
-
-
-
-      var priorPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: prior_objects, ps: priorProbs}));
-      return obj.shape == "circle" ? 1 : 0
-      }})
-      
-      observe(priorPredictions, row.correct)
-
-    }, conditionData)
-    
-    return {pref_int, pref_slope, condition: cndtn}
-    
-  }, all_conditions)
-  
-  var diff_speaker_params = _.filter(pref_params, 
-        {condition: "different_speaker"})[0]
-
-  var same_speaker_params = _.filter(pref_params, 
-        {condition: "same_speaker"})[0]
-        
-  var predictions_by_age = map(function(age_bin){
-    
-    var speakerOptimality = so_int  + so_slope * age_bin
-    
-    var diff_priorReg = logistic(diff_speaker_params.pref_int +
-            diff_speaker_params.pref_slope * age_bin)
-
-    var diff_priorProbs_congruent = [1-diff_priorReg, 1-diff_priorReg, diff_priorReg]
-
-    var diff_priorProbs_incongruent = [diff_priorReg, diff_priorReg, 1-diff_priorReg]
-      
-    var rsaPredictions_diff_cong = pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_congruent,   speakerOptimality)
-
-    var noisyRsaPredictions_diff_cong = expectation(addNoise(rsaPredictions_diff_cong, noise)) 
-
-    var rsaPredictions_diff_incong = pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_incongruent, speakerOptimality)
-
- var noisyRsaPredictions_diff_incong = expectation(addNoise(rsaPredictions_diff_incong, noise)) 
-      
-    var same_priorReg = logistic(same_speaker_params.pref_int +
-            same_speaker_params.pref_slope * age_bin)
-
-    var same_priorProbs_congruent = [1-same_priorReg, 1-same_priorReg, same_priorReg]
-
-    var same_priorProbs_incongruent = [same_priorReg, same_priorReg, 1-same_priorReg]
-
-
-  var rsaPredictions_same_cong = pragmaticListener({label: "dax", point: 2 }, same_priorProbs_congruent, speakerOptimality)
-
- var noisyRsaPredictions_same_cong = expectation(addNoise(rsaPredictions_same_cong, noise)) 
-
-   var rsaPredictions_same_incong = pragmaticListener({label: "dax", point: 2 }, same_priorProbs_incongruent, speakerOptimality)
-
- var noisyRsaPredictions_same_incong = expectation(addNoise(rsaPredictions_same_incong, noise))
-
-    return [ 
-    [ age_bin + "_diff_cong",  noisyRsaPredictions_diff_cong],
-    [ age_bin + "_diff_incong",  noisyRsaPredictions_diff_incong],
-    [ age_bin + "_same_cong",  noisyRsaPredictions_same_cong],
-    [ age_bin + "_same_incong",  noisyRsaPredictions_same_incong],
-]
-    
-  }, binned_age_range)
-  
-return _.fromPairs(predictions_by_age.concat([
-["so_slope", so_slope],
-["so_int", so_int],
-["noise", noise]
-]))
-
-}
-'
-```
-
-```{r noisy combined model predictions}
-
-noisy_model_pred <- readRDS("../saves/kids_noisy_model_predictions.rds")
-
-noisy_model_pred<- webppl(
-  program_code = paste(rsaUtils, rsaModel, noisyModelPredWebppl , sep='\n'),
-  data = pre_data,
-  data_var = "dataFromR",
-  model_var = "model",
-  chains = 4,
-  cores = 4,
-  inference_opts = list(method = "MCMC", samples = 2000, burn = 200, verbose = T)
-)
-
-#saveRDS(noisy_model_pred, file = "../saves/kids_noisy_model_predictions.rds")
-
-kids_noisy_model_pred <- noisy_model_pred%>%
-  select(value) %>%
-  map_df(bind_rows)%>%
-  mutate(iteration = rep(1:8000,each = 40))%>%
-  select(-diff_priorReg,-same_priorReg,-speakerOptimality,-so_slope,-so_int)%>%
-  gather(condition, prop_informative, -iteration,-age_bin,-noise)%>%
-  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
-  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
-         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
-
-```
-
-
-### Prior only model 
+## Prior only model 
 
 ```{r prior only model}
 priorOnlyWebppl <- '
@@ -1203,7 +683,7 @@ prior_same_incon,
 
 ```{r}
 
-prior_only_predictions <- readRDS("../saves/prior_only_predictions.rds")
+prior_only_predictions_across <- readRDS("../saves/prior_only_predictions_across.rds")
 
 # prior_only_predictions<- webppl(
 #   program_code = paste(rsaUtils, rsaModel, priorOnlyWebppl , sep='\n'),
@@ -1218,10 +698,10 @@ prior_only_predictions <- readRDS("../saves/prior_only_predictions.rds")
 #saveRDS(prior_only_predictions, "../saves/prior_only_predictions.rds")
 
 
-prior_only_model <- prior_only_predictions %>%
+prior_only_model_across <- prior_only_predictions_across %>%
   select(value) %>%
   map_df(bind_rows)%>%
-  mutate(iteration = rep(1:3000,each = 40))%>%
+  mutate(iteration = rep(1:4000,each = 40))%>%
   gather(condition, prop_informative, -iteration,-age_bin)%>%
   separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
   mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
@@ -1231,7 +711,7 @@ prior_only_model <- prior_only_predictions %>%
 ```
 
 
-# Sanity checks
+## Sanity checks
 
 ### Model based speaker optimality by age 
 
@@ -1296,55 +776,23 @@ ggarrange(pred_prior_plot, plot_pref, common.legend = T, legend = "right")
 
 The model accurately captures the the difference between conditions as well as the developmental trend we see in the data.  
 
-# Visualizing model predictions
+## Visualizing model predictions
 
-## RSA Model Predictions
+### RSA Model Predictions
 
 These are the predictions from the RSA model which takes in the age specific speaker optimality parameter and the age specific priors. The priors are converted from 2-object world into 3-object world before going into the model. This corresponds to the way we handled the priors for adults.
 
-```{r plot RSA model predictions, echo = F, fig.width= 10}
+```{r plot RSA model predictions, echo = F}
 
-  plot_model_pred <- kids_model_pred %>%
+  model_pred_across <- kids_model_pred_across %>%
   group_by(model,age_bin,Speaker,Alignment)%>%
   summarise(mean = mean(prop_informative),
             lci = hdi_lower(prop_informative),
             uci = hdi_upper(prop_informative))
 
-ggplot(kids_model_pred)+
-  #geom_line(data = kids_model_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
+ggplot(model_pred_across)+
   #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
-  #geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
-  geom_line(aes(age_bin, prop_informative), col = "black", size = 0.4, alpha = 1) + 
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(y="Proportion Expected Choice")+
-  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
-  ylim(-0.05,1.05)+
-  guides(col = F)+
-  facet_grid(Speaker~Alignment)+
-  theme_few()+
-  scale_color_solarized()+
-  scale_fill_solarized()
-```
-
-```{r, echo= F, fig.width= 10, fig.height = 8}
-pred_plot
-```
-
-
-## Noisy RSA Model Predictions
-
-```{r plot RSA model predictions, echo = F, fig.width= 10}
-
-  plot_noisy_model_pred <- kids_noisy_model_pred %>%
-  group_by(model,age_bin,Speaker,Alignment)%>%
-  summarise(mean = mean(prop_informative),
-            lci = hdi_lower(prop_informative),
-            uci = hdi_upper(prop_informative))
-
-pred_noisy_plot <- ggplot(plot_noisy_model_pred)+
-  #geom_line(data = kids_model_pred,aes(age_bin, prop_informative, group = paste(iteration,Speaker, sep= ""), col = Speaker),  alpha = 0.05) + 
-  #geom_pointrange(aes(y = mean, ymin = lci, ymax = uci))+
-  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = Speaker), alpha = .4) +
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci), alpha = .4) +
   geom_line(aes(age_bin, mean), col = "black", size = 0.4, alpha = 1) + 
   geom_hline(yintercept = 0.5, lty=2)+
   labs(y="Proportion Expected Choice")+
@@ -1357,16 +805,11 @@ pred_noisy_plot <- ggplot(plot_noisy_model_pred)+
   scale_fill_solarized()
 ```
 
-```{r, echo= F, fig.width= 10, fig.height = 8}
-pred_noisy_plot
-```
-
-
-## No Prior Model Predictions
+## No Prior Model Predictions Across
 
 ```{r, include = F}
 
-no_prior_pred <- bind_rows(
+no_prior_pred_across <- bind_rows(
   kids_model_pred_so%>%mutate(model = "no prior",
                               Speaker = "same_speaker",
                               Alignment = "congruent"),
@@ -1444,20 +887,16 @@ prior_only_plot
 
 ```{r}
 model_comp_mean_ci <- bind_rows(
-plot_model_pred%>%ungroup()%>%mutate(model = "RSA"), 
-plot_prior_only_pred%>%ungroup()%>%mutate(model = "Prior Only"),
-no_prior_plot%>%ungroup()%>%mutate(model = "No Prior")
-)
+kids_model_pred_across%>%mutate(model = "RSA"), 
+prior_only_model_across%>%mutate(model = "Prior Only"),
+no_prior_pred_across%>%mutate(model = "No Prior")
+)%>%
+  group_by(model,age_bin,Speaker,Alignment)%>%
+  summarise(mean = mean(prop_informative),
+            lci = hdi_lower(prop_informative),
+            uci = hdi_upper(prop_informative))
 
 #saveRDS(model_comp_mean_ci, "../saves/kids_model_comp_mean_ci.rds")
-
-model_comp <- bind_rows(
-kids_model_pred %>%mutate(model = "RSA"),
-prior_only_model%>%mutate(model = "Prior Only"),
-no_prior_pred%>%select(-so_slope,-so_int,-speakerOptimality)%>%mutate(model = "No Prior")
-  )
-
-# saveRDS(model_comp, "../saves/kids_model_comp.rds")
 
 ```
 
@@ -1485,22 +924,21 @@ pred_plot
 #ggsave("../graphs/no_prior_prior_only_model_predictions.pdf", width = 10, height = 8, scale = 1)
 ```
 
-# Model vs data
+## Model vs data
 
-## Predictions across age bins
+### Predictions across age bins
 
 ```{r comparison plot, echo= FALSE}
-
 p_data <- ex3_data %>%
   filter(trial != "filler1",
          trial != "filler2")%>%
   mutate(age_bin = age_num - 3)%>%
   group_by(Speaker, Alignment ,age_bin, subid)
 
-ggplot(posterior.predictive)+
+ggplot(model_comp_mean_ci)+
   #geom_jitter(data = p_data, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
-  geom_ribbon(aes(x =age_bin, ymin = ci_lower, ymax = ci_upper), alpha = .4) +
-  geom_line(aes(age_bin, mean), size = 1, alpha = 1, linetype = 1) + 
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = model), alpha = .4) +
+  geom_line(aes(age_bin, mean, col = model), size = .7, alpha = 1, linetype = 1) + 
   geom_smooth(data = p_data, aes(x = age_bin, y = correct_inf), col = "black", size = 0.6, method = "glm", method.args = list(family = "binomial"),  se = T,  alpha = .5, size = .4)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(y="proportion more informative")+
@@ -1513,34 +951,9 @@ ggplot(posterior.predictive)+
 
 ```
 
-## Predictions by age bin
 
-### Plot comparing noisy model and data by continous age
-```{r comparison plot by age, echo= FALSE}
 
-p_data <- ex3_data %>%
-  filter(trial != "filler1",
-         trial != "filler2")%>%
-  mutate(age_bin = age_num - 3)%>%
-  group_by(Speaker, Alignment ,age_bin, subid)
-
-ggplot(posterior.predictive)+
-  #geom_jitter(data = p_data, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
-  geom_ribbon(aes(x =age_bin, ymin = ci_lower, ymax = ci_upper), alpha = .4) +
-  geom_line(aes(age_bin, mean), size = 1, alpha = 1, linetype = 1) + 
-  geom_smooth(data = p_data, aes(x = age_bin, y = correct_inf), col = "black", size = 0.6, method = "glm", method.args = list(family = "binomial"),  se = T,  alpha = .5, size = .4)+
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(y="proportion more informative")+
-  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
-  ylim(-0.05,1.05)+
-  facet_grid(Speaker~Alignment)+
-  theme_few()+
-  scale_color_solarized()+
-  scale_fill_solarized()
-
-```
-
-## Correlation plot
+### Correlation plot
 ```{r}
 
 data <- ex3_data %>%
@@ -1556,10 +969,12 @@ data <- ex3_data %>%
          Data = (a-1)/(a+b-2))%>%
   select(-a,-b,-n,-k)
 
-model <- kids_model_pred %>%
+model <- kids_model_pred_across %>%
   mutate(subage = ifelse(age_bin<1,"3","4"))%>%
   group_by(model,Speaker,Alignment,subage)%>%
-  summarise(Model = mean(prop_informative))
+  summarise(Model = mean(prop_informative),
+            Model_ci_lower =hdi_lower(prop_informative) ,
+            Model_ci_upper = hdi_upper(prop_informative))
   
 
 cor_plot <- model %>%
@@ -1573,7 +988,7 @@ ggplot(data = cor_plot,aes(x = Model, y = Data, col = subage)) +
   geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
   geom_point(size = 3)+
   geom_errorbar(aes(ymin = Data_ci_lower, ymax = Data_ci_upper),width = 0,size = .5)+
-  #geom_errorbarh(aes(xmin = Model_ci_lower, xmax = Model_ci_upper), height = 0,size = .5)+
+  geom_errorbarh(aes(xmin = Model_ci_lower, xmax = Model_ci_upper), height = 0,size = .5)+
   coord_fixed()+
   stat_cor(method = "pearson", label.x = 0.1, label.y = 0.9, aes(x = Model, y = Data), inherit.aes = F)+
   facet_grid(~model)+
@@ -1584,5 +999,428 @@ ggplot(data = cor_plot,aes(x = Model, y = Data, col = subage)) +
 
 
 cor.test(cor_plot$Model,cor_plot$Data)
+```
+
+# Model predictions by age bin
+
+## Model parameters by age bin
+
+```{r}
+paramModelWebppl <- '
+
+var levels = function(df, label){
+  return _.uniq(_.map(df, label));
+}
+var prefData = _.filter(dataFromR, {experiment: "preference_pretest"})
+var infData = _.filter(dataFromR, {experiment: "informativeness_pretest"})
+
+// make finer grained as needed
+
+var binned_age_range = _.range(0, 2, 0.05)
+var all_conditions = levels(prefData, "condition")
+var foreach = function(fn, lst) {
+    var foreach_ = function(i) {
+        if (i < lst.length) {
+            fn(lst[i]);
+            foreach_(i + 1);
+        }
+    };
+    foreach_(0);
+};
+
+var logistic = function(x) {1 / (1 + Math.exp(-x))}
+
+var model  = function(){
+  var so_slope = uniformDrift({a: -2, b: 2, width: 0.4})
+  var so_int = uniformDrift({a: -2, b: 2, width: 0.4})
+  foreach(function(row){
+    var age = row.age_num
+    var speakerOptimality = so_int  + so_slope * (age - infData[0].minage)
+    
+    var inf_priorProbs = [.5, .5, .5] 
+    var rsaPredictions = pragmaticListener({label: "dax", point: 2 },
+    inf_priorProbs, speakerOptimality) 
+    
+    observe(rsaPredictions, row.correct)
+  }, infData)
+
+  var pref_params = map(function(cndtn){
+    var conditionData = _.filter(prefData, {condition: cndtn})
+    
+    var pref_slope = uniformDrift({a: -2, b: 2, width: 0.4})
+    var pref_int = uniformDrift({a: -2, b: 2, width: 0.4})    
+    
+    foreach(function(row){
+      var age = row.age_num
+      var priorReg = logistic(pref_int + pref_slope * (age - row.minage))
+      var priorProbs= [1-priorReg, priorReg]
+
+      var priorPredictions = Infer({method: "enumerate", model: function(){
+      var obj = sample( Categorical({vs: prior_objects, ps: priorProbs}));
+      return obj.shape == "circle" ? 1 : 0
+      }})
+      
+      observe(priorPredictions, row.correct)
+    }, conditionData)
+    
+    return [
+      {condition: cndtn, param: "pref_int", val: pref_int}, 
+      {condition: cndtn, param: "pref_slope", val: pref_slope}
+    ]
+    
+  }, all_conditions)
+  
+        
+  return _.flatten(pref_params).concat(
+    [
+      {condition: "NA", param: "so_slope", val: so_slope},
+      {condition: "NA", param: "so_int", val: so_int}
+    ]
+  )
+}
+'
+```
+
+```{r}
+params_by_age<- readRDS("../saves/params_by_age.rds")
+
+params_by_age<- webppl(
+  program_code = paste(rsaUtils, rsaModel, paramModelWebppl , sep='\n'),
+  data = pre_data,
+  data_var = "dataFromR",
+  model_var = "model",
+  chains = 4,
+  cores = 4,
+  inference_opts = list(method = "MCMC", samples = 2000, burn = 200, verbose = T)
+)
+
+#saveRDS(params_by_age, file = "../saves/params_by_age.rds")
+
+model_params <- params_by_age%>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  group_by(condition,param)%>%
+  summarise(param_map = estimate_mode(val))%>%
+  mutate(cond = paste(condition, param, sep = "_"))%>%
+  ungroup()%>%
+  select(cond,param_map)%>%
+  spread(cond,param_map)
+
+
+
+
+```
+
+## RSA model predictions by age bin 
+
+```{r}
+modelPredWebppl <- '
+
+var levels = function(df, label){
+  return _.uniq(_.map(df, label));
+}
+
+var age_bins = _.range(0, 2, 0.05)
+var ex3Data = dataFromR.ex3data
+var modelParams = dataFromR.modelParams[0]
+
+
+   //display(JSON.stringify(modelParams))
+
+var predict_by_age = function(age_bin){
+
+    //display(JSON.stringify(age_bin))
+
+    var speakerOptimality = modelParams.NA_so_int + modelParams.NA_so_slope * age_bin
+
+    var diff_priorReg = logistic(modelParams.different_speaker_pref_int + modelParams.different_speaker_pref_slope * age_bin)
+
+    //display(JSON.stringify(modelParams))
+
+    var diff_priorProbs_congruent = [1-diff_priorReg, 1-diff_priorReg, diff_priorReg]
+
+    var diff_priorProbs_incongruent = [diff_priorReg, diff_priorReg, 1-diff_priorReg]
+      
+    var rsaPredictions_diff_cong = expectation(pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_congruent,   speakerOptimality))
+
+    var rsaPredictions_diff_incong = expectation(pragmaticListener({label: "dax", point: 2 }, diff_priorProbs_incongruent, speakerOptimality))
+      
+    var same_priorReg = logistic(modelParams.same_speaker_pref_int + modelParams.same_speaker_pref_slope * age_bin)
+
+    var same_priorProbs_congruent = [1-same_priorReg, 1-same_priorReg, same_priorReg]
+
+    var same_priorProbs_incongruent = [same_priorReg, same_priorReg, 1-same_priorReg]
+
+    var rsaPredictions_same_cong = expectation(pragmaticListener({label: "dax", point: 2 }, same_priorProbs_congruent, speakerOptimality))
+
+    var rsaPredictions_same_incong = expectation(pragmaticListener({label: "dax", point: 2 }, same_priorProbs_incongruent, speakerOptimality))
+
+  return extend(
+      {rsaPredictions_diff_cong,
+      rsaPredictions_diff_incong,
+      rsaPredictions_same_cong,
+      rsaPredictions_same_incong,
+      age_bin
+    })
+
+ }
+
+var predictions_by_age = map(predict_by_age, age_bins)
+
+predictions_by_age
+
+'
+```
+
+
+```{r combined model predictions}
+
+model_pred<- webppl(
+  program_code = paste(rsaUtils, rsaModel, modelPredWebppl , sep='\n'),
+  data = list(ex3data = ex3_data_param, modelParams = model_params),
+  data_var = "dataFromR"
+)
+
+#saveRDS(model_pred, file = "../saves/kids_model_predictions.rds")
+
+pred <- model_pred %>%
+  gather(condition, mean, -age_bin)%>%
+  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
+  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
+         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"),
+         model = "parameter free", 
+         age = age_bin+3)%>%
+  select(-age_bin)
+```
+
+## Noisy RSA model Predictions 
+
+```{r}
+
+ex3_data_param <- ex3_data%>%
+  mutate(different_speaker_pref_int = model_params$different_speaker_pref_int,
+         different_speaker_pref_slope = model_params$different_speaker_pref_slope,
+         so_int = model_params$NA_so_int,
+         so_slope = model_params$NA_so_slope,
+         same_speaker_pref_int = model_params$same_speaker_pref_int,
+         same_speaker_pref_slope = model_params$same_speaker_pref_slope,
+         so = plogis(so_int+so_slope*(age_num-min(age_num))),
+         diff_prior = plogis(different_speaker_pref_int+different_speaker_pref_slope*(age_num-min(age_num))),
+         same_prior = plogis(same_speaker_pref_int+same_speaker_pref_slope*(age_num-min(age_num))))%>%
+  group_by(subid,trial)%>%
+        mutate(priorProbs = ifelse(Speaker == "same_speaker" & Alignment == "congruent", list(c(1-same_prior,1-same_prior,same_prior)),
+                                   ifelse(Speaker == "different_speaker" & Alignment == "congruent", list(c(1-diff_prior,1-diff_prior,diff_prior)),
+                                          ifelse(Speaker == "same_speaker" & Alignment == "incongruent", list(c(same_prior,same_prior,1-same_prior)),
+                                                 list(c(diff_prior,diff_prior,1-diff_prior))
+ 
+                                   ))))%>%
+  select(Speaker,age_num,Alignment,so,priorProbs,correct_inf)
+
+```
+
+### Noise parameter across age
+
+```{r}
+noisyModelPredWebppl <-'
+
+var allData = dataFromR.ex3data
+
+var model = function(){
+  
+  var noise = uniformDrift({a: 0, b: 1, width: 0.1})  
+
+  var output = map(function(row){
+
+    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.priorProbs,row.so)
+
+    var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+    observe(noisyModelPredictions, row.correct_inf)
+
+    return  [row.age_num + "/" + row.Speaker + "/" + row.Alignment, Math.exp(noisyModelPredictions.score(1))]
+
+}, allData)
+
+ return extend(_.fromPairs(output), {noise: noise})
+
+}
+'
+```
+
+```{r}
+noisy_model_pred<- webppl(
+  program_code = paste(rsaUtils, rsaModel, noisyModelPredWebppl , sep='\n'),
+  data =list(ex3data = ex3_data_param),
+  data_var = "dataFromR",
+  model_var = "model",
+  chains = 4,
+  cores = 4,
+  inference_opts = list(method = "MCMC", samples = 2000, burn = 500, verbose = T)
+)
+
+
+
+posterior.noise <- noisy_model_pred %>%
+  filter(Parameter %in% c("noise"))
+
+ggplot(posterior.noise, aes(x = value))+
+  geom_histogram()+
+  facet_wrap(~Parameter, scales = 'free')
+
+
+
+noisy_pred <- noisy_model_pred %>%
+  filter(!(Parameter %in% c("noise"))) %>%
+  separate(Parameter, into = c("age", "Speaker", "Alignment"), sep="/")%>%
+  mutate( model = "noise parameter across age")%>%
+  group_by(model, age,Alignment,Speaker) %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value), 
+            ci_upper =hdi_upper(value))%>%
+  ungroup()%>%
+  mutate(age = as.numeric(age))
+
+
+```
+
+### Developmental noise parameter
+
+```{r}
+developmentalNoisyModelPred <-'
+
+var allData = dataFromR.ex3data
+
+var model = function(){
+  
+  var noise_slope = uniformDrift({a: -2, b: 2, width: 0.2})
+  var noise_int = uniformDrift({a: -2, b: 2, width: 0.2})    
+
+  var output = map(function(row){
+
+    var noise = logistic(noise_int + noise_slope * (row.age_num))
+
+    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.priorProbs,row.so)
+
+    var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+    observe(noisyModelPredictions, row.correct_inf)
+
+    return  [row.age_num + "/" + row.Speaker + "/" + row.Alignment, Math.exp(noisyModelPredictions.score(1))]
+
+}, allData)
+
+ return extend(_.fromPairs(output), {noise_int: noise_int, noise_slope: noise_slope})
+
+}
+'
+```
+
+
+```{r}
+dev_noisy_model_pred<- webppl(
+  program_code = paste(rsaUtils, rsaModel, developmentalNoisyModelPred , sep='\n'),
+  data =list(ex3data = ex3_data_param),
+  data_var = "dataFromR",
+  model_var = "model",
+  chains = 4,
+  cores = 4,
+  inference_opts = list(method = "MCMC", samples = 2000, burn = 500, verbose = T)
+)
+
+posterior.noise <- dev_noisy_model_pred %>%
+  filter(Parameter %in% c("noise_int", "noise_slope"))
+
+ggplot(posterior.noise, aes(x = value))+
+  geom_histogram()+
+  facet_wrap(~Parameter, scales = 'free')
+
+
+dev_noisy_pred <- dev_noisy_model_pred %>%
+  filter(!(Parameter %in% c("noise_int", "noise_slope"))) %>%
+  separate(Parameter, into = c("age", "Speaker", "Alignment"), sep="/")%>%
+  mutate( model = "developmental noise parameter")%>%
+  group_by(model, age,Alignment,Speaker) %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value), 
+            ci_upper =hdi_upper(value))%>%
+  ungroup()%>%
+  mutate(age = as.numeric(age))
+
+
+```
+
+## Plot comparing noisy model and data by continous age
+```{r comparison plot by age, echo= FALSE}
+
+models <- bind_rows(
+  pred,
+  noisy_pred,
+  dev_noisy_pred
+)
+
+
+p_data <- ex3_data %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  mutate(age_bin = age_num - 3)%>%
+  group_by(Speaker, Alignment ,age_bin, subid)
+
+
+ggplot(models)+
+  #geom_jitter(data = p_data, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
+  geom_ribbon(aes(x = age, ymin = ci_lower, ymax = ci_upper, fill = model), alpha = .4) +
+  geom_line(aes(x = age, y = mean, col = model), size = 1, alpha = 1, linetype = 1) + 
+  geom_smooth(data = p_data, aes(x = age_num, y = correct_inf), col = "black", size = 0.6, method = "glm", method.args = list(family = "binomial"),  se = T,  alpha = .5, size = .4)+
+  #geom_hline(yintercept = 0.5, lty=2)+
+  labs(y="proportion more informative")+
+  ylim(-0.05,1.05)+
+  facet_grid(Speaker~Alignment)+
+  theme_few()+
+  scale_color_solarized()+
+  scale_fill_solarized()
+
+```
+
+```{r}
+data <- ex3_data %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  group_by(Speaker, Alignment ,subage) %>%
+  summarize(k = sum(correct_inf), n = n())%>%
+  ungroup() %>%
+  mutate(a = 1 + k,
+         b = 1 + n - k,
+         Data_ci_lower  = qbeta(.025, a, b),
+         Data_ci_upper = qbeta(.975, a, b),
+         Data = (a-1)/(a+b-2))%>%
+  select(-a,-b,-n,-k)
+
+model <- models %>%
+  mutate(age = ifelse(age<4,"3","4"))%>%
+  group_by(model,Speaker,Alignment,age)%>%
+  summarise(Model = mean(mean),
+            Model_ci_lower =hdi_lower(mean) ,
+            Model_ci_upper = hdi_upper(mean))
+  
+
+cor_plot <- model %>%
+  ungroup()%>%
+  mutate(Data = rep(data$Data,3),
+         Data_ci_lower = rep(data$Data_ci_lower,3),
+         Data_ci_upper  =rep( data$Data_ci_upper,3))
+
+
+ggplot(data = cor_plot,aes(x = Model, y = Data, col = age)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 3)+
+  geom_errorbar(aes(ymin = Data_ci_lower, ymax = Data_ci_upper),width = 0,size = .5)+
+  geom_errorbarh(aes(xmin = Model_ci_lower, xmax = Model_ci_upper), height = 0,size = .5)+
+  coord_fixed()+
+  facet_grid(~model)+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = Model, y = Data), inherit.aes = F)+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  theme_few() + 
+  scale_colour_solarized()
 ```
 

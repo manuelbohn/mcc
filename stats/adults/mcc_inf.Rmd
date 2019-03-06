@@ -14,7 +14,7 @@ library(ggthemes)
 
 
 ## importing data
-d <- read_csv(file="inf.data.csv") %>%
+d <- read_csv(file="../data/inf.data.csv") %>%
   mutate(trial_type = ifelse(trial == "train", "train", "test"))
 
 d%>%

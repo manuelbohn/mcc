@@ -553,18 +553,20 @@ ggsave("../graphs/overview_ex3_4.pdf", width = 10, height = 3, scale = 1)
 # kids
 
 ```{r pretest data, include=FALSE}
-pref_data <- read_csv(file="../data/kids_pref_data.csv")%>%
-  filter(age != "2",
-         trial_type != "train")%>%
+pref_data <- bind_rows(read_csv(file="../data/kids_pref_data.csv")%>%filter(age != "2")%>%mutate(speakerChange = change),
+                       read_csv(file="../data/kids_pref_2_data.csv"))%>%
+  filter(trial != "train")%>%
   mutate(age_bin = factor(age),
          experiment = "preference_pretest",
-         condition = ifelse(change == "false", "same_speaker", "different_speaker"),
-         agent = ifelse( change == "false", agent, altAgent),
+         condition = ifelse(speakerChange == F | speakerChange == "false", "same_speaker", "different_speaker"),
+         agent = ifelse( speakerChange == F | speakerChange == "false", agent, altAgent),
          minage = min(age_num))%>%
   select(experiment,subid,age_bin,age_num,trial,condition,agent,correct,minage)
 
 
-inf_data <- read_csv(file="../data/kids_inf_data.csv")%>%
+inf_data <- bind_rows(
+  read_csv(file="../data/kids_inf_data.csv"),
+  read_csv(file="../data/kids_inf_2_data.csv"))%>%
   filter(subage != "2",
          trial != "filler1",
          trial != "filler2")%>%
@@ -576,6 +578,11 @@ inf_data <- read_csv(file="../data/kids_inf_data.csv")%>%
   
 pre_data <- bind_rows(pref_data,
                       inf_data)
+
+
+ex3_data <- read_csv(file="../data/kids_ex3_data.csv")%>%
+  filter(trial != "filler1",trial != "filler2")%>%
+  mutate(binned_age=cut(age_num, breaks=seq.int(3, 5, 0.05), labels=seq.int(0, 1.95, 0.05)))
 ```
 
 
@@ -621,7 +628,7 @@ ggplot(data = pre_prior, aes(x = age_num, y = correct, col = condition)) +
   geom_smooth(aes(fill = condition),method = "lm", se = T, col = "black",  alpha = .5, size = 1)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="age",y="Proportion Expected Choice")+
-  theme_few(base_size = 20) +
+  theme_few() +
   #ggtitle("Preference data")+
   ylim(0,1)+
   guides(alpha = F)+ 
@@ -635,7 +642,7 @@ ggplot(data = pre_prior, aes(x = age_num, y = correct, col = condition)) +
 ```
 
 ```{r}
-ggsave("../graphs/kids_pref.png", width = 5, height = 4, scale = 1.5)
+ggsave("../graphs/kids_pref.png", width = 3.5, height = 3.5, scale = 1.2)
 ```
 
 ```{r pretest plot prior, echo = F}
@@ -643,7 +650,7 @@ ggsave("../graphs/kids_pref.png", width = 5, height = 4, scale = 1.5)
 
 kids_novel_data <- read_csv(file="../data/kids_novel.data.round1.csv")%>%
   filter(age != 2)%>%
-  mutate(condition = ifelse(change == "false", "same_speaker", "different_speaker"))
+  mutate(condition = ifelse(change == F, "same_speaker", "different_speaker"))
 
 
 p_kids_novel <- kids_novel_data %>%
@@ -656,7 +663,7 @@ ggplot(data = p_kids_novel, aes(x = age_num, y = correct, col = condition)) +
   geom_smooth(aes(fill = condition),method = "lm", se = T, col = "black",  alpha = .5, size = 1)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="age",y="Proportion Expected Choice")+
-  theme_few(base_size = 20) +
+  theme_few() +
   #ggtitle("Preference data")+
   ylim(0,1)+
   guides(alpha = F)+ 
@@ -670,7 +677,7 @@ ggplot(data = p_kids_novel, aes(x = age_num, y = correct, col = condition)) +
 ```
 
 ```{r}
-ggsave("../graphs/kids_novel.png", width = 5, height = 4, scale = 1.5)
+ggsave("../graphs/kids_novel.png", width = 3.5, height = 3.5, scale = 1.2)
 ```
 
 ### Model based speaker optimality by age 
@@ -757,38 +764,194 @@ ggsave("../graphs/kids_prior_model.png", width = 5, height = 4, scale = 1.5)
 ```
 
 ```{r}
-model_comp_mean_ci <- bind_rows(
-#plot_model_pred%>%ungroup()%>%mutate(model = "RSA"), 
-plot_prior_only_pred%>%ungroup()%>%mutate(model = "Prior Only"),
-no_prior_plot%>%ungroup()%>%mutate(model = "No Prior")
-)
 
-model_comp <- bind_rows(
-#kids_model_pred %>%mutate(model = "RSA"),
-prior_only_model%>%mutate(model = "Prior Only"),
-no_prior_pred%>%select(-so_slope,-so_int,-speakerOptimality)%>%mutate(model = "No Prior")
-  )
+prior_only_predictions_across <- readRDS("../saves/prior_only_predictions_across.rds")
+
+prior_only_model_across <- prior_only_predictions_across %>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  mutate(iteration = rep(1:4000,each = 40))%>%
+  gather(condition, prop_informative, -iteration,-age_bin)%>%
+  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
+  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
+         Alignment = ifelse(Alignment == "con", "congruent","incongruent"))
+
+
+
+model_pred_across <- readRDS("../saves/kids_model_predictions_across.rds")
+
+kids_model_pred_across <- model_pred_across%>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  mutate(iteration = rep(1:3400,each = 40))%>%
+  select(-diff_priorReg,-same_priorReg,-speakerOptimality,-so_slope,-so_int)%>%
+  gather(condition, prop_informative, -iteration,-age_bin)%>%
+  separate(condition, into = c("model", "Speaker", "Alignment"), sep="_")%>%
+  mutate(Speaker = ifelse(Speaker == "diff", "different_speaker","same_speaker"),
+         Alignment = ifelse(Alignment == "cong", "congruent","incongruent"))
+
+kids_model_pred_so <- model_pred_across%>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  mutate(iteration = rep(1:3400,each = 40))%>%
+  select(so_slope,so_int,age_bin,iteration,speakerOptimality)
+
+
+no_prior_pred_across <- bind_rows(
+  kids_model_pred_so%>%mutate(model = "no prior",
+                              Speaker = "same_speaker",
+                              Alignment = "congruent"),
+    kids_model_pred_so%>%mutate(model = "no prior",
+                              Speaker = "different_speaker",
+                              Alignment = "congruent"),
+    kids_model_pred_so%>%mutate(model = "no prior",
+                              Speaker = "same_speaker",
+                              Alignment = "incongruent"),
+    kids_model_pred_so%>%mutate(model = "no prior",
+                              Speaker = "different_speaker",
+                              Alignment = "incongruent")
+  ) %>%
+  mutate(prop_informative = plogis(so_int+so_slope*age_bin))
+
+
+model_comp_mean_ci <- bind_rows(
+kids_model_pred_across%>%mutate(model = "Pragmatic"), 
+prior_only_model_across%>%mutate(model = "Prior Only"),
+no_prior_pred_across%>%mutate(model = "No Prior")
+)%>%
+  group_by(model,age_bin,Speaker,Alignment)%>%
+  summarise(mean = mean(prop_informative),
+            lci = hdi_lower(prop_informative),
+            uci = hdi_upper(prop_informative))
+
+
 
 ```
-
+### All models predictions
 
 ```{r, include = F}
+p_data <- ex3_data %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  mutate(age_bin = age_num - 3)%>%
+  group_by(Speaker, Alignment ,age_bin, subid)
+
 ggplot(model_comp_mean_ci)+
-  geom_line(data = model_comp,aes(age_bin, prop_informative, group = paste(iteration,Speaker,model, sep= ""), col = model),  alpha = 0.01) + 
+  #geom_jitter(data = p_data, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
   geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = model), alpha = .4) +
-  geom_line(aes(age_bin, mean, col = model), size = 1, alpha = 1) + 
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(y="proportion more informative")+
+  geom_line(aes(age_bin, mean, col = model), size = .5, alpha = 1, linetype = 2) + 
+  geom_smooth(data = p_data, aes(x = age_bin, y = correct_inf), col = "black", size = 0.6, method = "glm", method.args = list(family = "binomial"),  se = T,  alpha = .5, size = .4)+
+  #geom_hline(yintercept = 0.5, lty=2)+
+  labs(y="Proportion More Informative")+
   scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
   ylim(-0.05,1.05)+
-  facet_grid(Speaker~Alignment)+
-  theme_few(base_size = 20)+
-  scale_color_manual( values = c("#dc322f","#268bd2"))+
-  scale_fill_manual(values = c("#dc322f","#268bd2"))
+  facet_grid(~Speaker+Alignment)+
+  theme_few()+
+  coord_fixed(ratio = 2)+
+  scale_colour_brewer(palette = "Dark2")+
+  scale_fill_brewer(palette = "Dark2")
 ```
 
 ```{r, include = F}
-ggsave("../graphs/kids_no_prior_prior_only_model_predictions.pdf", width = 9, height = 7, scale = 1.2)
+ggsave("../graphs/kids_model_predictions.png", width = 10, height = 3, scale = 1)
 ```
 
+### RSA model predictions
+
+```{r, include = F}
+
+model_comp_mean_ci_rsa <- bind_rows(
+kids_model_pred_across%>%mutate(model = "Pragmatic"), 
+prior_only_model_across%>%mutate(model = "Prior Only")%>%mutate(prop_informative = 5),
+no_prior_pred_across%>%mutate(model = "No Prior")%>%mutate(prop_informative = 5)
+)%>%
+  group_by(model,age_bin,Speaker,Alignment)%>%
+  summarise(mean = mean(prop_informative),
+            lci = hdi_lower(prop_informative),
+            uci = hdi_upper(prop_informative))
+
+
+p_data <- ex3_data %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  mutate(age_bin = age_num - 3)%>%
+  group_by(Speaker, Alignment ,age_bin, subid)
+
+
+p_data_2 <- ex3_data %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  mutate(age_bin = age_num - 3)%>%
+  group_by(Speaker, Alignment ,age_bin, subid)%>%
+  summarise(correct_inf = mean(correct_inf))
+
+ggplot(model_comp_mean_ci_rsa)+
+  geom_jitter(data = p_data_2, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
+  geom_ribbon(aes(x =age_bin, ymin = lci, ymax = uci, fill = model), alpha = .4) +
+  geom_line(aes(age_bin, mean, col = model), size = .5, alpha = 1, linetype = 2) + 
+  geom_smooth(data = p_data, aes(x = age_bin, y = correct_inf), col = "black", size = 0.6, method = "glm", method.args = list(family = "binomial"),  se = T,  alpha = .5, size = .4)+
+  #geom_hline(yintercept = 0.5, lty=2)+
+  labs(y="Proportion More Informative")+
+  scale_x_continuous(limits=c(0,2), name="age", breaks = c(0,0.5,1,1.5,2), labels = c(3.0,3.5,4.0,4.5,5)) +
+  ylim(-0.05,1.05)+
+  facet_grid(~Speaker+Alignment)+
+  theme_few()+
+  coord_fixed(ratio = 2)+
+  scale_colour_brewer(palette = "Dark2")+
+  scale_fill_brewer(palette = "Dark2")
+```
+
+```{r, include = F}
+ggsave("../graphs/kids_data.png", width = 10, height = 3, scale = 1)
+```
+
+```{r}
+
+data <- ex3_data %>%
+  filter(trial != "filler1",
+         trial != "filler2")%>%
+  group_by(Speaker, Alignment ,subage) %>%
+  summarize(k = sum(correct_inf), n = n())%>%
+  ungroup() %>%
+  mutate(a = 1 + k,
+         b = 1 + n - k,
+         Data_ci_lower  = qbeta(.025, a, b),
+         Data_ci_upper = qbeta(.975, a, b),
+         Data = (a-1)/(a+b-2))%>%
+  select(-a,-b,-n,-k)
+
+model <- kids_model_pred_across %>%
+  mutate(subage = ifelse(age_bin<1,"3","4"))%>%
+  group_by(model,Speaker,Alignment,subage)%>%
+  summarise(Model = mean(prop_informative),
+            Model_ci_lower =hdi_lower(prop_informative) ,
+            Model_ci_upper = hdi_upper(prop_informative))
+  
+
+cor_plot <- model %>%
+  ungroup()%>%
+  mutate(Data = data$Data,
+         Data_ci_lower = data$Data_ci_lower,
+         Data_ci_upper  =data$Data_ci_upper,3)
+
+
+ggplot(data = cor_plot,aes(x = Model, y = Data, col = subage)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 3)+
+  geom_errorbar(aes(ymin = Data_ci_lower, ymax = Data_ci_upper),width = 0,size = .5)+
+  geom_errorbarh(aes(xmin = Model_ci_lower, xmax = Model_ci_upper), height = 0,size = .5)+
+  coord_fixed()+
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = Model, y = Data), inherit.aes = F)+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  theme_few() + 
+  scale_colour_solarized()
+
+
+cor.test(cor_plot$Model,cor_plot$Data)
+```
+
+```{r}
+ggsave("../graphs/model_critique_kids.png", width = 3, height = 2.5, scale = 1.3)
+```
 
