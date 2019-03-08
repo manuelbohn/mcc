@@ -113,12 +113,13 @@ hdi_lower<- function(s){
 #          experiment = "child_ex2",
 #          condition = ifelse(speakerChange == F, "same_speaker", "different_speaker"),
 #          agent = ifelse( speakerChange == F, agent, altAgent),
-#          id = subid)%>%
+#          id = subid,
+#          minage = min(age_num))%>%
 #   filter(trial != "train")%>%
-#   select(experiment,id,age_bin,age_num,trial,condition,agent,correct)
+#   select(experiment,id,age_bin,age_num,minage,trial,condition,agent,correct)
 # 
 # write_csv(d , path="../../stats/data/child_ex2.csv")
-#
+# 
 # d <- bind_rows(
 #   read_csv(file="../../stats/data/kids_inf_data.csv"),
 #   read_csv(file="../../stats/data/kids_inf_2_data.csv"))%>%
@@ -127,22 +128,24 @@ hdi_lower<- function(s){
 #          trial != "filler2")%>%
 #   mutate(age_bin = factor(subage),
 #          experiment = "child_ex1",
-#          id =subid)%>%
-#   select(experiment,id,age_bin,age_num,trial,correct)
+#          id =subid,
+#          minage = min(age_num))%>%
+#   select(experiment,id,age_bin,age_num,minage,trial,correct)
 # 
-# write_csv(d , path="../../stats/data/child_ex1.csv") 
+# write_csv(d , path="../../stats/data/child_ex1.csv")
 # 
 # 
 # d <- read_csv(file="../../stats/data/kids_ex3_data.csv")%>%
 #   mutate(experiment = "child_ex3",
-#          id = subid, 
+#          id = subid,
 #          age_bin = subage,
 #          speaker = Speaker,
-#          alignment = Alignment)%>%
+#          alignment = Alignment,
+#          minage = min(age_num))%>%
 #   filter(trial != "filler1",trial != "filler2")%>%
-#   select(experiment, id,age_bin,age_num,trial, speaker, alignment, agent, correct_inf)
-#  
-# write_csv(d , path="../../stats/data/child_ex3.csv") 
+#   select(experiment, id,age_bin,age_num,minage,trial, speaker, alignment, agent, correct_inf)
+# 
+#  write_csv(d , path="../../stats/data/child_ex3.csv")
 
 
 ```
@@ -168,6 +171,15 @@ child_ex1_data <-read_csv(file="../../stats/data/child_ex1.csv")
 child_ex2_data <-read_csv(file="../../stats/data/child_ex2.csv") 
 # children ex3
 child_ex3_data <-read_csv(file="../../stats/data/child_ex3.csv") 
+
+# model predictions adults ex3
+ex3_model_predictions <- readRDS("../../stats/saves/ex3_model_predictions.rds")
+# model comparison adults ex3
+ex3_model_comparison <- readRDS("../../stats/saves/ex3_model_comparison.rds")
+# model predictions adults ex4
+ex4_model_predictions <- readRDS("../../stats/saves/ex4_model_predictions.rds")
+# model comparison adults ex4
+ex4_model_comparison <- readRDS("../../stats/saves/ex4_model_comparison.rds")
 ```
 
 # Adults 

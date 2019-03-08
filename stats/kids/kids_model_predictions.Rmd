@@ -1082,7 +1082,7 @@ var model  = function(){
 ```
 
 ```{r}
-params_by_age<- readRDS("../saves/params_by_age.rds")
+params_by_age<- readRDS("../saves/child_model_param.rds")
 
 params_by_age<- webppl(
   program_code = paste(rsaUtils, rsaModel, paramModelWebppl , sep='\n'),
@@ -1105,8 +1105,6 @@ model_params <- params_by_age%>%
   ungroup()%>%
   select(cond,param_map)%>%
   spread(cond,param_map)
-
-
 
 
 ```
@@ -1204,7 +1202,7 @@ ex3_data_param <- ex3_data%>%
          so_slope = model_params$NA_so_slope,
          same_speaker_pref_int = model_params$same_speaker_pref_int,
          same_speaker_pref_slope = model_params$same_speaker_pref_slope,
-         so = plogis(so_int+so_slope*(age_num-min(age_num))),
+         so = so_int+so_slope*(age_num-min(age_num)),
          diff_prior = plogis(different_speaker_pref_int+different_speaker_pref_slope*(age_num-min(age_num))),
          same_prior = plogis(same_speaker_pref_int+same_speaker_pref_slope*(age_num-min(age_num))))%>%
   group_by(subid,trial)%>%
@@ -1294,8 +1292,8 @@ var allData = dataFromR.ex3data
 
 var model = function(){
   
-  var noise_slope = uniformDrift({a: -2, b: 2, width: 0.4})
-  var noise_int = uniformDrift({a: -2, b: 2, width: 0.4})    
+  var noise_slope = uniformDrift({a: -5, b: 5, width: 0.2})
+  var noise_int = uniformDrift({a: -5, b: 5, width: 0.1})    
 
   var output = map(function(row){
 
@@ -1328,7 +1326,7 @@ dev_noisy_model_pred<- webppl(
   model_var = "model",
   chains = 4,
   cores = 4,
-  inference_opts = list(method = "MCMC", samples = 2000, burn = 500, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 8000, burn = 2000, verbose = T)
 )
 
 posterior.noise <- dev_noisy_model_pred %>%
@@ -1366,6 +1364,25 @@ ggplot(x, aes(x = age, y= y,col = param))+
   ylim(0,1)
 
 
+plot.posterior.noise <- posterior.noise%>%
+  group_by(Parameter)%>%
+  summarise(mean = estimate_mode(value))%>%
+  spread(Parameter,mean)
+
+
+x <- data_frame(
+  age = rep(seq(0,2, by = 0.05),1),
+  `int/slope` = c(rep(paste(round(plot.posterior.noise$noise_int,2),round(plot.posterior.noise$noise_slope,2), sep = "/"),41)),
+  int = c(rep(plot.posterior.noise$noise_int,41)),
+  slope = c(rep(plot.posterior.noise$noise_slope,41))
+) %>%
+  mutate(y = plogis(int + slope *age))
+
+ggplot(x, aes(x = age, y= y,col = `int/slope`))+
+  geom_line()+
+  ylim(0,1)
+
+
 
 ```
 
@@ -1391,7 +1408,7 @@ ggplot(models)+
   #geom_jitter(data = p_data, aes(x = age_bin, y = correct_inf), width = .025,height = .025, alpha = .2)+
   geom_ribbon(aes(x = age, ymin = ci_lower, ymax = ci_upper, fill = model), alpha = .4) +
   geom_line(aes(x = age, y = mean, col = model), size = 1, alpha = 1, linetype = 1) + 
-  geom_smooth(data = p_data, aes(x = age_num, y = correct_inf), col = "black", size = 0.6, method = "glm", method.args = list(family = "binomial"),  se = T,  alpha = .5, size = .4)+
+  geom_smooth(data = p_data, aes(x = age_num, y = correct_inf), col = "black", method = "loess", span = 1, se = T,  alpha = .5, size = .4)+
   #geom_hline(yintercept = 0.5, lty=2)+
   labs(y="proportion more informative")+
   ylim(-0.05,1.05)+
