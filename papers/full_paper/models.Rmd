@@ -189,7 +189,10 @@ adult_ex2_preference_data <- read_csv(file="../../stats/data/adult_ex2_preferenc
 
 #### Inferring speaker optimality parameter and setting priors
 
+
 ```{r model parameter adults}
+
+# The prior on the speaker optimality parameter is largely positive but also contains negative values so that it could, in theory, result in a parameter that leads to model predictions below chance. The same prior is used for the intercept on children's parameters, where performance was below chance.  
 speakOptParam <- '
 var data = dataFromR.data
 
@@ -953,6 +956,7 @@ child_ex2_data <-read_csv(file="../../stats/data/child_ex2.csv")
 #### Inferring speaker optimality parameter and priors
 
 ```{r model parameters children}
+# In theory, we would expect the speaker optimality parameter to always be positive. The prior for the intercept should therefore not include neagtive values. However, in the context of our study, the youngest children performed below chance and increased with age. This pattern can only be captured by the model if we allow the intercept to take negative values. To combine these considerations, the prior for the intercept is skewed towards being positive, but also includes negative values. The prior on the slope is agnostic about the shape of the developmental trajectory.
 childModelParam <- '
 var prefData = dataFromR.prefData
 var infData = dataFromR.infData
@@ -1070,7 +1074,6 @@ child_prior_plot <- child_ex2_data %>%
                         plogis(child_model_param$pref_int_same_speaker + child_model_param$pref_slope_same_speaker * (age_num-minage)
                         )))
 
-  
 ggplot(data = child_prior_plot, aes(x = age_num, y = correct, col = condition)) +
   geom_jitter(alpha = 0.5, height = 0.02, width = 0)+
   geom_smooth(aes(fill = condition),method = "lm", se = T, alpha = .5, size = .7)+
@@ -1082,6 +1085,8 @@ ggplot(data = child_prior_plot, aes(x = age_num, y = correct, col = condition)) 
   guides(alpha = F)+ 
   scale_color_solarized(name = "Condition")+
   scale_fill_solarized(name = "Condition")
+
+# dashed line represents the developmental trajectories based on the estimated parameters 
 ```
 
 ```{r visualize speaker optimality children}
@@ -1091,13 +1096,30 @@ child_so_plot <- child_ex1_data %>%
   summarise(correct = mean(correct))%>%
   mutate(model = child_model_param$so_int + child_model_param$so_slope * (age_num - minage))
 
-ggplot(data = child_so_plot, aes(x = age_num, y = model)) +
-  geom_line(alpha = .5, size = .7)+
+plot_child_so <- ggplot(data = child_so_plot, aes(x = age_num, y = model)) +
+  geom_hline(yintercept = 0, lty=2)+
+  geom_line( size = 2)+
   labs(x="Age",y="Speaker optimality parameter")+
   theme_few() +
-  geom_hline(yintercept = 0, lty=2)+
+  ggtitle("Speaker optimality parameter")+
   ylim(-3,3)+
   guides(alpha = F)
+
+
+plot_ex1_child <-child_ex1_data %>%
+  group_by(age_num, id) %>%
+  summarise(correct = mean(correct))%>%
+  ggplot(data = ., aes(x = age_num, y = correct)) +
+  geom_jitter(alpha = 0.5, height = 0.02, width = 0)+
+  geom_smooth(method = "lm", se = T, alpha = .5, size = .7)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="Age",y="Proportion Correct")+
+  ggtitle("Data ex1 children")+
+  theme_few() +
+  ylim(-0.05,1.05)+
+  guides(alpha = F)
+
+ggarrange(plot_child_so,plot_ex1_child)
 ```
 
 ```{r model setup ex3 children}
