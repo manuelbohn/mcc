@@ -1,11 +1,13 @@
 ---
 title: "MCC Models"
 author: "Manuel Bohn"
-output: html_document
+output:
+  html_document:
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 
 library(tidyverse)
 library(knitr)
@@ -191,14 +193,13 @@ adult_ex2_preference_data <- read_csv(file="../../stats/data/adult_ex2_preferenc
 
 
 ```{r model parameter adults}
-
-# The prior on the speaker optimality parameter is largely positive but also contains negative values so that it could, in theory, result in a parameter that leads to model predictions below chance. The same prior is used for the intercept on children's parameters, where performance was below chance.  
+# Cauchy prior on the speaker optimality parameter around 1, based on previous work (e.g. Frank & Goodman, 2014) 
 speakOptParam <- '
 var data = dataFromR.data
 
 var model  = function(){
 
-  var speakerOptimality = uniformDrift({a: -3, b: 7, width: 0.2})
+  var speakerOptimality = sample(Cauchy({location: 1, scale: 2}))
 
   foreach(function(row){
       
@@ -248,7 +249,7 @@ ggplot(plot_adult_model_speak_opt, aes(value))+
   theme_few()
 ```
 
-```{r model setup ex 3 adults, include = FALSE}
+```{r model setup ex 3 adults}
 # create datafiles with model parameters
 model_params_ex3 <- data.frame(
   common_ground_manipulation = c("preference","preference","preference","preference","novelty","novelty","novelty","novelty"),
@@ -288,7 +289,7 @@ model_params_ex3$prior = list(
 
 ##### Pragmatic model
 
-```{r model rsa noise ex3 adults, include = FALSE}
+```{r model rsa noise ex3 adults}
 predictions.rsa.ex3 <-'
 
 var allData = dataFromR.data
@@ -306,7 +307,7 @@ output
 '
 ```
 
-```{r predictions pragmatic model ex 3 adults, include = FALSE}
+```{r predictions pragmatic model ex 3 adults}
 ex3_pragm_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, predictions.rsa.ex3 , sep='\n'),
   data =list(data = model_params_ex3),
@@ -324,7 +325,7 @@ ex3_pragm_model_predictions <- ex3_pragm_model %>%
 
 ##### Prior only model
 
-```{r model prior only ex3 adults, include = FALSE}
+```{r model prior only ex3 adults}
 predictions.prior.only.ex3 <-'
 
 var allData = dataFromR.data
@@ -345,7 +346,7 @@ output
 '
 ```
 
-```{r predictions prior only model ex3 adults, include = FALSE}
+```{r predictions prior only model ex3 adults}
 ex3_prior_only_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, predictions.prior.only.ex3 , sep='\n'),
   data =list(data = model_params_ex3),
@@ -362,7 +363,7 @@ ex3_prior_only_model_predictions <- ex3_prior_only_model %>%
 
 ##### Flat prior model
 
-```{r model flat prior ex3 adults, include = FALSE}
+```{r model flat prior ex3 adults}
 predictions.flat.prior.ex3 <-'
 var allData = dataFromR.data
 
@@ -380,7 +381,7 @@ output
 '
 ```
 
-```{r predictions prior only model ex3 adults, include = FALSE}
+```{r predictions flat prior model ex3 adults}
 ex3_flat_prior_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, predictions.flat.prior.ex3 , sep='\n'),
   data =list(data = model_params_ex3),
@@ -560,7 +561,7 @@ adult_ex4_data <-read_csv(file="../../stats/data/adult_ex4.csv")
 adult_ex4_prior_data <-read_csv(file="../../stats/data/adult_ex4_prior.csv") 
 ```
 
-```{r model setup ex 4, include = FALSE}
+```{r model setup ex 4}
 
 # create datafiles with model parameters
 
@@ -679,7 +680,7 @@ model_params_ex4 = rbind(strongPrior,mediumPrior,weakPrior)%>%
 
 ##### Pragmatic model
 
-```{r model rsa noise ex4 adults, include = FALSE}
+```{r model rsa noise ex4 adults}
 predictions.rsa.ex4 <-'
 
 var allData = dataFromR.data
@@ -697,7 +698,7 @@ output
 '
 ```
 
-```{r predictions pragmatic model ex 4 adults, include = FALSE}
+```{r predictions pragmatic model ex 4 adults}
 ex4_pragm_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, predictions.rsa.ex4 , sep='\n'),
   data =list(data = model_params_ex4),
@@ -715,7 +716,7 @@ ex4_pragm_model_predictions <- ex4_pragm_model %>%
 
 ##### Prior only model 
 
-```{r model prior only ex4 adults, include = FALSE}
+```{r model prior only ex4 adults}
 predictions.prior.only.ex4 <-'
 
 var allData = dataFromR.data
@@ -736,7 +737,7 @@ output
 '
 ```
 
-```{r predictions prior only model ex4 adults, include = FALSE}
+```{r predictions prior only model ex4 adults}
 ex4_prior_only_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, predictions.prior.only.ex4 , sep='\n'),
   data =list(data = model_params_ex4),
@@ -753,7 +754,7 @@ ex4_prior_only_model_predictions <- ex4_prior_only_model %>%
 
 ##### Flat prior model 
 
-```{r model flat prior ex4 adults, include = FALSE}
+```{r model flat prior ex4 adults}
 predictions.flat.prior.ex4 <-'
 var allData = dataFromR.data
 
@@ -771,7 +772,7 @@ output
 '
 ```
 
-```{r predictions prior only model ex4 adults, include = FALSE}
+```{r predictions flat prior model ex4 adults}
 ex4_flat_prior_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, predictions.flat.prior.ex4 , sep='\n'),
   data =list(data = model_params_ex4),
@@ -956,7 +957,8 @@ child_ex2_data <-read_csv(file="../../stats/data/child_ex2.csv")
 #### Inferring speaker optimality parameter and priors
 
 ```{r model parameters children}
-# In theory, we would expect the speaker optimality parameter to always be positive. The prior for the intercept should therefore not include neagtive values. However, in the context of our study, the youngest children performed below chance and increased with age. This pattern can only be captured by the model if we allow the intercept to take negative values. To combine these considerations, the prior for the intercept is skewed towards being positive, but also includes negative values. The prior on the slope is agnostic about the shape of the developmental trajectory.
+# The prior on the speaker optimality intercept is the same as for the adult speaker optimality parameter. 
+
 childModelParam <- '
 var prefData = dataFromR.prefData
 var infData = dataFromR.infData
@@ -965,8 +967,8 @@ var all_conditions = levels(prefData, "condition")
 
 var model  = function(){
 
-  var so_slope = uniformDrift({a: -5, b: 5, width: 0.2})
-  var so_int = uniformDrift({a: -3, b: 7, width: 0.2})
+  var so_slope = sample(Cauchy({location: 0, scale: 2}))
+  var so_int = sample(Cauchy({location: 1, scale: 2}))
 
   foreach(function(row){
   
@@ -1031,7 +1033,7 @@ var model  = function(){
 #   model_var = "model",
 #   chains = 4,
 #   cores = 4,
-#   inference_opts = list(method = "MCMC", samples = 7000, burn = 1000, verbose = T)
+#   inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
 # )%>%
 #   saveRDS("../../stats/saves/child_model_param.rds")
   
