@@ -172,21 +172,13 @@ child_ex2_data <-read_csv(file="../../stats/data/child_ex2.csv")
 # children ex3
 child_ex3_data <-read_csv(file="../../stats/data/child_ex3.csv") 
 
-# model predictions adults ex3
-ex3_model_predictions <- readRDS("../../stats/saves/ex3_model_predictions.rds")
-# model comparison adults ex3
-ex3_model_comparison <- readRDS("../../stats/saves/ex3_model_comparison.rds")
-# model predictions adults ex4
-ex4_model_predictions <- readRDS("../../stats/saves/ex4_model_predictions.rds")
-# model comparison adults ex4
-ex4_model_comparison <- readRDS("../../stats/saves/ex4_model_comparison.rds")
 ```
 
 # Adults 
-## Experiment 1
+
+## Seperate assessment of general and speaker specific expectations (Exp. 1 and 2).
 
 ```{r, figure 1}
-
 p_fig1 <- bind_rows(adult_ex1_data,
                     adult_ex2_novelty_data %>%
                       mutate(condition = ifelse(condition == "same_speaker","test", "control")),
@@ -206,7 +198,7 @@ ggplot() +
   geom_pointrange(data = p_fig1x, aes(x = condition, y = mean, col = condition,ymin = ci_lower, ymax = ci_upper),size = .8, pch = 5, fatten = 2.5)+
   geom_hline(yintercept = 0.5, lty=2)+
   labs(x="",y="Proportion Correct")+
-  facet_wrap( ~ experiment, labeller = as_labeller(c(`adult_ex2_preference`="Exp. 2 - Pref.", `adult_ex2_novelty`="Exp. 2 - Nov.", `adult_ex1`="Exp. 1")))+
+  facet_wrap( ~ experiment, labeller = as_labeller(c(`adult_ex2_preference`="Exp. 2 - Pref.", `adult_ex2_novelty`="Exp. 2 - Nov.", `adult_ex1`="Exp. 1 - Info.")))+
   theme_few() + 
   ylim(-0.05,1.05)+
   guides(alpha = F,size =F)+
@@ -217,9 +209,105 @@ ggplot() +
 
 ```
 
+## Model predictions for information integration evaluated against new data (Exp 3). 
+
+```{r figure adults}
+
+adult_ex3_plot_data <- adult_ex3_data%>%
+  group_by(common_ground_manipulation,speaker,alignment,id)%>%
+  summarise(mean = mean(correct_inf))%>%
+  mutate(model = "data")
+
+adult_ex3_pred <- readRDS( "../../stats/saves/adult_ex3_model_predictions_data.rds")%>%
+  filter(model != "flat_prior",
+         model != "prior_only")%>%
+  mutate(prior_manipulation = "strong",
+        experiment = "experiment 3")
+
+
+adult_ex4_pred <- readRDS( "../../stats/saves/adult_ex4_model_predictions_data.rds")%>%
+  filter(model != "flat_prior",
+         model != "prior_only")%>%
+  mutate(experiment = "experiment 4")
+
+
+ggplot(data = adult_ex3_pred, aes(x = alignment, y = mean, col = model)) +
+  geom_jitter(data = adult_ex3_plot_data, alpha = .1, height = 0.02)+
+  geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper), size = .6,  position = position_dodge(width = .5), pch = 5)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="Choosing more informative")+
+  facet_grid (~ common_ground_manipulation + speaker) +
+  theme_few() + 
+  ylim(-0.05,1.05)+
+  guides(alpha = F)+ 
+  scale_color_manual(name="Model",
+                     breaks=c("data","pragmatic","flat_prior","prior_only"),
+                     values= c("black","#859900","#6c71c4","#b58900"))+
+  theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))
+
+```
+
+## Replication and extension to varying levels of prior manipulation (Exp 4).
+
+```{r}
+
+adult_ex3_cor_plot <- adult_ex3_pred %>%
+  ungroup()%>%
+  filter(model != "data") %>%
+  mutate(data_mean = rep(adult_ex3_pred%>%filter(model == "data")%>%pull(mean),1),
+         data_ci_lower = rep(adult_ex3_pred%>%filter(model == "data")%>%pull(ci_lower),1),
+         data_ci_upper = rep(adult_ex3_pred%>%filter(model == "data")%>%pull(ci_upper),1))
+  
+
+adult_ex4_cor_plot <- adult_ex4_pred %>%
+  ungroup()%>%
+  filter(model != "data") %>%
+  mutate(data_mean = rep(adult_ex4_pred%>%filter(model == "data")%>%pull(mean),1),
+         data_ci_lower = rep(adult_ex4_pred%>%filter(model == "data")%>%pull(ci_lower),1),
+         data_ci_upper = rep(adult_ex4_pred%>%filter(model == "data")%>%pull(ci_upper),1))
+
+adult_rep_cor_plot <- adult_ex4_pred %>%
+  ungroup()%>%
+  filter(model == "data",
+         prior_manipulation == "strong") %>%
+  mutate(data_mean = rep(adult_ex3_pred%>%filter(model == "data")%>%pull(mean),1),
+         data_ci_lower = rep(adult_ex3_pred%>%filter(model == "data")%>%pull(ci_lower),1),
+         data_ci_upper = rep(adult_ex3_pred%>%filter(model == "data")%>%pull(ci_upper),1),
+         experiment = "replication")
+  
+adult_pred <- bind_rows(adult_ex3_cor_plot,
+                        adult_ex4_cor_plot,
+                        adult_rep_cor_plot)%>%
+  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"),
+         experiment = factor(experiment,levels = c("experiment 3", "replication", "experiment 4")))
+
+ggplot(data = adult_pred,aes(x = mean, y = data_mean, col = prior_manipulation)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.7, size = 0.5)+
+  geom_point(size = 2)+
+  geom_errorbar(aes(ymin = data_ci_lower, ymax = data_ci_upper),width = 0,size = .7)+
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .7)+
+  coord_fixed()+
+  xlim(0,1)+ylim(0,1)+
+  xlab("")+
+  ylab("")+
+  facet_grid ( ~ experiment) +
+  stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = mean, y = data_mean), inherit.aes = F, size = 3)+
+  theme_few() + 
+  scale_colour_ptol(name = "Prior manipulation")
+
+```
+
+
+# Children
+
+## Seperate assessment of general and speaker specific expectations.
+
+## Model predictions for information integration evaluated against new data. 
+
+
 ```{r, figure x}
 
-p_figx <- bind_rows(child_ex1_data%>%
+plot_child_ex12 <- bind_rows(child_ex1_data%>%
                       mutate(condition = "test"),
                     child_ex2_data %>%
                       mutate(condition = ifelse(condition == "same_speaker","test", "control"))) %>%
@@ -229,12 +317,12 @@ p_figx <- bind_rows(child_ex1_data%>%
   summarise(correct = mean(correct))
 
 
-ggplot(data = p_figx, aes(x = age_num, y = correct, col = condition)) +
-  geom_jitter(alpha = 0.5, height = 0.02, width = 0)+
-  geom_smooth(aes(fill = condition),method = "lm", se = T, alpha = .5, size = .7)+
+ggplot(data = plot_child_ex12, aes(x = age_num, y = correct, col = condition)) +
   geom_hline(yintercept = 0.5, lty=2)+
+  geom_jitter(alpha = 0.2, height = 0.02, width = 0)+
+  geom_smooth(aes(fill = condition),method = "lm", se = T, alpha = .5, size = .7)+
   labs(x="Age",y="Proportion Correct")+
-  facet_wrap( ~ experiment, labeller = as_labeller(c(`child_ex2`="Exp. 2", `child_ex1`="Exp. 1")))+
+  facet_wrap( ~ experiment, labeller = as_labeller(c(`child_ex2`="Exp. 2 - Pref.", `child_ex1`="Exp. 1 - Info.")))+
   theme_few() +
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
@@ -242,7 +330,63 @@ ggplot(data = p_figx, aes(x = age_num, y = correct, col = condition)) +
   scale_fill_solarized(name = "Condition")
 
 ```
-```{r, fig.height=3, fig.width=8}
-#ggarrange(fig1_a, fig1_c, ncol = 2, nrow = 1, common.legend = F, legend = "bottom", widths = c(1,1.2))
+
+```{r}
+child_model_predictions <- readRDS(  "../../stats/saves/child_ex3_model_predictions.rds")%>%
+  filter(model != "flat_prior",
+         model != "prior_only")
+
+plot_child_ex3_data <- child_ex3_data%>%
+  group_by(age_num,speaker,alignment)%>%
+  summarise(mean = mean(correct_inf))
+
+ggplot(child_model_predictions)+
+  geom_jitter(data = plot_child_ex3_data, aes(x = age_num, y = mean), width = .01,height = .01, alpha = .2)+
+  geom_line(aes(x = age, y = value, col = model), size = 1.2, alpha = 1, linetype = 1) + 
+  geom_smooth(data = child_ex3_data, aes(x = age_num, y = correct_inf), col = "black", size = 0.6, method = "loess", span = 1,  se = T,  alpha = .4)+
+  #geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="Age",y="Proportion more informative")+
+  ylim(-0.05,1.05)+
+  facet_grid(~speaker+ alignment)+
+  coord_fixed(ratio = 1.5)+
+  theme_few()+
+  scale_color_manual(name=NULL,
+                     breaks=c("pragmatic"),
+                     labels = c("Model predictions"),
+                     values= c("#859900"))
+  # + theme(
+  #   legend.position = c(.23, .45),
+  #   legend.justification = c("right", "top"),
+  #   legend.background = element_blank()
+  #   )
+
+```
+
+```{r}
+child_cor_model <- child_model_predictions %>%
+  mutate(age = ifelse(age<4,"3","4"))%>%
+  group_by(model,speaker,alignment, age)%>%
+  summarise(Model = mean(value))
+  
+
+child_cor_plot <- child_cor_model %>%
+  ungroup()%>%
+  mutate(Data = rep(child_cor_data$Data,1),
+         Data_ci_lower = rep(child_cor_data$Data_ci_lower,1),
+         Data_ci_upper  =rep( child_cor_data$Data_ci_upper,1))
+
+
+ggplot(data = child_cor_plot,aes(x = Model, y = Data, col = age)) +
+  geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
+  geom_point(size = 3)+
+  geom_errorbar(aes(ymin = Data_ci_lower, ymax = Data_ci_upper),width = 0,size = .5)+
+  coord_fixed()+
+  #facet_grid(~model)+
+ stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = Model, y = Data), inherit.aes = F)+
+  xlim(0,1)+ylim(0,1)+
+  xlab("Model")+
+  theme_few() + 
+  scale_colour_ptol()
+
 ```
 

@@ -433,7 +433,8 @@ ex_3_pred <- bind_rows(
   adult_ex3_data_summary
 )
 
-#saveRDS(ex_3_pred, "../../stats/saves/ex3_model_predictions.rds")
+
+#saveRDS(ex_3_pred, "../../stats/saves/adult_ex3_model_predictions_data.rds")
 
 ```
 
@@ -794,7 +795,7 @@ ex4_flat_prior_model_predictions <- ex4_flat_prior_model %>%
 
 # summarize data 
 adult_ex4_data_summary <- adult_ex4_data %>%
-  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "weak"))%>%
+  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"))%>%
   mutate(model = "data") %>%
   group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
   summarize(k = sum(correct_inf), n = n())%>%
@@ -812,7 +813,7 @@ ex_4_model_pred <- bind_rows(
   ex4_prior_only_model_predictions,
   ex4_flat_prior_model_predictions
 )%>%
-  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "weak"))%>%
+  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"))%>%
   group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
   summarise(mean = mean(value))%>%
   mutate(ci_lower = mean,
@@ -825,7 +826,7 @@ ex_4_pred <- bind_rows(
   adult_ex4_data_summary
 )
 
-#saveRDS(ex_4_pred, "../../stats/saves/ex4_model_predictions.rds")
+#saveRDS(ex_4_pred, "../../stats/saves/adult_ex4_model_predictions_data.rds")
 
 ```
 
@@ -1271,6 +1272,9 @@ child_model_predictions <- bind_rows(
   child_ex3_flat_prior_model_predictions,
   child_ex3_prior_only_model_predictions
   )
+
+
+#saveRDS(child_model_predictions, "../../stats/saves/child_ex3_model_predictions.rds")
 
 plot_child_ex3_data <- child_ex3_data%>%
   group_by(age_num,speaker,alignment)%>%
