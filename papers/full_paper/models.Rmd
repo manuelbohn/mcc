@@ -36,16 +36,18 @@ hdi_lower<- function(s){
 
 # Model code
 
-## Model utensils
+## Model utilities
 
 ```{r rsaUtils}
 rsaUtils <- '
+// three objects: triangle_1 on table 1, triangle_2 and circle_1 on table 2
 var all_objects = [
 { shape: "triangle", id:1, location: 1},  
 { shape: "triangle", id:2, location: 2},
 { shape: "circle", id:1, location: 2}
 ]
 
+// listener prior is over types, not tokens (we use uniformDraw on prior_objects)
 var prior_objects = [
 { shape: "triangle", id:1, location: 1},  
 { shape: "circle", id:1, location: 2}
@@ -53,6 +55,7 @@ var prior_objects = [
 
 var labels = ["dax","wug"]
 
+// two possible lexica, corresponding to meaning of words "dax" and "wug"
 var lexicon1 = function(utterance, obj){
 utterance.label == "dax" ? obj.shape == "triangle" :
 utterance.label == "wug" ? obj.shape == "circle" : 
@@ -85,10 +88,10 @@ return obj.location == utterance.point
 
 
 var utterancePrior = function(obj, lexiconName){
-var locationsWithShape = _.map(_.filter(all_objects, {shape: obj.shape}), "location")
-var point = uniformDraw(locationsWithShape)
-var label = lexiconObjects[lexiconName][obj.shape]
-return {label: label, point: point}
+  var locationsWithShape = _.map(_.filter(all_objects, {shape: obj.shape}), "location")
+  var point = uniformDraw(locationsWithShape)
+  var label = lexiconObjects[lexiconName][obj.shape]
+  return {label: label, point: point}
 }
 
 var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
@@ -127,41 +130,40 @@ var levels = function(df, label){
 ```{r rsa model}
 rsaModel <- '
 var literalListener = cache(function(utterance, priorProbs){
-Infer({method: "enumerate", model: function(){
-var lexiconName = sample(LexiconPrior); 
-var lexicon = lexiconObject[lexiconName];
-var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
-if ("label" in utterance) {
- var truthValue = lexicon(utterance, obj);
- condition(truthValue)
-}
-if (utterance.point) {
- var truthValuePoint = point(utterance, obj);
- condition(truthValuePoint)
-}
-return obj.shape 
-}})
+  Infer({method: "enumerate", model: function(){
+    var lexiconName = sample(LexiconPrior); 
+    var lexicon = lexiconObject[lexiconName];
+    var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+    if ("label" in utterance) {
+      var truthValue = lexicon(utterance, obj);
+      condition(truthValue)
+    }
+    if (utterance.point) {
+     var truthValuePoint = point(utterance, obj);
+     condition(truthValuePoint)
+    }
+    return obj.shape 
+  }})
 })
 
 var speaker = cache(function(obj, lexiconName, priorProbs, speakerOptimality){
-Infer({method: "enumerate", model: function(){
-var utterance = utterancePrior(obj, lexiconName);
-var L0 = literalListener(utterance, priorProbs);
- factor(speakerOptimality * L0.score(obj.shape))
-return utterance
-}})
+  Infer({method: "enumerate", model: function(){
+    var utterance = utterancePrior(obj, lexiconName);
+    var L0 = literalListener(utterance, priorProbs);
+    factor(speakerOptimality * L0.score(obj.shape))
+    return utterance
+  }})
 })
 
 var pragmaticListener = cache(function(utterance, priorProbs, speakerOptimality){
-Infer({method: "enumerate", model: function(){
-var lexiconName = sample(LexiconPrior);
-var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
-var S1 = speaker(obj, lexiconName, priorProbs, speakerOptimality);
-observe(S1, utterance)
-return obj.shape == "circle" ? 1 : 0
-}})
+  Infer({method: "enumerate", model: function(){
+    var lexiconName = sample(LexiconPrior);
+    var obj = sample( Categorical({vs: all_objects, ps: priorProbs}));
+    var S1 = speaker(obj, lexiconName, priorProbs, speakerOptimality);
+    observe(S1, utterance)
+    return obj.shape == "circle" ? 1 : 0
+  }})
 })
-
 
 var addNoise = function(dist, noiseParam){
    Infer({model: function(){ 
@@ -203,19 +205,21 @@ var model  = function(){
 
   foreach(function(row){
       
-  var priorProbs = [.5, .5, .5] 
+    var priorProbs = [.5, .5, .5] 
     
-  var rsaPredictions = pragmaticListener({label: "dax", point: 2 },
-   priorProbs, speakerOptimality) 
-   observe(rsaPredictions, row.correct)
-
+    var rsaPredictions = pragmaticListener({label: "dax", point: 2 },
+      priorProbs, speakerOptimality) 
+      
+    observe(rsaPredictions, row.correct)
   }, data)
   
   return speakerOptimality
   
-  }
+}
 '
 ```
+
+**issue: here we are passing `adult_ex1_data` when we want `adult_ex1_data %>% filter(condition == "test")`**
 
 ```{r inferring speaker optimality parameter adults}
 # adult_model_param<- webppl(
@@ -273,16 +277,24 @@ prior_novel_diff <- adult_ex2_novelty_data %>%
   filter(condition == "different_speaker")%>%
   summarise(prior = mean(correct))
 
-model_params_ex3$prior = list(
-    c(1-prior_pref_same$prior,1-prior_pref_same$prior,prior_pref_same$prior), 
-    c(prior_pref_same$prior,prior_pref_same$prior,1-prior_pref_same$prior), 
-    c(1-prior_pref_diff$prior,1-prior_pref_diff$prior,prior_pref_diff$prior), 
-    c(prior_pref_diff$prior,prior_pref_diff$prior,1-prior_pref_diff$prior),
-    c(1-prior_novel_same$prior,1-prior_novel_same$prior,prior_novel_same$prior), 
-    c(prior_novel_same$prior,prior_novel_same$prior,1-prior_novel_same$prior), 
-    c(1-prior_novel_diff$prior,1-prior_novel_diff$prior,prior_novel_diff$prior), 
-    c(prior_novel_diff$prior,prior_novel_diff$prior,1-prior_novel_diff$prior))
+makePriorList = function(p){
+  c(1 - p, 1 - p, p)
+}
 
+makeInversePriorList = function(p){
+  c(p, p, 1 - p)
+}
+
+model_params_ex3$prior = list(
+  makePriorList(prior_pref_same$prior), 
+  makeInversePriorList(prior_pref_same$prior), 
+  makePriorList(prior_pref_diff$prior), 
+  makeInversePriorList(prior_pref_diff$prior), 
+  makePriorList(prior_novel_same$prior), 
+  makeInversePriorList(prior_novel_same$prior), 
+  makePriorList(prior_novel_diff$prior), 
+  makeInversePriorList(prior_novel_diff$prior)
+)
 ```
 
 ### Model predictions
@@ -298,7 +310,7 @@ var output = map(function(row){
 
     var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.prior,row.speak_opt)
 
-    return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment + "/" + row.correct_inf, Math.exp(modelPredictions.score(1))])
+    return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment, Math.exp(modelPredictions.score(1))])
 
 }, allData)
 
@@ -337,7 +349,7 @@ var output = map(function(row){
       return obj.shape == "circle" ? 1 : 0
   }})
 
-    return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment + "/" + row.correct_inf, Math.exp(modelPredictions.score(1))])
+    return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment, Math.exp(modelPredictions.score(1))])
 
 }, allData)
 
@@ -373,7 +385,7 @@ var output = map(function(row){
 
     var modelPredictions = pragmaticListener({label: "dax", point: 2 }, prior,row.speak_opt)
 
-    return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment + "/" + row.correct_inf, Math.exp(modelPredictions.score(1))])
+    return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment, Math.exp(modelPredictions.score(1))])
 
 }, allData)
 
@@ -462,12 +474,13 @@ ggplot(data = ex_3_pred, aes(x = alignment, y = mean, col = model)) +
 ex_3_cor_plot <- ex_3_pred %>%
   ungroup()%>%
   filter(model != "data") %>%
-  mutate(data_mean = rep(ex_3_pred%>%filter(model == "data")%>%pull(mean),3),
-         data_ci_lower = rep(ex_3_pred%>%filter(model == "data")%>%pull(ci_lower),3),
-         data_ci_upper = rep(ex_3_pred%>%filter(model == "data")%>%pull(ci_upper),3))
+  left_join(., ex_3_pred %>%
+    ungroup()%>%
+    filter(model == "data") %>%
+    rename(data_mean = mean, data_ci_lower = ci_lower, data_ci_upper = ci_upper) %>%
+    select(-model)
+  )
   
-
-
 ggplot(data = ex_3_cor_plot,aes(x = mean, y = data_mean, col = "#BB5566")) +
   geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.7, size = 0.5)+
   geom_point(size = 2)+
