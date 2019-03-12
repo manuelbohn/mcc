@@ -260,7 +260,8 @@ model_params_ex3 <- data.frame(
   speaker = c("same_speaker","same_speaker","different_speaker","different_speaker","same_speaker","same_speaker","different_speaker","different_speaker"),
   alignment = c("congruent","incongruent","congruent","incongruent","congruent","incongruent","congruent","incongruent"),
   speak_opt = adult_model_param$so_map)
-
+prior_pref_summary <- adult_ex2_preference_data %>%
+  group_by(condition)
 prior_pref_same <- adult_ex2_preference_data %>%
   filter(condition == "same_speaker")%>%
   summarise(prior = mean(correct))
@@ -503,7 +504,7 @@ ggplot(data = ex_3_cor_plot,aes(x = mean, y = data_mean, col = "#BB5566")) +
 # calculating model log-likelihoods
 log_like_pragmatic_ex3 <- adult_ex3_data %>%
   left_join(ex3_pragm_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == "1",value,1-value),
+  mutate(like = ifelse(correct_inf == 1, value, 1 - value),
          log_like = log(like))%>%
   group_by(model)%>%
   summarise(model_log_like = sum(log_like))
@@ -511,14 +512,14 @@ log_like_pragmatic_ex3 <- adult_ex3_data %>%
 
 log_like_flat_prior_ex3 <- adult_ex3_data %>%
   left_join(ex3_flat_prior_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == "1",value,1-value),
+  mutate(like = ifelse(correct_inf == 1, value, 1 - value),
          log_like = log(like))%>%
   group_by(model)%>%
   summarise(model_log_like = sum(log_like))
 
 log_like_prior_only_ex3 <- adult_ex3_data %>%
   left_join(ex3_prior_only_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == "1",value,1-value),
+  mutate(like = ifelse(correct_inf == 1, value, 1 - value),
          log_like = log(like))%>%
   group_by(model)%>%
   summarise(model_log_like = sum(log_like))
@@ -550,15 +551,18 @@ ggplot(ex3_model_comparison, aes(x = model, y = model_log_like, col = model))+
 ### Bayes factors
 
 ```{r bayes factors ex3 adults}
-ex3_bf <- data.frame(
-  comparison = c("pragmatic vs. flat_prior","pragmatic vs. prior_only", "flat_rior vs. prior_only"),
-  log_bayes_factor = c(
-    log_like_pragmatic_ex3$model_log_like - log_like_flat_prior_ex3$model_log_like,
-    log_like_pragmatic_ex3$model_log_like- log_like_prior_only_ex3$model_log_like,
-    log_like_flat_prior_ex3$model_log_like - log_like_prior_only_ex3$model_log_like)
-)
 
-ex3_bf%>%
+ex3_bf <- bind_rows(
+  log_like_pragmatic_ex3,
+  log_like_flat_prior_ex3,
+  log_like_prior_only_ex3
+) %>% spread(model, model_log_like) %>%
+  mutate("pragmatic > flat_prior" = pragmatic - flat_prior,
+         "pragmatic > prior_only" = pragmatic - prior_only,
+         "flat_prior > prior_only" = flat_prior - prior_only) %>%
+  select(-pragmatic,  -flat_prior, -prior_only)
+
+ex3_bf %>%
   kable(digits = 2)
 ```
 
@@ -579,115 +583,25 @@ adult_ex4_prior_data <-read_csv(file="../../stats/data/adult_ex4_prior.csv")
 
 # create datafiles with model parameters
 
-strongPrior <- data.frame(
-  common_ground_manipulation = c("preference","preference","preference","preference","novelty","novelty","novelty","novelty"),
-  speaker = c("same_speaker","same_speaker","different_speaker","different_speaker","same_speaker","same_speaker","different_speaker","different_speaker"),
-  alignment = c("congruent","incongruent","congruent","incongruent","congruent","incongruent","congruent","incongruent"),
-  prior_manipulation = rep("strong",8))
+strongPrior <- expand.grid(
+  common_ground_manipulation = c("preference","novelty"),
+  speaker = c("same_speaker","different_speaker"),
+  prior_manipulation = c("strong", "medium", "weak")
+)
+  
+strong_prior_summary <- adult_ex4_prior_data %>%
+  group_by(common_ground_manipulation, prior_manipulation, speaker) %>%
+  summarize(prior = mean(correct))
 
-strong_prior_pref_same <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "preference",
-         prior_manipulation == "strong",
-         speaker == "same_speaker")%>%
-  summarise(prior = mean(correct))
-
-strong_prior_pref_diff <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "preference",
-         prior_manipulation == "strong",
-         speaker == "different_speaker")%>%
-  summarise(prior = mean(correct))
-
-strong_prior_novel_same <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "novelty",
-         prior_manipulation == "strong",
-         speaker == "same_speaker")%>%
-  summarise(prior = mean(correct))
-
-strong_prior_novel_diff <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "novelty",
-         prior_manipulation == "strong",
-         speaker == "different_speaker")%>%
-  summarise(prior = mean(correct))
-
-strongPrior$prior = list(
-    c(1-strong_prior_pref_same$prior,1-strong_prior_pref_same$prior,strong_prior_pref_same$prior), 
-    c(strong_prior_pref_same$prior,strong_prior_pref_same$prior,1-strong_prior_pref_same$prior), 
-    c(1-strong_prior_pref_diff$prior,1-strong_prior_pref_diff$prior,strong_prior_pref_diff$prior), 
-    c(strong_prior_pref_diff$prior,strong_prior_pref_diff$prior,1-strong_prior_pref_diff$prior),
-    c(1-strong_prior_novel_same$prior,1-strong_prior_novel_same$prior,strong_prior_novel_same$prior), 
-    c(strong_prior_novel_same$prior,strong_prior_novel_same$prior,1-strong_prior_novel_same$prior), 
-    c(1-strong_prior_novel_diff$prior,1-strong_prior_novel_diff$prior,strong_prior_novel_diff$prior), 
-    c(strong_prior_novel_diff$prior,strong_prior_novel_diff$prior,1-strong_prior_novel_diff$prior))
-
-mediumPrior <- data.frame(
-  common_ground_manipulation = c("preference","preference","preference","preference","novelty","novelty","novelty","novelty"),
-  speaker = c("same_speaker","same_speaker","different_speaker","different_speaker","same_speaker","same_speaker","different_speaker","different_speaker"),
-  alignment = c("congruent","incongruent","congruent","incongruent","congruent","incongruent","congruent","incongruent"),
-  prior_manipulation = rep("medium",8))
-
-medium_prior_pref_same <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "preference",
-         prior_manipulation == "medium",
-         speaker == "same_speaker")%>%
-  summarise(prior = mean(correct))
-
-medium_prior_pref_diff <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "preference",
-         prior_manipulation == "medium",
-         speaker == "different_speaker")%>%
-  summarise(prior = mean(correct))
-
-medium_prior_novel_same <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "novelty",
-         prior_manipulation == "medium",
-         speaker == "same_speaker")%>%
-  summarise(prior = mean(correct))
-
-medium_prior_novel_diff <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "novelty",
-         prior_manipulation == "medium",
-         speaker == "different_speaker")%>%
-  summarise(prior = mean(correct))
-
-mediumPrior$prior = list(
-    c(1-medium_prior_pref_same$prior,1-medium_prior_pref_same$prior,medium_prior_pref_same$prior), 
-    c(medium_prior_pref_same$prior,medium_prior_pref_same$prior,1-medium_prior_pref_same$prior), 
-    c(1-medium_prior_pref_diff$prior,1-medium_prior_pref_diff$prior,medium_prior_pref_diff$prior), 
-    c(medium_prior_pref_diff$prior,medium_prior_pref_diff$prior,1-medium_prior_pref_diff$prior),
-    c(1-medium_prior_novel_same$prior,1-medium_prior_novel_same$prior,medium_prior_novel_same$prior), 
-    c(medium_prior_novel_same$prior,medium_prior_novel_same$prior,1-medium_prior_novel_same$prior), 
-    c(1-medium_prior_novel_diff$prior,1-medium_prior_novel_diff$prior,medium_prior_novel_diff$prior), 
-    c(medium_prior_novel_diff$prior,medium_prior_novel_diff$prior,1-medium_prior_novel_diff$prior))
-
-
-weakPrior <- data.frame(
-  common_ground_manipulation = c("novelty","novelty","novelty","novelty"),
-  speaker = c("same_speaker","same_speaker","different_speaker","different_speaker"),
-  alignment = c("congruent","incongruent","congruent","incongruent"),
-  prior_manipulation = rep("weak",4))
-
-weak_prior_novel_same <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "novelty",
-         prior_manipulation == "weak",
-         speaker == "same_speaker")%>%
-  summarise(prior = mean(correct))
-
-weak_prior_novel_diff <- adult_ex4_prior_data %>%
-  filter(common_ground_manipulation == "novelty",
-         prior_manipulation == "weak",
-         speaker == "different_speaker")%>%
-  summarise(prior = mean(correct))
-
-weakPrior$prior = list(
-    c(1-weak_prior_novel_same$prior,1-weak_prior_novel_same$prior,weak_prior_novel_same$prior), 
-    c(weak_prior_novel_same$prior,weak_prior_novel_same$prior,1-weak_prior_novel_same$prior), 
-    c(1-weak_prior_novel_diff$prior,1-weak_prior_novel_diff$prior,weak_prior_novel_diff$prior), 
-    c(weak_prior_novel_diff$prior,weak_prior_novel_diff$prior,1-weak_prior_novel_diff$prior))
-
-# combining all priors into one data frame
-model_params_ex4 = rbind(strongPrior,mediumPrior,weakPrior)%>%
+model_params_ex4 <- left_join( 
+  strongPrior, 
+  strong_prior_summary# %>% filter(prior_manipulation == "strong")
+) %>%
+  rename(congruent = prior) %>%
+  mutate(incongruent = 1 - congruent) %>%
+  gather(alignment, prior, congruent, incongruent) %>%
+  drop_na() %>%
   mutate(speak_opt = adult_model_param$so_map)
-
 ```
 
 ### Model predictions
@@ -700,8 +614,8 @@ predictions.rsa.ex4 <-'
 var allData = dataFromR.data
 
 var output = map(function(row){
-
-    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.prior,row.speak_opt)
+    var priorProbLst = [1 - row.prior, 1 - row.prior, row.prior]
+    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, priorProbLst, row.speak_opt)
 
     return extend([row.common_ground_manipulation + "/" + row.prior_manipulation + "/" + row.speaker + "/" + row.alignment + "/" + row.correct_inf, Math.exp(modelPredictions.score(1))])
 
@@ -737,8 +651,10 @@ var allData = dataFromR.data
 
 var output = map(function(row){
 
+    var priorProbLst = [1 - row.prior, 1 - row.prior, row.prior]
+
   var modelPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: all_objects, ps: row.prior}));
+      var obj = sample( Categorical({vs: all_objects, ps: priorProbLst}));
       return obj.shape == "circle" ? 1 : 0
   }})
 
@@ -863,14 +779,15 @@ ggplot(data = ex_4_pred, aes(x = alignment, y = mean, col = model)) +
 ##### Correlation plot model predictions and data
 
 ```{r correlation plot ex4 adults}
-
 ex_4_cor_plot <- ex_4_pred %>%
   ungroup()%>%
   filter(model != "data") %>%
-  mutate(data_mean = rep(ex_4_pred%>%filter(model == "data")%>%pull(mean),3),
-         data_ci_lower = rep(ex_4_pred%>%filter(model == "data")%>%pull(ci_lower),3),
-         data_ci_upper = rep(ex_4_pred%>%filter(model == "data")%>%pull(ci_upper),3))
-  
+  left_join(., ex_4_pred %>%
+    ungroup()%>%
+    filter(model == "data") %>%
+    rename(data_mean = mean, data_ci_lower = ci_lower, data_ci_upper = ci_upper) %>%
+    select(-model)
+  )
 
 
 ggplot(data = ex_4_cor_plot,aes(x = mean, y = data_mean, col = prior_manipulation)) +
@@ -894,7 +811,7 @@ ggplot(data = ex_4_cor_plot,aes(x = mean, y = data_mean, col = prior_manipulatio
 # calculating model log-likelihoods
 log_like_pragmatic_ex4 <- adult_ex4_data %>%
   left_join(ex4_pragm_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == "1",value,1-value),
+  mutate(like = ifelse(correct_inf == 1 , value, 1 - value),
          log_like = log(like))%>%
   group_by(model)%>%
   summarise(model_log_like = sum(log_like))
@@ -902,14 +819,14 @@ log_like_pragmatic_ex4 <- adult_ex4_data %>%
 
 log_like_flat_prior_ex4 <- adult_ex4_data %>%
   left_join(ex4_flat_prior_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == "1",value,1-value),
+  mutate(like = ifelse(correct_inf ==  1, value , 1 - value),
          log_like = log(like))%>%
   group_by(model)%>%
   summarise(model_log_like = sum(log_like))
 
 log_like_prior_only_ex4 <- adult_ex4_data %>%
-  left_join(ex4_prior_only_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == "1",value,1-value),
+  left_join(ex4_prior_only_model_predictions) %>%
+  mutate(like = ifelse(correct_inf == 1, value, 1 - value),
          log_like = log(like))%>%
   group_by(model)%>%
   summarise(model_log_like = sum(log_like))
@@ -941,17 +858,20 @@ ggplot(ex4_model_comparison, aes(x = model, y = model_log_like, col = model))+
 ### Bayes factors
 
 ```{r bayes factors ex4 adults}
-ex4_bf <- data.frame(
-  comparison = c("pragmatic vs. flat_prior","pragmatic vs. prior_only", "flat_rior vs. prior_only"),
-  log_bayes_factor = c(
-    log_like_pragmatic_ex4$model_log_like - log_like_flat_prior_ex4$model_log_like,
-    log_like_pragmatic_ex4$model_log_like- log_like_prior_only_ex4$model_log_like,
-    log_like_flat_prior_ex4$model_log_like - log_like_prior_only_ex4$model_log_like)
-)
+ex4_bf <- bind_rows(
+  log_like_pragmatic_ex4,
+  log_like_flat_prior_ex4,
+  log_like_prior_only_ex4
+) %>% spread(model, model_log_like) %>%
+  mutate("pragmatic > flat_prior" = pragmatic - flat_prior,
+         "pragmatic > prior_only" = pragmatic - prior_only,
+         "flat_prior > prior_only" = flat_prior - prior_only) %>%
+  select(-pragmatic,  -flat_prior, -prior_only)
 
-ex4_bf%>%
+ex4_bf %>%
   kable(digits = 2)
 ```
+
 # Children
 
 ## Model parameters and data
