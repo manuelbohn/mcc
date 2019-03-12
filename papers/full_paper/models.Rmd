@@ -255,47 +255,29 @@ ggplot(plot_adult_model_speak_opt, aes(value))+
 
 ```{r model setup ex 3 adults}
 # create datafiles with model parameters
-model_params_ex3 <- data.frame(
-  common_ground_manipulation = c("preference","preference","preference","preference","novelty","novelty","novelty","novelty"),
-  speaker = c("same_speaker","same_speaker","different_speaker","different_speaker","same_speaker","same_speaker","different_speaker","different_speaker"),
-  alignment = c("congruent","incongruent","congruent","incongruent","congruent","incongruent","congruent","incongruent"),
-  speak_opt = adult_model_param$so_map)
-prior_pref_summary <- adult_ex2_preference_data %>%
-  group_by(condition)
-prior_pref_same <- adult_ex2_preference_data %>%
-  filter(condition == "same_speaker")%>%
-  summarise(prior = mean(correct))
+model_params_ex3 <- expand.grid(
+  common_ground_manipulation = c("preference", "novelty"),
+  speaker = c("same_speaker", "different_speaker"),
+  speak_opt = adult_model_param$so_map
+  )
 
-prior_pref_diff <- adult_ex2_preference_data %>%
-  filter(condition == "different_speaker")%>%
-  summarise(prior = mean(correct))
+prior_pref_summary <- bind_rows(
+  adult_ex2_preference_data,
+  adult_ex2_novelty_data) %>%
+  group_by(condition, experiment) %>%
+  summarise(prior = mean(correct)) %>%
+  mutate(experiment = gsub("adult_ex2_", "", experiment)) %>%
+  rename(common_ground_manipulation = experiment,
+         speaker = condition)
 
-prior_novel_same <- adult_ex2_novelty_data %>%
-  filter(condition == "same_speaker")%>%
-  summarise(prior = mean(correct))
+model_params_ex3 <- left_join( 
+  model_params_ex3, 
+  prior_pref_summary, by = c("common_ground_manipulation", "speaker")
+) %>%
+  rename(congruent = prior) %>%
+  mutate(incongruent = 1 - congruent) %>%
+  gather(alignment, prior, congruent, incongruent) 
 
-prior_novel_diff <- adult_ex2_novelty_data %>%
-  filter(condition == "different_speaker")%>%
-  summarise(prior = mean(correct))
-
-makePriorList = function(p){
-  c(1 - p, 1 - p, p)
-}
-
-makeInversePriorList = function(p){
-  c(p, p, 1 - p)
-}
-
-model_params_ex3$prior = list(
-  makePriorList(prior_pref_same$prior), 
-  makeInversePriorList(prior_pref_same$prior), 
-  makePriorList(prior_pref_diff$prior), 
-  makeInversePriorList(prior_pref_diff$prior), 
-  makePriorList(prior_novel_same$prior), 
-  makeInversePriorList(prior_novel_same$prior), 
-  makePriorList(prior_novel_diff$prior), 
-  makeInversePriorList(prior_novel_diff$prior)
-)
 ```
 
 ### Model predictions
@@ -308,8 +290,9 @@ predictions.rsa.ex3 <-'
 var allData = dataFromR.data
 
 var output = map(function(row){
+    var priorProbLst = [1 - row.prior, 1 - row.prior, row.prior]
 
-    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.prior,row.speak_opt)
+    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, priorProbLst, row.speak_opt)
 
     return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment, Math.exp(modelPredictions.score(1))])
 
@@ -344,9 +327,10 @@ predictions.prior.only.ex3 <-'
 var allData = dataFromR.data
 
 var output = map(function(row){
+  var priorProbLst = [1 - row.prior, 1 - row.prior, row.prior]
 
   var modelPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: all_objects, ps: row.prior}));
+      var obj = sample( Categorical({vs: all_objects, ps: priorProbLst}));
       return obj.shape == "circle" ? 1 : 0
   }})
 
@@ -380,11 +364,11 @@ ex3_prior_only_model_predictions <- ex3_prior_only_model %>%
 predictions.flat.prior.ex3 <-'
 var allData = dataFromR.data
 
-var prior = [.5, .5, .5] 
+var priorProbLst = [.5, .5, .5] 
 
 var output = map(function(row){
 
-    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, prior,row.speak_opt)
+    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, priorProbLst, row.speak_opt)
 
     return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment, Math.exp(modelPredictions.score(1))])
 
