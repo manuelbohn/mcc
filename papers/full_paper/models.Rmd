@@ -193,7 +193,6 @@ adult_ex2_preference_data <- read_csv(file="../../stats/data/adult_ex2_preferenc
 
 #### Inferring speaker optimality parameter and setting priors
 
-
 ```{r model parameter adults}
 # Cauchy prior on the speaker optimality parameter around 1, based on previous work (e.g. Frank & Goodman, 2014) 
 speakOptParam <- '
@@ -219,12 +218,10 @@ var model  = function(){
 '
 ```
 
-**issue: here we are passing `adult_ex1_data` when we want `adult_ex1_data %>% filter(condition == "test")`**
-
 ```{r inferring speaker optimality parameter adults}
 # adult_model_param<- webppl(
 #   program_code = paste(rsaUtils, rsaModel, speakOptParam , sep='\n'),
-#   data = list(data = adult_ex1_data),
+#   data = list(data = adult_ex1_data %>% filter(condition == "test")),
 #   data_var = "dataFromR",
 #   model_var = "model",
 #   chains = 4,
