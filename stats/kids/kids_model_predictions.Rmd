@@ -1528,15 +1528,27 @@ lin_pred_prior <- lin_model_pred_prior %>%
 
 ```{r}
 
+model_params <- readRDS("../../stats/saves/child_model_param.rds")%>%
+  select(value) %>%
+  map_df(bind_rows)%>%
+  group_by(param,condition)%>%
+  summarise(param_map = estimate_mode(val))%>%
+  mutate(cond = paste(param,condition, sep = "_"))%>%
+  ungroup()%>%
+  select(cond,param_map)%>%
+  spread(cond,param_map)%>%
+  rename(so_int = so_int_NA,
+         so_slope = so_slope_NA)
+
+
 ex3_data_param <- ex3_data%>%
-  mutate(different_speaker_pref_int = model_params$different_speaker_pref_int,
-         different_speaker_pref_slope = model_params$different_speaker_pref_slope,
-         so_int = model_params$NA_so_int,
-         so_slope = model_params$NA_so_slope,
-         so_slope_quad = model_params$NA_so_slope_quad,
-         same_speaker_pref_int = model_params$same_speaker_pref_int,
-         same_speaker_pref_slope = model_params$same_speaker_pref_slope,
-         so = so_int+so_slope*(age_num-min(age_num))+so_slope_quad*(age_num-min(age_num))^2,
+  mutate(different_speaker_pref_int = model_params$pref_int_different_speaker,
+         different_speaker_pref_slope = model_params$pref_slope_different_speaker,
+         so_int = model_params$so_int,
+         so_slope = model_params$so_slope,
+         same_speaker_pref_int = model_params$pref_int_same_speaker,
+         same_speaker_pref_slope = model_params$pref_slope_same_speaker,
+         so = so_int+so_slope*(age_num-min(age_num)),
          diff_prior = plogis(different_speaker_pref_int+different_speaker_pref_slope*(age_num-min(age_num))),
          same_prior = plogis(same_speaker_pref_int+same_speaker_pref_slope*(age_num-min(age_num))))%>%
   group_by(subid,trial)%>%
@@ -1571,7 +1583,7 @@ var model = function(){
 
     observe(noisyModelPredictions, row.correct_inf)
 
-    return  [row.age_num + "/" + row.Speaker + "/" + row.Alignment, Math.exp(noisyModelPredictions.score(1))]
+    return  [row.age_num + "/" + row.Speaker + "/" + row.Alignment + "/" + row.correct_inf, Math.exp(noisyModelPredictions.score(1))]
 
 }, allData)
 
@@ -1605,15 +1617,22 @@ ggplot(posterior.noise, aes(x = value))+
 
 noisy_pred <- noisy_model_pred %>%
   filter(!(Parameter %in% c("noise"))) %>%
-  separate(Parameter, into = c("age", "Speaker", "Alignment"), sep="/")%>%
+  separate(Parameter, into = c("age", "speaker", "alignment", "correct"), sep="/")%>%
   mutate( model = "noise parameter across age")%>%
-  group_by(model, age,Alignment,Speaker) %>%
+  group_by(model, age,alignment,speaker, correct) %>%
   summarise(mean = estimate_mode(value), 
             ci_lower = hdi_lower(value), 
             ci_upper =hdi_upper(value))%>%
   ungroup()%>%
   mutate(age = as.numeric(age))
 
+
+
+log_like_noisy_model <- noisy_pred %>%
+  mutate(like = ifelse(correct == "1",mean,1-mean),
+         log_like = log(like))%>%
+  group_by(model)%>%
+  summarise(model_log_like = sum(log_like))
 
 ```
 
@@ -1641,7 +1660,7 @@ var model = function(){
 
     observe(noisyModelPredictions, row.correct_inf)
 
-    return  [row.age_num + "/" + row.Speaker + "/" + row.Alignment, Math.exp(noisyModelPredictions.score(1))]
+    return  [row.age_num + "/" + row.Speaker + "/" + row.Alignment , Math.exp(noisyModelPredictions.score(1))]
 
 }, allData)
 
@@ -1660,7 +1679,7 @@ dev_noisy_model_pred<- webppl(
   model_var = "model",
   chains = 4,
   cores = 4,
-  inference_opts = list(method = "MCMC", samples = 8000, burn = 2000, verbose = T)
+  inference_opts = list(method = "MCMC", samples = 2000, burn = 2000, verbose = T)
 )
 
 posterior.noise <- dev_noisy_model_pred %>%
@@ -1724,19 +1743,21 @@ ggplot(x, aes(x = age, y= y,col = `int/slope`))+
 ## Plot comparing noisy model and data by continous age
 ```{r comparison plot by age, echo= FALSE}
 
+
+child_ex3_pragm_model_predictions<- child_ex3_pragm_model_predictions%>%
+  mutate(mean = value,
+         ci_lower = value,
+         ci_upper = value)
+
 models <- bind_rows(
-  quad_pred,
-  lin_pred,
-  lin_flat_pred,
-  lin_pred_prior
+  noisy_pred,
+child_ex3_pragm_model_predictions
 )
 
 
-p_data <- ex3_data %>%
-  filter(trial != "filler1",
-         trial != "filler2")%>%
+p_data <- child_ex3_data %>%
   mutate(age_bin = age_num - 3)%>%
-  group_by(Speaker, Alignment ,age_bin, subid)
+  group_by(speaker, alignment ,age_bin, id)
 
 
 ggplot(models)+
@@ -1747,12 +1768,14 @@ ggplot(models)+
   #geom_hline(yintercept = 0.5, lty=2)+
   labs(y="proportion more informative")+
   ylim(-0.05,1.05)+
-  facet_grid(Speaker~Alignment)+
+  facet_grid(speaker~alignment)+
   theme_few()+
   scale_color_solarized()+
   scale_fill_solarized()
 
 ```
+
+
 
 ```{r}
 data <- ex3_data %>%
@@ -1795,5 +1818,68 @@ ggplot(data = cor_plot,aes(x = Model, y = Data, col = age)) +
   xlab("Model")+
   theme_few() + 
   scale_colour_solarized()
+```
+
+
+# model comparison 
+
+```{r}
+noisyModelPredWebpplLoglike <-'
+
+var allData = dataFromR.ex3data
+
+var model = function(){
+
+  var noise = uniformDrift({a: 0, b: 1, width: 0.1})  
+
+  var output = map(function(row){
+
+    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.priorProbs,row.so)
+
+    var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+    display(JSON.stringify(row.correct_inf))
+
+    var loglike = Binomial({
+        p: Math.exp(noisyModelPredictions.score(1)), 
+        n:row.correct_inf})
+  
+  return  loglike
+
+}, allData)
+
+  return sum(output)
+
+}
+'
+```
+
+```{r}
+
+noisy_model_pred<- webppl(
+  program_code = paste(rsaUtils, rsaModel, noisyModelPredWebpplLoglike , sep='\n'),
+  data =list(ex3data = ex3_data_param),
+  data_var = "dataFromR",
+  model_var = "model",
+  chains = 4,
+  cores = 4,
+  inference_opts = list(method = "forward", samples = 2)
+)
+
+# ex4_pragm_model_loglike <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, loglike.rsa.ex4, sep='\n'),
+#   data = list(Data = adult_ex4_data, allConditions = allConditionsEx4, predPrior = predPriorEx4, noise = ex3_pragm_model_noise$mean),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4, 
+#   cores = 4,
+#   inference_opts = list(method = "forward", samples = 5000)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_pragm_model_loglike.rds")
+
+ex4_pragm_model_loglike <- readRDS("../../stats/saves/ex4_pragm_model_loglike.rds")%>%
+  mutate(model = "pragmatic")%>%
+  group_by(model)%>%
+  summarize(logP = logSumExp(value))
 ```
 
