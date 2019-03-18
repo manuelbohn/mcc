@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-load("../saves/mcc_model_comparison.RData")
+?load("../saves/mcc_model_comparison.RData")
 
 library(tidyverse)
 library(knitr)
