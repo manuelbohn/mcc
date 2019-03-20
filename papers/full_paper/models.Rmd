@@ -387,44 +387,6 @@ ex3_pragm_model_noise_param <- readRDS("../../stats/saves/ex3_pragm_model_noise.
 
 #### Prior only model
 
-##### Parameter free
-```{r model prior only ex3 adults}
-predictions.prior.only.ex3 <-'
-
-var allData = dataFromR.data
-
-var output = map(function(row){
-  var priorProbLst = [1 - row.prior, 1 - row.prior, row.prior]
-
-  var modelPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: all_objects, ps: priorProbLst}));
-      return obj.shape == "circle" ? 1 : 0
-  }})
-
-    return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment, Math.exp(modelPredictions.score(1))])
-
-}, allData)
-
-output
-
-'
-```
-
-```{r predictions prior only model ex3 adults}
-ex3_prior_only_model<- webppl(
-  program_code = paste(rsaUtils, rsaModel, predictions.prior.only.ex3 , sep='\n'),
-  data =list(data = model_params_ex3),
-  data_var = "dataFromR"
-)
-
-# model predictions
-ex3_prior_only_model_predictions <- ex3_prior_only_model %>%
-  separate(`0`, into = c("common_ground_manipulation", "speaker", "alignment"), sep="/")%>%
-  mutate(value = `1`,
-         model="prior_only")%>%
-  select(-`1`)
-```
-
 ##### Noise parameter
 
 ```{r model prior only noise ex3, include = FALSE}
@@ -494,41 +456,6 @@ ex3_prior_only_model_noise_param <- readRDS("../../stats/saves/ex3_prior_only_mo
 ```
 
 #### Flat prior model
-
-##### Parameter free
-```{r model flat prior ex3 adults}
-predictions.flat.prior.ex3 <-'
-var allData = dataFromR.data
-
-var priorProbLst = [.5, .5, .5] 
-
-var output = map(function(row){
-
-    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, priorProbLst, row.speak_opt)
-
-    return extend([row.common_ground_manipulation + "/" + row.speaker + "/" + row.alignment, Math.exp(modelPredictions.score(1))])
-
-}, allData)
-
-output
-'
-```
-
-```{r predictions flat prior model ex3 adults}
-ex3_flat_prior_model<- webppl(
-  program_code = paste(rsaUtils, rsaModel, predictions.flat.prior.ex3 , sep='\n'),
-  data =list(data = model_params_ex3),
-  data_var = "dataFromR"
-)
-
-# model predictions
-ex3_flat_prior_model_predictions <- ex3_flat_prior_model %>%
-  separate(`0`, into = c("common_ground_manipulation", "speaker", "alignment"), sep="/")%>%
-  mutate(value = `1`,
-         model="flat_prior")%>%
-  select(-`1`)
-
-```
 
 ##### Noise parameter
 
@@ -616,8 +543,6 @@ adult_ex3_data_summary <- adult_ex3_data %>%
 # summarize model predictions
 ex_3_model_pred_param_free <- bind_rows(
   ex3_pragm_model_predictions
-  #ex3_prior_only_model_predictions,
-  #ex3_flat_prior_model_predictions
 )%>%
   group_by(model,common_ground_manipulation,speaker,alignment)%>%
   summarise(mean = mean(value))%>%
@@ -693,9 +618,9 @@ ggplot(data = ex_3_cor_plot,aes(x = mean, y = data_mean, col = "#BB5566")) +
 
 ```
 
-## Model comparison
+### Model comparison
 
-### Loglike Parameter free model
+#### Loglike Parameter free model
 ```{r log likes ex3 adults}
 # calculating model log-likelihoods
 log_like_pragmatic_ex3 <- adult_ex3_data %>%
@@ -704,26 +629,11 @@ log_like_pragmatic_ex3 <- adult_ex3_data %>%
          log_like = log(like))%>%
   group_by(model)%>%
   summarise(logP = sum(log_like))
-
-
-log_like_flat_prior_ex3 <- adult_ex3_data %>%
-  left_join(ex3_flat_prior_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == 1, value, 1 - value),
-         log_like = log(like))%>%
-  group_by(model)%>%
-  summarise(logP = sum(log_like))
-
-log_like_prior_only_ex3 <- adult_ex3_data %>%
-  left_join(ex3_prior_only_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == 1, value, 1 - value),
-         log_like = log(like))%>%
-  group_by(model)%>%
-  summarise(logP = sum(log_like))
 ```
 
-### Loglike models with noise
+#### Loglike models with noise
 
-#### Pragmatic model 
+##### Pragmatic model 
 ```{r model rsa noise ex3, include = FALSE}
 loglike.rsa.ex3.noise <-'
 var allParams = dataFromR.allParams
@@ -775,7 +685,7 @@ ex3_pragm_model_noise_loglike <- readRDS("../../stats/saves/ex3_pragm_model_nois
   group_by(model)%>%
   summarize(logP = logSumExp(value))
 ```
-#### Prior only model 
+##### Prior only model 
 
 ```{r model prior only noise ex3, include = FALSE}
 loglike.prior.only.ex3.noise <-'
@@ -832,7 +742,7 @@ ex3_prior_only_model_noise_loglike <- readRDS("../../stats/saves/ex3_prior_only_
   summarize(logP = logSumExp(value))
 ```
 
-#### Flat prior model 
+##### Flat prior model 
 
 ```{r model flat prior noise ex3, include = FALSE}
 loglike.flat.prior.ex3.noise <-'
@@ -898,7 +808,7 @@ ex3_model_comparison <- bind_rows(
 ```
 
 
-### Plot for likelihoods
+#### Plot for likelihoods
 
 ```{r likelihood plot adults}
 ggplot(ex3_model_comparison, aes(x = model, y = logP, col = model))+
@@ -913,7 +823,7 @@ ggplot(ex3_model_comparison, aes(x = model, y = logP, col = model))+
                     values= c("#00afaf","#b58900","#859900","#6c71c4"))
 ```
 
-### Bayes factors
+#### Bayes factors
 
 ```{r bayes factors ex3 adults}
 
@@ -971,118 +881,204 @@ model_params_ex4 <- left_join(
   mutate(speak_opt = adult_model_param$so_map)
 ```
 
-### Model predictions
+### Model predictions (including noise parameter)
 
-##### Pragmatic model
+#### Pragmatic model
 
-```{r model rsa noise ex4 adults}
-predictions.rsa.ex4 <-'
+```{r model rsa noise ex4, include = FALSE}
+predictions.rsa.ex4.noise <-'
+var allParams = dataFromR.allParams
+var allData = dataFromR.allData
 
-var allData = dataFromR.data
+var model = function(){
 
-var output = map(function(row){
-    var priorProbLst = [1 - row.prior, 1 - row.prior, row.prior]
-    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, priorProbLst, row.speak_opt)
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
-    return extend([row.common_ground_manipulation + "/" + row.prior_manipulation + "/" + row.speaker + "/" + row.alignment + "/" + row.correct_inf, Math.exp(modelPredictions.score(1))])
+  var conditionOutput = map(function(conditionInfo){
 
-}, allData)
+  var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, prior_manipulation: conditionInfo.prior_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment})
 
-output
+   var conditionSpecificPriors = [1 - conditionInfo.prior, 1 - conditionInfo.prior, conditionInfo.prior] 
 
+      var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors, conditionInfo.speak_opt)
+
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+  
+ map(function(d){ 
+      observe(noisyModelPredictions, d.correct_inf)
+    }, conditionSpecificData)
+
+  return  [conditionInfo.common_ground_manipulation + "/" + conditionInfo.prior_manipulation + "/" + conditionInfo.speaker + "/" +  conditionInfo.alignment, Math.exp(noisyModelPredictions.score(1))]
+
+}, allParams)
+
+  return extend(_.fromPairs(conditionOutput), {noise: noise})
+}
 '
 ```
 
-```{r predictions pragmatic model ex 4 adults}
-ex4_pragm_model<- webppl(
-  program_code = paste(rsaUtils, rsaModel, predictions.rsa.ex4 , sep='\n'),
-  data =list(data = model_params_ex4),
-  data_var = "dataFromR"
-)
+```{r predictions pragmatic model ex 4 noise, include = FALSE}
+# ex4_pragm_model_noise <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, predictions.rsa.ex4.noise, sep='\n'),
+#   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4,
+#   cores = 4,
+#   inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_pragm_model_noise.rds")
+
 
 # model predictions
-ex4_pragm_model_predictions <- ex4_pragm_model %>%
-  separate(`0`, into = c("common_ground_manipulation","prior_manipulation", "speaker", "alignment"), sep="/")%>%
-  mutate(value = `1`,
-         model="pragmatic")%>%
-  select(-`1`)
+ex4_pragm_model_pred_noise <- readRDS("../../stats/saves/ex4_pragm_model_noise.rds") %>%
+  filter(!(Parameter %in% c("noise")))  %>%
+  separate(Parameter, into = c("common_ground_manipulation","prior_manipulation","speaker", "alignment"), sep="/")%>%
+  mutate(model="pragmatic_noise")%>%
+  group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
 
+## noise parameter
+ex4_pragm_model_noise_param <- readRDS("../../stats/saves/ex4_pragm_model_noise.rds") %>%
+  filter(Parameter %in% c("noise"))  %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
 ```
 
-##### Prior only model 
+#### Prior only model 
 
-```{r model prior only ex4 adults}
-predictions.prior.only.ex4 <-'
+```{r model prior only noise ex4, include = FALSE}
+predictions.prior.only.ex4.noise <-'
+var allParams = dataFromR.allParams
+var allData = dataFromR.allData
 
-var allData = dataFromR.data
+var model = function(){
 
-var output = map(function(row){
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
-    var priorProbLst = [1 - row.prior, 1 - row.prior, row.prior]
+  var conditionOutput = map(function(conditionInfo){
+
+  var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, prior_manipulation: conditionInfo.prior_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment})
+
+   var conditionSpecificPriors = [1 - conditionInfo.prior, 1 - conditionInfo.prior, conditionInfo.prior] 
 
   var modelPredictions = Infer({method: "enumerate", model: function(){
-      var obj = sample( Categorical({vs: all_objects, ps: priorProbLst}));
+      var obj = sample( Categorical({vs: all_objects, ps: conditionSpecificPriors}));
       return obj.shape == "circle" ? 1 : 0
   }})
 
-    return extend([row.common_ground_manipulation + "/" + row.prior_manipulation + "/" + row.speaker + "/" + row.alignment + "/" + row.correct_inf, Math.exp(modelPredictions.score(1))])
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+  
+ map(function(d){ 
+      observe(noisyModelPredictions, d.correct_inf)
+    }, conditionSpecificData)
 
-}, allData)
+  return  [conditionInfo.common_ground_manipulation + "/" + conditionInfo.prior_manipulation + "/" + conditionInfo.speaker + "/" +  conditionInfo.alignment, Math.exp(noisyModelPredictions.score(1))]
 
-output
+}, allParams)
 
+  return extend(_.fromPairs(conditionOutput), {noise: noise})
+}
 '
 ```
 
-```{r predictions prior only model ex4 adults}
-ex4_prior_only_model<- webppl(
-  program_code = paste(rsaUtils, rsaModel, predictions.prior.only.ex4 , sep='\n'),
-  data =list(data = model_params_ex4),
-  data_var = "dataFromR"
-)
+```{r predictions prior only model ex 4 noise, include = FALSE}
+# ex4_prior_only_model_noise <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, predictions.prior.only.ex4.noise, sep='\n'),
+#   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4,
+#   cores = 4,
+#   inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_prior_only_model_noise.rds")
+
 
 # model predictions
-ex4_prior_only_model_predictions <- ex4_prior_only_model %>%
-  separate(`0`, into = c("common_ground_manipulation","prior_manipulation", "speaker", "alignment"), sep="/")%>%
-  mutate(value = `1`,
-         model="prior_only")%>%
-  select(-`1`)
+ex4_prior_only_model_pred_noise <- readRDS("../../stats/saves/ex4_prior_only_model_noise.rds") %>%
+  filter(!(Parameter %in% c("noise")))  %>%
+  separate(Parameter, into = c("common_ground_manipulation","prior_manipulation","speaker", "alignment"), sep="/")%>%
+  mutate(model="prior_only_noise")%>%
+  group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
+
+## noise parameter
+ex4_prior_only_model_noise_param <- readRDS("../../stats/saves/ex4_prior_only_model_noise.rds") %>%
+  filter(Parameter %in% c("noise"))  %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
 ```
 
-##### Flat prior model 
+#### Flat prior model 
 
-```{r model flat prior ex4 adults}
-predictions.flat.prior.ex4 <-'
-var allData = dataFromR.data
+```{r model flat prior noise ex4, include = FALSE}
+predictions.flat.prior.ex4.noise <-'
+var allParams = dataFromR.allParams
+var allData = dataFromR.allData
 
-var prior = [.5, .5, .5] 
+var model = function(){
 
-var output = map(function(row){
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
-    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, prior,row.speak_opt)
+  var conditionOutput = map(function(conditionInfo){
 
-    return extend([row.common_ground_manipulation + "/" + row.prior_manipulation + "/" + row.speaker + "/" + row.alignment + "/" + row.correct_inf, Math.exp(modelPredictions.score(1))])
+  var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, prior_manipulation: conditionInfo.prior_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment})
 
-}, allData)
+   var conditionSpecificPriors = [.5, .5, .5] 
 
-output
+      var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors, conditionInfo.speak_opt)
+
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+  
+ map(function(d){ 
+      observe(noisyModelPredictions, d.correct_inf)
+    }, conditionSpecificData)
+
+  return  [conditionInfo.common_ground_manipulation + "/" + conditionInfo.prior_manipulation + "/" + conditionInfo.speaker + "/" +  conditionInfo.alignment, Math.exp(noisyModelPredictions.score(1))]
+
+}, allParams)
+
+  return extend(_.fromPairs(conditionOutput), {noise: noise})
+}
 '
 ```
 
-```{r predictions flat prior model ex4 adults}
-ex4_flat_prior_model<- webppl(
-  program_code = paste(rsaUtils, rsaModel, predictions.flat.prior.ex4 , sep='\n'),
-  data =list(data = model_params_ex4),
-  data_var = "dataFromR"
-)
+```{r predictions flat prior model ex 4 noise, include = FALSE}
+# ex4_flat_prior_model_noise <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, predictions.flat.prior.ex4.noise, sep='\n'),
+#   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4,
+#   cores = 4,
+#   inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_flat_prior_model_noise.rds")
+
 
 # model predictions
-ex4_flat_prior_model_predictions <- ex4_flat_prior_model %>%
-  separate(`0`, into = c("common_ground_manipulation","prior_manipulation", "speaker", "alignment"), sep="/")%>%
-  mutate(value = `1`,
-         model="flat_prior")%>%
-  select(-`1`)
+ex4_flat_prior_model_pred_noise <- readRDS("../../stats/saves/ex4_flat_prior_model_noise.rds") %>%
+  filter(!(Parameter %in% c("noise")))  %>%
+  separate(Parameter, into = c("common_ground_manipulation","prior_manipulation","speaker", "alignment"), sep="/")%>%
+  mutate(model="flat_prior_noise")%>%
+  group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
 
+## noise parameter
+ex4_flat_prior_model_noise_param <- readRDS("../../stats/saves/ex4_flat_prior_model_noise.rds") %>%
+  filter(Parameter %in% c("noise"))  %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
 ```
 
 
@@ -1105,16 +1101,13 @@ adult_ex4_data_summary <- adult_ex4_data %>%
 
 # summarize model predictions
 ex_4_model_pred <- bind_rows(
-  ex4_pragm_model_predictions,
-  ex4_prior_only_model_predictions,
-  ex4_flat_prior_model_predictions
+  ex4_pragm_model_pred_noise,
+  ex4_prior_only_model_pred_noise,
+  ex4_flat_prior_model_pred_noise
 )%>%
-  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"))%>%
-  group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
-  summarise(mean = mean(value))%>%
-  mutate(ci_lower = mean,
-         ci_upper = mean)
-
+  ungroup()%>%
+  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"))
+ 
 # combine model predictions and data
 
 ex_4_pred <- bind_rows(
@@ -1126,7 +1119,9 @@ ex_4_pred <- bind_rows(
 
 ```
 
-##### Plot model predictions and data
+### Compare model predictions to data
+
+#### Plot model predictions and data
 
 ```{r plot ex4 model predictions and data adults}
 ggplot(data = ex_4_pred, aes(x = alignment, y = mean, col = model)) +
@@ -1138,12 +1133,12 @@ ggplot(data = ex_4_pred, aes(x = alignment, y = mean, col = model)) +
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
   scale_color_manual(name="Model",
-                     breaks=c("data","pragmatic","flat_prior","prior_only"),
+                     breaks=c("data","pragmatic_noise","flat_prior_noise","prior_only_noise"),
                      values= c("black","#859900","#6c71c4","#b58900"))+
   theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))
 ```
 
-##### Correlation plot model predictions and data
+#### Correlation plot model predictions and data
 
 ```{r correlation plot ex4 adults}
 ex_4_cor_plot <- ex_4_pred %>%
@@ -1172,46 +1167,189 @@ ggplot(data = ex_4_cor_plot,aes(x = mean, y = data_mean, col = prior_manipulatio
   scale_colour_ptol()
 ```
 
-## Model comparison
+### Model comparison
 
-```{r loglikes ex4 adults}
-# calculating model log-likelihoods
-log_like_pragmatic_ex4 <- adult_ex4_data %>%
-  left_join(ex4_pragm_model_predictions)%>%
-  mutate(like = ifelse(correct_inf == 1 , value, 1 - value),
-         log_like = log(like))%>%
-  group_by(model)%>%
-  summarise(model_log_like = sum(log_like))
+#### Loglike models with noise
 
+##### Pragmatic model 
+```{r model rsa noise ex4, include = FALSE}
+loglike.rsa.ex4.noise <-'
+var allParams = dataFromR.allParams
+var allData = dataFromR.allData
 
-log_like_flat_prior_ex4 <- adult_ex4_data %>%
-  left_join(ex4_flat_prior_model_predictions)%>%
-  mutate(like = ifelse(correct_inf ==  1, value , 1 - value),
-         log_like = log(like))%>%
-  group_by(model)%>%
-  summarise(model_log_like = sum(log_like))
+var model = function(){
 
-log_like_prior_only_ex4 <- adult_ex4_data %>%
-  left_join(ex4_prior_only_model_predictions) %>%
-  mutate(like = ifelse(correct_inf == 1, value, 1 - value),
-         log_like = log(like))%>%
-  group_by(model)%>%
-  summarise(model_log_like = sum(log_like))
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
 
+  var conditionOutput = map(function(conditionInfo){
 
-ex4_model_comparison <- bind_rows(
-  log_like_pragmatic_ex4,
-  log_like_flat_prior_ex4,
-  log_like_prior_only_ex4
-)%>%
-  mutate(model = reorder(model,model_log_like))
+ var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, prior_manipulation: conditionInfo.prior_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment})
+
+   var conditionSpecificPriors = [1 - conditionInfo.prior, 1 - conditionInfo.prior, conditionInfo.prior] 
+
+      var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors, conditionInfo.speak_opt)
+
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+  
+    var loglike = Binomial({
+        p: Math.exp(noisyModelPredictions.score(1)), 
+        n: conditionSpecificData.length}).score(
+      sum(_.map(conditionSpecificData, "correct_inf"))
+    )
+  return  loglike
+
+}, allParams)
+
+ return sum(conditionOutput)
+
+}
+'
 ```
 
-### Plot for likelihoods
+```{r}
+# ex4_pragm_model_noise_loglike <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, loglike.rsa.ex4.noise, sep='\n'),
+#   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4,
+#   cores = 4,
+#   inference_opts = list(method = "forward", samples = 5000)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_pragm_model_noise_loglike.rds")
+
+ex4_pragm_model_noise_loglike <- readRDS("../../stats/saves/ex4_pragm_model_noise_loglike.rds")%>%
+  mutate(model = "pragmatic_noise")%>%
+  group_by(model)%>%
+  summarize(logP = logSumExp(value))
+```
+
+##### Prior only model 
+
+```{r model prior only noise ex4, include = FALSE}
+loglike.prior.only.ex4.noise <-'
+var allParams = dataFromR.allParams
+var allData = dataFromR.allData
+
+var model = function(){
+
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
+
+  var conditionOutput = map(function(conditionInfo){
+
+ var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, prior_manipulation: conditionInfo.prior_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment})
+
+   var conditionSpecificPriors = [1 - conditionInfo.prior, 1 - conditionInfo.prior, conditionInfo.prior] 
+
+  var modelPredictions = Infer({method: "enumerate", model: function(){
+      var obj = sample( Categorical({vs: all_objects, ps: conditionSpecificPriors}));
+      return obj.shape == "circle" ? 1 : 0
+  }})
+
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+  
+    var loglike = Binomial({
+        p: Math.exp(noisyModelPredictions.score(1)), 
+        n: conditionSpecificData.length}).score(
+      sum(_.map(conditionSpecificData, "correct_inf"))
+    )
+  return  loglike
+
+}, allParams)
+
+ return sum(conditionOutput)
+
+}
+'
+```
+
+```{r}
+# ex4_prior_only_model_noise_loglike <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, loglike.prior.only.ex4.noise, sep='\n'),
+#   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4,
+#   cores = 4,
+#   inference_opts = list(method = "forward", samples = 5000)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_prior_only_model_noise_loglike.rds")
+
+ex4_prior_only_model_noise_loglike <- readRDS("../../stats/saves/ex4_prior_only_model_noise_loglike.rds")%>%
+  mutate(model = "prior_only_noise")%>%
+  group_by(model)%>%
+  summarize(logP = logSumExp(value))
+```
+
+##### Flat prior model 
+
+```{r model flat prior noise ex4, include = FALSE}
+loglike.flat.prior.ex4.noise <-'
+var allParams = dataFromR.allParams
+var allData = dataFromR.allData
+
+var model = function(){
+
+   var noise = uniformDrift({a: 0, b:1, width: 0.1})
+
+  var conditionOutput = map(function(conditionInfo){
+
+ var conditionSpecificData =  _.filter(allData, {common_ground_manipulation: conditionInfo.common_ground_manipulation, prior_manipulation: conditionInfo.prior_manipulation, speaker: conditionInfo.speaker, alignment: conditionInfo.alignment})
+
+   var conditionSpecificPriors = [.5, .5,.5] 
+
+      var modelPredictions = pragmaticListener({label: "dax", point: 2 }, conditionSpecificPriors, conditionInfo.speak_opt)
+
+   var noisyModelPredictions = addNoise(modelPredictions, noise)
+  
+    var loglike = Binomial({
+        p: Math.exp(noisyModelPredictions.score(1)), 
+        n: conditionSpecificData.length}).score(
+      sum(_.map(conditionSpecificData, "correct_inf"))
+    )
+  return  loglike
+
+}, allParams)
+
+ return sum(conditionOutput)
+
+}
+'
+```
+
+```{r}
+# ex4_flat_prior_model_noise_loglike <- webppl(
+#   program_code = paste(rsaUtils, rsaModel, loglike.flat.prior.ex4.noise, sep='\n'),
+#   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4,
+#   cores = 4,
+#   inference_opts = list(method = "forward", samples = 5000)
+# ) %>%
+#   saveRDS("../../stats/saves/ex4_flat_prior_model_noise_loglike.rds")
+
+ex4_flat_prior_model_noise_loglike <- readRDS("../../stats/saves/ex4_flat_prior_model_noise_loglike.rds")%>%
+  mutate(model = "flat_prior_noise")%>%
+  group_by(model)%>%
+  summarize(logP = logSumExp(value))
+```
+
+
+```{r}
+ex4_model_comparison <- bind_rows(
+  ex4_pragm_model_noise_loglike,
+  ex4_flat_prior_model_noise_loglike,
+  ex4_prior_only_model_noise_loglike
+)%>%
+  mutate(model = reorder(model,logP))
+```
+
+#### Plot for likelihoods
 
 ```{r plot for loglikelihood ex4 adults}
-ggplot(ex4_model_comparison, aes(x = model, y = model_log_like, col = model))+
-  geom_segment( aes(x=model, xend=model, y=-1500, yend=model_log_like), col = "black", size = 1)+
+ggplot(ex4_model_comparison, aes(x = model, y = logP, col = model))+
+  geom_segment( aes(x=model, xend=model, y=logP, yend=0), col = "black", size = 1)+
   geom_point(size = 7)+
   theme_few()+ 
   xlab("Model")+
@@ -1222,18 +1360,18 @@ ggplot(ex4_model_comparison, aes(x = model, y = model_log_like, col = model))+
                     values= c("#b58900","#859900","#6c71c4"))
 ```
 
-### Bayes factors
+#### Bayes factors
 
 ```{r bayes factors ex4 adults}
 ex4_bf <- bind_rows(
-  log_like_pragmatic_ex4,
-  log_like_flat_prior_ex4,
-  log_like_prior_only_ex4
-) %>% spread(model, model_log_like) %>%
-  mutate("pragmatic > flat_prior" = pragmatic - flat_prior,
-         "pragmatic > prior_only" = pragmatic - prior_only,
-         "flat_prior > prior_only" = flat_prior - prior_only) %>%
-  select(-pragmatic,  -flat_prior, -prior_only)
+  ex4_pragm_model_noise_loglike,
+  ex4_flat_prior_model_noise_loglike,
+  ex4_prior_only_model_noise_loglike
+) %>% spread(model, logP) %>%
+  mutate("pragmatic_noise > flat_prior_noise" = pragmatic_noise - flat_prior_noise,
+         "pragmatic_noise > prior_only_noise" = pragmatic_noise - prior_only_noise,
+         "flat_prior_noise > prior_only_noise" = flat_prior_noise - prior_only_noise) %>%
+  select(-pragmatic_noise,  -flat_prior_noise, -prior_only_noise)
 
 ex4_bf %>%
   kable(digits = 2)
