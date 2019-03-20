@@ -1589,10 +1589,12 @@ ex3_model_data <- child_ex3_data%>%
 
 ### Pragmatic model
 
+#### Parameter free 
+
 ```{r pragmatic model ex3 children}
 child.ex3.rsa.predictions <-'
 
-var allData = dataFromR.ex3data
+var allData = dataFromR.allData
 
 var output = map(function(row){
 
@@ -1610,17 +1612,83 @@ output
 ```{r predictions pragmatic model ex3 children}
 child_ex3_pragm_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.predictions , sep='\n'),
-  data =list(ex3data = ex3_model_data),
+  data =list(allData = ex3_model_data),
   data_var = "dataFromR"
 )
 
 # model predictions
 child_ex3_pragm_model_predictions <- child_ex3_pragm_model %>%
   separate(`0`, into = c("age", "speaker", "alignment","correct"), sep="/")%>%
-  mutate(value = `1`,
+  mutate(mean = `1`,
+         ci_lower = mean,
+         ci_upper = mean,
          model="pragmatic",
          age = as.numeric(age))%>%
   select(-`1`)
+```
+
+#### Noise parameter
+
+```{r}
+child.ex3.rsa.predictions.noise <-'
+
+var allData = dataFromR.allData
+
+var model = function(){
+
+  var noise = uniformDrift({a: 0, b: 1, width: 0.1})  
+
+  var output = map(function(row){
+
+    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.priorProbs,row.so)
+
+    var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+    observe(noisyModelPredictions, row.correct_inf)
+
+    return  [row.age_num + "/" + row.speaker + "/" + row.alignment, Math.exp(noisyModelPredictions.score(1))]
+
+}, allData)
+
+ return extend(_.fromPairs(output), {noise: noise})
+
+}
+'
+```
+
+
+```{r}
+# child_ex3_pragm_model_noise<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.predictions.noise , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   model_var = "model",
+#   chains = 4,
+#   cores = 4,
+#   inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
+# )%>%
+#    saveRDS("../../stats/saves/child_ex3_pragm_model_noise.rds")
+
+  
+# model predictions
+child_ex3_pragm_model_predictions_noise <- readRDS("../../stats/saves/child_ex3_pragm_model_noise.rds") %>%
+  filter(!(Parameter %in% c("noise"))) %>%
+  separate(Parameter, into = c("age", "speaker", "alignment"), sep="/")%>%
+  mutate(model = "pragmatic_noise")%>%
+  group_by(model, age,alignment,speaker) %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value), 
+            ci_upper =hdi_upper(value))%>%
+  ungroup()%>%
+  mutate(age = as.numeric(age))
+
+## noise parameter
+child_ex3_pragm_model_noise_param <- readRDS("../../stats/saves/child_ex3_pragm_model_noise.rds") %>%
+  filter(Parameter %in% c("noise"))  %>%
+  summarise(mean = estimate_mode(value), 
+            ci_lower = hdi_lower(value),
+            ci_upper = hdi_upper(value))
+
 ```
 
 ### Prior only model
@@ -1628,7 +1696,7 @@ child_ex3_pragm_model_predictions <- child_ex3_pragm_model %>%
 ```{r prior only model ex3 children}
 child.ex3.prior.only.predictions <-'
 
-var allData = dataFromR.ex3data
+var allData = dataFromR.allData
 
   var output = map(function(row){
 
@@ -1649,14 +1717,14 @@ var allData = dataFromR.ex3data
 ```{r predictions prior only model ex3 children}
 child_ex3_prior_only_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.predictions , sep='\n'),
-  data =list(ex3data = ex3_model_data),
+  data =list(allData = ex3_model_data),
   data_var = "dataFromR"
 )
 
 # model predictions
 child_ex3_prior_only_model_predictions <- child_ex3_prior_only_model %>%
   separate(`0`, into = c("age", "speaker", "alignment","correct"), sep="/")%>%
-  mutate(value = `1`,
+  mutate(mean = `1`,
          model="prior_only",
          age = as.numeric(age))%>%
   select(-`1`)
@@ -1668,7 +1736,7 @@ child_ex3_prior_only_model_predictions <- child_ex3_prior_only_model %>%
 ```{r flat prior model ex3 children}
 child.ex3.flat.prior.predictions <-'
 
-var allData = dataFromR.ex3data
+var allData = dataFromR.allData
 
   var output = map(function(row){
     
@@ -1688,14 +1756,14 @@ output
 ```{r predictions flat prior model ex3 children}
 child_ex3_flat_prior_model<- webppl(
   program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.predictions , sep='\n'),
-  data =list(ex3data = ex3_model_data),
+  data =list(allData = ex3_model_data),
   data_var = "dataFromR")
 
 
 # model predictions
 child_ex3_flat_prior_model_predictions <- child_ex3_flat_prior_model %>%
   separate(`0`, into = c("age", "speaker", "alignment","correct"), sep="/")%>%
-  mutate(value = `1`,
+  mutate(mean = `1`,
          model="flat_prior",
          age = as.numeric(age))%>%
   select(-`1`)
@@ -1706,6 +1774,7 @@ child_ex3_flat_prior_model_predictions <- child_ex3_flat_prior_model %>%
 
 ```{r plot model predictions ex3 children}
 child_model_predictions <- bind_rows(
+  child_ex3_pragm_model_predictions_noise,
   child_ex3_pragm_model_predictions,
   child_ex3_flat_prior_model_predictions,
   child_ex3_prior_only_model_predictions
@@ -1720,7 +1789,8 @@ plot_child_ex3_data <- child_ex3_data%>%
 
 ggplot(child_model_predictions)+
   #geom_jitter(data = plot_child_ex3_data, aes(x = age_num, y = mean), width = .025,height = .025, alpha = .2)+
-  geom_line(aes(x = age, y = value, col = model), size = 1, alpha = 1, linetype = 1) + 
+  geom_ribbon(aes(x = age, ymin = ci_lower, ymax = ci_upper, fill = model), alpha = .4) +
+  geom_line(aes(x = age, y = mean, col = model), size = 1, alpha = 1, linetype = 1) + 
   geom_smooth(data = child_ex3_data, aes(x = age_num, y = correct_inf), col = "black", size = 0.6, method = "loess", span = 1,  se = T,  alpha = .5)+
   #geom_hline(yintercept = 0.5, lty=2)+
   labs(y="proportion more informative")+
@@ -1728,11 +1798,11 @@ ggplot(child_model_predictions)+
   facet_grid(speaker~alignment)+
   theme_few()+
   scale_color_manual(name="Model",
-                     breaks=c("pragmatic","flat_prior","prior_only"),
-                     values= c("#859900","#6c71c4","#b58900"))+
+                     breaks=c("pragmatic","pragmatic_noise","flat_prior","prior_only"),
+                     values= c("#859900","#00afaf","#6c71c4","#b58900"))+
   scale_fill_manual(name="Model",
-                     breaks=c("pragmatic","flat_prior","prior_only"),
-                     values= c("#859900","#6c71c4","#b58900"))
+                     breaks=c("pragmatic","pragmatic_noise","flat_prior","prior_only"),
+                     values= c("#859900","#00afaf","#6c71c4","#b58900"))
 
 ```
 
@@ -1755,14 +1825,14 @@ child_cor_data <- child_ex3_data %>%
 child_cor_model <- child_model_predictions %>%
   mutate(age = ifelse(age<4,"3","4"))%>%
   group_by(model,speaker,alignment, age)%>%
-  summarise(Model = mean(value))
+  summarise(Model = mean(mean))
   
 
 child_cor_plot <- child_cor_model %>%
   ungroup()%>%
-  mutate(Data = rep(child_cor_data$Data,3),
-         Data_ci_lower = rep(child_cor_data$Data_ci_lower,3),
-         Data_ci_upper  =rep( child_cor_data$Data_ci_upper,3))
+  mutate(Data = rep(child_cor_data$Data,4),
+         Data_ci_lower = rep(child_cor_data$Data_ci_lower,4),
+         Data_ci_upper  =rep( child_cor_data$Data_ci_upper,4))
 
 
 ggplot(data = child_cor_plot,aes(x = Model, y = Data, col = age)) +

@@ -9,4 +9,6 @@ stats/adults/rsconnect/*
 models/rsconnect/*
 stats/rsconnect/*
 
+stats/.Rhistory
+
 .Rproj.user
