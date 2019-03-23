@@ -1658,16 +1658,19 @@ var model = function(){
 
 
 ```{r}
-# child_ex3_pragm_model_noise<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.predictions.noise , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   model_var = "model",
-#   chains = 4,
-#   cores = 4,
-#   inference_opts = list(method = "MCMC", samples = 6000, burn = 2000, verbose = T)
-# )%>%
-#    saveRDS("../../stats/saves/child_ex3_pragm_model_noise.rds")
+child_ex3_pragm_model_noise<- webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.predictions.noise , sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  model_var = "model",
+  chains = 1,
+  cores = 1,
+  inference_opts = list(method = "MCMC", samples = 100, burn = 5, verbose = T)
+)
+
+
+%>%
+   saveRDS("../../stats/saves/child_ex3_pragm_model_noise.rds")
 
   
 # model predictions
@@ -1849,6 +1852,49 @@ ggplot(data = child_cor_plot,aes(x = Model, y = Data, col = age)) +
 ```
 
 ## Model comparison
+
+
+
+```{r}
+child.ex3.rsa.marginal.likelihood <-'
+
+var allData = dataFromR.allData
+
+var model = function(){
+
+  var noise = uniform({a: 0, b: 1})  
+
+  var output = map(function(row){
+
+    var modelPredictions = pragmaticListener({label: "dax", point: 2 }, row.priorProbs,row.so)
+
+    var noisyModelPredictions = addNoise(modelPredictions, noise)
+
+    observe(noisyModelPredictions, row.correct_inf)
+
+}, allData)
+
+}
+
+var steps = 100
+var samples = 1
+var mll = AIS(model, {steps:steps, samples: samples})
+mll
+'
+```
+
+
+```{r}
+child_ex3_pragm_model_noise_likelihood<- webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.marginal.likelihood , sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  chains = 3,
+  cores = 3
+)
+```
+
+
 
 ```{r model loglike ex3 children}
 # calculating model log-likelihoods
