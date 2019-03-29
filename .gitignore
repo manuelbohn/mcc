@@ -2,12 +2,27 @@
 auth.json
 my-own-auth.json
 *.Rapp.history
-*.Rproj
-*RData
+*.Rproj.user
+*.RData
+*.Rhistory
+*.fff
+*.tex
 stats/kids/rsconnect/*
 stats/adults/rsconnect/*
 models/rsconnect/*
 stats/rsconnect/*
+
+papers/full_paper/raw_figures/*
+
+papers/full_paper/manuscript_cache/*
+
+papers/full_paper/manuscript_files/*
+
+
+papers/full_paper/paper_plots.Rmd
+
+papers/full_paper/r-references.bib
+
 
 stats/.Rhistory
 

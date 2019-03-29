@@ -43,11 +43,11 @@ hdi_lower<- function(s){
 
 ```{r data, include= FALSE}
 
-dat <- bind_rows(read_csv(file="ex3.2.novel.strong.data.csv"),
-               read_csv(file="ex3.2.novel.medium.data.csv"),
-               read_csv(file="ex3.2.novel.weak.data.csv"),
-               read_csv(file="ex3.2.pref.strong.data.csv"),
-               read_csv(file="ex3.2.pref.medium.data.csv")
+dat <- bind_rows(read_csv(file="../data/ex3.2.novel.strong.data.csv"),
+               read_csv(file="../data/ex3.2.novel.medium.data.csv"),
+               read_csv(file="../data/ex3.2.novel.weak.data.csv"),
+               read_csv(file="../data/ex3.2.pref.strong.data.csv"),
+               read_csv(file="../data/ex3.2.pref.medium.data.csv")
                ) %>%
   mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
 ```
@@ -215,7 +215,7 @@ library(lme4)
 
 m.data.strong <- data %>%
   filter(Prior == "Strong") %>%
-  mutate(item = ifelse( change == "false", agent, altAgent))
+  mutate(item = ifelse( change == "same", agent, altAgent))
 
 
 lm.strong <- glmer(correct_inf ~ Experiment*Change*Alignment + (Change*Alignment|id) + (Change+Alignment|agent), 
@@ -231,7 +231,7 @@ summary(lm.strong)
 
 m.data.medium <- data %>%
   filter(Prior == "Medium") %>%
-  mutate(item = ifelse( change == "false", agent, altAgent))
+  mutate(item = ifelse( change == "same", agent, altAgent))
 
 
 lm.medium <- glmer(correct_inf ~ Experiment*Change*Alignment + (Change*Alignment|id) + (Change+Alignment|agent), 
@@ -247,7 +247,7 @@ summary(lm.medium)
 
 m.data.weak <- data %>%
   filter(Prior == "Weak") %>%
-  mutate(item = ifelse( change == "false", agent, altAgent))
+  mutate(item = ifelse( change == "same", agent, altAgent))
 
 
 lm.weak <- glmer(correct_inf ~ Change*Alignment + (Change*Alignment|id) + (Change+Alignment|agent), 
