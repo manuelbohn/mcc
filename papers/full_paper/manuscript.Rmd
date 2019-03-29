@@ -286,7 +286,7 @@ ex1_r <- tidy(lm_ex1, effects = "fixed")%>%
          estimate = round(estimate,2))
 ```
 
-Participants made the inference consistent with the assumption that the speaker communicated informatively: They selected object B above chance (0.5) in the test condition (t(`r ex1t%>%filter(condition == "test")%>%pull(df)`) = `r ex1t%>%filter(condition == "test")%>%pull(t_value)`, *p* `r ex1t%>%filter(condition == "test")%>%pull(p_value)`, see Fig. 2) and more often compared to the control condition (*$\beta$* = `r ex1_r%>%filter(term == "conditiontest")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "conditiontest")%>%pull(std.error)`, *p* `r ex1_r%>%filter(term == "conditiontest")%>%pull(p.value)`). 
+Participants made the inference consistent with the assumption that the speaker communicated informatively: They selected object B above chance in the test condition (t(`r ex1t%>%filter(condition == "test")%>%pull(df)`) = `r ex1t%>%filter(condition == "test")%>%pull(t_value)`, *p* `r ex1t%>%filter(condition == "test")%>%pull(p_value)`, see Fig. 2) and more often compared to the control condition (*$\beta$* = `r ex1_r%>%filter(term == "conditiontest")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "conditiontest")%>%pull(std.error)`, *p* `r ex1_r%>%filter(term == "conditiontest")%>%pull(p.value)`). 
 
 ```{r ex2-results}
 ex2tpref <- adult_ex2_preference_data %>%
