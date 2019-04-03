@@ -6,6 +6,7 @@ my-own-auth.json
 *.RData
 *.Rhistory
 *.fff
+*.docx
 *.tex
 stats/kids/rsconnect/*
 stats/adults/rsconnect/*

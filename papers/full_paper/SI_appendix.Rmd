@@ -2373,6 +2373,7 @@ ggplot(data = child_cor_plot,aes(x = model_mode, y = data_mode, col = age)) +
   stat_cor(method = "pearson", label.x = 0.01, label.y = 0.99, aes(x = model_mode, y = data_mode), inherit.aes = F)+
   xlim(0,1)+ylim(0,1)+
   xlab("Model")+
+  ylab("Data")+
   theme_few() + 
   scale_colour_ptol()
 ```
