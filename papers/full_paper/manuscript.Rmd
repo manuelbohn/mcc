@@ -274,10 +274,11 @@ ex1t <- adult_ex1_data %>%
 
 # model
 lm_ex1 <- glmer(correct ~ condition +
-              (condition |id) + (condition |agent), 
+              (1 |id) , 
               data = adult_ex1_data, 
               family = binomial,control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
+#summary(lm_ex1)
 
 ex1_r <- tidy(lm_ex1, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
@@ -303,10 +304,11 @@ ex2tpref <- adult_ex2_preference_data %>%
 
 # model (maximally converging)
 lm_ex2pref <- glmer(correct ~ condition +
-              (1|id) + (condition |agent), 
+              (1|id), 
               data = adult_ex2_preference_data, 
               family = binomial,control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
+#summary(lm_ex2pref)
 
 ex2pref_r <- tidy(lm_ex2pref, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
@@ -327,10 +329,11 @@ ex2tnov <- adult_ex2_novelty_data %>%
 
 # model
 lm_ex2nov <- glmer(correct ~ condition +
-              (1|id) + (condition |agent), 
+              (condition|id), 
               data = adult_ex2_novelty_data, 
               family = binomial,control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
+#summary(lm_ex2nov)
 
 ex2nov_r <- tidy(lm_ex2nov, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
@@ -360,7 +363,7 @@ With $\alpha$ and $P_S(r_s)$ fixed based on experiment 1 and 2, we generated mod
 
 ```{r ex3 GLMM, cache=T}
 # model 
-lm_ex3 <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (speaker+alignment|id) + (speaker+alignment|agent), 
+lm_ex3 <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (alignment|id), 
               data = adult_ex3_data, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -413,7 +416,7 @@ The goal of experiment 4 was twofold: First, to replicate the results of experim
 ```{r ex4 GLMMs, cache=T}
 # strong 
 
-lm_ex4_strong <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (speaker+alignment|id) + (speaker+alignment|agent), 
+lm_ex4_strong <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (speaker+alignment|id), 
               data = adult_ex4_data %>% filter(prior_manipulation == "strong"), family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -425,7 +428,7 @@ lm_ex4_r_strong <- tidy(lm_ex4_strong, effects = "fixed")%>%
          estimate = round(estimate,2))
 
 
-lm_ex4_medium <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (speaker+alignment|id) + (speaker+alignment|agent), 
+lm_ex4_medium <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (alignment|id), 
               data = adult_ex4_data %>% filter(prior_manipulation == "medium"), family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -436,7 +439,7 @@ lm_ex4_r_medium <- tidy(lm_ex4_medium, effects = "fixed")%>%
          std.error = round(std.error,2),
          estimate = round(estimate,2))
 
-lm_ex4_weak <- glmer(correct_inf ~ speaker*alignment + (speaker+alignment|id) + (speaker+alignment|agent), 
+lm_ex4_weak <- glmer(correct_inf ~ speaker*alignment + (speaker+alignment|id), 
               data = adult_ex4_data %>% filter(prior_manipulation == "weak"), family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -564,13 +567,12 @@ child_ex3_lm_data <- child_ex3_data%>%
   mutate(age_num = scale(age_num, center = TRUE, scale = TRUE))
 
 child_ex3_lm <- glmer(correct_inf ~ age_num*speaker*alignment 
-      + (speaker*alignment | id) 
-      + (age_num*speaker*alignment | agent), 
+      + (speaker+alignment | id), 
       family = "binomial",
       data = child_ex3_lm_data,
       control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
-#summary(child_ex3_lm)
+summary(child_ex3_lm)
 
 child_lm_ex3_r <- tidy(child_ex3_lm, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
