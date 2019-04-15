@@ -97,8 +97,6 @@ var utterancePrior = function(obj, lexiconName){
 
 var LexiconPrior = Categorical({vs: ["dax = triangle","dax = circle" ], ps: [1, 1]})
 
-var speakerOptimality = 2.25;
-
 var addNoise = function(dist, noiseParam){
    Infer({model: function(){ 
       return flip(noiseParam) ? uniformDraw([0, 1]) : sample(dist)

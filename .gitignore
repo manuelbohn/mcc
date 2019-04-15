@@ -6,12 +6,15 @@ my-own-auth.json
 *.RData
 .Rhistory
 *.fff
+*.log
 *.docx
 *.tex
 stats/kids/rsconnect/*
 stats/adults/rsconnect/*
 models/rsconnect/*
 stats/rsconnect/*
+stats/graphs/*
+stats/simulations/*
 
 papers/full_paper/raw_figures/*
 

@@ -232,10 +232,11 @@ Participants selected the less frequent object above chance in the test
 condition (t(39) = 5.51, \emph{p} \textless{} .001, see Fig.
 \ref{fig:plotexp12}) and did so more often compared to the control
 condition (generalized linear mixed model
-(GLMM\footnote{All models included random effects for subject and speaker.}):\emph{\(\beta\)}
-= 1.49, se = 0.5 \emph{p} = .003). This result replicates earlier work
-(Frank \& Goodman, 2014) and is consistent with the hypothesis that
-listeners expect speakers to communicate in an informative way.
+(GLMM\footnote{All models had maximal random effects structure conditional on model convergence.}):\emph{\(\beta\)}
+= 1.28, se = 0.29 \emph{p} \textless{} .001). This result replicates
+earlier work (Frank \& Goodman, 2014) and is consistent with the
+hypothesis that listeners expect speakers to communicate in an
+informative way.
 
 \begin{CodeChunk}
 \begin{figure}[H]
@@ -293,7 +294,7 @@ novel.
 Participants selected the preferred object above chance when the same
 animal returned (t(39) = 29.14, \emph{p} \textless{} .001, see Fig.
 \ref{fig:plotexp12}) and did so more often compared to trials in which a
-different animal returned (GLMM: \(\beta\) = 2.97, se = 0.7, \emph{p}
+different animal returned (GLMM: \(\beta\) = 2.92, se = 0.56, \emph{p}
 \textless{} .001). Thus, listeners inferred the referent of the
 utterance by considering previous interactions with the speaker.
 Interestingly, participants transferred preference to some extent from
@@ -306,9 +307,9 @@ The novel object was selected above chance when the same animal returned
 (t(39) = 6.77, \emph{p} \textless{} .001) but not when a different one
 appeared (t(39) = 1.49, \emph{p} = .144, see Fig. \ref{fig:plotexp12}).
 Furthermore, the two conditions differed in the expected direction
-(\(\beta\) = 1.7, se = 0.39, \emph{p} \textless{} .001). Thus, like
-children (Akhtar et al., 1996), adults used their prior information
-about the speaker to resolve ambiguity in the utterance.
+(\(\beta\) = 6.27, se = 1.96, \emph{p} = .001). Thus, like children
+(Akhtar et al., 1996), adults used their prior information about the
+speaker to resolve ambiguity in the utterance.
 
 \section{Experiment 3}\label{experiment-3}
 
@@ -404,7 +405,7 @@ more informative referent when only considering speaker general
 expectations). For a comparison to chance within each unique condition
 see Fig. \ref{fig:plotexp3}. Combinations of alignment and speaker
 identity differed in how they influenced participants' responses (GLMM
-model term: \texttt{alignment*speaker}; \(\beta\) = -2.92, se = 0.57,
+model term: \texttt{alignment*speaker}; \(\beta\) = -2.64, se = 0.48,
 \emph{p} \textless{} .001). Fig. \ref{fig:plotmodelcomp}A shows the mean
 response in each unique condition compared to the pragmatics model.
 Model predictions and data were highly correlated (r = 0.96, \emph{p}
@@ -523,19 +524,32 @@ inferred referent of any semantically plausible utterance, even when the
 same utterance would point to a different object in the absence of prior
 information.
 
-In our model, we treated common ground expectations as equivalent to
-more basic manipulations of contextual salience (e.g.~in Frank \&
-Goodman, 2012) and did not explicitly model the social-cognitive
-processes that give rise to these expectations. The interaction around
-the object prior to the test event simply increased the probability that
-this particular speaker will refer to the object subsequently. The same
-change could be brought about if one of the objects would be made
-perceptually more salient, for example by making it flash. In future
-work, it would be interesting to explore ways to model common ground
-expectations explicitly as well as to contrast perceptual and
-interactional salience.
+A range probabilistic frameworks been used to model word learning (e.g.
+Fazly, Alishahi, \& Stevenson, 2010; Frank, Goodman, \& Tenenbaum, 2009;
+Xu \& Tenenbaum, 2007). RSA models differ from other approaches in that
+they treat word learning as the outcome of a social reasoning process.
+In contrast to models for cross-situational word learning (Fazly et al.,
+2010; Frank et al., 2009), RSA models show how learning might occur in a
+one shot scenario based on pragmatic reasoning alone. While the ad hoc
+informativeness inference characteristic for RSA would be predicted by
+the model of Xu and Tenenbaum (2007), in their work it follows from the
+``size principle'' of generalization (Tenenbaum \& Griffiths, 2001) and
+not from social reasoning. In cotrast to RSA, this approach does not
+offer a straightforward way to incorporate other types of social
+information such as expectations following from common ground.
 
-This work integrates different perspectives on the study of pragmatic
+We treated common ground expectations as equivalent to more basic
+manipulations of contextual salience (e.g.~in Frank \& Goodman, 2012)
+and did not explicitly model the social-cognitive processes that give
+rise to these expectations. The interaction around the object prior to
+the test event simply increased the probability that this particular
+speaker will refer to the object subsequently. The same change could be
+brought about if one of the objects would be made perceptually more
+salient, for example by making it flash. In future work, it would be
+interesting to explore ways to model common ground expectations
+explicitly as well as to contrast perceptual and interactional salience.
+
+Our work integrates different perspectives on the study of pragmatic
 inference. Previous work focused either on general or speaker specific
 expectations. The methodological approach taken here illustrates how
 computational and experimental approaches can be used in conjunction to
@@ -543,11 +557,9 @@ explicate theories of language use and learning.
 
 \vspace{1em}
 \fbox{\parbox[b][][c]{7.3cm}{\centering Corresponding data and code are available at\ \url{https://github.com/manuelbohn/mcc}}}
-\vspace{1em} --\textgreater{}
+\vspace{1em}
 
 \section{Acknowledgements}\label{acknowledgements}
-
-Masked for peer review.
 
 MB received funding from the European Union's Horizon 2020 research and
 innovation programme under the Marie Sklodowska-Curie grant agreement No
@@ -575,6 +587,11 @@ Cambridge University Press.
 Clark, H. H. (1996). \emph{Using language}. Cambridge: Cambridge
 University Press.
 
+\hypertarget{ref-fazly2010probabilistic}{}
+Fazly, A., Alishahi, A., \& Stevenson, S. (2010). A probabilistic
+computational model of cross-situational word learning. \emph{Cognitive
+Science}, \emph{34}(6), 1017--1063.
+
 \hypertarget{ref-frank2012predicting}{}
 Frank, M. C., \& Goodman, N. D. (2012). Predicting pragmatic reasoning
 in language games. \emph{Science}, \emph{336}(6084), 998--998.
@@ -583,6 +600,11 @@ in language games. \emph{Science}, \emph{336}(6084), 998--998.
 Frank, M. C., \& Goodman, N. D. (2014). Inferring word meanings by
 assuming that speakers are informative. \emph{Cognitive Psychology},
 \emph{75}, 80--96.
+
+\hypertarget{ref-frank2009using}{}
+Frank, M. C., Goodman, N. D., \& Tenenbaum, J. B. (2009). Using
+speakers' referential intentions to model early cross-situational word
+learning. \emph{Psychological Science}, \emph{20}(5), 578--585.
 
 \hypertarget{ref-goodman2016pragmatic}{}
 Goodman, N. D., \& Frank, M. C. (2016). Pragmatic language
@@ -606,9 +628,18 @@ Development}, \emph{24}(2), 125--132.
 Sperber, D., \& Wilson, D. (2001). \emph{Relevance: Communication and
 cognition} (2nd ed.). Cambridge, MA: Blackwell Publishers.
 
+\hypertarget{ref-tenenbaum2001generalization}{}
+Tenenbaum, J. B., \& Griffiths, T. L. (2001). Generalization,
+similarity, and bayesian inference. \emph{Behavioral and Brain
+Sciences}, \emph{24}(4), 629--640.
+
 \hypertarget{ref-tomasello2009constructing}{}
 Tomasello, M. (2009). \emph{Constructing a language}. Cambridge, MA:
 Harvard University Press.
+
+\hypertarget{ref-xu2007word}{}
+Xu, F., \& Tenenbaum, J. B. (2007). Word learning as bayesian inference.
+\emph{Psychological Review}, \emph{114}(2), 245.
 
 \bibliographystyle{apacite}
 

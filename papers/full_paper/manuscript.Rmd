@@ -304,7 +304,7 @@ ex2tpref <- adult_ex2_preference_data %>%
 
 # model (maximally converging)
 lm_ex2pref <- glmer(correct ~ condition +
-              (1|id), 
+              (1|id) + (1|agent), 
               data = adult_ex2_preference_data, 
               family = binomial,control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -361,7 +361,7 @@ We treated common ground expectations as changes in the prior probability that a
 
 With $\alpha$ and $P_S(r_s)$ fixed based on experiment 1 and 2, we generated model predictions for situations in which general and common ground expectations had to be integrated (Fig. 1C). Expectations could either be congruent or incongruent. If, for example, object A was the more informative object (unique to that table) and also the one the speaker expressed preference for, expectations were congruent. Next, the speaker who made the request could either be the same as the one in the previous interaction or a different one. Finally, common ground information could be manipulated in the form of preference or novelty. This resulted in a total of 2 (novelty or preference) x 2 (same or different speaker) x 2 (congruent or incongruent) = 8 conditions for which we generated model predictions. In order to capture that behavioral data is to some extend noisy, all models included a noise parameter. Noise parameters ranged between 0 and 1 and reflect the proportion of responses that are estimated (based on the data) to be random instead of in line with model predictions. Including the noise parameter greatly improved the model fit to the data (see SI Appendix for details). We did not preregister the inclusion of a noise parameter for experiment 3 but did so for all subsequent experiments.   
 
-```{r ex3 GLMM, cache=T}
+```{r ex3 GLMM, cache=F}
 # model 
 lm_ex3 <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (alignment|id), 
               data = adult_ex3_data, family = binomial, 
@@ -413,7 +413,7 @@ Model predictions were highly correlated with the average response in each condi
 
 The goal of experiment 4 was twofold: First, to replicate the results of experiment 3 and second, to test the generalizability of the pragmatics model to a larger range of conditions. Compared to experiment 3, we manipulated the strength of the common ground expectations. For both, preference and novelty, we planned to have a strong, a medium and a weak manipulation. Expectation strength was manipulated by changing the way the speaker interacted with the objects prior to the request and measured as the proportion with which participants chose the preferred/novel object in the same speaker condition (see SI Appendix for results). For novelty, we succeeded in finding three qualitatively different manipulations. For preference, we piloted a number of manipulations but did not find a way to indicate only weak preference. Experiment 4 therefore included strong and medium manipulations for novelty and preference and a weak manipulation for novelty. The general expectation was the same as in experiment 3. For each level we crossed general and common ground expectations in the same way as in experiment 3, resulting in a total of 8 (strong) + 8 (medium) + 4 (weak) = 20 conditions. The strong manipulation was a direct replication of experiment 3. Model predictions were generated in the same way as in experiment 3.
 
-```{r ex4 GLMMs, cache=T}
+```{r ex4 GLMMs, cache=F}
 # strong 
 
 lm_ex4_strong <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (speaker+alignment|id), 
@@ -562,7 +562,7 @@ For preference, four-year-olds selected the preferred object above chance when t
 
 We used the measurements from experiment 1 and 2 to specify $\alpha$ and $P_S(r_s)$ in the pragmatics model. However, instead of setting these parameters to a single value, we used the data to infer the intercept and slope that best described the developmental trajectory for each parameter. For $P_S(r_s)$, this was done separately for the same speaker and the different speaker condition (see SI Appendix for details). These parameter settings were then used to generate age sensitive model predictions in 2 (same or different speaker) x 2 (congruent or incongruent) = 4 conditions. As for adults, all models included a noise parameter, which was estimated based on the data. 
 
-```{r child ex3 GLMM, cache = T}
+```{r child ex3 GLMM, cache = F}
 child_ex3_lm_data <- child_ex3_data%>%
   mutate(age_num = scale(age_num, center = TRUE, scale = TRUE))
 
