@@ -10,6 +10,8 @@ author:
     email         : "bohn@stanford.edu"
   - name          : "Michael Henry Tessler"
     affiliation   : "3"
+  - name          : "Megan Merrick"
+    affiliation   : "1"
   - name          : "Michael C. Frank"
     affiliation   : "1"
 
@@ -22,7 +24,7 @@ affiliation:
     institution   : "Department of Brain and Cognitive Sciences, Massachusetts Institute of Technology"
 
 author_note: |
-  MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement no. 749229. We thank Jacqueline Quirke, Sabina Zacco and especially Megan Merrick for help with the data collection.  
+  MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement no. 749229. MCF was supported by a Jacobs Foundation Advanced Research Fellowship and the Zhou Fund. We thank Jacqueline Quirke and Sabina Zacco for help with the data collection.  
 
 abstract: |
   Language is used and learned in complex social settings. To infer what a speaker means, listeners have to go beyond the literal meaning of words and rely on pragmatic inferences. During language acquisition, the same processes can help children to learn the meaning of novel words. Yet, pragmatic inferences require balancing multiple sources of social information. Here we study this integration process. We isolate two types of pragmatic inference and formalize how they should be integrated according to a Bayesian pragmatics model. We present a series of experiments with preschool children and adults that suggest that information integration is best described as a form of probabilistic inference.
@@ -648,7 +650,7 @@ In experiment 3 for children, we again inserted the preference manipulation into
 
 ## Analysis
 
-All analysis were run in R [@R-base]. GLMMs were fit via the function `glmer` from the package `lme4` [@R-lme4]. Probabilistic models and model comparisons were implemented in WebPPL [@dippl] using the r package `rwebppl` [@R-rwebppl]. The flat prior model had the same structure as the pragmatics model but used a uniform prior over objects. The prior only model predicted choice based on the prior probability for each object alone. Note that the proportions that informed the prior distribution in the pragmatics and prior only model were measured when participants chose between two objects in experiment 2. In experiment 3, however, three objects were involved. For each object we used the proportion measured in experiment 2 as the prior probability. This approach spread out the absolute probability mass but conserved the relative relation between objects. Bayes Factors for model comparisons are based on marginal likelihoods of each model given the data. The corresponding model code can be found in the associated online repository.
+All analysis were run in R [@R-base]. GLMMs were fit via the function `glmer` from the package `lme4` [@R-lme4]. Probabilistic models and model comparisons were implemented in WebPPL [@dippl] using the r package `rwebppl` [@R-rwebppl]. The flat prior model had the same structure as the pragmatics model but used a uniform prior over objects. The prior only model predicted choice based on the prior probability for each object alone. Bayes Factors for model comparisons are based on marginal likelihoods of each model given the data. The corresponding model code can be found in the associated online repository.
 
 \newpage
 

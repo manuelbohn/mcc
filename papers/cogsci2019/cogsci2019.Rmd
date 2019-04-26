@@ -5,7 +5,7 @@ csl: apa6.csl
 document-params: "10pt, letterpaper"
 
 author-information: > 
-   \author{{\large \bf Manuel Bohn} \\ \texttt{bohn@stanford.edu} \\ Psychology, Stanford University \\ LFE, Leipzig University 
+   \author{{\large \bf Manuel Bohn} \\ \texttt{bohn@stanford.edu} \\ Department of Psychology \\ Stanford University\\ LFE \\Leipzig University 
     \And {\large \bf Michael Henry Tessler} \\ \texttt{tessler@mit.edu} \\ Department of Brain and Cognitive Sciences \\ Massachusetts Institute of Technology
     \And {\large \bf Michael C. Frank} \\ \texttt{mcfrank@stanford.edu} \\ Department of Psychology \\ Stanford University}
 
@@ -450,7 +450,7 @@ Notably, Experiment 3 also included situations in which the two expectations wer
 
 <!-- In some cases, this constraining effect of prior knowledge can lead to counterintuitive predictions from RSA models [see @degen2015wonky for discussion and model extension].  -->
 
-A range probabilistic frameworks been used to model word learning [e.g. @fazly2010probabilistic; @frank2009using; @xu2007word]. RSA models differ from other approaches in that they treat word learning as the outcome of a social reasoning process. In contrast to models for cross-situational word learning [@fazly2010probabilistic; @frank2009using], RSA models show how learning might occur in a one shot scenario based on pragmatic reasoning alone. While the ad hoc informativeness inference characteristic for RSA would be predicted by the model of Xu and Tenenbaum [-@xu2007word], in their work it follows from the "size principle" of generalization [@tenenbaum2001generalization] and not from social reasoning. In cotrast to RSA, this approach does not offer a straightforward way to incorporate other types of social information such as expectations following from common ground.
+A range of probabilistic models have been used to model word learning [e.g. @fazly2010probabilistic; @frank2009using; @xu2007word]. RSA models differ from these approaches in that they treat word learning as the outcome of a social reasoning process. In contrast to models for cross-situational word learning [@fazly2010probabilistic; @frank2009using], RSA models show how learning might occur in a one shot scenario based on pragmatic reasoning alone. While the ad-hoc informativeness inference characteristic for RSA would be predicted by the model of Xu and Tenenbaum [-@xu2007word], in their work it follows from the "size principle" of generalization [@tenenbaum2001generalization] and not from social reasoning. In contrast to RSA, this approach does not offer a straightforward way to incorporate other types of social information such as expectations following from common ground.
 
 We treated common ground expectations as equivalent to more basic manipulations of contextual salience [e.g. in @frank2012predicting] and did not explicitly model the social-cognitive processes that give rise to these expectations. The interaction around the object prior to the test event simply increased the probability that this particular speaker will refer to the object subsequently. The same change could be brought about if one of the objects would be made perceptually more salient, for example by making it flash. In future work, it would be interesting to explore ways to model common ground expectations explicitly as well as to contrast perceptual and interactional salience.
 
@@ -464,7 +464,7 @@ Our work integrates different perspectives on the study of pragmatic inference. 
 
 # Acknowledgements
 
-MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 749229. 
+MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 749229. MCF was supported by a Jacobs Foundation Advanced Research Fellowship and NSF #1456077.
 
 # References
 
