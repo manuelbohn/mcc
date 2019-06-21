@@ -105,7 +105,7 @@ Cognitive models were implemented in WebPPL [@dippl] using the r package `rwebpp
 The pragmatics model captures the following process: A pragmatic listener ($L_1$) reasons about a pragmatic speaker ($S_1$) who is reasoning about a literal listener ($L_0$) who interprets utterances according to their literal semantics. The outcome is the posterior probability of a particular referent given an utterance. According to Bayes rule it is defined as:
 
 \begin{equation} 
-P_{L_1}(r,L|u)\propto P_{S_1}(u|r)P(L)P_(r)
+P_{L_1}(r,L|u)\propto P_{S_1}(u|r)P(L)P(r)
 \end{equation} 
 
 The right side of this equation has three components, the likelihood $P_{S1}(u|r)$, the probability of the lexicon that is considered ($P(L)$) and the prior $P(r)$. Because we studied word learning, we assumed that the listener ($L_1$) had no prior expectations that a particular lexicon (i.e. word - object mapping) is more likely. In the model, $P(L)$ therefore took the form of a uniform distribution over potential lexical. 
@@ -123,6 +123,32 @@ Informativity(u; r) = ln P(r|u) \propto ln \sum_L P(r,l|u) P(L) \propto P(r) L_{
 \end{equation} 
 
 while $P(r)$ again denotes the prior probability of a referent, $L_{lit}$ encodes the literal meaning of an utterance given a particular lexicon, returning 1 if the utterance is literally true and 0 if the utterance is literally false. As mentioned above, because $L_1$ does not know the lexicon, the semantics of the words contained in the utterance offer no information about the referent. The non-linguistic aspects of the utterance, however, do. As described in the main text, the utterance also included the agent's turn to one of the tables. The semantics of turning to one of the tables is roughly equal to using a word that could be used to describe the objects on that table. That is, $L_{lit}$ returns 1 for a referent that is on the table the agent turned to and 0 for referents on the other table.
+
+### Numerical Example
+
+Prior = 0.6416667
+SO = 2.242435
+
+\begin{equation} 
+Informativity(u; r) = ln P(r|u) \propto ln \sum_L P(r,l|u) P(L) \propto P(r) L_{lit}
+Informativity(u; r_1) = ln(0.6416667 * 1) = -0.4436863
+Informativity(u; r_1) = ln(0.3583333 * 1) = -1.026292
+\end{equation} 
+
+(For the above, I get the same results from the model if get these values from webppl)
+
+\begin{equation} 
+P_{S_1}(u|r)\propto exp(\alpha Informativity(u;r))
+P_{S_1}(u|r_1) = exp(2.242435 * -0.4436863)/(exp(2.242435 * -0.4436863)+exp(2.242435 * -1.026292)) = 0.7869194
+P_{S_1}(u|r_2) = exp(2.242435 * -1.026292)/(exp(2.242435 * -0.4436863)+exp(2.242435 * -1.026292)) = 0.2130806
+\end{equation} 
+
+\begin{equation} 
+P_{L_1}(r,L|u)\propto P_{S_1}(u|r)P(L)P(r)
+P_{L_1}(r_1,L|u) = 0.7869194 * 0.6416667 /(0.7869194 * 0.6416667+0.2130806 * 0.3583333) = 0.8686484
+\end{equation} 
+
+Result should be: 0.9077334746997058
 
 ### Model parameters 
 
