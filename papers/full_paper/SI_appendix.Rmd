@@ -126,7 +126,8 @@ while $P(r)$ again denotes the prior probability of a referent, $L_{lit}$ encode
 
 ### Numerical Example
 
-Prior = 0.6416667
+P(r_1) = 0.6416667
+P(r_2) = 0.3583333
 SO = 2.242435
 
 \begin{equation} 
