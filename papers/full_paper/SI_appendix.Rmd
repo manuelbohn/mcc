@@ -130,28 +130,37 @@ P(r_1) = 0.6416667
 P(r_2) = 0.3583333
 SO = 2.242435
 
+
+u_1 = point to table with 2 objects
+u_2 = point to table with 1 object
+
 \begin{equation} 
 Informativity(u; r) = ln P(r|u) \propto ln \sum_L P(r,l|u) P(L) \propto P(r) L_{lit}
-Informativity(u; r_1) = ln(0.6416667 * 1) = -0.4436863
-Informativity(u; r_1) = ln(0.3583333 * 1) = -1.026292
+Informativity(u_1; r_1) = log(0.6416667 * 1) = -0.4436863
+Informativity(u_2; r_1) = log(0.6416667 * 0) = -Inf
+Informativity(u_1; r_2) = log(0.3583333 * 1) = -1.026292
+Informativity(u_2; r_2) = ???? = 0
+Informativity(u_1; r_3) = log(0.3583333 * ) = -Inf
+Informativity(u_2; r_3) = ???? = 0
+
+\end{equation} 
+
+\begin{equation} 
+P_{S_1}(u|r)\propto exp(\alpha Informativity(u;r))
+P_{S_1}(u_1|r_1) = exp(2.242435 * -0.4436863)/(exp(2.242435 * -0.4436863)) = 1
+P_{S_1}(u_1|r_2) = exp(2.242435 * -1.026292)/(exp(2.242435 * -1.026292)+ exp(2.242435 * 0)) = 0.09100765
+P_{S_1}(u_1|r_3) = exp(2.242435 * -1.026292)/(exp(2.242435 * -1.026292)+ exp(2.242435 * 0)) = 0.09100765 <-- Why????
 \end{equation} 
 
 (For the above, I get the same results from the model if get these values from webppl)
 
 \begin{equation} 
-P_{S_1}(u|r)\propto exp(\alpha Informativity(u;r))
-P_{S_1}(u|r_1) = exp(2.242435 * -0.4436863)/(exp(2.242435 * -0.4436863)+exp(2.242435 * -1.026292)) = 0.7869194
-P_{S_1}(u|r_2) = exp(2.242435 * -1.026292)/(exp(2.242435 * -0.4436863)+exp(2.242435 * -1.026292)) = 0.2130806
-\end{equation} 
-
-\begin{equation} 
 P_{L_1}(r,L|u)\propto P_{S_1}(u|r)P(L)P(r)
-P_{L_1}(r_1,L|u) = 0.7869194 * 0.6416667 /(0.7869194 * 0.6416667+0.2130806 * 0.3583333) = 0.8686484
+P_{L_1}(r_1,L|u) = 1 * 0.6416667 /(1*0.6416667 + 0.09100765*0.3583333 + 0.09100765*0.3583333) = 0.9077335
 \end{equation} 
 
-Result should be: 0.9077334746997058
 
-### Model parameters 
+### Model parameters  
 
 As noted in the main text, the parameter $\alpha$ (speaker optimality parameter) in equation 2 determines the absolute strength of the likelihood term. It's interpretation is *how* rational $L$ thinks $S$ is in this particular context. For adults, we used the data from Experiment 1 to infer the value of $\alpha$. That is, we inferred which value of $\alpha$ would generate model predictions for the RSA model (assuming equal prior probability for each object) that corresponded to the average proportion of correct responses measured in Experiment 1. This value for $\alpha$ was then used in Experiment 3 and 4.
 
