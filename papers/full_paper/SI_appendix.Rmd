@@ -124,42 +124,6 @@ Informativity(u; r) = ln P(r|u) \propto ln \sum_L P(r,l|u) P(L) \propto P(r) L_{
 
 while $P(r)$ again denotes the prior probability of a referent, $L_{lit}$ encodes the literal meaning of an utterance given a particular lexicon, returning 1 if the utterance is literally true and 0 if the utterance is literally false. As mentioned above, because $L_1$ does not know the lexicon, the semantics of the words contained in the utterance offer no information about the referent. The non-linguistic aspects of the utterance, however, do. As described in the main text, the utterance also included the agent's turn to one of the tables. The semantics of turning to one of the tables is roughly equal to using a word that could be used to describe the objects on that table. That is, $L_{lit}$ returns 1 for a referent that is on the table the agent turned to and 0 for referents on the other table.
 
-### Numerical Example
-
-P(r_1) = 0.6416667
-P(r_2) = 0.3583333
-SO = 2.242435
-
-
-u_1 = point to table with 2 objects
-u_2 = point to table with 1 object
-
-\begin{equation} 
-Informativity(u; r) = ln P(r|u) \propto ln \sum_L P(r,l|u) P(L) \propto P(r) L_{lit}
-Informativity(u_1; r_1) = log(0.6416667 * 1) = -0.4436863
-Informativity(u_2; r_1) = log(0.6416667 * 0) = -Inf
-Informativity(u_1; r_2) = log(0.3583333 * 1) = -1.026292
-Informativity(u_2; r_2) = ???? = 0
-Informativity(u_1; r_3) = log(0.3583333 * ) = -Inf
-Informativity(u_2; r_3) = ???? = 0
-
-\end{equation} 
-
-\begin{equation} 
-P_{S_1}(u|r)\propto exp(\alpha Informativity(u;r))
-P_{S_1}(u_1|r_1) = exp(2.242435 * -0.4436863)/(exp(2.242435 * -0.4436863)) = 1
-P_{S_1}(u_1|r_2) = exp(2.242435 * -1.026292)/(exp(2.242435 * -1.026292)+ exp(2.242435 * 0)) = 0.09100765
-P_{S_1}(u_1|r_3) = exp(2.242435 * -1.026292)/(exp(2.242435 * -1.026292)+ exp(2.242435 * 0)) = 0.09100765 <-- Why????
-\end{equation} 
-
-(For the above, I get the same results from the model if get these values from webppl)
-
-\begin{equation} 
-P_{L_1}(r,L|u)\propto P_{S_1}(u|r)P(L)P(r)
-P_{L_1}(r_1,L|u) = 1 * 0.6416667 /(1*0.6416667 + 0.09100765*0.3583333 + 0.09100765*0.3583333) = 0.9077335
-\end{equation} 
-
-
 ### Model parameters  
 
 As noted in the main text, the parameter $\alpha$ (speaker optimality parameter) in equation 2 determines the absolute strength of the likelihood term. It's interpretation is *how* rational $L$ thinks $S$ is in this particular context. For adults, we used the data from Experiment 1 to infer the value of $\alpha$. That is, we inferred which value of $\alpha$ would generate model predictions for the RSA model (assuming equal prior probability for each object) that corresponded to the average proportion of correct responses measured in Experiment 1. This value for $\alpha$ was then used in Experiment 3 and 4.
@@ -171,6 +135,44 @@ The prior distribution over objects, $P(r)$, varied with the common ground manip
 For adults, this worked in the following way: For example, in Experiment 2, for the preference/same speaker condition, when the speaker indicated that they liked object A and disliked object B, the average proportion with which participants chose object A was `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` and for object B it was `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` respectively. In Experiment 3, this measurement determined the prior distribution over objects in cases whenever the the same manipulation was used (preference/same speaker). When utterance and common ground information were aligned (i.e. object A was the more informative object), the distribution of objects was (A,B,B). The corresponding prior distribution was therefore (`r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`, `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`, `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`). When information sources were dis-aligned (i.e. object B was the more informative one), the object distribution was (B,A,A) and the prior distribution was (`r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`, `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`, `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`). Note that Experiment 3 involved three objects while Experiment 2 only involved two. We nevertheless used the exact proportions measured in Experiment 2 for each object to inform the prior. This approach spread out the absolute probability mass but conserved the relative relation between objects.
 
 For children, we used the data from Experiment 6 to model the slope and intercept that best described the developmental trajectory in the data for each of the two conditions. As for the speaker optimality parameter, this allowed us to generate prior distributions that were sensitive to the child's age. In Experiment 7, the prior probability for an object was computed by taking the intercept for the respective condition (same or different speaker), adding the slope times the child's age and then using a logistic transformation to convert the outcome into proportions. The overall distribution then depended on the alignment of information sources in the same way as it did for adults. 
+
+### Numerical Example
+
+In the following, we walk through a numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model, excluding the noise parameter. The numbers are taken from the preference - different speaker - congruent condition. Fig. 1 shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents (two red-ish, one yellow-ish), of two types (red-ish and yellow-ish) on two tables. In principle, the speaker, the frog in this case, can perform one of two utterances: $u_1$, which is turning to the right table (two objects) and making a request or $u_2$, which involves turning to the left table (single object) and making a request. In the experiment, the speaker chose $u_1$ and we therefore model $L_1$'s interpretation of this utterance.
+
+```{r figS1, include = T, fig.align = "center", fig.cap = "Screenshot from adult experiment.", out.width="400px"}
+knitr::include_graphics("./figures/SI_setup.png")
+```
+
+From a learning perspective, we assume that the listener is learning the mappings between labels and object types instead of object tokens. That is, the listener either thinks the novel word refers to "red-ish objects" or "yellow-ish objects". 
+
+The prior distribution over objects (left to right in Fig.1), based on Experiment 2A, for this condition was [`r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`]. That is, the yellow object has a higher a priory probability compared to red objects. We start with calculating the informativity of of the utterance for each referent (red or yellow object) based on equation 3. 
+
+$$
+\begin{aligned}
+&Informativity(u_1; r_1) = log(0.64 \cdot 1) = -0.44 \\
+&Informativity(u_1; r_2) = log(0.36 \cdot 1) = -1.03
+\end{aligned}
+$$
+
+with $r_1$ being the yellow object and $r_2$ being the red object. Next we can insert these values into equation 2 to compute the probability that the speaker chooses this utterance to refer to this type of object. To do so, we need the speaker optimality parameter of $\alpha = 2.24$, which was estimated based on Experiment 1.
+
+$$
+\begin{aligned}
+&P_{S_1}(u_1|r_1) = \frac{exp(2.24 \cdot -0.44)}{exp(2.24 \cdot -0.44)} = 1 \\
+&P_{S_1}(u_1|r_2) = \frac{exp(2.24 \cdot -1.03)}{exp(2.24 \cdot -1.03) + exp(2.24 \cdot 0)} = 0.09
+\end{aligned}
+$$
+
+Here, the informativity for a referent is normalized across all utterances that could be used to refer to this referent. Finally, based on equation 1 we can use these values to compute the probability that the speaker thinks that the speaker is referring to the yellow object ($r_1$) when they produce $r_1$:
+
+$$
+\begin{aligned}
+&P_{L_1}(r_1,L|u_1) = \frac{1 * 0.64}{1\cdot0.64 + 0.09\cdot0.36 + 0.09\cdot0.36} = 0.91
+\end{aligned}
+$$
+
+Thus, we normalize across all potential states that the utterance could refer to.   
 
 ## Prior only model
 
@@ -729,7 +731,7 @@ ggarrange(child_noise_plot,child_dev_noise_plot, nrow = 1, ncol = 2, common.lege
 
 Finally, Figure \ref{fig:childcor} shows correlations between model predictions and the data, binned by year. Across noise parameters, model predictions and data are closest aligned (i.e. closest to the dotted line) for the pragmatics model, thereby corroborating the conclusions drawn based on the model comparison and the evaluation of the noise parameters. 
 
-```{r childcor,  include = T, fig.cap = "Correlation plot for model predictions and data for all models considered in Experiment 7. Coefficients and p-values are based on Pearson correlation statistics. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.height = 7}
+```{r childcor,  include = T, fig.cap = "Correlation plot for model predictions and data for all models considered in Experiment 7. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.height = 7}
 
 # child_cor <- bind_rows(
 #   readRDS("../../stats/saves/child_ex3_pragm_model_noise.rds") %>%
