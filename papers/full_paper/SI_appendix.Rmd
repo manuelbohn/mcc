@@ -100,15 +100,40 @@ Here we present details for the cognitive models as well as supplementary analys
 
 Cognitive models were implemented in WebPPL [@dippl] using the r package `rwebppl` [@R-rwebppl].
 
+## Ontology
+
+The situation we model is defined by three sets: referents $r$, utterances $u$, and lexica $L$. 
+Referents are defined two features: the type of object they are (visually discernible given their shape and color) and their location (a table).
+There are two types $t_1$, $t_2$ and two locations $l_1$ and $l_2$.
+The utterances available to a speaker are (action, label) pairs, where the action involves turning (or pointing) to a particular location (i.e., a table) and labels are novel words, which are assumed to refer to the type of the object. 
+The action of the turning or pointing reduces the set of referents to those that are on the table targeted by the turn (point) and interpreting a label reduces that set further to that which is of the type referred to by that label.
+The interpretation of a label involves a lexicon $L$, which provides the label--type mappings.
+There are two lexica: one which maps label 1 $w_1$ to type 1 $t_1$ and label 2 $w_2$ to type 2 $t_2$, and one which has the inverse mapping. 
+
 ## Pragmatics model
 
-The pragmatics model captures the following process: A pragmatic listener ($L_1$) reasons about a pragmatic speaker ($S_1$) who is reasoning about a literal listener ($L_0$) who interprets utterances according to their literal semantics. The outcome is the posterior probability of a particular referent given an utterance. According to Bayes rule it is defined as:
+The pragmatics model is a Rational Speech Act model that captures the following process: A pragmatic listener ($L_1$) jointly infers a referent (what object is being picked out by the utterance) and a lexicon (what does the utterance mean) by reasoning about a pragmatic speaker ($S_1$) who produces utterances to convey information to a literal listener ($L_0$), who in turn interprets utterances according to their literal meaning. According to Bayes rule, this inference is given by:
 
 \begin{equation} 
 P_{L_1}(r,L|u)\propto P_{S_1}(u|r)P(L)P(r)
 \end{equation} 
 
-The right side of this equation has three components, the likelihood $P_{S1}(u|r)$, the probability of the lexicon that is considered ($P(L)$) and the prior $P(r)$. Because we studied word learning, we assumed that the listener ($L_1$) had no prior expectations that a particular lexicon (i.e. word - object mapping) is more likely. In the model, $P(L)$ therefore took the form of a uniform distribution over potential lexical. 
+The right side of this equation has three components: the prior distribution over referents $P(r)$, the prior distribution over lexica (word - object mappings) $P(L)$, and the likelihood that a speaker would produce the an utterance $u$ given a referent $r$ ($P_{S1}(u|r)$).
+In the situation we model, the prior on referents $P(r)$ is a categorical distribution over three objects in a scene, which we assume could be non-uniform due to our common ground manipulations (see below). 
+Objects are defined a single feature: the type of object they are. 
+
+The utterances available to a speaker are (action, label) pairs, where the action involves turning (or pointing) to a particular location (i.e., a table) and labels are novel words, which are assumed to refer to the type of the object. 
+The action of the turning or pointing rules out the referents that are not on the table targeted by the turn (point). 
+The listener knows that the labels refer to the kind of object but does not know which kind is referred to be which label, formalized by the prior over lexica $P(L)$. 
+For example, in SI Figure 1,  two possible labels are "dax" and "wug", each of which could either mean.
+
+the listener's prior has no substantive knowledge of the meanings of the labels that a speaker could produce.
+
+In principle, the speaker, the frog in this case, can perform one of two utterances: $u_1$, which is turning to the right table (two objects) and making a request by using a novel label or $u_2$, which involves turning to the left table (single object) and making a request by using a novel label.
+
+
+
+Because we studied word learning, we assumed that the listener ($L_1$) had no prior expectations that a particular lexicon  is more likely. In the model, $P(L)$ therefore took the form of a uniform distribution over potential lexica. 
 
 The likelihood represent the probability that ($S_1$) uses a particular utterance to refer to the referent. It is defined in terms of the informativity of an utterance for a referent:
 
@@ -138,7 +163,7 @@ For children, we used the data from Experiment 6 to model the slope and intercep
 
 ### Numerical Example
 
-In the following, we walk through a numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model, excluding the noise parameter. The numbers are taken from the preference - different speaker - congruent condition. Fig. 1 shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents (two red-ish, one yellow-ish), of two types (red-ish and yellow-ish) on two tables. In principle, the speaker, the frog in this case, can perform one of two utterances: $u_1$, which is turning to the right table (two objects) and making a request or $u_2$, which involves turning to the left table (single object) and making a request. In the experiment, the speaker chose $u_1$ and we therefore model $L_1$'s interpretation of this utterance.
+In the following, we walk through a numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model, excluding the noise parameter. The numbers are taken from the preference - different speaker - congruent condition. Fig. 1 shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents (two red-ish: $r_1^r$, $r_2^r$; one yellow-ish, $r_3^y$,), of two types (red-ish and yellow-ish) on two tables. In principle, the speaker, the frog in this case, can perform one of two utterances: $u_1$, which is turning to the right table (two objects) and making a request by using a novel label or $u_2$, which involves turning to the left table (single object) and making a request by using a novel label. In the experiment, the speaker chose $u_1$ and we therefore model $L_1$'s interpretation of this utterance.
 
 ```{r figS1, include = T, fig.align = "center", fig.cap = "Screenshot from adult experiment.", out.width="400px"}
 knitr::include_graphics("./figures/SI_setup.png")
@@ -146,7 +171,7 @@ knitr::include_graphics("./figures/SI_setup.png")
 
 From a learning perspective, we assume that the listener is learning the mappings between labels and object types instead of object tokens. That is, the listener either thinks the novel word refers to "red-ish objects" or "yellow-ish objects". 
 
-The prior distribution over objects (left to right in Fig.1), based on Experiment 2A, for this condition was [`r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`]. That is, the yellow object has a higher a priory probability compared to red objects. We start with calculating the informativity of of the utterance for each referent (red or yellow object) based on equation 3. 
+The prior distribution over objects (left to right in Fig.1), based on Experiment 2A, for this condition was [`r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`]. That is, the yellow object has a higher a priori probability compared to red objects, because the speaker previously displayed a preference for a yellow object. The informativity of the observed utterance for each referent (red or yellow object) can be calculated based on equation 3. 
 
 $$
 \begin{aligned}
