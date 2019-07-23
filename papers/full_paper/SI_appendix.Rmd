@@ -211,6 +211,14 @@ $$
 
 Next we can insert these values into equation 2 to compute the probability that the speaker chooses this utterance to refer to this type of object. To do so, we need the speaker optimality parameter of $\alpha = 2.24$, which was estimated based on Experiment 1.
 
+TO CREATE S(u | r), WE NEED TO HAVE THE INFORMATIVITY OF EACH OF THE 4 UTTERANCES. PASSING THE INFORMATIVITY THROUGH THE SOFT-MAX (speaker optimality) creates an "unnormalized" probability, which we then turn into a real probability by dividing by the sum of all the unnormalized probabilities of each utterance. 
+
+$$
+P_{S_1}(u|r) = \frac{exp(\alpha Informativity(u;r))}{\sum_{u'} exp(\alpha Informativity(u';r))}
+$$
+
+
+
 SEEMS LIKE WE NEED TO NORMALIZE ACROSS ALL UTTERANCES, SO WE WILL NEED TO REDO THE ABOVE CALCULATIONS FOR EACH OF THE 6 UTTERANCES.
 
 $$
