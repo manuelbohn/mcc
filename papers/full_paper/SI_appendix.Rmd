@@ -147,9 +147,9 @@ $P(r)$ again denotes the prior probability of a referent, $\mathcal{L}_{lit}$ en
 
 ### Worked Example
 
-In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from the preference - different speaker - congruent condition (see below). Fig. 1 shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents (two red-ish: $r_1^r$, $r_2^r$; one yellow-ish, $r_3^y$,), of two types (red-ish and yellow-ish) on two tables. 
+In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from the preference - different speaker - congruent condition (see below). Fig. 1 shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents (two red-ish: $r_1^r$ - left tabe, $r_2^r$ - right table; one yellow-ish, $r_3^y$ - right table,), of two types (red-ish and yellow-ish) on two tables. 
 In principle, the speaker, the frog in this case, can produce one of four utterances, turning either to the left or right table and saying either label ("dax" or "wug"):  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
-We work out the example where the speaker produces utterance $u_3$, turning to the right table (two objects) and saying the label "dax" (though since the labels have no *a priori* meanings, the computation would be the same for utterance $u_4$). <-- CHECK ME.
+We work out the example where the speaker produces utterance $u_3$, turning to the right table (two objects) and saying the label "dax" (though since the labels have no *a priori* meanings, the computation would be the same for utterance $u_4$).
 
 <!-- $u_1$, which is turning to the right table (two objects) and making a request by using a novel label or $u_2$, which involves turning to the left table (single object) and making a request by using a novel label. In the experiment, the speaker chose $u_1$ and we therefore model $L_1$'s interpretation of this utterance. -->
 
@@ -181,11 +181,11 @@ After normalization we have:
 $$
 \begin{aligned}
 & P_{L_0}(r_1^r, \mathcal{L}_1 | {u_3}) = 0 \\
-& P_{L_0}(r_2^r, \mathcal{L}_1 | {u_3}) = 0.35 \\
+& P_{L_0}(r_2^r, \mathcal{L}_1 | {u_3}) = 0.13 \\
 & P_{L_0}(r_3^y, \mathcal{L}_1 | {u_3})   = 0 \\
 & P_{L_0}(r_1^r, \mathcal{L}_2 | {u_3})   = 0 \\
 & P_{L_0}(r_2^r, \mathcal{L}_2 | {u_3})   = 0 \\
-& P_{L_0}(r_3^y, \mathcal{L}_2 | {u_3}) = 0.65\\
+& P_{L_0}(r_3^y, \mathcal{L}_2 | {u_3}) = 0.24\\
 \end{aligned}
 $$
 
@@ -194,8 +194,8 @@ then,
 $$
 \begin{aligned}
 &P_{L_0}(r_1|u_3) =  P_{L_0}(r_1, \mathcal{L}_1|u_3) + P_{L_0}(r_1, \mathcal{L}_2|u_3) = 0+0=0 \\
-&P_{L_0}(r_2|u_3) =  P_{L_0}(r_2, \mathcal{L}_1|u_3) + P_{L_0}(r_2, \mathcal{L}_2|u_3) = 0.35+0=0.35 \\
-&P_{L_0}(r_3|u_3) =  P_{L_0}(r_3, \mathcal{L}_1|u_3) + P_{L_0}(r_3, \mathcal{L}_2|u_3) = 0+0.65=0.65 \\
+&P_{L_0}(r_2|u_3) =  P_{L_0}(r_2, \mathcal{L}_1|u_3) + P_{L_0}(r_2, \mathcal{L}_2|u_3) = 0.13+0=0.13 \\
+&P_{L_0}(r_3|u_3) =  P_{L_0}(r_3, \mathcal{L}_1|u_3) + P_{L_0}(r_3, \mathcal{L}_2|u_3) = 0+0.24=0.24 \\
 \end{aligned}
 $$
 
@@ -204,20 +204,56 @@ and
 $$
 \begin{aligned}
 &Informativity(u_3; r_1) = log(0) = -\infty \\
-&Informativity(u_3; r_2) = log(0.35) = -1.04 \\
-&Informativity(u_3; r_3) = log(0.65) = -0.43
+&Informativity(u_3; r_2) = log(0.13) = -2.04 \\
+&Informativity(u_3; r_3) = log(0.24) = -1.43
 \end{aligned}
 $$
 
-Next we can insert these values into equation 2 to compute the probability that the speaker chooses this utterance to refer to this type of object. To do so, we need the speaker optimality parameter of $\alpha = 2.24$, which was estimated based on Experiment 1.
-
-TO CREATE S(u | r), WE NEED TO HAVE THE INFORMATIVITY OF EACH OF THE 4 UTTERANCES. PASSING THE INFORMATIVITY THROUGH THE SOFT-MAX (speaker optimality) creates an "unnormalized" probability, which we then turn into a real probability by dividing by the sum of all the unnormalized probabilities of each utterance. 
+Next we can insert these values into equation 2 to compute the probability that the speaker chooses this utterance to refer to this type of object. To do so, we need the speaker optimality parameter of $\alpha = 2.24$, which was estimated based on Experiment 1 (see Model Parameters section below for how this value was estimated).
 
 $$
 P_{S_1}(u|r) = \frac{exp(\alpha Informativity(u;r))}{\sum_{u'} exp(\alpha Informativity(u';r))}
 $$
 
+Now, to compute $P_{S_1}(u_3|r_3)$, we need the informativity for $r_3$ given the other utterance with the same label. We need
 
+$$
+\begin{aligned}
+& P_{L_0}(r_3^y, \mathcal{L}_1 | {u_1}) = 0 \times 0.48 \times 0.5 = 0\\
+& P_{L_0}(r_3^y, \mathcal{L}_2 | {u_1}) = 0 \times 0.48 \times 0.5 = 0\\
+\end{aligned}
+$$
+and 
+
+$$
+\begin{aligned}
+&P_{L_0}(r_3|u_1) =  P_{L_0}(r_3, \mathcal{L}_1|u_1) + P_{L_0}(r_1, \mathcal{L}_2|u_1) = 0+0=0 \\
+\end{aligned}
+$$
+as well as
+
+$$
+\begin{aligned}
+&Informativity(u_1; r_3) = log(0) = -\infty \\
+\end{aligned}
+$$
+
+to get 
+
+$$
+P_{S_1}(u_3|r_3) = \frac{exp(2.24 \times -1.43)}{exp(2.24 \times -1.43)+exp(2.24 \times -\infty)}=1
+$$
+Thus, the probability that the speaker will chose $u_3$ to refer to $r_3$ is 1. We can now turn to equation 1 to get the probability with which the pragmatic listener ($L_1$) think that the Speaker ($S_1$) is referring to $r_3$ when producing utterance $u_3$.
+
+MANUEL: THE ABOVE HAS TO BE TRUE, AT LEAST THIS IS THE VALUE WE GET OUT OF THE WEBPPL MODEL.
+
+
+
+To get the probability with which the pragmatic listener $L_1$ think that the $S_1$ is referring to $r_3$ when producing utterance 
+
+
+
+TO CREATE S(u | r), WE NEED TO HAVE THE INFORMATIVITY OF EACH OF THE 4 UTTERANCES. PASSING THE INFORMATIVITY THROUGH THE SOFT-MAX (speaker optimality) creates an "unnormalized" probability, which we then turn into a real probability by dividing by the sum of all the unnormalized probabilities of each utterance. 
 
 SEEMS LIKE WE NEED TO NORMALIZE ACROSS ALL UTTERANCES, SO WE WILL NEED TO REDO THE ABOVE CALCULATIONS FOR EACH OF THE 6 UTTERANCES.
 
