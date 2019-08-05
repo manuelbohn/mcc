@@ -155,6 +155,7 @@ In this section, we work through a toy numerical example for how model predictio
 In principle, the speaker, the frog in this case, can produce one of four utterances, turning either to the left or right table and saying either label ("dax" or "wug"):  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
 We work out the example where the speaker produces utterance $u_3$, turning to the right table (two objects) and saying the label "dax" (though since the labels have no *a priori* meanings, the computation would be the same for utterance $u_4$). 
 
+
 <!-- $u_1$, which is turning to the right table (two objects) and making a request by using a novel label or $u_2$, which involves turning to the left table (single object) and making a request by using a novel label. In the experiment, the speaker chose $u_1$ and we therefore model $L_1$'s interpretation of this utterance. -->
 
 ```{r figS1, include = T, fig.align = "center", fig.cap = "Screenshot from adult experiment.", out.width="400px"}
@@ -298,11 +299,50 @@ TO CREATE S(u | r), WE NEED TO HAVE THE INFORMATIVITY OF EACH OF THE 4 UTTERANCE
 
 
 
+
 $$
 \exp(\alpha Informativity(u_3;r)) = \exp(2.24 \times)
 $$
 
+Now, to compute $P_{S_1}(u_3|r_3)$, we need the informativity for $r_3$ given the other utterance with the same label. We need
 
+$$
+\begin{aligned}
+& P_{L_0}(r_3^y, \mathcal{L}_1 | {u_1}) = 0 \times 0.48 \times 0.5 = 0\\
+& P_{L_0}(r_3^y, \mathcal{L}_2 | {u_1}) = 0 \times 0.48 \times 0.5 = 0\\
+\end{aligned}
+$$
+and 
+
+$$
+\begin{aligned}
+&P_{L_0}(r_3|u_1) =  P_{L_0}(r_3, \mathcal{L}_1|u_1) + P_{L_0}(r_1, \mathcal{L}_2|u_1) = 0+0=0 \\
+\end{aligned}
+$$
+as well as
+
+$$
+\begin{aligned}
+&Informativity(u_1; r_3) = log(0) = -\infty \\
+\end{aligned}
+$$
+
+to get 
+
+$$
+P_{S_1}(u_3|r_3) = \frac{exp(2.24 \times -1.43)}{exp(2.24 \times -1.43)+exp(2.24 \times -\infty)}=1
+$$
+Thus, the probability that the speaker will chose $u_3$ to refer to $r_3$ is 1. We can now turn to equation 1 to get the probability with which the pragmatic listener ($L_1$) think that the Speaker ($S_1$) is referring to $r_3$ when producing utterance $u_3$.
+
+MANUEL: THE ABOVE HAS TO BE TRUE, AT LEAST THIS IS THE VALUE WE GET OUT OF THE WEBPPL MODEL.
+
+
+
+To get the probability with which the pragmatic listener $L_1$ think that the $S_1$ is referring to $r_3$ when producing utterance 
+
+
+
+TO CREATE S(u | r), WE NEED TO HAVE THE INFORMATIVITY OF EACH OF THE 4 UTTERANCES. PASSING THE INFORMATIVITY THROUGH THE SOFT-MAX (speaker optimality) creates an "unnormalized" probability, which we then turn into a real probability by dividing by the sum of all the unnormalized probabilities of each utterance. 
 
 SEEMS LIKE WE NEED TO NORMALIZE ACROSS ALL UTTERANCES, SO WE WILL NEED TO REDO THE ABOVE CALCULATIONS FOR EACH OF THE 6 UTTERANCES.
 
