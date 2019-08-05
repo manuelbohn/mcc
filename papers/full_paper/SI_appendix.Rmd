@@ -147,9 +147,13 @@ $P(r)$ again denotes the prior probability of a referent, $\mathcal{L}_{lit}$ en
 
 ### Worked Example
 
-In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from the preference - different speaker - congruent condition (see below). Fig. 1 shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents (two red-ish: $r_1^r$, $r_2^r$; one yellow-ish, $r_3^y$,), of two types (red-ish and yellow-ish) on two tables. 
+TWO CORRECTIONS:
+- THE GENERATIVE PROCESS OF THE UTTERANCE: Speaker knows lexicon, but doesn't assume listener does, but must label (we do not model the decision as to whether or not to label). So the only thing informative they do is point.
+- QUD is type, not referent. Change L0 model.
+
+In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from the preference - same speaker - incongruent condition (see below); that is, the pressures of informativity and preference operate in conflicting directions. Fig. 1 shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents of two types (pink-ish and yellow-ish; for simplicity, we refer refer the object's type by its color) on two tables: $r^{table: 1}_{type:pink}$, $r^{table: 2}_{type:pink}$; one yellow-ish, $r^{table: 2}_{type:yellow}$). For simplicity, we refer to the referents by the shorthand: $r_{p}^1, r_{p}^2, r_y^2$.
 In principle, the speaker, the frog in this case, can produce one of four utterances, turning either to the left or right table and saying either label ("dax" or "wug"):  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
-We work out the example where the speaker produces utterance $u_3$, turning to the right table (two objects) and saying the label "dax" (though since the labels have no *a priori* meanings, the computation would be the same for utterance $u_4$). <-- CHECK ME.
+We work out the example where the speaker produces utterance $u_3$, turning to the right table (two objects) and saying the label "dax" (though since the labels have no *a priori* meanings, the computation would be the same for utterance $u_4$). 
 
 <!-- $u_1$, which is turning to the right table (two objects) and making a request by using a novel label or $u_2$, which involves turning to the left table (single object) and making a request by using a novel label. In the experiment, the speaker chose $u_1$ and we therefore model $L_1$'s interpretation of this utterance. -->
 
@@ -157,35 +161,49 @@ We work out the example where the speaker produces utterance $u_3$, turning to t
 knitr::include_graphics("./figures/SI_setup.png")
 ```
 
-The listener is learning the mappings between labels and object types (rather than object tokens). That is, the listener either thinks the novel word "dax" refers to "red-ish objects" or "yellow-ish objects". Turning or pointing to a table always has the same meaning. These semantics can be described using two lexica: $\mathcal{L_1} = \{dax: \text{red-ish thing}, wug: \text{yellow-ish thing}, point: \text{location of point}\}$, $\mathcal{L_2} = \{dax: \text{yellow-ish thing}, wug: \text{red-ish thing}, point: \text{location of point}\}$.
+The listener is learning the mappings between labels and object types (rather than object tokens). That is, the listener either believes the novel word "dax" refers to either "red-ish objects" or "yellow-ish objects". Turning or pointing to a table always has the same meaning. These semantics can be described using two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing}, point: \text{location of point}\}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}, point: \text{location of point}\}$.
 
 We construct the prior distribution over referents $P(r)$ based on the results of Experiment 2A, in which the speaker displayed a preference for a yellow object (see Model Parameters section below for a detailed description of how this distribution was constructed). 
 The prior distribution over referents $P(r)$ (left to right in Fig.1) for this condition was [0.26, 0.26, 0.48].
 <!-- [`r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`].  -->
 
+We assume that the intentional goal of the speaker is to get the listener to get an option of the correct type. That is, the informativity of an utterance is calculated with respect to conveying the correct object type.
+First, we calculate the literal listener's posterior distribution over referents and lexica, and marginalize (average) over objects of the same type and the different lexica. 
 The literal listener's posterior distribution over referents and lexica has support of size six, owing to the unique combinations of referents and lexica.
 $$
 \begin{aligned}
-& P_{L_0}(r_1^r, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_1^r, u_3) P(r_1^r) P(L_1) = 0 \times 0.26 \times 0.5\\
-& P_{L_0}(r_2^r, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_2^r, u_3) P(r_2^r) P(L_1) = 1 \times 0.26 \times 0.5\\
-& P_{L_0}(r_3^y, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_3^y, u_3) P(r_3^y) P(L_1) = 0 \times 0.48 \times 0.5\\
-& P_{L_0}(r_1^r, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_1^r, u_3) P(r_1^r) P(L_2) = 0 \times 0.26 \times 0.5\\
-& P_{L_0}(r_2^r, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_2^r, u_3) P(r_2^r) P(L_2) = 0 \times 0.26 \times 0.5\\
-& P_{L_0}(r_3^y, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_3^y, u_3) P(r_3^y) P(L_2) = 1 \times 0.48 \times 0.5\\
+& P_{L_0}(r_p^1, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_p^1, u_3) P(r_1^r) P(L_1) = 0 \times 0.26 \times 0.5 =0\\
+& P_{L_0}(r_p^2, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_p^2, u_3) P(r_2^r) P(L_1) = 1 \times 0.26 \times 0.5 =0.13\\
+& P_{L_0}(r_y^2, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_y^2, u_3) P(r_3^y) P(L_1) = 0 \times 0.48 \times 0.5 =0\\
+& P_{L_0}(r_p^1, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_p^1, u_3) P(r_1^r) P(L_2) = 0 \times 0.26 \times 0.5=0\\
+& P_{L_0}(r_p^2, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_p^2, u_3) P(r_2^r) P(L_2) = 0 \times 0.26 \times 0.5=0\\
+& P_{L_0}(r_y^2, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_y^2, u_3) P(r_3^y) P(L_2) = 1 \times 0.48 \times 0.5=0.24\\
 \end{aligned}
 $$
 
-because the speaker is pointing to the table with $r_2$ and $r_3$, and under $\mathcal{L}_1$, "dax" means the red object and under $\mathcal{L}_2$, "dax" means the yellow object.
+
+
+because the speaker is pointing to the table with $r_p^2$ and $r_y^2$, and under $\mathcal{L}_1$, "dax" means the pink object and under $\mathcal{L}_2$, "dax" means the yellow object.
 After normalization we have:
 
 $$
 \begin{aligned}
-& P_{L_0}(r_1^r, \mathcal{L}_1 | {u_3}) = 0 \\
-& P_{L_0}(r_2^r, \mathcal{L}_1 | {u_3}) = 0.35 \\
-& P_{L_0}(r_3^y, \mathcal{L}_1 | {u_3})   = 0 \\
-& P_{L_0}(r_1^r, \mathcal{L}_2 | {u_3})   = 0 \\
-& P_{L_0}(r_2^r, \mathcal{L}_2 | {u_3})   = 0 \\
-& P_{L_0}(r_3^y, \mathcal{L}_2 | {u_3}) = 0.65\\
+& P_{L_0}(r_p^1, \mathcal{L}_1 | {u_3}) = 0 \\
+& P_{L_0}(r_p^2, \mathcal{L}_1 | {u_3}) = 0.35 \\
+& P_{L_0}(r_y^2, \mathcal{L}_1 | {u_3})   = 0 \\
+& P_{L_0}(r_p^1, \mathcal{L}_2 | {u_3})   = 0 \\
+& P_{L_0}(r_p^2, \mathcal{L}_2 | {u_3})   = 0 \\
+& P_{L_0}(r_y^2, \mathcal{L}_2 | {u_3}) = 0.65\\
+\end{aligned}
+$$
+The correspondence of the token distribution (above) with the type distribution is straight-forward:
+
+$$
+\begin{aligned}
+& P_{L_0}(r_p, \mathcal{L}_1 | {u_3}) = P_{L_0}(r_p^1, \mathcal{L}_1 | {u_3})  + P_{L_0}(r_p^2, \mathcal{L}_1 | {u_3})  = 0+ 0.35 =0.35 \\
+& P_{L_0}(r_y, \mathcal{L}_1 | {u_3}) = P_{L_0}(r_y^2, \mathcal{L}_1 | {u_3})  = 0 \\
+& P_{L_0}(r_p, \mathcal{L}_2 | {u_3})  = P_{L_0}(r_p^1, \mathcal{L}_2 | {u_3})  + P_{L_0}(r_p^2, \mathcal{L}_2 | {u_3})  = 0+ 0 =0 \\
+& P_{L_0}(r_y, \mathcal{L}_2 | {u_3}) = P_{L_0}(r_y^2, \mathcal{L}_2 | {u_3}) = 0.65\\
 \end{aligned}
 $$
 
@@ -193,9 +211,8 @@ then,
 
 $$
 \begin{aligned}
-&P_{L_0}(r_1|u_3) =  P_{L_0}(r_1, \mathcal{L}_1|u_3) + P_{L_0}(r_1, \mathcal{L}_2|u_3) = 0+0=0 \\
-&P_{L_0}(r_2|u_3) =  P_{L_0}(r_2, \mathcal{L}_1|u_3) + P_{L_0}(r_2, \mathcal{L}_2|u_3) = 0.35+0=0.35 \\
-&P_{L_0}(r_3|u_3) =  P_{L_0}(r_3, \mathcal{L}_1|u_3) + P_{L_0}(r_3, \mathcal{L}_2|u_3) = 0+0.65=0.65 \\
+&P_{L_0}(r_p|u_3) =  P_{L_0}(r_p, \mathcal{L}_1|u_3) + P_{L_0}(r_p, \mathcal{L}_2|u_3) = 0.35+0=0.35 \\
+&P_{L_0}(r_y|u_3) =  P_{L_0}(r_y, \mathcal{L}_1|u_3) + P_{L_0}(r_y, \mathcal{L}_2|u_3) = 0+0.65=0.65 \\
 \end{aligned}
 $$
 
@@ -203,18 +220,86 @@ and
 
 $$
 \begin{aligned}
-&Informativity(u_3; r_1) = log(0) = -\infty \\
-&Informativity(u_3; r_2) = log(0.35) = -1.04 \\
-&Informativity(u_3; r_3) = log(0.65) = -0.43
+&Informativity(u_3; r_p) = log(0.35) = -1.04 \\
+&Informativity(u_3; r_y) = log(0.65) = -0.43
 \end{aligned}
 $$
+
+In a similar way, we can compute the informativity of the other utterances. Since the words have no *a priori* meanings, $u_4$ (pointing to the right and saying "wug") will have the same informativity values as $u_3$ (pointing the right and saying "dax"). The informativity vectors for $u_1$ and $u_2$, pointing to the left and saying either "dax" or "wug" are also identical: 
+
+$$
+\begin{aligned}
+&Informativity(u_1; r_p) = log(P_{L_0}(r_p|u_1)) = log(1)  = 0\\
+&Informativity(u_1; r_y) = log(P_{L_0}(r_y|u_1)) = log(0) = -\infty
+\end{aligned}
+$$
+We assume that the speaker knows the lexicon, but doesn't believe the listener to know the lexicon. That is, the generative process of the utterance is tantamount to pointing to the table with the referent of the type they want and incidentally labeling it. The label itself carries no information. 
+
+We can now compute the probability with each a speaker would produce each of the 4 utterances given the goal of conveying each of the 2 types.
+
+$$
+P_{S_1}(u|r) = \frac{\exp(\alpha \cdot Informativity(u;r))}{\sum_{u'} \exp(\alpha \cdot Informativity(u';r))}
+$$
+
+We begin with $r_p$. If the lexicon was $\mathcal{L}_1$, the speaker would say ...
+
+$$
+P_{S_1}(u|r^1_p) = \frac{\exp(\alpha \cdot Informativity(u;r_p))}{\sum_{u'} \exp(\alpha \cdot Informativity(u';r_p))}
+$$
+$$
+\exp(\alpha \cdot Informativity(u;r_p)) = \begin{cases} 
+\exp(2.24 \times 0) = 1 & \mbox{for } u_1 \\
+\exp(2.24 \times 0) = 1& \mbox{for } u_2 \\
+\exp(2.24 \times -\infty) = 0  & \mbox{for } u_3 \\
+\exp(2.24 \times -\infty) = 0& \mbox{for } u_4 \\
+\end{cases}
+$$
+
+To arrive at the speaker production probabilities, we divide by the normalizing constant (the sum of all of the unnormalized probabilties):
+
+$$
+P_{S_1}(u|r^1_p) = \begin{cases} 
+0.5  & \mbox{for } u_1 \\
+0.5 & \mbox{for } u_2 \\
+ 0  & \mbox{for } u_3 \\
+0& \mbox{for } u_4 \\
+\end{cases}
+$$
+
+For $r^2_p$, we have: 
+
+$$
+\exp(\alpha \cdot Informativity(u;r^2_p)) = \begin{cases} 
+\exp(2.24 \times -\infty) = 0 & \mbox{for } u_1 \\
+\exp(2.24 \times -\infty) = 0& \mbox{for } u_2 \\
+\exp(2.24 \times -1.04) = 0.1  & \mbox{for } u_3 \\
+\exp(2.24 \times -1.04) = 0.1 & \mbox{for } u_4 \\
+\end{cases}
+$$
+
+and so: 
+
+
+$$
+P_{S_1}(u|r^1_p) = \begin{cases} 
+0 & \mbox{for } u_1 \\
+0 & \mbox{for } u_2 \\
+0.5  & \mbox{for } u_3 \\
+0.5 & \mbox{for } u_4 \\
+\end{cases}
+$$
+
+
 
 Next we can insert these values into equation 2 to compute the probability that the speaker chooses this utterance to refer to this type of object. To do so, we need the speaker optimality parameter of $\alpha = 2.24$, which was estimated based on Experiment 1.
 
 TO CREATE S(u | r), WE NEED TO HAVE THE INFORMATIVITY OF EACH OF THE 4 UTTERANCES. PASSING THE INFORMATIVITY THROUGH THE SOFT-MAX (speaker optimality) creates an "unnormalized" probability, which we then turn into a real probability by dividing by the sum of all the unnormalized probabilities of each utterance. 
 
+
+
+
 $$
-P_{S_1}(u|r) = \frac{exp(\alpha Informativity(u;r))}{\sum_{u'} exp(\alpha Informativity(u';r))}
+\exp(\alpha Informativity(u_3;r)) = \exp(2.24 \times)
 $$
 
 
