@@ -1,6 +1,6 @@
 ---
-title             : "Supplementary information:Predicting information integration in pragmatic word learning across development"
-shorttitle        : "Supplementary information"
+title             : "Supplementary information:Pragmatic cue integration in adults’ and children’s inferences about novel word meanings"
+shorttitle        : " "
 
 author: 
   - name          : "Manuel Bohn"
@@ -33,6 +33,10 @@ mask              : no
 
 class             : "doc"
 output            : papaja::apa6_pdf
+header-includes:
+  \usepackage{caption}
+  \renewcommand{\thetable}{S\arabic{table}} 
+  \renewcommand{\thefigure}{S\arabic{figure}}
 ---
 
 ```{r setup, include=FALSE}
@@ -92,9 +96,9 @@ child_ex3_data <-read_csv(file="../../stats/data/child_ex3.csv")
 ```
 
 
-# Structure
+# Overview
 
-Here we present details for the cognitive models as well as supplementary analysis and results. Readers who are interested in the model and/or analysis code itself are encouraged to consult the corresponding online repository: (https://github.com/manuelbohn/mcc).  
+Here we present details for the cognitive models as well as supplementary analysis and results. Readers who are interested in the model and/or analysis code itself are encouraged to consult the associated online repository: https://github.com/manuelbohn/mcc.  
 
 # Models
 
@@ -108,11 +112,11 @@ There are two types of objects $t_1$, $t_2$ and two locations $l_1$ and $l_2$.
 The utterances available to a speaker are (action, label) pairs, where the action involves turning (pointing) to a particular location (a table) and labels are novel words ($w_1$, $w_2$), which are assumed to refer to the type of the object. 
 The action of turning (pointing) reduces the set of referents to those that are on the table targeted by the turn (point); interpreting a label reduces that set further to those which are of the type referred to by that label.
 The interpretation of a label requires a lexicon $\mathcal{L}$, which provides the label--type mappings.
-There are two lexica: one which maps label 1 $w_1$ to type 1 $t_1$ and label 2 $w_2$ to type 2 $t_2$, and one which has the inverse mapping. 
+There are two lexica: $\mathcal{L}_1$ which maps label 1 $w_1$ to type 1 $t_1$ and label 2 $w_2$ to type 2 $t_2$, and $\mathcal{L}_2$ which has the inverse mapping. 
 
 ## Pragmatics model
 
-Our word-learning model is a model of pragmatic reasoning couched in the Rational Speech Act modeling framework. The model describes the following process: A pragmatic listener ($L_1$) jointly infers a referent (what object is being picked out by the utterance) and a lexicon (label--type mappings) by reasoning about a pragmatic speaker ($S_1$) who produces utterances to convey information to a literal listener ($L_0$), who in turn interprets utterances according to their literal meaning. According to Bayes rule, the pragmatic listener's inference is given by:
+Our word-learning model is a model of pragmatic reasoning couched in the Rational Speech Act modeling framework [@frank2012predicting; @goodman2016pragmatic]. The model describes the following process: A pragmatic listener ($L_1$) jointly infers a referent (what object is being picked out by the utterance) and a lexicon (label--type mappings) by reasoning about a pragmatic speaker ($S_1$) who produces utterances to convey information to a literal listener ($L_0$), who in turn interprets utterances according to their literal meaning. According to Bayes rule, the pragmatic listener's inference is given by:
 
 \begin{equation} 
 P_{L_1}(r, \mathcal{L}|u)\propto P_{S_1}(u|r)P( \mathcal{L})P(r)
@@ -128,7 +132,7 @@ The pragmatic listener updates their beliefs about both the referent and the lex
 P_{S_1}(u|r)\propto exp(\alpha Informativity(u;r))
 \end{equation} 
 
-As spelled out in @GoodmanStuhlmuller2013, the informativity of an utterance for a referent is the (log) probability that a naive listener $L_0$ would select that referent given that utterance.
+As spelled out in @goodman2013knowledge, the informativity of an utterance for a referent is the (log) probability that a naive listener $L_0$ would select that referent given that utterance.
 
 \begin{equation} 
 Informativity(u; r) = \ln P_{L_0}(r|u)
@@ -145,26 +149,24 @@ where $P_{L_0}(r, \mathcal{L}|u)  \propto \mathcal{L}_{lit} P(r) P(\mathcal{L})$
 $P(r)$ again denotes the prior probability of a referent, $\mathcal{L}_{lit}$ encodes the literal meaning of an utterance given a particular lexicon, returning 1 if the utterance is literally true and 0 if the utterance is literally false. As mentioned above, because $L_1$ does not know the lexicon, the semantics of the words contained in the utterance (i.e., the labels) offer no information about the referent. The non-linguistic aspect of the utterance (the turning or pointing), however, do. As described above, the semantics of turning to one of the tables is roughly equivalent to saying "It's an object on that table". That is, $\mathcal{L}_{lit}$ returns 1 for a referent that is on the table the agent turned to and 0 for referents on the other table.
 
 
-### Worked Example
+## Worked Example
 
-In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from the preference - same speaker - congruent condition (see below); that is, the pressures of informativity and preference operate in the same direction. Fig. 1 shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents of two types (pink-ish and yellow-ish; for simplicity, we refer refer the object's type by its color) on two tables: $r^{table: 1}_{type:pink}$, $r^{table: 2}_{type:pink}$; one yellow-ish, $r^{table: 2}_{type:yellow}$). For simplicity, we refer to the referents by the shorthand: $r_{p}^1, r_{p}^2, r_y^2$.
+In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from the preference--different speaker--congruent condition (see below). Fig. \ref{fig:figS1} shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents of two types (pink-ish and yellow-ish; for simplicity, we refer refer the object's type by its color) on two tables: $r^{table: 1}_{type:pink}$, $r^{table: 2}_{type:pink}$; one yellow-ish, $r^{table: 2}_{type:yellow}$). For simplicity, we refer to the referents by the shorthand: $r_{p}^1, r_{p}^2, r_y^2$.
 In principle, the speaker, the frog in this case, can produce one of four utterances, turning either to the left or right table and saying either label ("dax" or "wug"):  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
 We work out the example where the speaker produces utterance $u_3$, turning to the right table (two objects) and saying the label "dax" (though since the labels have no *a priori* meanings, the computation would be the same for utterance $u_4$). 
 
-
 <!-- $u_1$, which is turning to the right table (two objects) and making a request by using a novel label or $u_2$, which involves turning to the left table (single object) and making a request by using a novel label. In the experiment, the speaker chose $u_1$ and we therefore model $L_1$'s interpretation of this utterance. -->
 
-```{r figS1, include = T, fig.align = "center", fig.cap = "Screenshot from adult experiment.", out.width="400px"}
-knitr::include_graphics("./figures/SI_setup.png")
+```{r figS1, include = T, fig.align = "center", fig.cap = "Screenshot showing test situation Experiment 1, 3 and 4.", out.width="400px"}
+knitr::include_graphics("./figures/SI_setup_inf.png")
 ```
 
-The listener is learning the mappings between labels and object types (rather than object tokens). That is, the listener either believes the novel word "dax" refers to either "red-ish objects" or "yellow-ish objects". Turning or pointing to a table always has the same meaning. These semantics can be described using two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing}, point: \text{location of point}\}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}, point: \text{location of point}\}$.
+The listener is learning the mappings between labels and object types (rather than object tokens). That is, the listener either believes the novel word "dax" refers to either "pink-ish objects" or "yellow-ish objects". Turning or pointing to a table always has the same meaning. These semantics can be described using two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing}, point: \text{location of point}\}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}, point: \text{location of point}\}$.
 
-We construct the prior distribution over referents $P(r)$ based on the results of Experiment 2A, in which the speaker displayed a preference for a yellow object (see Model Parameters section below for a detailed description of how this distribution was constructed). 
-The prior distribution over referents $P(r)$ (left to right in Fig.1) for this condition was [0.26, 0.26, 0.48].
+We construct the prior distribution over referents $P(r)$ based on the results of Experiment 2A, in which a different speaker displayed a preference for a yellow-ish object. The prior distribution over referents $P(r)$ (left to right in Fig. \ref{fig:figS1}) for this condition was [0.26, 0.26, 0.48] (see Model Parameters section below for a detailed description of how this distribution was constructed).
 <!-- [`r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`].  -->
 
-We assume that the intentional goal of the speaker is to get the listener to get an option of the correct type. That is, the informativity of an utterance is calculated with respect to conveying the correct object type as opposed to a particular referent (token).
+We assume that the intentional goal of the speaker is to get the listener to select an object of the correct type. That is, the informativity of an utterance is calculated with respect to conveying the correct object type as opposed to a particular referent (token).
 First, we calculate the literal listener's posterior distribution over referents and lexica, and marginalize (average) over objects of the same type and the different lexica to compute the informativity of an utterance for a type.
 The literal listener's posterior distribution over referents and lexica has support of size six, owing to the unique combinations of referents and lexica.
 $$
@@ -180,7 +182,7 @@ $$
 
 
 
-because the speaker is pointing to the table with $r_p^2$ and $r_y^2$, and under $\mathcal{L}_1$, "dax" means the pink object and under $\mathcal{L}_2$, "dax" means the yellow object.
+because the speaker is pointing to the table with $r_p^2$ and $r_y^2$, and under $\mathcal{L}_1$, "dax" means the pink-ish object and under $\mathcal{L}_2$, "dax" means the yellow-ish object.
 After normalization we have:
 
 $$
@@ -193,7 +195,8 @@ $$
 & P_{L_0}(r_y^2, \mathcal{L}_2 | {u_3}) = 0.65\\
 \end{aligned}
 $$
-The correspondence of the token distribution (above) with the type distribution is straight-forward:
+
+In order to get the distribution over types (instead of tokens), we simply add up the probabilities for each token from the same type. Thus, when taking
 
 $$
 \begin{aligned}
@@ -204,7 +207,7 @@ $$
 \end{aligned}
 $$
 
-then,
+we get,
 
 $$
 \begin{aligned}
@@ -213,7 +216,7 @@ $$
 \end{aligned}
 $$
 
-and
+and finally
 
 $$
 \begin{aligned}
@@ -222,7 +225,7 @@ $$
 \end{aligned}
 $$
 
-In a similar way, we can compute the informativity of the other utterances. Since the words have no *a priori* meanings, $u_4$ (pointing to the right and saying "wug") will have the same informativity values as $u_3$ (pointing the right and saying "dax"). The informativity vectors for $u_1$ and $u_2$, pointing to the left and saying either "dax" or "wug" are also identical: 
+In a similar way, we can compute the informativity of the other utterances. Since the words have no *a priori* meanings, $u_4$ (pointing to the right and saying "wug") will have the same informativity values as $u_3$ (pointing the right and saying "dax"). The informativity vectors for $u_1$ and $u_2$, pointing to the left and saying either "dax" or "wug" are also identical and given by: 
 
 $$
 \begin{aligned}
@@ -230,10 +233,10 @@ $$
 &Informativity(u_1; t_y) = log(P_{L_0}(t_y|u_1)) = \log(0) = -\infty
 \end{aligned}
 $$
-We assume that the speaker knows the lexicon, but doesn't believe the listener to know the lexicon. That is, the generative process of the utterance is tantamount to pointing to the table with the referent of the type the speaker wants and incidentally labeling it. The label itself carries no information. 
+We assume that the speaker knows the lexicon, but doesn't believe the listener to know the lexicon. That is, the generative process of the utterance is tantamount to pointing to the table with the referent of the type the speaker wants and incidentally labeling it. The label itself carries no information.
 
-Recall the two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing}, point: \text{location of point}\}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}, point: \text{location of point}\}$, and the four utterances:  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
-We begin with $t_p$. If the speaker's lexicon were $\mathcal{L}_1$:
+Based on euqation 2 we can now compute the likelihood of each utterance given an object type. Recall the two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing}, point: \text{location of point}\}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}, point: \text{location of point}\}$, and the four utterances:  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
+We begin with the pink-ish type ($t_p$). If the speaker's lexicon were $\mathcal{L}_1$:
 
 $$
 P_{S_1}(u|t_p, \mathcal{L}_1) \propto \exp(\alpha \cdot Informativity(u;t_p)) = \begin{cases} 
@@ -264,9 +267,8 @@ P_{S_1}(u|t_p, \mathcal{L}_2) = \begin{cases}
 0.09& \mbox{for } u_4 \\
 \end{cases}
 $$
-That is, if the speaker is trying to convey the pinkish object type, the speaker would be 10 times more likely (under a speaker rationality parameter of 2.24) to point to the left table than to the right table. 
-If instead the speaker wanted to convey the yellowish object type:
- = -0.43
+That is, if the speaker is trying to convey the pink-ish object type, the speaker would be 10 times more likely (under a speaker rationality parameter of 2.24) to point to the left table than to the right table. This corresponds with the intuition that pointing to the left table would be a much better way to refer to a pink-ish object. 
+If instead the speaker wanted to convey the yellow-ish object type ($t_y$):
 
 $$
 P_{S_1}(u|t_y, \mathcal{L}_1) = \exp(\alpha \cdot Informativity(u;t_y)) = \begin{cases} 
@@ -298,7 +300,7 @@ P_{S_1}(u|t_y, \mathcal{L}_2) = \begin{cases}
 \end{cases}
 $$
 
-That is, the speaker would point to the right table and say the utterance consistent with their lexicon. 
+That is, the speaker would point to the right table and say the utterance consistent with their lexicon. Again, intuitively this makes sense because the yellow-ish object is located only on the right table and pointing to that table presents the only way one could refer to that object type.
 
 Finally, based on equation 1 we can use these values to compute the probability that the listener thinks that the speaker is referring to the yellow type ($t_y$) when they produce $u_3$ (pointing to the right table and saying "dax"). In this case, it is the same as the probability of the yellow referent ($r^2_y$) because there is only one yellow object.
 
@@ -335,7 +337,7 @@ $$
 \end{aligned}
 $$
 
-To arrive at the distribution on types, you simply add all of the referents of the same type and marginalize out the lexicon:
+To arrive at the distribution over types, you simply add all of the referents of the same type and marginalize out the lexicon:
 
 $$
 \begin{aligned}
@@ -343,8 +345,7 @@ $$
 &P_{L_1}(t_y|u_3) =  \sum_{i \in {1, 2}} P_{L_1}(r^2_y, \mathcal{L}_i|u_3)  = 0.91 \\
 \end{aligned}
 $$
-
-
+To conclude the example, according to the parameter free pragmatics model, the proability that $L_1$ thinks that $S_1$ is reffering to a yellow-ish object when producing $u_3$ is 0.91. Based on this model we thus expected that, on average, participants would select the yellow-ish object in 91% of cases in the preference--different speaker--congruent condition.  
 
 <!-- The utterances available to a speaker are (action, label) pairs, where the action involves turning (or pointing) to a particular location (i.e., a table) and labels are novel words, which are assumed to refer to the type of the object.  -->
 <!-- The action of the turning or pointing rules out the referents that are not on the table targeted by the turn (point).  -->
@@ -356,32 +357,36 @@ $$
 
 <!-- Because we studied word learning, we assumed that the listener ($L_1$) had no prior expectations that a particular lexicon  is more likely. In the model, $P(L)$ therefore took the form of a uniform distribution over potential lexica.  -->
 
-
-### Model parameters  
-
-As noted in the main text, the parameter $\alpha$ (speaker optimality parameter) in equation 2 determines the absolute strength of the likelihood term. It's interpretation is *how* rational $L$ thinks $S$ is in this particular context. For adults, we used the data from Experiment 1 to infer the value of $\alpha$. That is, we inferred which value of $\alpha$ would generate model predictions for the RSA model (assuming equal prior probability for each object) that corresponded to the average proportion of correct responses measured in Experiment 1. This value for $\alpha$ was then used in Experiment 3 and 4.
-
-For children, the speaker optimality parameter changed with age. Instead of inferring a single value across age, we used the data from Experiment 5 to find the slope and intercept for $\alpha$ that best described the developmental trajectory in the data. As for adults, this was done via the RSA model with equal prior probability for each object. In Experiment 7, the speaker optimality parameter for a given child of a given age was computed by taking the overall intercept and adding the slope times the child's age (with age anchored at 0).
-
-The prior distribution over objects, $P(r)$, varied with the common ground manipulation, the identity of the speaker and the alignment of utterance and common ground information. Numerically, it depended on the measurement obtained in Experiment 2A and B for adults and Experiment 6 for children. 
-
-For adults, this worked in the following way: For example, in Experiment 2, for the preference/same speaker condition, when the speaker indicated that they liked object A and disliked object B, the average proportion with which participants chose object A was `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` and for object B it was `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` respectively. In Experiment 3, this measurement determined the prior distribution over objects in cases whenever the the same manipulation was used (preference/same speaker). When utterance and common ground information were aligned (i.e. object A was the more informative object), the distribution of objects was (A,B,B). The corresponding prior distribution was therefore (`r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`, `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`, `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`). When information sources were dis-aligned (i.e. object B was the more informative one), the object distribution was (B,A,A) and the prior distribution was (`r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`, `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`, `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)`). Note that Experiment 3 involved three objects while Experiment 2 only involved two. We nevertheless used the exact proportions measured in Experiment 2 for each object to inform the prior. This approach spread out the absolute probability mass but conserved the relative relation between objects.
-
-For children, we used the data from Experiment 6 to model the slope and intercept that best described the developmental trajectory in the data for each of the two conditions. As for the speaker optimality parameter, this allowed us to generate prior distributions that were sensitive to the child's age. In Experiment 7, the prior probability for an object was computed by taking the intercept for the respective condition (same or different speaker), adding the slope times the child's age and then using a logistic transformation to convert the outcome into proportions. The overall distribution then depended on the alignment of information sources in the same way as it did for adults. 
-
 ## Prior only model
 
-The prior only model ignored the information about the intended referent that was expressed by the utterance and instead only focused only on common ground manipulation. It is defined as: 
+The prior only model ignored the information about the intended referent that was expressed by the utterance and instead only focused on common ground manipulation. The only inforamtion available to $L_1$ is the prior distribution over referents. It is therefore defined as: 
 
 \begin{equation} 
-P_{L}(r|u)\propto P(r)
+P_{L_1}(r|u)\propto P(r)
 \end{equation} 
 
 That is, the probability of the referent given the utterance is determined by the prior probability of the referent for a particular speaker. The prior distributions were set in the same way as for the pragmatics model.
 
 ## Flat prior model
 
-This model was identical in structure to the pragmatics model with the exception that the prior distribution did not correspond to the measurements from Experiment 2 and did not vary with speaker identity. That is, regardless of common ground manipulation and speaker identity the prior distribution was always uniform (e.g. 0.33,0.33,0.33). This was the case for children as well as  adults. The speaker optimality parameter was set in the same way as in the pragmatics model. 
+This model was identical in structure to the pragmatics model with the exception that the prior distribution did not correspond to the measurements from Experiment 2 and did not vary with speaker identity. That is, regardless of common ground manipulation and speaker identity the prior distribution was always uniform (i.e. [0.33,0.33,0.33]). The speaker optimality parameter $\alpha$ was set in the same way as in the pragmatics model. 
+
+# Model parameters  
+
+As noted in the main text, the parameter $\alpha$ (speaker optimality parameter) in equation 2 determines the absolute strength of the likelihood term. It's interpretation is *how* rational $L_1$ thinks $S_1$ is in this particular context. For adults, we used the data from Experiment 1 to infer the value of $\alpha$. That is, we inferred which value of $\alpha$ would generate model predictions for the pragmatics model (assuming equal prior probability over referents) that corresponded to the average proportion of correct responses measured in Experiment 1. This value for $\alpha$ was then used in Experiment 3 and 4. 
+
+For children, the speaker optimality parameter changed with age. Instead of inferring a single value across age, we used the data from Experiment 5 to find the slope and intercept for $\alpha$ that best described the developmental trajectory in the data. As for adults, this was done via the pragmatics model with equal prior probability for each object. In Experiment 7, the speaker optimality parameter for a given child of a given age was computed by taking the overall intercept and adding the slope times the child's age (with age anchored at 0). The analysis code corresponding to these calculations can be found in the associated online repository.
+
+The prior distribution over objects, $P(r)$, varied with the common ground manipulation, the identity of the speaker and the alignment of utterance and common ground information. Numerically, it depended on the measurement obtained in Experiment 2A and B for adults and Experiment 6 for children. Fig. \ref{fig:figS2} shows the test situation on Experiment 2.  
+
+```{r figS2, include = T, fig.align = "center", fig.cap = "Screenshot showing test situation in Experiment 2 for adults.", out.width="400px"}
+knitr::include_graphics("./figures/SI_setup_pref.png")
+```
+
+For adults, this worked in the following way: For example, in Experiment 2, for the preference/same speaker condition, when the speaker previously indicated that they liked the yellow-ish object (right table in Fig. \ref{fig:figS2}) and disliked the pink-ish object (left table in Fig.\ref{fig:figS2}), the average proportion with which participants chose the yellow-ish object  was `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` and for the pink-ish object it was `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` respectively. In Experiment 3 and 4, this measurement determined the prior distribution over objects in cases whenever the the same manipulation was used (preference/same speaker). Note that Experiment 3 involved three objects while Experiment 2 only involved two. We nevertheless used the exact proportions measured in Experiment 2 for each object to inform the prior. This approach spread out the absolute probability mass but conserved the relative relation between objects. Thus, when utterance and common ground information were aligned (i.e. the yellow-ish object was the more informative object as in Fig. \ref{fig:figS1}), the distribution of objects was [$r_{p}^1, r_{p}^2, r_y^2$]. Using the raw proportions, the corresponding prior distribution was [$P(r_{p}^1) = 0.03, P(r_{p}^2) = 0.03, P(r_{y}^2) = 0.97$] and after normalizing (so that they add up to 1) it was [0.03, 0.03, 0.94]. When information sources were dis-aligned (i.e. the pink-ish object was the more informative one), the object distribution was ($r_{y}^1, r_{p}^2, r_y^2$) and the prior distribution was thus [0.97, 0.03, 0.97] or [0.49, 0.02, 0.49] after normalizing. 
+
+For children, we used the data from Experiment 6 to model the slope and intercept that best described the developmental trajectory in the data for each of the two conditions. As for the speaker optimality parameter, this allowed us to generate prior distributions that were sensitive to the child's age. In Experiment 7, the prior probability for an object was computed by taking the intercept for the respective condition (same or different speaker), adding the slope times the child's age and then using a logistic transformation to convert the outcome into proportions. The overall distribution then depended on the alignment of information sources in the same way as it did for adults. Model code for inferring the intercept and the slope for the child study can be found in the associated online repository.
+
 
 # Prior strength manipualtions Experiment 4
 
@@ -421,7 +426,7 @@ apa_table(
 
 Below we describe the different ways in which prior strength was manipulated in Experiment 4. The corresponding experiments can be found in the online repository. The test event was always the same: The animal disappeared and then either the same or a different animal returned and requested an object using an unknown word.
 
-For preference, both tables initially contained an object. In preference/strong the animal turned to one side and stated that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object. Then they turned the other side and expressed the respective other attitude. In preference/medium the animal only turned to one side and expressed liking in a more subtle way (saying only: “Oh, wow”). 
+For preference, at the beginning of the experiment both tables contained an object. In preference/strong the animal turned to one side and stated that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object. Then they turned the other side and expressed the respective other attitude. In preference/medium the animal only turned to one side and expressed liking in a more subtle way (saying only: “Oh, wow”). 
 
 For novelty, one table was empty while there was an object on the other. In novelty/strong the animal turned to one of the sides and commented either on the presence (“Aha, look at that”) or the absence of an object (“Hm, nothing there”). Then the animal turned to the other side and commented in a complementary way. Next, the animal disappeared. The same animal re-appeared and the sequence above was repeated. When the animal disappeared for the second time, a second object appeared on the empty table while the animal was away. In novelty/medium, the animal commented on the presence/absence of objects in the same way but did so only once. In novelty/weak, the animal only turned to the present object and commented on it. 
 
@@ -459,7 +464,7 @@ Analysis code for model comparison can be found in the online repository.
 
 ## Experiment 3
 
-Here we report details on the model comparisons. Model fit was assessed based on marginal log-likelihoods of the data under each model. Bayes Factors were computed by first subtracting log-likelihoods and then exponentiating the result. Table \ref{tab:ex3_comp} shows Bayes Factors for model comparisons in Experiment 3. We did not pre-register the inclusion of the noise parameter for Experiment 3, but did so for all subsequent experiments for which we did model comparisons (4 and 7). The first row in Table \ref{tab:ex3_comp} compares the pragmatics model with noise parameter to the model without the noise parameter. This comparison shows that including the noise parameter greatly improves model fit. Figure \ref{fig:modelpredex3} compares model predictions from the models including noise parameters to the data from Experiment 3. 
+Here we report details on the model comparisons. Model fit was assessed based on marginal log-likelihoods of the data under each model. Bayes Factors were computed by first subtracting log-likelihoods for two models and then exponentiating the result. Table \ref{tab:ex3_comp} shows Bayes Factors for model comparisons in Experiment 3. We did not pre-register the inclusion of the noise parameter for Experiment 3, but did so for all subsequent experiments for which we did model comparisons (4 and 7). The first row in Table \ref{tab:ex3_comp} compares the pragmatics model with noise parameter to the model without the noise parameter. This comparison shows that including the noise parameter greatly improves model fit. Figure \ref{fig:modelpredex3} correlates model predictions from the models including noise parameters to the data from Experiment 3. 
 
 ```{r modelpredex3, include = T, fig.cap = "Correlation plot for model predictions and data from Experiment 3. All models depicted here included a noise parameter. Coefficients and p-values are based on Pearson correlation statistics. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.height=2.5}
 
@@ -623,7 +628,7 @@ ggplot(ex3_noise_parameters, aes(x = value, col = Model, fill = Model))+
                     values= c("#b58900","#6c71c4","#859900"))
 ```
 
-Figure \ref{fig:ex3noise} shows the posterior distribution of the noise parameter for each model. The noise parameter was fit to the data and indicates the proportion of responses that are estimated to be due to random guessing rather than in line with model predictions. Consequently, a model that makes predictions that are closer to the data is likely to have a lower noise parameter. 
+Figure \ref{fig:ex3noise} shows the posterior distribution of the noise parameter under each model. The noise parameter was fit to the data and indicates the proportion of responses that are estimated to be due to random guessing rather than in line with model predictions. Consequently, a model that makes predictions that are closer to the data is likely to have a lower noise parameter. The results corroborate the model comparison by showing that the pragmatics model has the lowest noise parameter.  
 
 ## Experiment 4
 
@@ -781,13 +786,13 @@ ggplot(ex4_noise_parameters, aes(x = value, col = Model, fill = Model))+
                     values= c("#b58900","#6c71c4","#859900"))
 ```
 
-Figure \ref{fig:modelpredex4} compares model predictions to the data from Experiment 4. Table \ref{tab:ex4_comp} shows Bayes Factors for model comparisons in Experiment 3. As pre-registered, all models included a noise parameter. Figure \ref{fig:ex4noise} shows the posterior distribution of the noise parameter for each model in Experiment 4.
+Figure \ref{fig:modelpredex4} correlates model predictions with the data from Experiment 4. Table \ref{tab:ex4_comp} shows Bayes Factors for model comparisons in Experiment 4. As pre-registered, all models included a noise parameter. Figure \ref{fig:ex4noise} shows the posterior distribution of the noise parameter for each model in Experiment 4. All results suggest that the pragmatics model captures the structure in the data better compared to the alternative models considered. 
 
 ## Experiment 7
 
-For children, we compared models using different types of noise parameters. We preregistered the model comparison for models including a single noise parameter. We added the additional model comparisons because the noise parameter was comparably high. The additional model comparisons allow us to see if the pragmatics model provides a better fit when more emphasis is put on the model structure itself. The results show that this was the case.
+For children, we compared models using different types of noise parameters. We preregistered the model comparison for models including a single noise parameter. We added the additional model comparisons because the noise parameter was relatively high. The additional model comparisons allow us to see if the pragmatics model provides a better fit when more emphasis is put on the model structure itself. The results show that this was the case.
 
-Parameter free models did not include a noise parameter. Noise models included a single noise parameter across age. Developmental noise models included a noise parameter that changed with age. That is, instead of a single value, we inferred an intercept and a slope for the noise parameter. Noise was therefore a function of the child's age. Table \ref{tab:child_prag_bf} shows model comparisons for the pragmatics models using different noise parameters. This shows that including a noise parameter improves model fit but that the type of noise parameter does not make much of a difference.  
+Parameter free models did not include a noise parameter. Noise models included a single noise parameter for all ages. Developmental noise models included a noise parameter that changed with age. That is, instead of a single value, we inferred an intercept and a slope for the noise parameter. Noise was therefore a function of the child's age. Table \ref{tab:child_prag_bf} shows model comparisons for the pragmatics models using different noise parameters. This shows that including a noise parameter improves model fit but that the type of noise parameter does not make much of a difference.  
 
 ```{r child_prag_bf, results = "asis"}
 child_ex3_model_comparison <- readRDS("../../stats/saves/child_ex3_model_comparison.rds")
@@ -918,13 +923,13 @@ child_dev_noise_plot <- ggplot(developmental_noise_parameter, aes(x = age, y= y,
                     values= c("#b58900","#6c71c4","#859900"))
 ```
 
-Figure \ref{fig:childnoise} shows the different types of noise parameters for the each model. Figure \ref{fig:childnoise}A shows that the pragmatics model has the lowest estimated level of noise of all the models considered. Figure \ref{fig:childnoise}B shows that the the pragmatics model has the lowest level of estimated noise across the entire age range. It also shows that noise decreases with age for the pragmatics model, suggesting that older children behaved more in line with model predictions compared to younger children.
+Figure \ref{fig:childnoise} shows the different types of noise parameters for the each model. Figure \ref{fig:childnoise}A shows that the pragmatics model has the lowest estimated level of noise of all the models considered. Figure \ref{fig:childnoise}B shows that the the pragmatics model has the lowest level of estimated noise across the entire age range. It also shows that noise decreases with age for the pragmatics model, suggesting that older children behaved more in line with model predictions compared to younger children. 
 
 ```{r childnoise, include = T, fig.cap = "Posterior distribution of noise parameter for each model in Experiment 7. A: single noise parameter across age, B: Developmental noise parameter.", fig.height = 2.5}
 ggarrange(child_noise_plot,child_dev_noise_plot, nrow = 1, ncol = 2, common.legend = T, legend = "right", labels = c("A","B"))
 ```
 
-Finally, Figure \ref{fig:childcor} shows correlations between model predictions and the data, binned by year. Across noise parameters, model predictions and data are closest aligned (i.e. closest to the dotted line) for the pragmatics model, thereby corroborating the conclusions drawn based on the model comparison and the evaluation of the noise parameters. 
+Finally, Figure \ref{fig:childcor} shows correlations between model predictions and the data, binned by year. Across noise parameters, model predictions and data are closest aligned (i.e. closest to the dotted line) for the pragmatics model, thereby corroborating the conclusions drawn based on the model comparison and the evaluation of the noise parameters. Correlations are also higher for 4yo compared to 3yo, supporting the interpretation based on the developmental noise parameter that children behaved more in line with the model predictions as they got older.  
 
 ```{r childcor,  include = T, fig.cap = "Correlation plot for model predictions and data for all models considered in Experiment 7. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.height = 7}
 
