@@ -211,45 +211,37 @@ In order to get the distribution over types (instead of tokens), we simply add u
 
 $$
 \begin{aligned}
-& P_{L_0}(r_p | {u_3}) = P_{L_0}(r_{p1}| {u_3})  + P_{L_0}(r_{p2}| {u_3})  = 0+ 0.35 =0.35 \\
-& P_{L_0}(r_y | {u_3}) = P_{L_0}(r_{y2} | {u_3}) = 0.65\\
+& Informativity(u_3; r_p) = P_{L_0}(r_p | {u_3}) = P_{L_0}(r_{p1}| {u_3})  + P_{L_0}(r_{p2}| {u_3})  = 0+ 0.35 =0.35 \\
+& Informativity(u_3; r_p) = P_{L_0}(r_y | {u_3}) = P_{L_0}(r_{y2} | {u_3}) = 0.65\\
 \end{aligned}
 $$
 
-and finally
-
-$$
-\begin{aligned}
-&Informativity(u_3; r_p) = \log(0.35) = -1.04 \\
-&Informativity(u_3; r_y) = \log(0.65) = -0.43
-\end{aligned}
-$$
 
 In a similar way, we can compute the informativity of the other utterances. Since the words have no *a priori* meanings, $u_4$ (pointing to the right and saying "wug") will have the same informativity values as $u_3$ (pointing the right and saying "dax"). The informativity vectors for $u_1$ and $u_2$, pointing to the left and saying either "dax" or "wug" are also identical and given by: 
 
 $$
 \begin{aligned}
-&Informativity(u_1; r_p) = log(P_{L_0}(r_p|u_1)) = \log(1)  = 0\\
-&Informativity(u_1; r_y) = log(P_{L_0}(r_y|u_1)) = \log(0) = -\infty
+&Informativity(u_1; r_p) = P_{L_0}(r_p|u_1) = 1\\
+&Informativity(u_1; r_y) = P_{L_0}(r_y|u_1) = 0
 \end{aligned}
 $$
 We assume that the speaker knows the lexicon, but doesn't believe the listener to know the lexicon. That is, the generative process of the utterance is tantamount to pointing to the table with the referent of the type the speaker wants and incidentally labeling it. The label itself carries no information.
 
-Based on euqation 2 we can now compute the likelihood of each utterance given an object type. Recall the two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing}, point: \text{location of point}\}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}, point: \text{location of point}\}$, and the four utterances:  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
-We begin with the pink-ish type ($t_p$). If the speaker's lexicon were $\mathcal{L}_1$:
+Based on euqation 2 we can now compute the likelihood of each utterance given an object type. Recall the two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing} \}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}\}$, and the four utterances:  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
+We begin with the pink-ish type ($r_p$). If the speaker's lexicon were $\mathcal{L}_1$:
 
 $$
-P_{S_1}(u|t_p, \mathcal{L}_1) \propto \exp(\alpha \cdot Informativity(u;t_p)) = \begin{cases} 
-\exp(2.24 \times 0) = 1 & \mbox{for } u_1 \\
-\exp(2.24 \times -\infty) = 0& \mbox{for } u_2 \\
-\exp(2.24 \times -1.04) = 0.097  & \mbox{for } u_3 \\
-\exp(2.24 \times -\infty) = 0& \mbox{for } u_4 \\
+P_{S_1}(u|r_p, \mathcal{L}_1) \propto   Informativity(u_a;r_p)^\alpha P(u \mid \mathcal{L}_1) = \begin{cases} 
+1^{2.24} \times 1 = 1 & \mbox{for } u_1 \\
+0^{2.24} \times 0 = 0& \mbox{for } u_2 \\
+0.35^{2.24} \times 1 = 0.095  & \mbox{for } u_3 \\
+1^{2.24} \times 0 = 0& \mbox{for } u_4 \\
 \end{cases}
 $$
-To arrive at the production probabilities, you normalize:
+To arrive at the production probabilities, you the values from the previous calculation so that they add to 1:
 
 $$
-P_{S_1}(u|t_p, \mathcal{L}_1) = \begin{cases} 
+P_{S_1}(u|r_p, \mathcal{L}_1) = \begin{cases} 
 0.91  & \mbox{for } u_1 \\
 0 & \mbox{for } u_2 \\
 0.09  & \mbox{for } u_3 \\
@@ -260,7 +252,7 @@ $$
 The speaker's production probabilities are the same if the speaker's lexicon is $\mathcal{L}_2$, only the utterances use the other label:
 
 $$
-P_{S_1}(u|t_p, \mathcal{L}_2) = \begin{cases} 
+P_{S_1}(u|r_p, \mathcal{L}_2) = \begin{cases} 
 0  & \mbox{for } u_1 \\
 0.91 & \mbox{for } u_2 \\
 0  & \mbox{for } u_3 \\
@@ -268,21 +260,21 @@ P_{S_1}(u|t_p, \mathcal{L}_2) = \begin{cases}
 \end{cases}
 $$
 That is, if the speaker is trying to convey the pink-ish object type, the speaker would be 10 times more likely (under a speaker rationality parameter of 2.24) to point to the left table than to the right table. This corresponds with the intuition that pointing to the left table would be a much better way to refer to a pink-ish object. 
-If instead the speaker wanted to convey the yellow-ish object type ($t_y$):
+If instead the speaker wanted to convey the yellow-ish object type ($r_y$):
 
 $$
-P_{S_1}(u|t_y, \mathcal{L}_1) = \exp(\alpha \cdot Informativity(u;t_y)) = \begin{cases} 
-\exp(2.24 \times -\infty) = 0 & \mbox{for } u_1 \\
-\exp(2.24 \times -\infty) = 0& \mbox{for } u_2 \\
-\exp(2.24 \times -\infty) = 0  & \mbox{for } u_3 \\
-\exp(2.24 \times -0.43) = 0.38& \mbox{for } u_4 \\
+P_{S_1}(u|r_y, \mathcal{L}_1) = Informativity(u;r_y)^\alpha \cdot P(u\mid \mathcal{L}_1) = \begin{cases} 
+0^{2.24} \times 0 = 0 & \mbox{for } u_1 \\
+0^{2.24} \times 0 = 0& \mbox{for } u_2 \\
+0^{2.24} \times 0 = 0  & \mbox{for } u_3 \\
+0.65^{2.24} \times 1 = 0.38& \mbox{for } u_4 \\
 \end{cases}
 $$
 
 To arrive at the production probabilities, you normalize:
 
 $$
-P_{S_1}(u|t_y, \mathcal{L}_1) = \begin{cases} 
+P_{S_1}(u|r_y, \mathcal{L}_1) = \begin{cases} 
 0  & \mbox{for } u_1 \\
 0 & \mbox{for } u_2 \\
 0  & \mbox{for } u_3 \\
@@ -292,7 +284,7 @@ $$
 and
 
 $$
-P_{S_1}(u|t_y, \mathcal{L}_2) = \begin{cases} 
+P_{S_1}(u|r_y, \mathcal{L}_2) = \begin{cases} 
 0  & \mbox{for } u_1 \\
 0 & \mbox{for } u_2 \\
 1  & \mbox{for } u_3 \\
@@ -302,11 +294,11 @@ $$
 
 That is, the speaker would point to the right table and say the utterance consistent with their lexicon. Again, intuitively this makes sense because the yellow-ish object is located only on the right table and pointing to that table presents the only way one could refer to that object type.
 
-Finally, based on equation 1 we can use these values to compute the probability that the listener thinks that the speaker is referring to the yellow type ($t_y$) when they produce $u_3$ (pointing to the right table and saying "dax"). In this case, it is the same as the probability of the yellow referent ($r^2_y$) because there is only one yellow object.
+Finally, based on equation 1 we can use these values to compute the probability that the listener thinks that the speaker is referring to the yellow type ($r_y$) when they produce $u_3$ (pointing to the right table and saying "dax"). In this case, it is the same as the probability of the yellow referent ($r_{y2}$) because there is only one yellow object.
 
 $$
 \begin{aligned}
-&P_{L_1}(r^2_y, \mathcal{L}|u ) = \frac{P_{S_1}(u_3 \mid t_y, \mathcal{L}) \cdot P(\mathcal{L}) \cdot P(r^2_y)}{
+&P_{L_1}(r_{y2}, \mathcal{L}|u_3 ) = \frac{P_{S_1}(u_3 \mid r_y, \mathcal{L}) \cdot P(\mathcal{L}) \cdot P(r_{y2})}{
 \sum_{r'} P_{S_1}(u_3 \mid r', \mathcal{L}) \cdot P(\mathcal{L}) \cdot P(r')
 }
 \end{aligned}
@@ -315,12 +307,12 @@ $$
 
 $$
 \begin{aligned}
-& P_{L_1}(r_p^1, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_p^1, \mathcal{L}_1) P(r^1_r) P(\mathcal{L}_1) = 0.09 \times 0.26 \times 0.5 =0.012\\
-& P_{L_1}(r_p^2, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_p^2, \mathcal{L}_1)  P(r^2_r) P(\mathcal{L}_1) = 0.09 \times 0.26 \times 0.5 =0.012\\
-& P_{L_1}(r_y^2, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_y^2, \mathcal{L}_1)  P(r^2_y) P(\mathcal{L}_1) = 0 \times 0.48 \times 0.5 =0\\
-& P_{L_1}(r_p^1, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_p^1, \mathcal{L}_2)  P(r^1_r) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
-& P_{L_1}(r_p^2, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_p^2, \mathcal{L}_2) P(r^2_r) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
-& P_{L_1}(r_y^2, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_y^2, \mathcal{L}_2) P(r^2_y) P(\mathcal{L}_2) = 1 \times 0.48 \times 0.5=0.24\\
+& P_{L_1}(r_{p1}, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p1}, \mathcal{L}_1) P(r_{r1}) P(\mathcal{L}_1) = 0.09 \times 0.26 \times 0.5 =0.012\\
+& P_{L_1}(r_{p2}, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p2}, \mathcal{L}_1)  P(r_{r2}) P(\mathcal{L}_1) = 0.09 \times 0.26 \times 0.5 =0.012\\
+& P_{L_1}(r_{y2}, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_{y2}, \mathcal{L}_1)  P(r_{y2}) P(\mathcal{L}_1) = 0 \times 0.48 \times 0.5 =0\\
+& P_{L_1}(r_{p1}, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p1}, \mathcal{L}_2)  P(r_{r1}) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
+& P_{L_1}(r_{p2}, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p2}, \mathcal{L}_2) P(r_{r2}) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
+& P_{L_1}(r_{y2}, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_{y2}, \mathcal{L}_2) P(r_{y2}) P(\mathcal{L}_2) = 1 \times 0.48 \times 0.5=0.24\\
 \end{aligned}
 $$
 
@@ -328,12 +320,12 @@ After normalizing, the full joint-posterior distribution over referents and lexi
 
 $$
 \begin{aligned}
-& P_{L_1}(r_p^1, \mathcal{L}_1 | {u_3})  = 0.045\\
-& P_{L_1}(r_p^2, \mathcal{L}_1 | {u_3})  = 0.045\\
-& P_{L_1}(r_y^2, \mathcal{L}_1 | {u_3})  = 0 \\
-& P_{L_1}(r_p^1, \mathcal{L}_2 | {u_3})  = 0\\
-& P_{L_1}(r_p^2, \mathcal{L}_2 | {u_3})  = 0\\
-& P_{L_1}(r_y^2, \mathcal{L}_2 | {u_3})  = 0.91\\
+& P_{L_1}(r_{p1}, \mathcal{L}_1 | {u_3})  = 0.045\\
+& P_{L_1}(r_{p2}, \mathcal{L}_1 | {u_3})  = 0.045\\
+& P_{L_1}(r_{y2}, \mathcal{L}_1 | {u_3})  = 0 \\
+& P_{L_1}(r_{p1}, \mathcal{L}_2 | {u_3})  = 0\\
+& P_{L_1}(r_{p2}, \mathcal{L}_2 | {u_3})  = 0\\
+& P_{L_1}(r_{y2}, \mathcal{L}_2 | {u_3})  = 0.91\\
 \end{aligned}
 $$
 
@@ -341,8 +333,8 @@ To arrive at the distribution over types, you simply add all of the referents of
 
 $$
 \begin{aligned}
-&P_{L_1}(t_p|u_3) =  \sum_{i \in {1, 2}} P_{L_1}(r^1_p, \mathcal{L}_i|u_3) + P_{L_0}(r^2_p, \mathcal{L}_i|u_3) = 0.09 \\
-&P_{L_1}(t_y|u_3) =  \sum_{i \in {1, 2}} P_{L_1}(r^2_y, \mathcal{L}_i|u_3)  = 0.91 \\
+&P_{L_1}(r_p|u_3) =  \sum_{i \in {1, 2}} P_{L_1}(r_{p1}, \mathcal{L}_i|u_3) + P_{L_0}(r_{p2}, \mathcal{L}_i|u_3) = 0.09 \\
+&P_{L_1}(r_y|u_3) =  \sum_{i \in {1, 2}} P_{L_1}(r_{y2}, \mathcal{L}_i|u_3)  = 0.91 \\
 \end{aligned}
 $$
 To conclude the example, according to the parameter free pragmatics model, the proability that $L_1$ thinks that $S_1$ is reffering to a yellow-ish object when producing $u_3$ is 0.91. Based on this model we thus expected that, on average, participants would select the yellow-ish object in 91% of cases in the preference--different speaker--congruent condition.  
