@@ -107,46 +107,46 @@ Cognitive models were implemented in WebPPL [@dippl] using the r package `rwebpp
 ## Ontology
 
 The situation we model is defined by three sets: referents $r$, utterances $u$, and lexica $\mathcal{L}$. 
-Referents are defined by two features: the type of object they are (visually discernible given their shape and color) and their location (one of two tables).
+Referents are defined by two features $r_{t, l}$: the type of object they are $t$ (visually discernible given their shape and color) and their location $l$ (one of two tables).
 There are two types of objects $t_1$, $t_2$ and two locations $l_1$ and $l_2$.
-The utterances available to a speaker are (action, label) pairs, where the action involves turning (pointing) to a particular location (a table) and labels are novel words ($w_1$, $w_2$), which are assumed to refer to the type of the object. 
-The action of turning (pointing) reduces the set of referents to those that are on the table targeted by the turn (point); interpreting a label reduces that set further to those which are of the type referred to by that label.
-The interpretation of a label requires a lexicon $\mathcal{L}$, which provides the label--type mappings.
-There are two lexica: $\mathcal{L}_1$ which maps label 1 $w_1$ to type 1 $t_1$ and label 2 $w_2$ to type 2 $t_2$, and $\mathcal{L}_2$ which has the inverse mapping. 
+The utterances $u$ available to a speaker are (action, label) pairs $(u_a, u_w)$, where the action involves turning (pointing) to a particular location (a table) and labels are novel words ($w_1$, $w_2$), which are assumed to refer to the type of the object.
+There are two kinds of lexica, corresponding to the two utterance components: The lexicon of pointing $\mathcal{L}_{point}$ and the lexica of label $\mathcal{L}_1, \mathcal{L}_2$.
+The lexicon of pointing $\mathcal{L}_{point}$ encodes the meaning of a point: The action of turning (pointing) reduces the set of referents to those that are on the table targeted by the turn (point).
+The lexica of labels map labels $u_w$ onto referents: $\mathcal{L}_1$ maps label 1 $w_1$ to type 1 $t_1$ and label 2 $w_2$ to type 2 $t_2$, and $\mathcal{L}_2$ which has the inverse mapping. 
 
 ## Pragmatics model
 
 Our word-learning model is a model of pragmatic reasoning couched in the Rational Speech Act modeling framework [@frank2012predicting; @goodman2016pragmatic]. The model describes the following process: A pragmatic listener ($L_1$) jointly infers a referent (what object is being picked out by the utterance) and a lexicon (label--type mappings) by reasoning about a pragmatic speaker ($S_1$) who produces utterances to convey information to a literal listener ($L_0$), who in turn interprets utterances according to their literal meaning. According to Bayes rule, the pragmatic listener's inference is given by:
 
 \begin{equation} 
-P_{L_1}(r, \mathcal{L}|u)\propto P_{S_1}(u|r, \mathcal{L})P( \mathcal{L})P(r)
+P_{L_1}(r, \mathcal{L}|u)\propto P_{S_1}(u|r_{t}, \mathcal{L})P( \mathcal{L})P(r)
 \end{equation} 
 
-The right-hand side of this equation has three terms: the prior distribution over referents $P(r)$, the prior distribution over lexica $P(\mathcal{L})$, and the likelihood that a speaker would produce an utterance $u$ given a referent $r$ and their lexicon $\mathcal{L}$: ($P_{S1}(u|r, \mathcal{L})$).
+The right-hand side of this equation has three terms: the prior distribution over referents $P(r)$, the prior distribution over lexica $P(\mathcal{L})$, and the likelihood that a speaker would produce an utterance $u$ given a referent type $r_t$ and their lexicon $\mathcal{L}$: ($P_{S1}(u|r_t, \mathcal{L})$).
 In the situation we model, the prior on referents $P(r)$ is a categorical distribution over three objects in a scene, which we posit could be non-uniform due to what is in common ground (see below for common ground manipulations). 
 Because the labels produced by the speaker are all novel words, the listener has no substantive knowledge about the lexica (label--type mappings) and thus the prior over the two lexica (described above) is uniform.
 
-The pragmatic listener updates their beliefs about both the referent and the lexicon by reasoning about the speaker, assumed to produce utterances to convey the referent type ($r^t$) to the listener by being a soft-max rational agent (with degree of rationality $\alpha$) with a utility function defined in terms of the informativity of an utterance for a referent type (r^t):
+The pragmatic listener updates their beliefs about both the referent and the lexicon by reasoning about the speaker, assumed to produce utterances to convey the referent type ($r_t$) to the listener by being a soft-max rational agent (with degree of rationality $\alpha$) with a utility function defined in terms of the informativity of an utterance for a referent type ($r_t$):
 
 \begin{equation} 
-P_{S_1}(u^{a,l} | r^t, \mathcal{L})\propto Informativity(u^a;r^t)^\alpha \cdot P(u^l \mid \mathcal{L})
+P_{S_1}(u_{a,l} | r_t, \mathcal{L})\propto Informativity(u_a;r_t)^\alpha \cdot P(u_l \mid \mathcal{L})
 \end{equation} 
 
-The speaker's utterances are (action, label) pairs $(u^a, u^l)$ (i.e., we assume the speaker must turn to one of the locations and must produce a label). The label the speaker produces $u^l$ depends upon their lexicon $\mathcal{L}$ (i.e., they choose the label that is consistent with the object under their lexicon). The action (a point or a turn) the speaker produces $u^a$ is a function of that signal's informativity. That is, because the listener does not know the meaning of the labels, the labels carry no information to the listener.
-The informativity of the utterance (action) for a referent is the probability that a naive listener $L_0$ would select a the type of referent ($r^t$) given that utterance (action)[@goodman2013knowledge].
+The speaker's utterances are (action, label) pairs $(u_a, u_l)$ (i.e., we assume the speaker must turn to one of the locations and must produce a label). The label the speaker produces $u_l$ depends upon their lexicon $\mathcal{L}$ (i.e., they choose the label that is consistent with the object under their lexicon). The action (a point or a turn) the speaker produces $u_a$ is a function of that signal's informativity. That is, because the listener does not know the meaning of the labels, the labels carry no information to the listener.
+The informativity of the utterance (action) for a referent is the probability that a naive listener $L_0$ would select a the type of referent ($r_t$) given that utterance (action)[@goodman2013knowledge].
 
 \begin{equation} 
-Informativity(u^a; r^t) = P_{L_0}(r^t|u^a)
+Informativity(u_a; r_t) = P_{L_0}(r_t|u_a)
 \end{equation} 
 
-\noindent where the probability that the naive listener $L_0$ would select that a referent of a given type $r^t$ given the utterance $u^a$ is given by Bayes' Rule:
+\noindent where the probability that the naive listener $L_0$ would select that a referent of a given type $r_t$ given the utterance $u_a$ is given by Bayes' Rule:
 
 \begin{equation} 
-P_{L_0}(r^t|u) = \sum_{r_i \in t} P_{L_0}(r_i | u) \propto \mathcal{L}_{point} P(r^i)
+P_{L_0}(r_t|u) = \sum_{r_i \in t} P_{L_0}(r_i | u) \propto \mathcal{L}_{point} P(r_i)
 \end{equation} 
 
-\noindent where \mathcal{L}_{point} encodes the meaning of the actions (points), and is simply a truth-function stipulating the location of the referent must be at the location of the point / turn.
-We assume in this model that the speaker is trying to convey the type of the referent $r^t$ rather than the individual token referents $r^i$; thus, the relevant probability for purposes of informativity is the type probability $P_{L_0}(r^t|u)$, which is simply a sum of the token probabilities for tokens that are of the same type $ \sum_{r_i \in t} P_{L_0}(r_i | u)$.
+\noindent where $\mathcal{L}_{point}$ encodes the meaning of the actions (points), and is simply a truth-function stipulating the location of the referent must be at the location of the point / turn.
+We assume in this model that the speaker is trying to convey the type of the referent $r_t$ rather than the individual token referents $r_i$; thus, the relevant probability for purposes of informativity is the type probability $P_{L_0}(r_t|u)$, which is simply a sum of the token probabilities for tokens that are of the same type $\sum_{r_i \in t} P_{L_0}(r_i | u)$.
 
 $P(r)$ again denotes the prior probability of a referent, $\mathcal{L}_{point}$ encodes the literal meaning of a point, returning 1 if the object is at the location of the point and 0 if the utterance if not. As mentioned above, because $L_1$ does not know the lexicon, the semantics of the words contained in the utterance (i.e., the labels) offer no information about the referent. The non-linguistic aspect of the utterance (the turning or pointing), however, do. As described above, the semantics of turning to one of the tables is roughly equivalent to saying "It's an object on that table". 
 
@@ -156,7 +156,7 @@ The above formulation of a literal interpretation model based only on the semant
 
 ## Worked Example
 
-In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from the preference--different speaker--congruent condition (see below). Fig. \ref{fig:figS1} shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents of two types (pink-ish and yellow-ish; for simplicity, we refer refer the object's type by its color) on two tables: $r^{table: 1}_{type:pink}$, $r^{table: 2}_{type:pink}$; one yellow-ish, $r^{table: 2}_{type:yellow}$). For simplicity, we refer to the referents by the shorthand: $r_{p}^1, r_{p}^2, r_y^2$.
+In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from a preference  condition (see below). Fig. \ref{fig:figS1} shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents of two types (pink-ish and yellow-ish; for simplicity, we refer refer the object's type by its color) on two tables: $r^{table: 1}_{type:pink}$, $r^{table: 2}_{type:pink}$; one yellow-ish, $r^{table: 2}_{type:yellow}$). For simplicity, we refer to the referents by the shorthand: $r_{p1}, r_{p2}, r_{y2}$.
 In principle, the speaker, the frog in this case, can produce one of four utterances, turning either to the left or right table and saying either label ("dax" or "wug"):  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
 We work out the example where the speaker produces utterance $u_3$, turning to the right table (two objects) and saying the label "dax" (though since the labels have no *a priori* meanings, the computation would be the same for utterance $u_4$). 
 
@@ -172,32 +172,38 @@ We construct the prior distribution over referents $P(r)$ based on the results o
 <!-- [`r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(1-mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`; `r round(mean(adult_ex2_preference_data%>%filter(condition == "different_speaker")%>%pull(correct)),2)`].  -->
 
 We assume that the intentional goal of the speaker is to get the listener to select an object of the correct type. That is, the informativity of an utterance is calculated with respect to conveying the correct object type as opposed to a particular referent (token).
-First, we calculate the literal listener's posterior distribution over referents and lexica, and marginalize (average) over objects of the same type and the different lexica to compute the informativity of an utterance for a type.
-The literal listener's posterior distribution over referents and lexica has support of size six, owing to the unique combinations of referents and lexica.
+First, we calculate the literal listener's posterior distribution over referents, and marginalize (average) over objects of the same type to compute the informativity of an utterance for a type.
+<!-- The literal listener's posterior distribution over referents and lexica has support of size six, owing to the unique combinations of referents and lexica. -->
+
 $$
 \begin{aligned}
-& P_{L_0}(r_p^1, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_p^1, u_3) P(r^1_r) P(\mathcal{L}_1) = 0 \times 0.26 \times 0.5 =0\\
-& P_{L_0}(r_p^2, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_p^2, u_3) P(r^2_r) P(\mathcal{L}_1) = 1 \times 0.26 \times 0.5 =0.13\\
-& P_{L_0}(r_y^2, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_y^2, u_3) P(r^2_y) P(\mathcal{L}_1) = 0 \times 0.48 \times 0.5 =0\\
-& P_{L_0}(r_p^1, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_p^1, u_3) P(r^1_r) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
-& P_{L_0}(r_p^2, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_p^2, u_3) P(r^2_r) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
-& P_{L_0}(r_y^2, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_y^2, u_3) P(r^2_y) P(\mathcal{L}_2) = 1 \times 0.48 \times 0.5=0.24\\
+& P_{L_0}(r_{p1}| {u_3})  \propto \mathcal{L}_{point}(r_{p1}, u_3) P(r_{p1})  = 0 \times 0.26  =0\\
+& P_{L_0}(r_{p2}| {u_3})  \propto \mathcal{L}_{point}(r_{p2}, u_3) P(r_{p2})= 1 \times 0.26  =0.26\\
+& P_{L_0}(r_{y2} | {u_3})  \propto \mathcal{L}_{point}(r_{y2}, u_3) P(r_{y2})  = 1 \times 0.48  = 0.48
 \end{aligned}
 $$
 
+<!-- $$ -->
+<!-- \begin{aligned} -->
+<!-- & P_{L_0}(r_{p1}, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_{p1}, u_3) P(r_{p1}) P(\mathcal{L}_1) = 0 \times 0.26 \times 0.5 =0\\ -->
+<!-- & P_{L_0}(r_{p2}, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_{p2}, u_3) P(r_{p2}) P(\mathcal{L}_1) = 1 \times 0.26 \times 0.5 =0.13\\ -->
+<!-- & P_{L_0}(r_{y2}, \mathcal{L}_1 | {u_3})  \propto \mathcal{L}_1(r_{y2}, u_3) P(r_{y2}) P(\mathcal{L}_1) = 0 \times 0.48 \times 0.5 =0\\ -->
+<!-- & P_{L_0}(r_{p1}, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_{p1}, u_3) P(r_{p1}) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\ -->
+<!-- & P_{L_0}(r_{p2}, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_{p2}, u_3) P(r_{p2}) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\ -->
+<!-- & P_{L_0}(r_{y2}, \mathcal{L}_2 | {u_3})  \propto \mathcal{L}_2(r_{y2}, u_3) P(r_{y2}) P(\mathcal{L}_2) = 1 \times 0.48 \times 0.5=0.24\\ -->
+<!-- \end{aligned} -->
+<!-- $$ -->
 
 
-because the speaker is pointing to the table with $r_p^2$ and $r_y^2$, and under $\mathcal{L}_1$, "dax" means the pink-ish object and under $\mathcal{L}_2$, "dax" means the yellow-ish object.
+
+because the speaker is pointing to the table with $r_{p2}$ and $r_{y2}$.
 After normalization we have:
 
 $$
 \begin{aligned}
-& P_{L_0}(r_p^1, \mathcal{L}_1 | {u_3}) = 0 \\
-& P_{L_0}(r_p^2, \mathcal{L}_1 | {u_3}) = 0.35 \\
-& P_{L_0}(r_y^2, \mathcal{L}_1 | {u_3})   = 0 \\
-& P_{L_0}(r_p^1, \mathcal{L}_2 | {u_3})   = 0 \\
-& P_{L_0}(r_p^2, \mathcal{L}_2 | {u_3})   = 0 \\
-& P_{L_0}(r_y^2, \mathcal{L}_2 | {u_3}) = 0.65\\
+& P_{L_0}(r_{p1}| {u_3}) = 0 \\
+& P_{L_0}(r_{p2}| {u_3}) = 0.35 \\
+& P_{L_0}(r_{y2} | {u_3}) = 0.65
 \end{aligned}
 $$
 
@@ -205,19 +211,8 @@ In order to get the distribution over types (instead of tokens), we simply add u
 
 $$
 \begin{aligned}
-& P_{L_0}(t_p, \mathcal{L}_1 | {u_3}) = P_{L_0}(r_p^1, \mathcal{L}_1 | {u_3})  + P_{L_0}(r_p^2, \mathcal{L}_1 | {u_3})  = 0+ 0.35 =0.35 \\
-& P_{L_0}(t_y, \mathcal{L}_1 | {u_3}) = P_{L_0}(r_y^2, \mathcal{L}_1 | {u_3})  = 0 \\
-& P_{L_0}(t_p, \mathcal{L}_2 | {u_3})  = P_{L_0}(r_p^1, \mathcal{L}_2 | {u_3})  + P_{L_0}(r_p^2, \mathcal{L}_2 | {u_3})  = 0+ 0 =0 \\
-& P_{L_0}(t_y, \mathcal{L}_2 | {u_3}) = P_{L_0}(r_y^2, \mathcal{L}_2 | {u_3}) = 0.65\\
-\end{aligned}
-$$
-
-we get,
-
-$$
-\begin{aligned}
-&P_{L_0}(t_p|u_3) =  P_{L_0}(t_p, \mathcal{L}_1|u_3) + P_{L_0}(t_p, \mathcal{L}_2|u_3) = 0.35+0=0.35 \\
-&P_{L_0}(t_y|u_3) =  P_{L_0}(t_y, \mathcal{L}_1|u_3) + P_{L_0}(t_y, \mathcal{L}_2|u_3) = 0+0.65=0.65 \\
+& P_{L_0}(r_p | {u_3}) = P_{L_0}(r_{p1}| {u_3})  + P_{L_0}(r_{p2}| {u_3})  = 0+ 0.35 =0.35 \\
+& P_{L_0}(r_y | {u_3}) = P_{L_0}(r_{y2} | {u_3}) = 0.65\\
 \end{aligned}
 $$
 
@@ -225,8 +220,8 @@ and finally
 
 $$
 \begin{aligned}
-&Informativity(u_3; t_p) = \log(0.35) = -1.04 \\
-&Informativity(u_3; t_y) = \log(0.65) = -0.43
+&Informativity(u_3; r_p) = \log(0.35) = -1.04 \\
+&Informativity(u_3; r_y) = \log(0.65) = -0.43
 \end{aligned}
 $$
 
@@ -234,8 +229,8 @@ In a similar way, we can compute the informativity of the other utterances. Sinc
 
 $$
 \begin{aligned}
-&Informativity(u_1; t_p) = log(P_{L_0}(t_p|u_1)) = \log(1)  = 0\\
-&Informativity(u_1; t_y) = log(P_{L_0}(t_y|u_1)) = \log(0) = -\infty
+&Informativity(u_1; r_p) = log(P_{L_0}(r_p|u_1)) = \log(1)  = 0\\
+&Informativity(u_1; r_y) = log(P_{L_0}(r_y|u_1)) = \log(0) = -\infty
 \end{aligned}
 $$
 We assume that the speaker knows the lexicon, but doesn't believe the listener to know the lexicon. That is, the generative process of the utterance is tantamount to pointing to the table with the referent of the type the speaker wants and incidentally labeling it. The label itself carries no information.
