@@ -307,11 +307,11 @@ $$
 
 $$
 \begin{aligned}
-& P_{L_1}(r_{p1}, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p1}, \mathcal{L}_1) P(r_{r1}) P(\mathcal{L}_1) = 0.09 \times 0.26 \times 0.5 =0.012\\
-& P_{L_1}(r_{p2}, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p2}, \mathcal{L}_1)  P(r_{r2}) P(\mathcal{L}_1) = 0.09 \times 0.26 \times 0.5 =0.012\\
+& P_{L_1}(r_{p1}, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p1}, \mathcal{L}_1) P(r_{p1}) P(\mathcal{L}_1) = 0.09 \times 0.26 \times 0.5 =0.012\\
+& P_{L_1}(r_{p2}, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p2}, \mathcal{L}_1)  P(r_{p2}) P(\mathcal{L}_1) = 0.09 \times 0.26 \times 0.5 =0.012\\
 & P_{L_1}(r_{y2}, \mathcal{L}_1 | {u_3})  \propto P_{S_1}(u_3 \mid r_{y2}, \mathcal{L}_1)  P(r_{y2}) P(\mathcal{L}_1) = 0 \times 0.48 \times 0.5 =0\\
-& P_{L_1}(r_{p1}, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p1}, \mathcal{L}_2)  P(r_{r1}) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
-& P_{L_1}(r_{p2}, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p2}, \mathcal{L}_2) P(r_{r2}) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
+& P_{L_1}(r_{p1}, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p1}, \mathcal{L}_2)  P(r_{p1}) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
+& P_{L_1}(r_{p2}, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_{p2}, \mathcal{L}_2) P(r_{p2}) P(\mathcal{L}_2) = 0 \times 0.26 \times 0.5=0\\
 & P_{L_1}(r_{y2}, \mathcal{L}_2 | {u_3})  \propto P_{S_1}(u_3 \mid r_{y2}, \mathcal{L}_2) P(r_{y2}) P(\mathcal{L}_2) = 1 \times 0.48 \times 0.5=0.24\\
 \end{aligned}
 $$
