@@ -1,6 +1,6 @@
 ---
 title             : "Supplementary information:Pragmatic cue integration in adults’ and children’s inferences about novel word meanings"
-shorttitle        : " "
+shorttitle        : "Supplementary information"
 
 author: 
   - name          : "Manuel Bohn"
@@ -52,6 +52,7 @@ library(matrixStats)
 library(ggpubr)
 library(lme4)
 library(broom)
+library(exactRankTests)
 
 estimate_mode <- function(s) {
   d <- density(s)
@@ -228,7 +229,7 @@ $$
 $$
 We assume that the speaker knows the lexicon, but doesn't believe the listener to know the lexicon. That is, the generative process of the utterance is tantamount to pointing to the table with the referent of the type the speaker wants and incidentally labeling it. The label itself carries no information.
 
-Based on euqation 2 we can now compute the likelihood of each utterance given an object type. Recall the two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing} \}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}\}$, and the four utterances:  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
+Based on equation 2 we can now compute the likelihood of each utterance given an object type. Recall the two lexica: $\mathcal{L}_1 = \{dax: \text{pink-ish thing}, wug: \text{yellow-ish thing} \}$, $\mathcal{L}_2 = \{dax: \text{yellow-ish thing}, wug: \text{pink-ish thing}\}$, and the four utterances:  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
 We begin with the pink-ish type ($r_p$). If the speaker's lexicon were $\mathcal{L}_1$:
 
 $$
@@ -339,11 +340,11 @@ $$
 \end{aligned}
 $$
 
-To conclude the example, according to the parameter free pragmatics model, the proability that $L_1$ thinks that $S_1$ is reffering to a yellow-ish object when producing $u_3$ is 0.91. Based on this model we thus expected that, on average, participants would select the yellow-ish object in 91% of cases in a condition with the prior distribution specified above.  
+To conclude the example, according to the parameter free pragmatics model, the probability that $L_1$ thinks that $S_1$ is referring to a yellow-ish object when producing $u_3$ is 0.91. Based on this model we thus expected that, on average, participants would select the yellow-ish object in 91% of cases in a condition with the prior distribution specified above.  
 
 ## Prior only model
 
-The prior only model ignored the information about the intended referent that was expressed by the utterance and instead only focused on common ground manipulation. The only inforamtion available to $L_1$ is the prior distribution over referents. It is therefore defined as: 
+The prior only model ignored the information about the intended referent that was expressed by the utterance and instead only focused on common ground manipulation. The only information available to $L_1$ is the prior distribution over referents. It is therefore defined as: 
 
 \begin{equation} 
 P_{L_1}(r|u)\propto P(r)
@@ -370,77 +371,6 @@ knitr::include_graphics("./figures/SI_setup_pref.png")
 For adults, this worked in the following way: For example, in Experiment 2, for the preference/same speaker condition, when the speaker previously indicated that they liked the yellow-ish object (right table in Fig. \ref{fig:figS2}) and disliked the pink-ish object (left table in Fig.\ref{fig:figS2}), the average proportion with which participants chose the yellow-ish object  was `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` and for the pink-ish object it was `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` respectively. In Experiment 3 and 4, this measurement determined the prior distribution over objects in cases whenever the the same manipulation was used (preference/same speaker). Note that Experiment 3 involved three objects while Experiment 2 only involved two. We nevertheless used the exact proportions measured in Experiment 2 for each object to inform the prior. This approach spread out the absolute probability mass but conserved the relative relation between objects. Thus, when utterance and common ground information were aligned (i.e. the yellow-ish object was the more informative object as in Fig. \ref{fig:figS1}), the distribution of objects was [$r_{p1}, r_{p2}, r_{y2}$]. Using the raw proportions, the corresponding prior distribution was [$P(r_{p}^1) = 0.03, P(r_{p}^2) = 0.03, P(r_{y}^2) = 0.97$] and after normalizing (so that they add up to 1) it was [0.03, 0.03, 0.94]. When information sources were dis-aligned (i.e. the pink-ish object was the more informative one), the object distribution was [$r_{y1}, r_{p2}, r_{y2}$] and the prior distribution was thus [0.97, 0.03, 0.97] or [0.49, 0.02, 0.49] after normalizing.
 
 For children, we used the data from Experiment 6 to model the slope and intercept that best described the developmental trajectory in the data for each of the two conditions. As for the speaker optimality parameter, this allowed us to generate prior distributions that were sensitive to the child's age. In Experiment 7, the prior probability for an object was computed by taking the intercept for the respective condition (same or different speaker), adding the slope times the child's age and then using a logistic transformation to convert the outcome into proportions. The overall distribution then depended on the alignment of information sources in the same way as it did for adults. Model code for inferring the intercept and the slope for the child study can be found in the associated online repository.
-
-
-# Prior strength manipualtions Experiment 4
-
-```{r ex4 prior pre-tests data adults}
-# load data from prior strength manipulation experiments to set priors
-adult_ex4_prior_data <-read_csv(file="../../stats/data/adult_ex4_prior.csv") 
-```
-
-```{r table_prior,results = "asis"}
-ex4_prior_models <- adult_ex4_prior_data %>%
-  group_by(common_ground_manipulation,prior_manipulation)%>%
-  do(models = glmer(correct ~ speaker + (1|id) + (1|agent),data = .,family=binomial,  control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))))
-
-
-ex4_prior_models_table <- tidy(ex4_prior_models, models)%>%
-  filter(group == "fixed")%>%
-  select(-statistic, -group)%>%
-  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
-         std.error = round(std.error,2),
-         estimate = round(estimate,2),
-         term = case_when(term == "(Intercept)" ~ "Intercept",
-                          term == "speakersame_speaker" ~ "condition (same speaker)"))%>%
-  rename(Manipulation = common_ground_manipulation,
-         Strength = prior_manipulation,
-         Term = term,
-         Estimate = estimate,
-         SE = std.error,
-         p = p.value)
-
-apa_table(
-  ex4_prior_models_table
-  , caption = "Model output for prior strength experiments "
-  , note = "Model structure in all cases: correct ~ condition + (1|id) + (1|agent)"
-  , escape = T
-)
-```
-
-Below we describe the different ways in which prior strength was manipulated in Experiment 4. The corresponding experiments can be found in the online repository. The test event was always the same: The animal disappeared and then either the same or a different animal returned and requested an object using an unknown word.
-
-For preference, at the beginning of the experiment both tables contained an object. In preference/strong the animal turned to one side and stated that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object. Then they turned the other side and expressed the respective other attitude. In preference/medium the animal only turned to one side and expressed liking in a more subtle way (saying only: “Oh, wow”). 
-
-For novelty, one table was empty while there was an object on the other. In novelty/strong the animal turned to one of the sides and commented either on the presence (“Aha, look at that”) or the absence of an object (“Hm, nothing there”). Then the animal turned to the other side and commented in a complementary way. Next, the animal disappeared. The same animal re-appeared and the sequence above was repeated. When the animal disappeared for the second time, a second object appeared on the empty table while the animal was away. In novelty/medium, the animal commented on the presence/absence of objects in the same way but did so only once. In novelty/weak, the animal only turned to the present object and commented on it. 
-
-In all cases, the order of utterances and/or the side to which the speaker turned first were counterbalanced. Figure \ref{fig:priorplot} shows the results for the same speaker and different speaker conditions for each manipulation.
-
-```{r priorplot, fig.cap = "Results from prior strength manipulation Experiments. Transparent dots show data from individual participants, diamonds represent condition means, error bars are 95\\% CIs. Dashed line indicates performance expected by chance.", fig.height = 3}
-
-p_adult_ex4_priors <- adult_ex4_prior_data%>%
-  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"))%>%
-  group_by(common_ground_manipulation,prior_manipulation,speaker, id) %>%
-  summarise(correct = mean(correct))
-  
-
-p_adult_ex4_priors_ci <- p_adult_ex4_priors %>%
-  multi_boot_standard(col = "correct")
-
-ggplot() +
-  geom_jitter(data = p_adult_ex4_priors, aes(x = speaker, y = correct, col = speaker), alpha = 0.3, width = .3,height = .02)+
-  geom_pointrange(data = p_adult_ex4_priors_ci, aes(x = speaker, y = mean, col = speaker,ymin = ci_lower, ymax = ci_upper),size = .8, pch = 5, fatten = 2.5)+
-  geom_hline(yintercept = 0.5, lty=2)+
-  labs(x="",y="")+
-  facet_grid(common_ground_manipulation ~ prior_manipulation)+
-  theme_few() + 
-  ylim(-0.05,1.05)+
-  guides(alpha = F,size =F)+
-  scale_color_solarized()+
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.position = "right")
-```
-
-Table \ref{tab:table_prior} shows the results of a generalized linear mixed model (GLMM) fit to the data from each manipulation. The results show that the parameter estimates for condition (i.e. difference between same speaker and different speaker condition) decreases in line with the hypothesized effect of the prior manipulation. 
 
 # Model comparison
 
@@ -1066,7 +996,445 @@ ggplot(p_child_cor, aes(x = mean, y = data_mean, col = age)) +
 
 ```
 
+# Supplemental results
 
+The following sections present details on the analyses used to evaluate whether the different experimental manipulations produced different responses. For all generalized linear mixed models (GLMM) we used the maximally converging random effects structure.
+
+## Experiment 1
+
+```{r table_chance_Ex_1_2,results = "asis"}
+chance_comp_ex_1_2 <- bind_rows(
+    adult_ex1_data,
+    adult_ex2_novelty_data %>% mutate(condition = ifelse(condition == "same_speaker", "test", "control")),
+    adult_ex2_preference_data %>% mutate(condition = ifelse(condition == "same_speaker", "test", "control"))
+  )%>%
+    mutate(condition = factor(condition, levels = c("test","control")),
+           experiment = factor(experiment, levels = c("adult_ex1","adult_ex2_preference","adult_ex2_novelty")),
+           experiment = recode(experiment, 
+                               adult_ex1 = "Experiment 1",
+                               adult_ex2_preference = "Experiment 2A: Preference", 
+                               adult_ex2_novelty = "Experiment 2B: Novelty"))%>%
+  group_by(experiment,condition, id) %>%
+  summarise(correct = mean(correct))%>%
+  summarise(correct = list(correct)) %>%
+  group_by(experiment,condition) %>%
+  mutate(mean = mean(unlist(correct)),
+         df= t.test(unlist(correct), mu = 0.5)$parameter,
+         t_value = t.test(unlist(correct), mu = 0.5)$statistic,
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
+  select(experiment,condition,mean,df,t_value,p_value)%>%
+  mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
+         t_value = round(t_value,2))
+
+apa_table(
+  chance_comp_ex_1_2
+  , caption = "Comparison to chance in each condition of Experiment 1, 2A and 2B"
+  , note = "Proportion expected by chance = 0.5. Data aggregated within participant and conditon."
+  , escape = T
+)
+  
+```
+
+We used one sample t-tests to test if participants selected the more informative object (the one unique to the table the animal pointed at) above chance (50%). Table \ref{tab:table_chance_Ex_1_2} shows the results. 
+
+```{r}
+# model
+lm_ex1 <- glmer(correct ~ condition +
+              (1 |id), 
+              data = adult_ex1_data, 
+              family = binomial,control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+#summary(lm_ex1)
+
+ex1_r <- tidy(lm_ex1, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))
+```
+
+To compare the two conditions, we fit the following GLMM: `correct ~ condition + (1 |id)`. Participants chose the more informative object more often in the test condition compared to the control condition ($\beta$ = `r ex1_r%>%filter(term == "conditiontest")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "conditiontest")%>%pull(std.error)`, *p* `r ex1_r%>%filter(term == "conditiontest")%>%pull(p.value)`). 
+
+## Experiment 2
+
+```{r}
+# model (maximally converging)
+lm_ex2pref <- glmer(correct ~ condition +
+              (1|id) + (1|agent), 
+              data = adult_ex2_preference_data, 
+              family = binomial,control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+#summary(lm_ex2pref)
+
+ex2pref_r <- tidy(lm_ex2pref, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))
+
+ex2tnov <- adult_ex2_novelty_data %>%
+  group_by(condition, id) %>%
+  summarise(correct = mean(correct)) %>%
+  summarise(correct = list(correct)) %>%
+  group_by(condition) %>%
+  mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
+         t_value = t.test(unlist(correct), mu = 0.5)$statistic,
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
+  select(condition,df,t_value,p_value)%>%
+  mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
+         t_value = round(t_value,2))
+
+# model
+lm_ex2nov <- glmer(correct ~ condition +
+              (condition|id), 
+              data = adult_ex2_novelty_data, 
+              family = binomial,control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+#summary(lm_ex2nov)
+
+ex2nov_r <- tidy(lm_ex2nov, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))
+```
+
+
+Table \ref{tab:table_chance_Ex_1_2} shows results for the comparison to chance in Experiment 2A and B. In Experiment 2A, we fit the following GLMM: `correct ~ condition + (1|id) + (1|agent)`. Here, `agent` refers to the animal making the request. Participants chose the object previously preferred by the speaker more often in the test (same speaker) condition compared to the control (different speaker) condition ($\beta$ = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`). For Experiment 2B, we fit the following GLMM: `correct ~ condition + (condition|id)`. Participants chose the novel object more often in the test (same speaker) condition compared to the control (different speaker) condition ($\beta$ = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`). 
+
+## Experiment 3
+
+```{r ex3_model, results = "asis"}
+# model 
+lm_ex3 <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (alignment|id), 
+              data = adult_ex3_data, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+#summary(lm_ex3)
+
+lm_ex3_r <- tidy(lm_ex3, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))%>%
+  as_tibble()%>%
+  mutate(term = recode(term, 
+                       `(Intercept)` = "Intercept",
+                       common_ground_manipulationpreference = "common ground",
+                       speakersame_speaker = "speaker",
+                       alignmentincongruent = "alignment",
+                       `common_ground_manipulationpreference:speakersame_speaker` = "common ground * speaker",
+                       `common_ground_manipulationpreference:alignmentincongruent` = "common ground * alignment",
+                       `speakersame_speaker:alignmentincongruent` = "speaker * alignment",
+                       `common_ground_manipulationpreference:speakersame_speaker:alignmentincongruent` = "common ground * speaker * alignment"
+         ))
+   
+
+apa_table(
+  lm_ex3_r
+  , caption = "GLMM output for Experiment 3"
+  , note = "Reference levels: commmon ground - novelty, speaker - different speaker, alignment - congruent."
+  , escape = T
+)
+
+```
+
+To see if participants differentiated between conditions, we fit the following GLMM to the data: `correct_inf ~ common ground*speaker*alignment + (alignment|id)`. The dependent variable `correct_inf` captures whether participants chose the more informative object. Table \ref{tab:ex3_model} shows the model output.
+
+## Prior strength manipualtions Experiment 4
+
+```{r ex4 prior pre-tests data adults}
+# load data from prior strength manipulation experiments to set priors
+adult_ex4_prior_data <-read_csv(file="../../stats/data/adult_ex4_prior.csv") 
+```
+
+```{r table_prior,results = "asis"}
+ex4_prior_models <- adult_ex4_prior_data %>%
+  group_by(common_ground_manipulation,prior_manipulation)%>%
+  do(models = glmer(correct ~ speaker + (1|id) + (1|agent),data = .,family=binomial,  control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))))
+
+
+ex4_prior_models_table <- tidy(ex4_prior_models, models)%>%
+  filter(group == "fixed")%>%
+  select(-statistic, -group)%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2),
+         term = case_when(term == "(Intercept)" ~ "Intercept",
+                          term == "speakersame_speaker" ~ "condition (same speaker)"))%>%
+  rename(Manipulation = common_ground_manipulation,
+         Strength = prior_manipulation,
+         Term = term,
+         Estimate = estimate,
+         SE = std.error,
+         p = p.value)
+
+apa_table(
+  ex4_prior_models_table
+  , caption = "GLMMs output for prior strength experiments"
+  , note = "Model structure in all cases: correct ~ condition + (1|id) + (1|agent)"
+  , escape = T
+)
+```
+
+Below we describe the different ways in which prior strength was manipulated in Experiment 4. The corresponding experiments can be found in the online repository. The test event was always the same: The animal disappeared and then either the same or a different animal returned and requested an object using an unknown word.
+
+For preference, at the beginning of the experiment both tables contained an object. In preference/strong the animal turned to one side and stated that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object. Then they turned the other side and expressed the respective other attitude. In preference/medium the animal only turned to one side and expressed liking in a more subtle way (saying only: “Oh, wow”). 
+
+For novelty, one table was empty while there was an object on the other. In novelty/strong the animal turned to one of the sides and commented either on the presence (“Aha, look at that”) or the absence of an object (“Hm, nothing there”). Then the animal turned to the other side and commented in a complementary way. Next, the animal disappeared. The same animal re-appeared and the sequence above was repeated. When the animal disappeared for the second time, a second object appeared on the empty table while the animal was away. In novelty/medium, the animal commented on the presence/absence of objects in the same way but did so only once. In novelty/weak, the animal only turned to the present object and commented on it. 
+
+In all cases, the order of utterances and/or the side to which the speaker turned first were counterbalanced. Figure \ref{fig:priorplot} shows the results for the same speaker and different speaker conditions for each manipulation.
+
+```{r priorplot, fig.cap = "Results from prior strength manipulation Experiments. Transparent dots show data from individual participants, diamonds represent condition means, error bars are 95\\% CIs. Dashed line indicates performance expected by chance.", fig.height = 3}
+
+p_adult_ex4_priors <- adult_ex4_prior_data%>%
+  mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"))%>%
+  group_by(common_ground_manipulation,prior_manipulation,speaker, id) %>%
+  summarise(correct = mean(correct))
+  
+
+p_adult_ex4_priors_ci <- p_adult_ex4_priors %>%
+  multi_boot_standard(col = "correct")
+
+ggplot() +
+  geom_jitter(data = p_adult_ex4_priors, aes(x = speaker, y = correct, col = speaker), alpha = 0.3, width = .3,height = .02)+
+  geom_pointrange(data = p_adult_ex4_priors_ci, aes(x = speaker, y = mean, col = speaker,ymin = ci_lower, ymax = ci_upper),size = .8, pch = 5, fatten = 2.5)+
+  geom_hline(yintercept = 0.5, lty=2)+
+  labs(x="",y="")+
+  facet_grid(common_ground_manipulation ~ prior_manipulation)+
+  theme_few() + 
+  ylim(-0.05,1.05)+
+  guides(alpha = F,size =F)+
+  scale_color_solarized()+
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.position = "right")
+```
+
+Table \ref{tab:table_prior} shows the results of a GLMM fit to the data from each manipulation. The results show that the parameter estimates for condition (i.e. difference between same speaker and different speaker condition) decreases in line with the hypothesized effect of the prior manipulation. 
+
+## Experiment 4
+
+```{r ex4_models, results = "asis"}
+lm_ex4_strong <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (speaker+alignment|id), 
+              data = adult_ex4_data %>% filter(prior_manipulation == "strong"), family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+#summary(lm_ex4_strong)
+
+lm_ex4_r_strong <- tidy(lm_ex4_strong, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))%>%
+  as_tibble()%>%
+  mutate(term = recode(term, 
+                       `(Intercept)` = "Intercept",
+                       common_ground_manipulationpreference = "common ground",
+                       speakersame_speaker = "speaker",
+                       alignmentincongruent = "alignment",
+                       `common_ground_manipulationpreference:speakersame_speaker` = "common ground * speaker",
+                       `common_ground_manipulationpreference:alignmentincongruent` = "common ground * alignment",
+                       `speakersame_speaker:alignmentincongruent` = "speaker * alignment",
+                       `common_ground_manipulationpreference:speakersame_speaker:alignmentincongruent` = "common ground * speaker * alignment"
+         ))%>%
+  mutate(`prior strength` = "strong")%>%
+  select(`prior strength`, term, estimate, std.error, statistic,p.value)
+
+
+lm_ex4_medium <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (alignment|id), 
+              data = adult_ex4_data %>% filter(prior_manipulation == "medium"), family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+#summary(lm_ex4_medium)
+
+lm_ex4_r_medium <- tidy(lm_ex4_medium, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))%>%
+  as_tibble()%>%
+  mutate(term = recode(term, 
+                       `(Intercept)` = "Intercept",
+                       common_ground_manipulationpreference = "common ground",
+                       speakersame_speaker = "speaker",
+                       alignmentincongruent = "alignment",
+                       `common_ground_manipulationpreference:speakersame_speaker` = "common ground * speaker",
+                       `common_ground_manipulationpreference:alignmentincongruent` = "common ground * alignment",
+                       `speakersame_speaker:alignmentincongruent` = "speaker * alignment",
+                       `common_ground_manipulationpreference:speakersame_speaker:alignmentincongruent` = "common ground * speaker * alignment"
+         ))%>%
+  mutate(`prior strength` = "medium")%>%
+  select(`prior strength`, term, estimate, std.error, statistic,p.value)
+
+lm_ex4_weak <- glmer(correct_inf ~ speaker*alignment + (speaker+alignment|id), 
+              data = adult_ex4_data %>% filter(prior_manipulation == "weak"), family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+#summary(lm_ex4_weak)
+
+lm_ex4_r_weak <- tidy(lm_ex4_weak, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))%>%
+  as_tibble()%>%
+  mutate(term = recode(term, 
+                       `(Intercept)` = "Intercept",
+                       common_ground_manipulationpreference = "common ground",
+                       speakersame_speaker = "speaker",
+                       alignmentincongruent = "alignment",
+                       `common_ground_manipulationpreference:speakersame_speaker` = "common ground * speaker",
+                       `common_ground_manipulationpreference:alignmentincongruent` = "common ground * alignment",
+                       `speakersame_speaker:alignmentincongruent` = "speaker * alignment",
+                       `common_ground_manipulationpreference:speakersame_speaker:alignmentincongruent` = "common ground * speaker * alignment"
+         ))%>%
+  mutate(`prior strength` = "weak")%>%
+  select(`prior strength`, term, estimate, std.error, statistic,p.value)
+
+
+t_ex4_r <- bind_rows(
+  lm_ex4_r_strong,
+  lm_ex4_r_medium,
+  lm_ex4_r_weak
+)
+
+
+apa_table(
+  t_ex4_r
+  , caption = "GLMMs output for Experiment 4"
+  , note = "Reference levels: commmon ground - novelty, speaker - different speaker, alignment - congruent."
+  , escape = T
+)
+
+```
+
+To assess how participants differentiated between combinations of manipulations, we fit a separate GLMM to the data of each level of prior strength manipulation. Please note that we did not find a weak manipulation for preference. Model outputs are shown in Table \ref{tab:ex4_models}. Model structure for each level of prior strength manipulation was as follows: 
+
+* Strong:`correct_inf ~ common ground*speaker*alignment + (speaker+alignment|id)`
+* Medium:`correct_inf ~ common ground*speaker*alignment + (alignment|id)`
+* Weak:`correct_inf ~ correct_inf ~ speaker*alignment + (speaker+alignment|id)`
+
+## Experiment 5
+
+```{r child_chance_comp, results = "asis"}
+#experiment 1
+child_ex1t <- child_ex1_data %>%
+  mutate(condition = "test",
+         experiment = "Experiment 5")%>%
+  group_by(experiment,condition,age_bin, id) %>%
+  summarise(correct = mean(correct)) %>%
+  summarise(correct = list(correct)) %>%
+  group_by(age_bin) %>%
+  mutate(mean = mean(unlist(correct)),
+         df= t.test(unlist(correct), mu = 0.5)$parameter,
+         t_value = t.test(unlist(correct), mu = 0.5)$statistic,
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
+  select(experiment,condition, mean, age_bin,df,t_value,p_value)%>%
+  mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
+         t_value = round(t_value,2))
+
+
+child_ex1_lm_data <- child_ex1_data%>%
+  mutate(age_num = scale(age_num, center = TRUE, scale = TRUE))
+
+# experiment 2
+child_ex2t <- child_ex2_data %>%
+  mutate(condition = ifelse(condition == "same_speaker", "test", "control"),
+         experiment = "Experiment 6")%>%
+  group_by(experiment,condition,age_bin, id) %>%
+  summarise(correct = mean(correct)) %>%
+  summarise(correct = list(correct)) %>%
+  group_by(condition,age_bin) %>%
+  mutate(mean = mean(unlist(correct)),
+         df= t.test(unlist(correct), mu = 0.5)$parameter,
+         t_value = t.test(unlist(correct), mu = 0.5)$statistic,
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
+  select(experiment, condition, mean, age_bin,df,t_value,p_value)%>%
+  mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
+         t_value = round(t_value,2))
+
+child_chance <- 
+  bind_rows(
+    child_ex1t,
+    child_ex2t
+  )
+
+apa_table(
+  child_chance
+  , caption = "Comparison to chance in each condition of Experiment 5 and 6"
+  , note = "Proportion expected by chance = 0.5. Data aggregated within participant and conditon."
+  , escape = T
+)
+
+```
+
+Data for children was binned by year for the comparison to chance. As for adults, we used one sample t-tests for this analysis. Table \ref{tab:child_chance_comp} shows the results for Experiment 5.
+
+```{r}
+child_ex1_lm_data <- child_ex1_data%>%
+  mutate(age_num = scale(age_num, center = TRUE, scale = TRUE))
+
+# GLMM
+child_ex1_lm <- glmer(correct ~ age_num + (1 | id), 
+              data = child_ex1_lm_data, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+
+child_lm_ex1_r <- tidy(child_ex1_lm, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))
+
+```
+
+We fit a GLMM with the following structure to the trial by trial data with age as a continuous variable: `correct ~ age_num + (1|id)`. Results show that children became more likely to select the more informative object with age ($\beta$ = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(p.value)`.
+
+## Experiment 6
+
+```{r}
+child_ex2_lm_data <- child_ex2_data%>%
+  mutate(age_num = scale(age_num, center = TRUE, scale = TRUE))
+
+child_ex2_lm <- glmer(correct ~ age_num*condition + (condition | id) + (1 | agent), 
+              data = child_ex2_lm_data, family = binomial, 
+              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+child_lm_ex2_r <- tidy(child_ex2_lm, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))
+```
+
+Comparison to chance within each condition of Experiment 6 is given in Table \ref{tab:child_chance_comp}. We fit a GLMM with the following structure to the data: `correct ~ age_num*condition + (condition|id) + (1|agent)`. The model output shows an effect of condition (same or different speaker) ($\beta$ = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`) but no effect of age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(p.value)`) or interaction between speaker identity and age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(p.value)`).
+
+## Experiment 7
+
+```{r child_models, results = "asis"}
+child_ex3_lm_data <- child_ex3_data%>%
+  mutate(age_num = scale(age_num, center = TRUE, scale = TRUE))
+
+child_ex3_lm <- glmer(correct_inf ~ age_num*speaker*alignment 
+      + (speaker+alignment | id), 
+      family = "binomial",
+      data = child_ex3_lm_data,
+      control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
+
+child_lm_ex3_r <- tidy(child_ex3_lm, effects = "fixed")%>%
+  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
+         std.error = round(std.error,2),
+         estimate = round(estimate,2))%>%
+    mutate(term = recode(term, 
+                       `(Intercept)` = "Intercept",
+                       age_num = "age",
+                       speakersame_speaker = "speaker",
+                       alignmentincongruent = "alignment",
+                       `age_num:speakersame_speaker` = "age * speaker",
+                       `age_num:alignmentincongruent` = "age * alignment",
+                       `speakersame_speaker:alignmentincongruent` = "speaker * alignment",
+                       `age_num:speakersame_speaker:alignmentincongruent` = "age * speaker * alignment"
+         ))
+
+apa_table(
+  child_lm_ex3_r
+  , caption = "GLMM output for Experiment 7"
+  , note = "Reference level: speaker - different speaker, alignment - congruent."
+  , escape = T
+)
+```
+
+To see if children differentiated between the different combinations of manipulations in Experiment 7, we fit the following GLMM to the data: `correct_inf ~ age_num*speaker*alignment+ (speaker+alignment|id)`. Model output is shown in Table \ref{tab:child_models}.
 
 \newpage
 
