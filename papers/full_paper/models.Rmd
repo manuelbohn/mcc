@@ -65,6 +65,135 @@ hdi_lower<- function(s){
 
 ```
 
+```{r}
+# preparing datafiles (delete eventually)
+
+# d <- read_csv(file="../../stats/data/inf.data.csv") %>%
+#   mutate(trial_type = ifelse(trial == "train", "train", "test"),
+#          trial = alltrial -2,
+#          experiment = "adult_ex1",
+#          condition = ifelse(control == TRUE, "control", "test") )%>%
+#   filter(trial_type == "test")%>%
+#   select(experiment, id,  trial,condition, agent, correct)
+# 
+# write_csv(d , path="../../stats/data/adult_ex1.csv")
+# 
+# d <- read_csv(file="../../stats/data/novel.data.csv") %>%
+#   mutate(trial_type = ifelse(trial == "train", "train", "test"),
+#          experiment = "adult_ex2_novelty",
+#          speaker = ifelse(change == TRUE, "different_speaker" , "same_speaker"),
+#          agent = ifelse( condition == "same_speaker", agent, altAgent))%>%
+#   filter(trial != "train")%>%
+#   select(experiment, id, trial,speaker, agent, correct)
+# 
+# write_csv(d , path="../../stats/data/adult_ex2_novelty.csv")
+# 
+# d <- read_csv(file="../../stats/data/pref.data.csv") %>%
+#   mutate(trial_type = ifelse(trial == "train", "train", "test"),
+#          experiment = "adult_ex2_preference",
+#          speaker = ifelse(change == TRUE, "different_speaker" , "same_speaker"),
+#          agent = ifelse( condition == "same_speaker", agent, altAgent))%>%
+#   filter(trial != "train")%>%
+#   select(experiment, id, trial,speaker, agent, correct)
+# 
+# write_csv(d , path="../../stats/data/adult_ex2_preference.csv")
+# 
+# d <- bind_rows(read_csv(file="../../stats/data/ex3.novel.data.csv"),
+#                read_csv(file="../../stats/data/ex3.pref.data.csv")) %>%
+#   distinct(id, alltrial, .keep_all = TRUE) %>%
+#   mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
+# 
+# exclude <- d %>%
+#   filter(trial_type == "train") %>%
+#   group_by(id)%>%
+#   summarise(correct_inf = mean(correct_inf)) %>%
+#   filter(correct_inf == 0)
+# 
+# d <- d%>%
+#   filter(!id %in% exclude$id)%>%
+#   mutate(agent = ifelse( change == "same", agent, altAgent),
+#          common_ground_manipulation = ifelse(experiment == "novel_inf","novelty", "preference"),
+#          experiment = "adult_ex3",
+#          trial = alltrial -2,
+#          speaker = ifelse(change == "same", "same_speaker", "different_speaker"))%>%
+#   filter(trial_type == "test")%>%
+#   select(experiment, id,trial, common_ground_manipulation, speaker ,alignment, agent, correct_inf)
+# 
+# write_csv(d , path="../../stats/data/adult_ex3.csv")
+# 
+# 
+#
+# d <- bind_rows(read_csv(file="../../stats/data/ex3.2.novel.strong.data.csv"),
+#                read_csv(file="../../stats/data/ex3.2.novel.medium.data.csv"),
+#                read_csv(file="../../stats/data/ex3.2.novel.weak.data.csv"),
+#                read_csv(file="../../stats/data/ex3.2.pref.strong.data.csv"),
+#                read_csv(file="../../stats/data/ex3.2.pref.medium.data.csv")
+#                ) %>%
+#   distinct(id, alltrial, .keep_all = TRUE) %>%
+#   mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
+#          
+# exclude <- d %>%
+#   filter(trial_type == "train") %>%
+#   group_by(id)%>%
+#   summarise(correct_inf = mean(correct_inf)) %>%
+#   filter(correct_inf == 0)
+# 
+# d <- d%>%
+#   filter(!id %in% exclude$id)%>%
+#   mutate(agent = ifelse( change == "same", agent, altAgent),
+#          common_ground_manipulation = ifelse(grepl("novel",experiment),"novelty", "preference"),
+#          trial = alltrial -2,
+#          speaker = ifelse(change == "same", "same_speaker", "different_speaker"),
+#          prior_manipulation = prior,
+#          experiment = "adult_ex4")%>%
+#   filter(trial_type == "test")%>%
+#   select(experiment, id,trial, common_ground_manipulation, prior_manipulation, speaker, alignment, agent, correct_inf)
+# 
+# write_csv(d , path="../../stats/data/adult_ex4.csv")
+#
+# 
+# d <- bind_rows(read_csv(file="../../stats/data/kids_pref_data.csv")%>%filter(age != "2")%>%mutate(speakerChange = change),
+#                        read_csv(file="../../stats/data/kids_pref_2_data.csv")%>% mutate(age = subage))%>%
+#   filter(trial != "train")%>%
+#   mutate(age_bin = factor(age),
+#          experiment = "child_ex2",
+#          condition = ifelse(speakerChange == F, "same_speaker", "different_speaker"),
+#          agent = ifelse( speakerChange == F, agent, altAgent),
+#          id = subid,
+#          minage = min(age_num))%>%
+#   filter(trial != "train")%>%
+#   select(experiment,id,age_bin,age_num,minage,trial,condition,agent,correct)
+# 
+# write_csv(d , path="../../stats/data/child_ex2.csv")
+# 
+# d <- bind_rows(
+#   read_csv(file="../../stats/data/kids_inf_data.csv"),
+#   read_csv(file="../../stats/data/kids_inf_2_data.csv"))%>%
+#   filter(subage != "2",
+#          trial != "filler1",
+#          trial != "filler2")%>%
+#   mutate(age_bin = factor(subage),
+#          experiment = "child_ex1",
+#          id =subid,
+#          minage = min(age_num))%>%
+#   select(experiment,id,age_bin,age_num,sex,minage,trial,correct)
+# 
+# write_csv(d , path="../../stats/data/child_ex1.csv")
+#
+# d <- read_csv(file="../../stats/data/kids_ex3_data.csv")%>%
+#   mutate(experiment = "child_ex3",
+#          id = subid,
+#          age_bin = subage,
+#          speaker = Speaker,
+#          alignment = Alignment,
+#          minage = min(age_num))%>%
+#   filter(trial != "filler1",trial != "filler2")%>%
+#   select(experiment, id,age_bin,age_num,minage,trial, speaker, alignment, agent, correct_inf)
+# 
+#  write_csv(d , path="../../stats/data/child_ex3.csv")
+```
+
+
 # Model code
 
 ## Model utilities
@@ -915,6 +1044,12 @@ ex3_bf %>%
 ```{r ex4 data adults}
 # load data  from experiment 4 
 adult_ex4_data <-read_csv(file="../../stats/data/adult_ex4.csv") 
+```
+
+
+```{r ex4 prior pre-tests data adults}
+# load data from prior strength manipulation experiments to set priors
+adult_ex4_prior_data <-read_csv(file="../../stats/data/adult_ex4_prior.csv") 
 ```
 
 ```{r model setup ex 4}

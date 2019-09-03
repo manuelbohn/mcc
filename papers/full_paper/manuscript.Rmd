@@ -1,13 +1,13 @@
 ---
-title             : "Predicting information integration in pragmatic word learning across development"
-
+title             : "Pragmatic cue integration in adults’ and children’s inferences about novel word meanings"
+shorttitle        : "Pragmatic cue integration"
 
 author: 
   - name          : "Manuel Bohn"
     affiliation   : "1,2"
     corresponding : yes    # Define only one corresponding author
-    address       : "Department of Psychology, 450 Serra Mall, Stanford, CA 94305"
-    email         : "bohn@stanford.edu"
+    address       : "Leipzig Research Center for Early Child Development, Jahnallee 59, 04109 Leipzig, Germany"
+    email         : "manuel.bohn@uni-leipzig.de"
   - name          : "Michael Henry Tessler"
     affiliation   : "3"
   - name          : "Megan Merrick"
@@ -23,16 +23,15 @@ affiliation:
   - id            : "3"
     institution   : "Department of Brain and Cognitive Sciences, Massachusetts Institute of Technology"
 
-author_note: |
-  MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement no. 749229. MCF was supported by a Jacobs Foundation Advanced Research Fellowship and the Zhou Fund. We thank Jacqueline Quirke and Sabina Zacco for help with the data collection.  
-
 abstract: |
-  Language is used and learned in complex social settings. To infer what a speaker means, listeners have to go beyond the literal meaning of words and rely on pragmatic inferences. During language acquisition, the same processes can help children to learn the meaning of novel words. Yet, pragmatic inferences require balancing multiple sources of social information. Here we study this integration process. We isolate two types of pragmatic inference and formalize how they should be integrated according to a Bayesian pragmatics model. We present a series of experiments with preschool children and adults that suggest that information integration is best described as a form of probabilistic inference.
+  Language is learned in complex social settings where listeners must reconstruct speakers’ intentend meanings from context. To navigate this challenge, children can use contextual or pragmatic reasoning to learn the meaning of unfamiliar words. One important challenge for pragmatic reasoning is that it often requires integrating information about the current utterance with broader common ground built up over the course of an interaction. Here we study this integration process. We isolate these two sources of pragmatic information and formalize both how they should be combined and how they might develop using a probabilistic model of conversational reasoning. We present a series of seven experiments with three- to five-year-old children and adults that suggest that these two information sources flexibly trade off with one another. A cue combination model accurately predicted empirical results for children and adults and provided a better fit compared with alternative models in which only one information source was considered. This work integrates distinct sets of findings regarding early language and suggests that pragmatic reasoning models can provide a quantitative framework for understanding developmental changes in language learning. 
   
 keywords          : "language acquisition, social cognition, pragmatics, Bayesian modeling"
 wordcount         : "X"
 
 bibliography      : ["library.bib"]
+
+csl               : pnas.csl
 
 figsintext        : yes
 figurelist        : no
@@ -80,135 +79,6 @@ hdi_lower<- function(s){
 
 ```
 
-```{r}
-# preparing datafiles (delete eventually)
-
-# d <- read_csv(file="../../stats/data/inf.data.csv") %>%
-#   mutate(trial_type = ifelse(trial == "train", "train", "test"),
-#          trial = alltrial -2,
-#          experiment = "adult_ex1",
-#          condition = ifelse(control == TRUE, "control", "test") )%>%
-#   filter(trial_type == "test")%>%
-#   select(experiment, id,  trial,condition, agent, correct)
-# 
-# write_csv(d , path="../../stats/data/adult_ex1.csv")
-# 
-# d <- read_csv(file="../../stats/data/novel.data.csv") %>%
-#   mutate(trial_type = ifelse(trial == "train", "train", "test"),
-#          experiment = "adult_ex2_novelty",
-#          speaker = ifelse(change == TRUE, "different_speaker" , "same_speaker"),
-#          agent = ifelse( condition == "same_speaker", agent, altAgent))%>%
-#   filter(trial != "train")%>%
-#   select(experiment, id, trial,speaker, agent, correct)
-# 
-# write_csv(d , path="../../stats/data/adult_ex2_novelty.csv")
-# 
-# d <- read_csv(file="../../stats/data/pref.data.csv") %>%
-#   mutate(trial_type = ifelse(trial == "train", "train", "test"),
-#          experiment = "adult_ex2_preference",
-#          speaker = ifelse(change == TRUE, "different_speaker" , "same_speaker"),
-#          agent = ifelse( condition == "same_speaker", agent, altAgent))%>%
-#   filter(trial != "train")%>%
-#   select(experiment, id, trial,speaker, agent, correct)
-# 
-# write_csv(d , path="../../stats/data/adult_ex2_preference.csv")
-# 
-# d <- bind_rows(read_csv(file="../../stats/data/ex3.novel.data.csv"),
-#                read_csv(file="../../stats/data/ex3.pref.data.csv")) %>%
-#   distinct(id, alltrial, .keep_all = TRUE) %>%
-#   mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
-# 
-# exclude <- d %>%
-#   filter(trial_type == "train") %>%
-#   group_by(id)%>%
-#   summarise(correct_inf = mean(correct_inf)) %>%
-#   filter(correct_inf == 0)
-# 
-# d <- d%>%
-#   filter(!id %in% exclude$id)%>%
-#   mutate(agent = ifelse( change == "same", agent, altAgent),
-#          common_ground_manipulation = ifelse(experiment == "novel_inf","novelty", "preference"),
-#          experiment = "adult_ex3",
-#          trial = alltrial -2,
-#          speaker = ifelse(change == "same", "same_speaker", "different_speaker"))%>%
-#   filter(trial_type == "test")%>%
-#   select(experiment, id,trial, common_ground_manipulation, speaker ,alignment, agent, correct_inf)
-# 
-# write_csv(d , path="../../stats/data/adult_ex3.csv")
-# 
-# 
-#
-# d <- bind_rows(read_csv(file="../../stats/data/ex3.2.novel.strong.data.csv"),
-#                read_csv(file="../../stats/data/ex3.2.novel.medium.data.csv"),
-#                read_csv(file="../../stats/data/ex3.2.novel.weak.data.csv"),
-#                read_csv(file="../../stats/data/ex3.2.pref.strong.data.csv"),
-#                read_csv(file="../../stats/data/ex3.2.pref.medium.data.csv")
-#                ) %>%
-#   distinct(id, alltrial, .keep_all = TRUE) %>%
-#   mutate(trial_type = ifelse(trial == "train1" | trial =="train2", "train", "test"))
-#          
-# exclude <- d %>%
-#   filter(trial_type == "train") %>%
-#   group_by(id)%>%
-#   summarise(correct_inf = mean(correct_inf)) %>%
-#   filter(correct_inf == 0)
-# 
-# d <- d%>%
-#   filter(!id %in% exclude$id)%>%
-#   mutate(agent = ifelse( change == "same", agent, altAgent),
-#          common_ground_manipulation = ifelse(grepl("novel",experiment),"novelty", "preference"),
-#          trial = alltrial -2,
-#          speaker = ifelse(change == "same", "same_speaker", "different_speaker"),
-#          prior_manipulation = prior,
-#          experiment = "adult_ex4")%>%
-#   filter(trial_type == "test")%>%
-#   select(experiment, id,trial, common_ground_manipulation, prior_manipulation, speaker, alignment, agent, correct_inf)
-# 
-# write_csv(d , path="../../stats/data/adult_ex4.csv")
-#
-# 
-# d <- bind_rows(read_csv(file="../../stats/data/kids_pref_data.csv")%>%filter(age != "2")%>%mutate(speakerChange = change),
-#                        read_csv(file="../../stats/data/kids_pref_2_data.csv")%>% mutate(age = subage))%>%
-#   filter(trial != "train")%>%
-#   mutate(age_bin = factor(age),
-#          experiment = "child_ex2",
-#          condition = ifelse(speakerChange == F, "same_speaker", "different_speaker"),
-#          agent = ifelse( speakerChange == F, agent, altAgent),
-#          id = subid,
-#          minage = min(age_num))%>%
-#   filter(trial != "train")%>%
-#   select(experiment,id,age_bin,age_num,minage,trial,condition,agent,correct)
-# 
-# write_csv(d , path="../../stats/data/child_ex2.csv")
-# 
-# d <- bind_rows(
-#   read_csv(file="../../stats/data/kids_inf_data.csv"),
-#   read_csv(file="../../stats/data/kids_inf_2_data.csv"))%>%
-#   filter(subage != "2",
-#          trial != "filler1",
-#          trial != "filler2")%>%
-#   mutate(age_bin = factor(subage),
-#          experiment = "child_ex1",
-#          id =subid,
-#          minage = min(age_num))%>%
-#   select(experiment,id,age_bin,age_num,sex,minage,trial,correct)
-# 
-# write_csv(d , path="../../stats/data/child_ex1.csv")
-#
-# d <- read_csv(file="../../stats/data/kids_ex3_data.csv")%>%
-#   mutate(experiment = "child_ex3",
-#          id = subid,
-#          age_bin = subage,
-#          speaker = Speaker,
-#          alignment = Alignment,
-#          minage = min(age_num))%>%
-#   filter(trial != "filler1",trial != "filler2")%>%
-#   select(experiment, id,age_bin,age_num,minage,trial, speaker, alignment, agent, correct_inf)
-# 
-#  write_csv(d , path="../../stats/data/child_ex3.csv")
-
-
-```
 
 ```{r data}
 # load data files
@@ -234,31 +104,40 @@ child_ex2_data <-read_csv(file="../../stats/data/child_ex2.csv")
 child_ex3_data <-read_csv(file="../../stats/data/child_ex3.csv") 
 ```
 
+# Significance statement
+
+In order to learn the meaning of a new word, children need to integrate multiple sources of information. Some information is provided by the utterance itself, but other contextual information accumulates over the course of a conversation and is stored in common ground. To understand how these sources are integrated with one another and how they might develop, we formalize this process using computational models of pragmatic reasoning. These models make quantitative predictions for different hypotheses about how integration proceeds. Across seven experiments, we find that the way in which preschoolers and adults integrate information is best described by a model that flexibly trades off between different sources of information. Taken together, this work presents an explicit theory of socially grounded language learning.
+
 # Introduction
 
-Language use and language learning require integrating and balancing different sources of information. And even though linguistic cues, such as conventional syntax and semantics, may provide strong evidence about the intended meaning of an utterance, additional pragmatic inferences are necessary arrive at a precise interpretation [@levinson2000presumptive; @sperber2001relevance]. A second route to meaning is even more important in the process of language learning. In this case, inferences based on the social embedding of the utterance are key to understanding its meaning and learning the words contained therein [@clark2009first; @tomasello2009constructing]. In this paper, we explore how different forms of social information are integrated during word learning across development. More specifically, we look at information integration as a form of probabilistic inference.
+What someone means by an utterance is oftentimes not reducible to the words they used. It takes  pragmatic inference – context-sensitive reasoning about the speaker’s intentions - to recover the intended meaning [@grice1991studies, @levinson2000presumptive, @sperber2001relevance]. Contextual information comes in many forms. On the one hand, there is information provided by the utterance\footnote{We use the terms utterance, utterance-level information or utterance-level cues to capture all cues that the speaker provides for their intended meaning. This includes direct referential information in the form of actions such as pointing or gazing, semantic information in the form of conventional word meanings as well as pragmatic inferences that are licenced by the particular choice of words or actions.} itself. Competent language users expect each other to communicate in a cooperative way such that speakers produce utterances that are relevant and informative. Thus, semantic ambiguity can be resolved by reasoning about why the speaker produced this particular utterance [@grice1991studies, @clark1996using, @sperber2001relevance, @tomasello2008origins]. On the other hand, there is information provided by common ground (the body of knowledge and beliefs shared between interlocutors; [@bohn2018common, @clark1996using, @clark2015common]. Because utterances are embedded in a broader (ongoing) social interaction, common ground information serves as a background against which new utterances are interpreted, making some meanings for ambiguous terms more likely than others.	
 
-Pragmatic inferences rest on assumptions about how communication *should* proceed. Interlocutors mutually expect each other to communicate in a cooperative way and this mutual expectation serves as the basis for inferences that go beyond the literal meaning of an utterance [@grice1991studies; @sperber2001relevance; @tomasello2008origins]. Paul Grice [-@grice1991studies] famously summarized this notion in his *Cooperative Principle*, which reads: “Make your contribution such as is required, at the stage at which it occurs, by the accepted purpose or direction of the talk exchange in which you are engaged.” Two sets of expectations follow from this principle. On the one hand, there is the general expectation that one follows the principle and communicates in a relevant and informative way. On the other hand, there is the expectation that communication is further specific to the communicative partner, that is, that it is adjusted to the the common ground shared between speaker and listener [@bohn2018common; @clark1996using]. 
+Children learning their first language make inferences about intended meanings based on utterance-level and common-ground information both for language understanding and language learning [@bohn2019pervasive, @clark2009first, @tomasello2008origins]. Starting very early, infants expect adults to produce utterances in a cooperative way [@behne2005one], and expect language to be carrying information [@vouloumanos2012twelve]. By age two, children are sensitive to the informativeness of communication [@o2001two]. By age three children can use this expectation to make pragmatic inferences [@stiller2015ad, @yoon2019role] and to infer novel word meanings [@frank2014inferring]. And although older children continue to struggle with some complex pragmatic inferences until age five and beyond [@noveck2001children], an emerging consensus identifies these difficulties as stemming from difficulties reasoning about linguistic alternatives rather than pragmatic deficits [@skordos2016children, @horowitz2018trouble, @barner2011accessing]. Thus, children’s ability to reason about utterance-level pragmatics is present at least by ages three to five, and possibly substantially younger.
 
-Importantly, these expectations can also support language development [@clark2009first; @tomasello2009constructing]. Starting in infancy, children generally expect adults' communicative acts to provide them with relevant information [e.g @behne2005one]. And preschool children learn novel words by assuming that speakers are informative [@frank2014inferring]. In the absence of any additional information about the potential referent objects or the speaker, children expected a novel word to be intended to refer to an object it describes in a unique way [see also @stiller2015ad]. Person specific common ground information supports communication in infancy [e.g. @bohn2018social; @saylor2011s] and facilitates word learning in slightly older children. For example, two-year-olds keep track of which object is new to a speaker to decide which object the speaker is referring to when they use a novel word [@akhtar1996role; @diesendruck2004two]. Furthermore, when three to five year old children learn about a speaker's preference, they later use this information to identify the meaning of an unknown word coming from the same speaker [@saylor2009preschoolers]. These studies suggest early emerging pragmatic competences. Yet, communicative interactions in naturalistic contexts have multiple layers and require balancing expectations [@clark1996using]. So how are different expectations integrated?
+Evidence for the use of common ground information by young children is even stronger: Common ground information guides how infants produce non-verbal gestures and interpret ambiguous utterances [@bohn2018social, @saylor2011s]. For slightly older children, common ground – in the form of knowledge about discourse novelty, preferences, and even discourse expectations – also facilitates word learning [@akhtar1996role, @diesendruck2004two, @saylor2009preschoolers, @sullivan2019discourse]. 
 
-The Rational Speech Act (RSA) framework [@frank2012predicting; @goodman2016pragmatic] offers a formal framework for addressing this integration problem. RSA models are characterized by their recursive structure. Each agent in the recursion is modeled as a Bayesian reasoner; thus, information integration is treated as a process of probabilistic inference. The expectation that speakers communicate informatively is already encoded in the structure of the model: Speakers choose utterances that help listeners in disambiguating referents. Common ground information can be integrated in the model as a shared prior probability of referents in the context of the utterance. Thus, a natural locus for information integration within RSA models is the trade off between the prior probability of a referent and the likelihood of that referent given the current utterance. 
+All of these examples, however, highlight children’s use of a single pragmatic information source or cue. Harnessing multiple – potentially competing – cues poses a separate challenge. One aspect of this integration problem is how to balance common ground information that is built up over the course of an interaction against information gleaned from the current utterance. Much less is known about whether and how children – or even adults – combine these types of information. While many theories of pragmatic reasoning presuppose that both information sources are integrated, the nature of their relationship has typically not been specified. We address this challenge here. 
 
-Here we apply this rational, pragmatic account of communication to the study of information integration during word learning. We do so from a developmental perspective and include children, continuously sampled between three and five years of age, as well as adults. For both groups, we first test speaker-specific and common ground expectations independently. Based on this data, we generate model predictions about how expectations should be integrated. Finally, we compare these predictions to newly collected data and use model comparisons to test different hypothesis about how expectations are integrated. 
+Recent innovations in probabilistic models of pragmatic reasoning provide a quantitative method for addressing the problem of integrating multiple sources of contextual information. This class of computational models, which are referred to as Rational Speech Act (RSA) models [@frank2012predicting, @goodman2016pragmatic] formalize the problem of language understanding as a special case of Bayesian social reasoning. A listener interprets an utterance by assuming it was produced by a cooperative speaker who had the goal to be informative. Being informative is defined as providing a message that would increase the probability of the listener recovering the speaker’s intended meaning in context. This notion of contextual informativeness captures the Gricean idea of cooperation between speaker and listener, and provides a first approximation to what we have described above as utterance-level pragmatic information. 
 
-```{r fig1, include = T, fig.align = "center", fig.cap = "Schematic experimental procedure with screenshots from the adult experiments. In all conditions, at test (bottom), the speaker ambiguously requested an object using a non-word (e.g. “dax”). Participants clicked on the object they thought the speaker referred to. Informativeness (Experiment 1, left) translated to making one object less frequent in context. Common ground (Experiment 2, middle) was manipulated by making one object prefered by or new to the speaker. Green plus signs represent utterances that expressed preference and red minus of dispreference (see main text for details). Experiment 3 (right) combined manipulations. When expressing e.g. preference for an object on a table with two objects (panel 3 from top), the respective object was temporarily enlarged. Condition for Experiment 3 shown here: preference - same speaker - incongruent.", out.width="450px"}
+Listeners and speakers also enter into a conversation with assumptions about what is likely to be talked about, a reflection of the common ground shared between them. RSA models capture common ground information as a shared prior distribution over possible intended meanings. Thus, a natural locus for information integration within probabilistic models of pragmatic reasoning is the trade off between the prior probability of a meaning and the informativeness of the utterance. This trade off between contextual factors during word learning is a unique aspect of the word learning problem that is not addressed by other computational models of word learning, which have focused on learning from cross-situational, co-occurrence statistics [@fazly2010probabilistic, @frank2009using] or describing generalizations about word meaning [@xu2007word]. 
+
+We make use of this framework to study pragmatic cue integration across development. To this end, we adapt a method used in perceptual cue integration studies [@ernst2002humans] predictions about conditions in which they either coincide or conflict. 
+
+We start by replicating previous findings with adults showing that listeners make pragmatic inferences based on non-linguistic properties of utterances in isolation (Experiment 1). In separate experiments, we then show that adults make inferences based on common ground information (Experiment 2A and 2B). We use data from these experiments as parameters to generate a priori predictions from RSA models about how utterance and common ground information should be integrated. We consider three models that make different assumptions about the integration process: In the pragmatics model, the two information sources are integrated with one another; according to the flat prior model, participants focus only on the utterance information and in the prior only model, only common ground information is considered. We compare predictions from these models to new empirical data from experiments in which utterance and common ground information are manipulated simultaneously (Experiment 3 and 4). 
+
+After successfully validating this approach with adults, we apply the same model-driven experimental procedure to children: We first show that they make pragmatic inferences based on utterance and common ground information separately (Experiment 5 and 6). Then we generate a priori model predictions and compare them to data from an experiment – parallel to Experiment 3 – in which both information sources have to be integrated (Experiment 7). To our knowledge, the strategy of independently estimating model parameters with separate groups and combining them via the model to make preregistered quantitative predictions about a new population has not been used before with children.
+
+Taken together, this work makes two primary contributions: first, it shows that both adults and children integrate utterance-level (Gricean) and common-ground information flexibly. Second, it uses Bayesian data analysis within the RSA framework to provide a model for understanding the multiple loci for developmental change in complex behaviors like contextual communication.
+
+
+```{r fig1, include = T, fig.align = "center", fig.cap = "Schematic experimental procedure with screenshots from the adult experiments. In all conditions, at test (bottom), the speaker ambiguously requested an object using a non-word (e.g. “dax”). Participants clicked on the object they thought the speaker referred to. Informativeness (Experiment 1, left) translated to making one object less frequent in context. Common ground (Experiment 2, middle) was manipulated by making one object preferred by or new to the speaker. Green plus signs represent utterances that expressed preference and red minus signs represent utterances that expressed dispreference (see main text for details). Experiment 3 (right) combined manipulations. One condition of Experiment 3 is shown here: preference - same speaker - incongruent.", out.width="450px"}
 knitr::include_graphics("./figures/fig1.png")
 ```
 
-# Adults 
+# How do adults integrate contextual sources of information? 
 
-## Assessment of general and speaker specific expectations (Experiment 1 and 2)
-
-As a first step, we assessed whether adults make general and common ground inferences when tested separately. In experiment 1, participants could infer which object a novel word referred to by assuming that the speaker communicated in an informative way. The speaker was located between two tables, one with two novel objects, A and B, and the other with only object A (Fig. 1A). When the speaker turned to the table with the two objects (A and B) and used an novel word to request one of them, participants could infer that the word referred to object B. This follows from the counter-factual inferences that, if the (informative) speaker would have wanted to refer to object A, they would have turned to the table with the single object, because this would have been the least ambiguous way to refer to this object. As a consequence, turning to the table with two objects most likely reflects an intention to refer to object B. In the control condition, both tables contained both objects and no inference could be made based on the speaker's behavior.  
-
-```{r fig2, include = T, fig.align = "center", fig.cap = "Results from experiment 1 and 2 for adults. For preference and novelty, control refers to a different speaker (see Fig. 1B). Transparent dots show data from individual participants, diamonds represent condition means, error bars are 95\\% CIs. Dashed line indicates performance expected by chance.", out.width="250px"}
-knitr::include_graphics("./figures/fig2.png")
-```
+## Inferences based on utterance and common ground information  (Experiments 1 and 2)
 
 ```{r ex1 results}
 ex1t <- adult_ex1_data %>%
@@ -276,7 +155,7 @@ ex1t <- adult_ex1_data %>%
 
 # model
 lm_ex1 <- glmer(correct ~ condition +
-              (1 |id) , 
+              (1 |id), 
               data = adult_ex1_data, 
               family = binomial,control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -288,8 +167,7 @@ ex1_r <- tidy(lm_ex1, effects = "fixed")%>%
          estimate = round(estimate,2))
 ```
 
-Participants made the inference consistent with the assumption that the speaker communicated informatively: They selected object B above chance in the test condition (t(`r ex1t%>%filter(condition == "test")%>%pull(df)`) = `r ex1t%>%filter(condition == "test")%>%pull(t_value)`, *p* `r ex1t%>%filter(condition == "test")%>%pull(p_value)`, see Fig. 2) and more often compared to the control condition (*$\beta$* = `r ex1_r%>%filter(term == "conditiontest")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "conditiontest")%>%pull(std.error)`, *p* `r ex1_r%>%filter(term == "conditiontest")%>%pull(p.value)`). 
-
+In Experiment 1, participants could learn which object a novel word referred to by assuming that the speaker communicated in an informative way [@frank2014inferring]. The speaker was located between two tables, one with two novel objects, A and B, and the other with only object A (Fig. 1A). When the speaker turned and pointed to the table with the two objects (A and B) and used a novel word to request one of them, participants could infer that the word referred to object B. This follows from the counter-factual inferences that, if the (informative) speaker had wanted to refer to object A, they would have pointed to the table with the single object (this being the least ambiguous way to refer to that object). In the control condition, both tables contained both objects and no inference could be made based on the speaker’s behavior. Participants selected object B above chance in the test condition (t(`r ex1t%>%filter(condition == "test")%>%pull(df)`) = `r ex1t%>%filter(condition == "test")%>%pull(t_value)`, *p* `r ex1t%>%filter(condition == "test")%>%pull(p_value)`) and more often compared to the control condition (*$\beta$* = `r ex1_r%>%filter(term == "conditiontest")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "conditiontest")%>%pull(std.error)`, *p* `r ex1_r%>%filter(term == "conditiontest")%>%pull(p.value)`). 
 ```{r ex2-results}
 ex2tpref <- adult_ex2_preference_data %>%
   group_by(condition, id) %>%
@@ -343,26 +221,27 @@ ex2nov_r <- tidy(lm_ex2nov, effects = "fixed")%>%
          estimate = round(estimate,2))
 ```
 
-In experiment 2, we tested if participants use common ground information that is specific to a speaker to infer the referent of a novel word. In the preference manipulation (Fig. 1B . left), the speaker expressed preference for one of two objects. When the speaker later used a novel word to requested an object, participants could infer the referent by assuming that the speaker was talking about the object they liked. In a control condition, a different speaker, whose preferences were unknown, made the request. Adults selected the preferred object above chance when the same speaker made the request (t(`r ex2tpref%>%filter(condition == "same_speaker")%>%pull(df)`) = `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(t_value)`, *p* `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(p_value)`, see Fig. 2) and more so compared to when a different speaker asked for an object ($\beta$ = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`).
-
-In the novelty manipulation (Fig 1B - right), the speaker encountered one object on one of the tables. Later, a second object appeared. The second object was therefore new to the speaker. When the same speaker later used a novel word to requested an object (in a slightly excited way), participants could infer that it was the new object they are referring to. In contrast, when a different speaker, to whom both objects were equally new, made a request, no inference could be made based on the speaker's state of knowledge. In line with this reasoning, participants selected the new object above chance with the same speaker (t(`r ex2tnov%>%filter(condition == "same_speaker")%>%pull(df)`) = `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(t_value)`, *p* `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(p_value)`, see Fig. 2), and more often compared to the different speaker ($\beta$ = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`). Taken together, experiment 1 and 2 showed that adults use general and speaker specific expectations to identify the referent of a novel word. In the following, we studied how these expectations are integrated when combined experimentally. 
+In Experiments 2A and 2B, we tested if participants use common ground information that is specific to a speaker to identify the referent of a novel word [@akhtar1996role, @saylor2009preschoolers]. In Experiment 2A, the speaker expressed a preference for one of two objects (Fig. 1B, left). Later, the speaker used a novel word to request an object. Adults selected the preferred object above chance (t(`r ex2tpref%>%filter(condition == "same_speaker")%>%pull(df)`) = `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(t_value)`, *p* `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(p_value)`) and more so than in a control condition, where a different speaker, whose preferences were unknown, made the request ($\beta$ = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`). In Experiment 2B, common ground information came in the form of novelty (Fig 1B, right). First, the speaker encountered one object on one of the tables. Later, a second object appeared. When the same speaker then used a novel word to request an object, participants selected the new object above chance (t(`r ex2tnov%>%filter(condition == "same_speaker")%>%pull(df)`) = `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(t_value)`, *p* `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(p_value)`), and more often compared to when a different speaker (to whom both objects were equally new) made the request ($\beta$ = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`). Taken together, Experiments 1 and 2 confirmed that adults make pragmatic inferences based on information provided by the utterance as well as by common ground and provided quantitative estimates of the strength of these inferences for use in our model. 
 
 ## Model predictions for information integration evaluated against new data (Experiment 3).
 
-We modeled the integration of general and common ground expectations as a process of probabilistic inference. We used the results of experiment 1 and 2 to inform key parameters in the model's architecture. Within the RSA framework, general expectations that speakers (or listeners) communicate in a cooperative and informative way are reflected in the model's recursive structure. When interpreting an utterance, the hypothetical listener imagines that it was generated by a pragmatic speaker whose goal is to produce the most informative utterance. The pragmatic speaker is modeled as reasoning about what the most informative utterance would be for a naive listener, who does not know the novel words. Importantly, the utterance in this case includes not just the novel word but also the turning to one of the tables. The conditional probability that the listener interprets an utterance as referring to a particular referent is defined as:
+We modeled the integration of utterance informativity and common ground as a process of socially-guided probabilistic inference, using the results of Experiments 1 and 2 to inform key parameters of a computational model. The Rational Speech Act (RSA) model architecture introduced by [@frank2012predicting] encodes conversational reasoning through the perspective of a listener (“he” pronoun) who is trying to decide on the intended meaning of the utterance he heard from the speaker (“she” pronoun). The basic idea is that the listener combines his uncertainty about the speaker’s intended meaning - a prior distribution over referents P(r) - with his generative model of how the utterance was produced: a speaker trying to convey information to him. To adapt this model to the word learning context, we enrich this basic architecture with a mechanism for expressing uncertainty about the meanings of words (lexical uncertainty) - a prior distribution over lexica P(L) [@bergen2016pragmatic]. 
 
-$$P_L(r_s|u)\propto P_S(u|r_s)P_S(r_s)$$
+$$P_{L}(r, \mathcal{L}|u)\propto P_{S}(u|r, \mathcal{L}) \cdot P( \mathcal{L}) \cdot P(r)$$
 
-Here, the term $P_S(u|r_s)$ denotes the likelihood that the pragmatic speaker will produce a particular utterance $u$ to refer to a referent $r$. It is defined in terms of a utility function $U_S(u;s)$ consisting of the surprisal of $u$ for a naive listener, who interprets $u$ according its literal semantics:
+In the above equation, the listener is trying to jointly resolve the speaker’s intended referent r and the meaning of words (thus learning the lexicon $\mathcal{L}$). He does this by imagining what a rational speaker would say, given the referent they are trying to communicate and a lexicon. The speaker is an approximately rational Bayesian actor (with degree of rationality alpha), who produces utterances as a function of their informativity. The space of utterances the speaker could produce depends upon the lexicon $P(u|\mathcal{L})$; simply put, the speaker labels objects with the true labels under a given lexicon L (see SI Appendix for details):
 
-$$P_S(u|r_s)\propto exp(\alpha U_S(u;s))$$
+$$P_{S}(u|r,\mathcal{L})\propto Informativity(u;r)^\alpha \cdot P(u|\mathcal{L})$$
 
-This utility is maximized in order to decide which utterance to use to communicate about a particular referent, reflecting the expectation that the speaker communicates in an informative way. The absolute strength of $P_S(u|r_s)$ depends on a scalar value, $\alpha$, which can be interpreted as an indicator of how rational the speaker is in choosing utterances (i.e. as $\alpha$ increases, the speaker is more likely to choose the most informative utterance). We used the data from experiment 1 to specify how rational participants thought speakers were in the current setup. That is, we inferred which value of $\alpha$ would generate model predictions (assuming equal prior probability for each object) that corresponded to the average proportion of correct responses measured in experiment 1. 
+The informativity of an utterance for a referent is taken to be the probability with which a naive listener, who only interprets utterances according to their literal semantics, would select a particular referent given an utterance.
 
-We treated common ground expectations as changes in the prior probability that a particular referent is being referred to ($P_S(r_s)$ in the first equation). For example, if the speaker expresses preference for object A, and the same speaker later requests an object, then A has a higher probability of being the referent of a subsequent utterance, regardless of any additional pragmatic considerations. We used the proportions measured in experiment 2 to specify the probability distribution across referents for the different common ground manipulations (novelty or preference, same or different speaker).
+$$Informativity(u; r) = P(r|u) \propto P(r) \cdot \mathcal{L}_{point}$$
 
-With $\alpha$ and $P_S(r_s)$ fixed based on experiment 1 and 2, we generated model predictions for situations in which general and common ground expectations had to be integrated (Fig. 1C). Expectations could either be congruent or incongruent. If, for example, object A was the more informative object (unique to that table) and also the one the speaker expressed preference for, expectations were congruent. Next, the speaker who made the request could either be the same as the one in the previous interaction or a different one. Finally, common ground information could be manipulated in the form of preference or novelty. This resulted in a total of 2 (novelty or preference) x 2 (same or different speaker) x 2 (congruent or incongruent) = 8 conditions for which we generated model predictions. In order to capture that behavioral data is to some extend noisy, all models included a noise parameter. Noise parameters ranged between 0 and 1 and reflect the proportion of responses that are estimated (based on the data) to be random instead of in line with model predictions. Including the noise parameter greatly improved the model fit to the data (see SI Appendix for details). We did not preregister the inclusion of a noise parameter for experiment 3 but did so for all subsequent experiments.   
+The speaker’s possible utterances are pairs of linguistic and non-linguistic signals, namely labels and points. Because the listener does not know the lexicon, the informativity of an utterance comes from the speaker’s point, the meaning of which is encoded in $\mathcal{L}_{point}$ and is simply a truth-function checking whether or not the referent is at the location picked out by the speaker’s point. Though the speaker makes their communicative decision assuming the listener does not know the meaning of the labels, we assume that in addition to a point, the speaker produces a label consistent with their own lexicon $\mathcal{L}$, described by $P(u|\mathcal{L})$ (see SI Appendix for modeling details).
 
+This computational model provides a natural avenue to formalize quantitatively how informativeness and common ground trade-off during word learning. As mentioned above, the common ground shared between speaker and listener plays the role of the listener’s prior distribution over meanings, or types of referents, that the speaker might be referring to and which we posit depends on prior interactions around the referents in the present context (e.g., preference or novelty; Experiment 2A and B). We use the results from Experiment 2 to specify this distribution. The in-the-moment, contextual informativeness of the utterance is captured in the likelihood term, whose value depends on the rationality parameter $\alpha$. Assumptions about rationality may change depending on context and we therefore used the data from Experiment 1 to specify $\alpha$ (see SI Appendix for details about these parameters). 	
+
+The model generates predictions for situations in which utterance and common ground expectations are jointly manipulated (Fig. 1C - see SI Appendix for additional details and a worked example of how predictions were generated). In addition to the parameters fit to the data from previous experiments, we include an additional noise parameter to account for responses better explained by a process of random guessing than by pragmatics; we estimate this parameter from the observed data (Experiment 3). Including the noise parameter greatly improved the model fit to the data (see SI Appendix for details). We did not pre-register the inclusion of a noise parameter for Experiment 3 but did so for all subsequent experiments.
 ```{r ex3 GLMM, cache=F}
 # model 
 lm_ex3 <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (alignment|id), 
@@ -376,12 +255,6 @@ lm_ex3_r <- tidy(lm_ex3, effects = "fixed")%>%
          std.error = round(std.error,2),
          estimate = round(estimate,2))
 
-```
-
-In experiment 3, we collected new behavioral data for each of the eight conditions. Experimentally, we combined the procedures of experiment 1 and 2. The test setup was identical to experiment 1, however, before making a request, the speaker interacted with the objects so that some of them were preferred by or new to them (Fig. 1C). We discuss and visualize the results as the proportion with which participants chose the more informative object (i.e., the object that would be the more informative referent when only general expectations are considered). Before comparing responses to model predictions we fit a generalized linear mixed model (GLMM) to the data to test if participant's responses varied across conditions. Participants distinguished between congruent and incongruent trials when the speaker remained the same (model term: `alignment x speaker`; $\beta$ = `r lm_ex3_r%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(estimate)`, se = `r lm_ex3_r%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(std.error)`, *p* `r lm_ex3_r%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(p.value)`). 
-
-```{r fig3, include = T, fig.align = "center", fig.cap = "Results from experiment 3 and 4 for adults. Data and model predictions by condition for experiment 3 (A). Transparent dots show data from individual participants, diamonds represent condition means. Corrrelation between model predictions and data in experiment 3 (B), between data in experiment 3 and data for the strong prior manipulation in experiment 4 (direct replication - C) and between model predictions and data in experiment 4 (D). Coefficients and p-values are based on Pearson correlation statistics. Error bars represent 95\\% HDIs.", out.width="450px"}
-knitr::include_graphics("./figures/fig3.png")
 ```
 
 ```{r model comparison ex3}
@@ -409,52 +282,15 @@ ex3_pragm_model_noise_param <- readRDS("../../stats/saves/ex3_pragm_model_noise.
   round(digits = 2)
 ```
 
-Model predictions were highly correlated with the average response in each condition (Fig. 3A and B). We compared the fit of the pragmatics model described above to two alternative models: the *flat prior* model ignored the speaker specific expectation and the *prior only* model ignored the informativeness inference. This analysis tests whether the trade-off between expectations in the pragmatics model captured the structure in the data better compared to models that assume that participants only consider one type of expectation at a time. Model fit was much better for the pragmatic compared to the flat prior (Bayes Factor (BF) = `r format(ex3_bf%>%pull(pragmatic_noise_flat_prior_noise), digits = 2)`) or the prior only model (BF = `r format(ex3_bf%>%pull(pragmatic_noise_prior_only_noise), digits = 2)`), suggesting that participants considered and integrated both types of expectations. The estimated proportion of random responses according to the pragmatics model was `r ex3_pragm_model_noise_param%>%pull(mean)` (95% Highest Density Interval (HDI): `r ex3_pragm_model_noise_param%>%pull(ci_lower)` - `r ex3_pragm_model_noise_param%>%pull(ci_upper)` ). This value was considerably lower for the pragmatics model, compared to the alternative models (see SI Appendix), lending additional support to the conclusion that the pragmatics model better captured the behavioral data.  
+In Experiment 3, we combined the procedures of Experiment 1 and 2A or 2B. The test setup was identical to Experiment 1, however, before making a request, the speaker interacted with the objects so that some of them were preferred by or new to them (Fig. 1C). We discuss and visualize the results as the proportion with which participants chose the more informative object (i.e., the object that would be the more informative referent when only utterance information is considered). Participants distinguished between congruent and incongruent trials when the speaker remained the same, as evidenced by the fit of a generalized linear mixed effects model (model term: `alignment x speaker`; $\beta$ = `r lm_ex3_r%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(estimate)`, se = `r lm_ex3_r%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(std.error)`, *p* `r lm_ex3_r%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(p.value)`).
 
-## Replication and extension to different levels of speaker specific expectation (Experiment 4).
+Participants’ average responses were highly correlated with the model’s predictions in each condition (Fig. 2A). To test whether participants in fact balanced both information sources, we compared the pragmatics model to two alternative models: the *flat prior model*, which ignores common ground information and the *prior only model*, which ignores utterance information. Model fit was considerably better for the pragmatics model compared to the flat prior model (Bayes Factor (BF) = `r format(ex3_bf%>%pull(pragmatic_noise_flat_prior_noise), digits = 2)`) or the prior only model (BF = `r format(ex3_bf%>%pull(pragmatic_noise_prior_only_noise), digits = 2)`), suggesting that participants considered and integrated both sources of information. The estimated proportion of random responses according to the pragmatics model was `r ex3_pragm_model_noise_param%>%pull(mean)` (95% Highest Density Interval (HDI): `r ex3_pragm_model_noise_param%>%pull(ci_lower)` - `r ex3_pragm_model_noise_param%>%pull(ci_upper)`). This value was substantially lower for the pragmatics model compared to the alternative models (see SI Appendix), lending additional support to the conclusion that the pragmatics model better captured the behavioral data. Rather than explaining systematic structure in the data, the alternative models achieved their best fit only by assuming a very high level of noise.
 
-The goal of experiment 4 was twofold: First, to replicate the results of experiment 3 and second, to test the generalizability of the pragmatics model to a larger range of conditions. Compared to experiment 3, we manipulated the strength of the common ground expectations. For both, preference and novelty, we planned to have a strong, a medium and a weak manipulation. Expectation strength was manipulated by changing the way the speaker interacted with the objects prior to the request and measured as the proportion with which participants chose the preferred/novel object in the same speaker condition (see SI Appendix for results). For novelty, we succeeded in finding three qualitatively different manipulations. For preference, we piloted a number of manipulations but did not find a way to indicate only weak preference. Experiment 4 therefore included strong and medium manipulations for novelty and preference and a weak manipulation for novelty. The general expectation was the same as in experiment 3. For each level we crossed general and common ground expectations in the same way as in experiment 3, resulting in a total of 8 (strong) + 8 (medium) + 4 (weak) = 20 conditions. The strong manipulation was a direct replication of experiment 3. Model predictions were generated in the same way as in experiment 3.
-
-```{r ex4 GLMMs, cache=F}
-# strong 
-
-lm_ex4_strong <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (speaker+alignment|id), 
-              data = adult_ex4_data %>% filter(prior_manipulation == "strong"), family = binomial, 
-              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
-
-#summary(lm_ex4_strong)
-
-lm_ex4_r_strong <- tidy(lm_ex4_strong, effects = "fixed")%>%
-  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
-         std.error = round(std.error,2),
-         estimate = round(estimate,2))
-
-
-lm_ex4_medium <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (alignment|id), 
-              data = adult_ex4_data %>% filter(prior_manipulation == "medium"), family = binomial, 
-              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
-
-#summary(lm_ex4_medium)
-
-lm_ex4_r_medium <- tidy(lm_ex4_medium, effects = "fixed")%>%
-  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
-         std.error = round(std.error,2),
-         estimate = round(estimate,2))
-
-lm_ex4_weak <- glmer(correct_inf ~ speaker*alignment + (speaker+alignment|id), 
-              data = adult_ex4_data %>% filter(prior_manipulation == "weak"), family = binomial, 
-              control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
-
-#summary(lm_ex4_weak)
-
-lm_ex4_r_weak <- tidy(lm_ex4_weak, effects = "fixed")%>%
-  mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
-         std.error = round(std.error,2),
-         estimate = round(estimate,2))
-
+```{r fig2, include = T, fig.align = "center", fig.cap = "Correlation between model predictions and data. (A) Experiment 3, (B) Experiment 4, (C) 3-year-olds in Experiment 7 and (D) 4-year-olds in Experiment 7. Coefficients and p-values are based on Pearson correlation statistics. Error bars represent  95\\% HDIs.", out.width="450px"}
+knitr::include_graphics("./figures/fig2.png")
 ```
 
-Again, before evaluating model predictions, we fit GLMMs to the data for each level of common ground manipulation. Participants distinguished between congruent and incongruent trials when the speaker remained the same for the strong ($\beta$ = `r lm_ex4_r_strong%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(estimate)`, se = `r lm_ex4_r_strong%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(std.error)`, *p* `r lm_ex4_r_strong%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(p.value)`)\footnote{Here, this effect differed between novelty and preference: model term manipulation x alignment x speaker; $\beta$ = `r lm_ex4_r_strong%>%filter(term == "common_ground_manipulationpreference:speakersame_speaker:alignmentincongruent")%>%pull(estimate)`, se = `r lm_ex4_r_strong%>%filter(term == "common_ground_manipulationpreference:speakersame_speaker:alignmentincongruent")%>%pull(std.error)`, p `r lm_ex4_r_strong%>%filter(term == "common_ground_manipulationpreference:speakersame_speaker:alignmentincongruent")%>%pull(p.value)`} and medium ($\beta$ = `r lm_ex4_r_medium%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(estimate)`, se = `r lm_ex4_r_medium%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(std.error)`, *p* `r lm_ex4_r_medium%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(p.value)`), but not the weak manipulation ($\beta$ = `r lm_ex4_r_weak%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(estimate)`, se = `r lm_ex4_r_weak%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(std.error)`, *p* `r lm_ex4_r_weak%>%filter(term == "speakersame_speaker:alignmentincongruent")%>%pull(p.value)`, model term: `alignment x speaker` in all cases). This pattern validates our manipulations. If the speaker specific manipulation is weak, changing the speaker has no differential impact on the informativeness inference. Results from the strong manipulation in experiment 4 further replicated findings from experiment 3 (Fig. 3C).
+## Replication and extension to different levels of common ground information (Experiment 4).
 
 ```{r model comparison ex4}
 ex4_bf <- bind_rows(
@@ -469,8 +305,6 @@ ex4_bf <- bind_rows(
          "pragmatic_noise_flat_prior_noise" = exp(pragmatic_noise - flat_prior_noise),
          "prior_only_noise_flat_prior_noise" = exp(prior_only_noise - flat_prior_noise)) %>%
   select(-pragmatic_noise, -flat_prior_noise, -prior_only_noise)
-
-
 ex4_pragm_model_noise_param <- readRDS("../../stats/saves/ex4_pragm_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
   summarise(mean = estimate_mode(value), 
@@ -479,15 +313,17 @@ ex4_pragm_model_noise_param <- readRDS("../../stats/saves/ex4_pragm_model_noise.
   round(digits = 2)
 ```
 
-Model predictions from the pragmatics model were again highly correlated with the average response in each condition (Fig. 3D). We evaluated model fit for the same models as in experiment 3 and found again that the pragmatics model fit the data much better compared to the flat prior (BF = `r format(ex4_bf%>%pull(pragmatic_noise_flat_prior_noise), digits = 2)`) or the prior only model (BF = `r format(ex4_bf%>%pull(pragmatic_noise_prior_only_noise), digits = 2)`). The inferred level of noise based on the data for the pragmatics model was `r ex4_pragm_model_noise_param%>%pull(mean)` (95% HDI: `r ex4_pragm_model_noise_param%>%pull(ci_lower)` - `r ex4_pragm_model_noise_param%>%pull(ci_upper)`), which was again lower compared to the alternative models (see SI Appendix).
+To test if our model makes accurate predictions for different combinations, we first replicated and then extended the results of Experiment 3 to a broader range of experimental conditions. Specifically, we manipulated the strength of the common ground information (strong, medium and weak manipulation) by changing  the way the speaker interacted with the objects prior to the request We ran a total of 20 conditions, including a direct replication of Experiment 3 (see SI Appendix for details).
 
-Summarizing experiment 3 and 4, we saw that adults flexibly integrated different expectations about a speaker in a word learning scenario. This process was best described by a model that treated information integration as a form of probabilistic inference. Next, we took a developmental perspective and studied if the same model could be used to describe children's word learning. 
+Model predictions from the pragmatics model were again highly correlated with the average response in each condition (Fig. 2B). We evaluated model fit for the same models as in Experiment 3 and found again that the pragmatics model fit the data much better compared to the flat prior (BF = `r format(ex4_bf%>%pull(pragmatic_noise_flat_prior_noise), digits = 2)`) or the prior only model (BF = `r format(ex4_bf%>%pull(pragmatic_noise_prior_only_noise), digits = 2)`). The inferred level of noise based on the data for the pragmatics model was `r ex4_pragm_model_noise_param%>%pull(mean)` (95% HDI: `r ex4_pragm_model_noise_param%>%pull(ci_lower)` - `r ex4_pragm_model_noise_param%>%pull(ci_upper)`), which was similar to Experiment 3 and again lower compared to the alternative models (see SI Appendix).
 
-# Children
+# Do children integrate contextual information?
 
-## Assessment of general and speaker specific expectations (Experiment 1 and 2)
+The previous section showed that competent language users flexibly integrate information during pragmatic word learning. Do children make use of multiple information sources during word learning as well? When does this integration emerge developmentally? While many verbal theories of language learning imply that this integration takes place, the actual process has neither been described in detail nor tested. Here we provide an explanation in the form of our pragmatics model and test if it is able to capture children’s word learning. Embedded in the assumptions of the model is the idea that developmental change is change in the strength of the individual inferences, leading to a change in the strength of the integrated inference. As a starting point, our model assumes developmental continuity in the integration process itself, though this assumption could be called into question by a poor model fit.
 
-We approached children's word learning in the same way as adults'. First, we measured the strength of general (informativeness) and common ground (preference) expectations and used these measurements to set model parameters. Then we generated model predictions for how expectations should be integrated. Finally, we compared model predictions to new behavioral data. In this, we took a truly developmental perspective. We sampled children continuously across the entire age range and generated model predictions for the average developmental trajectory in each condition. In all the following experiments, we tested children between 3.0 and 4.9 years of age. For experiment 1 and 2, we also tested two-year-olds but did not find sufficient evidence that they make general and/or common ground inferences in the tasks we used.
+## Inferences based on utterance and common ground information (Experiment 5 and 6)
+
+The study for children followed the same general pattern as the one for adults. We generated model predictions for how information should be integrated by first measuring children’s ability to use utterance (informativeness) and common ground (preference) information in isolation when making pragmatic inferences. We then adapted our model to study developmental change: We sampled children continuously between 3.0 and 5.0 years of age – a time in which children have been found to make the kind of pragmatic inferences we studied here [@bohn2019pervasive, frank2014inferring] - and generated model predictions for the average developmental trajectory in each condition\footnote{For Experiment 5 and 6, we also tested two-year-olds but did not find sufficient evidence that they use utterance and/or common ground information in the tasks we used to justify investigating their ability to integrate the two.}.
 
 ```{r child ex1 and 2 results}
 #experiment 1
@@ -512,7 +348,7 @@ child_ex1_lm <- glmer(correct ~ age_num + (1 | id),
               data = child_ex1_lm_data, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
-summary(child_ex1_lm)
+#summary(child_ex1_lm)
 
 child_lm_ex1_r <- tidy(child_ex1_lm, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
@@ -537,7 +373,7 @@ child_ex2t <- child_ex2_data %>%
 child_ex2_lm_data <- child_ex2_data%>%
   mutate(age_num = scale(age_num, center = TRUE, scale = TRUE))
 
-child_ex2_lm <- glmer(correct ~ age_num*condition + (condition | id) + (condition*age_num | agent), 
+child_ex2_lm <- glmer(correct ~ age_num*condition + (condition | id) + (1 | agent), 
               data = child_ex2_lm_data, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
@@ -550,19 +386,15 @@ child_lm_ex2_r <- tidy(child_ex2_lm, effects = "fixed")%>%
 
 ```
 
-Children were only tested in the test condition in experiment 1. To compare children's performance to chance level, we binned age by year. Four-year-olds selected the more informative object (i.e. the object that was unique to the location the speaker turned to) above chance (t(`r child_ex1t%>%filter(age_bin =="4")%>%pull(df)`) = `r child_ex1t%>%filter(age_bin =="4")%>%pull(t_value)`, *p* `r child_ex1t%>%filter(age_bin =="4")%>%pull(p_value)`). Three-year-olds, on the other hand, did not (t(`r child_ex1t%>%filter(age_bin =="3")%>%pull(df)`) = `r child_ex1t%>%filter(age_bin =="3")%>%pull(t_value)`, *p* `r child_ex1t%>%filter(age_bin =="3")%>%pull(p_value)`). Consequently, when we fit a GLMM to the data with age as a continuous predictor, performance increased with age ($\beta$ = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(p.value)`, see Fig. 4). Thus, children's expectation that speakers communicate in an informative way increased with age. 
+Experiment 5 was analogous to Experiment 1 for adults. To compare children’s performance to chance level, we binned age by year. Four-year-olds selected the more informative object (i.e. the object that was unique to the location the speaker turned to) above chance (t(`r child_ex1t%>%filter(age_bin =="4")%>%pull(df)`) = `r child_ex1t%>%filter(age_bin =="4")%>%pull(t_value)`, *p* `r child_ex1t%>%filter(age_bin =="4")%>%pull(p_value)`). Three-year-olds, on the other hand, did not (t(`r child_ex1t%>%filter(age_bin =="3")%>%pull(df)`) = `r child_ex1t%>%filter(age_bin =="3")%>%pull(t_value)`, *p* `r child_ex1t%>%filter(age_bin =="3")%>%pull(p_value)`). Consequently, when we fit a GLMM to the data with age as a continuous predictor, performance increased with age ($\beta$ = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(p.value)`). Thus, children’s ability to use utterance information in a word learning context increased with age.
 
-In experiment 2, we assessed whether children use common ground information to identify the referent of a novel word. We tested children with the novelty as well as the preference manipulation but found little evidence that children distinguished between requests made by the same speaker or a different speaker in the case of novelty. We therefore dropped this manipulation and focused on preference for the remainder of the study.
+In Experiment 6, we assessed whether children use common ground information to identify the referent of a novel word. We tested children with the novelty as well as the preference manipulation but found little evidence that children distinguished between requests made by the same speaker or a different speaker in the case of novelty. Since our focus was on how children selectively integrate the two sources of information, we therefore dropped this manipulation and focused on preference for the remainder of the study.
 
-```{r fig4, include = T, fig.align = "center", fig.cap = "Results from experiment 1 and 2 for children For preference, control refers to to the different speaker condition (see Fig. 1B). Transparent dots show data from individual participants, regression lines show fitted linear models with 95\\% CIs. Dashed line indicates performance expected by chance.", out.width="250px"}
-knitr::include_graphics("./figures/fig4.png")
-```
+For preference, four-year-olds selected the preferred object above chance when the same speaker made the request (t(`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(df)`) = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(t_value)`, *p* `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(p_value)`), whereas three-year-olds did not (t(`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(df)`) = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(t_value)`, *p* `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(p_value)`). However, when we fit a GLMM to the data with age as a continuous predictor, we found an effect of speaker identity ($\beta$ = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`) but no effect of age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(p.value)`) or interaction between speaker identity and age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(p.value)`4). Thus, children across the age range used common ground information to infer the referent of a novel word.
 
-For preference, four-year-olds selected the preferred object above chance when the same speaker made the request (t(`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(df)`) = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(t_value)`, *p* `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(p_value)`), whereas three-year-olds did not (t(`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(df)`) = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(t_value)`, *p* `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(p_value)`). However, when we fit a GLMM to the data with age as a continuous predictor, we found an effect of speaker identity ($\beta$ = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`) but no effect of age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(p.value)`) or interaction between speaker identity and age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(p.value)`, Fig. 4). Thus, children across the age range used common ground information to infer the referent of a novel word.
+## Developmental model predictions evaluated against new data (Experiment 7)
 
-## Model predictions for information integration evaluated against new data (Experiment 3)
-
-We used the measurements from experiment 1 and 2 to specify $\alpha$ and $P_S(r_s)$ in the pragmatics model. However, instead of setting these parameters to a single value, we used the data to infer the intercept and slope that best described the developmental trajectory for each parameter. For $P_S(r_s)$, this was done separately for the same speaker and the different speaker condition (see SI Appendix for details). These parameter settings were then used to generate age sensitive model predictions in 2 (same or different speaker) x 2 (congruent or incongruent) = 4 conditions. As for adults, all models included a noise parameter, which was estimated based on the data. 
+We used the measurements from Experiment 5 and 6 to specify the strength of informativity, $\alpha$, and common ground in the pragmatics model. Instead of inferring a single value we inferred the intercept and slope for each parameter that best described the developmental trajectory in the data of Experiment 5 and 6. These parameter settings were then used to generate age sensitive model predictions in 2 (same or different speaker) x 2 (congruent or incongruent) = 4 conditions. As for adults, all models included a noise parameter, which was estimated based on the data.
 
 ```{r child ex3 GLMM, cache = F}
 child_ex3_lm_data <- child_ex3_data%>%
@@ -582,11 +414,7 @@ child_lm_ex3_r <- tidy(child_ex3_lm, effects = "fixed")%>%
          estimate = round(estimate,2))
 ```
 
-In experiment 3, we combined the procedures of experiment 1 and 2 and collected new data from children between 3.0 and 4.9 years of age in each of the four conditions (Fig. 1C). Before comparing the data to model predictions, we fit a GLMM to the data to test if children distinguished between conditions. Children's propensity to differentiate between congruent and incongruent trials for the same or a different speaker increased with age (model term: `age x alignment x speaker`; $\beta$ = `r child_lm_ex3_r%>%filter(term == "age_num:speakersame_speaker:alignmentincongruent")%>%pull(estimate)`, se = `r child_lm_ex3_r%>%filter(term == "age_num:speakersame_speaker:alignmentincongruent")%>%pull(std.error)`, *p* `r child_lm_ex3_r%>%filter(term == "age_num:speakersame_speaker:alignmentincongruent")%>%pull(p.value)`).
-
-```{r fig5, include = T, fig.align = "center", fig.cap = "Results from experiment 3 for children. Purple lines show model predictions with 95\\% HDIs, transparent dots show data from individual participants (A). Correlation between model predictions and condition means binned by year (B). Coefficent and p-value are based on Pearson correlation statistic. Error bars represent 95\\% HDIs.", out.width="450px"}
-knitr::include_graphics("./figures/fig5.png")
-```
+In Experiment 7, we combined the procedures of Experiment 5 and 6 and collected new data from children between 3.0 and 5.0 years of age in each of the four conditions (Fig. 1C). Children’s propensity to differentiate between congruent and incongruent trials for the same or a different speaker increased with age (model term: `age x alignment x speaker`; $\beta$ = `r child_lm_ex3_r%>%filter(term == "age_num:speakersame_speaker:alignmentincongruent")%>%pull(estimate)`, se = `r child_lm_ex3_r%>%filter(term == "age_num:speakersame_speaker:alignmentincongruent")%>%pull(std.error)`, *p* `r child_lm_ex3_r%>%filter(term == "age_num:speakersame_speaker:alignmentincongruent")%>%pull(p.value)`).
 
 ```{r child model comparison}
 
@@ -606,51 +434,45 @@ child_ex3_pragm_model_noise_param <- readRDS("../../stats/saves/child_ex3_pragm_
             ci_upper = hdi_upper(value))
 ```
 
-Next, we evaluated the model predictions (Fig 5A). For the correlational analysis, we binned model predictions and data by year. There was a substantial correlation between the predicted and measured average response in each age bin (Fig. 5B). For the model comparison, we treated age continuously. As for adults, we found a much better model fit for the pragmatics model compared to the flat prior (BF = `r format(child_ex3_bf%>%filter (parameter=="noise")%>%pull(pragmatic_flat_prior), digits = 2)`) or the prior only model (BF = `r format(child_ex3_bf%>%filter (parameter=="noise")%>%pull(pragmatic_prior_only), digits = 2)`). The inferred level of noise based on the data for the pragmatics model was `r child_ex3_pragm_model_noise_param%>%pull(mean)` (95% HDI: `r child_ex3_pragm_model_noise_param%>%pull(ci_lower)` - `r child_ex3_pragm_model_noise_param%>%pull(ci_upper)`), which was lower compared to the alternative models considered (see SI Appendix). The high level of inferred noise moved the model predictions in all conditions close to chance level (Fig. 5A). We therefore compared two additional sets of models with different parameterizations that emphasized differences between conditions in the model predictions more. This analysis was not preregistered. Parameter free models did not include a noise parameter and developmental noise models allowed the noise parameter to change with age. In each case, the pragmatics model provided a better fit compared to the alternative models (flat prior: parameter free BF = `r format(child_ex3_bf%>%filter (parameter=="parameter free")%>%pull(pragmatic_flat_prior), digits = 2)`, developmental noise BF = `r format(child_ex3_bf%>%filter (parameter=="developmental noise")%>%pull(pragmatic_flat_prior), digits = 2)`; prior only: parameter free BF = `r format(child_ex3_bf%>%filter (parameter=="parameter free")%>%pull(pragmatic_prior_only), digits = 2)`, developmental noise BF = `r format(child_ex3_bf%>%filter (parameter=="developmental noise")%>%pull(pragmatic_prior_only), digits = 2)`). Taken together, these results suggest that children's word learning is best described as a flexible integration of general and common ground expectations.
+Our modeling results suggest that children flexibly integrate both common ground and informativity information, and that this integration process is accurately captured by the pragmatics model at least for four-year-olds. For the correlational analysis, we binned model predictions and data by year. There was a substantial correlation between the predicted and measured average response for four-year-olds, but less so for three-year-olds (Fig. 2C and D). One of the reasons for the latter was the low variation between conditions. For the model comparison, we treated age continuously. As with adults, we found a much better model fit for the pragmatics model compared to the flat prior (BF = `r format(child_ex3_bf%>%filter (parameter=="noise")%>%pull(pragmatic_flat_prior), digits = 2)`) or the prior only model (BF = `r format(child_ex3_bf%>%filter (parameter=="noise")%>%pull(pragmatic_prior_only), digits = 2)`). The inferred level of noise based on the data for the pragmatics model was `r child_ex3_pragm_model_noise_param%>%pull(mean)` (95% HDI: `r child_ex3_pragm_model_noise_param%>%pull(ci_lower)` - `r child_ex3_pragm_model_noise_param%>%pull(ci_upper)`), which was lower compared to the alternative models considered but numerically higher than that of adults (see SI Appendix). 
+
+The high level of inferred noise moved the model predictions for children in all conditions close to chance level. We therefore compared two additional sets of models with different parameterizations that emphasized differences between conditions in the model predictions more (see SI Appendix). This analysis was not pre-registered. Parameter free models did not include a noise parameter and developmental noise models allowed the noise parameter to change with age. In each case, the pragmatics model provided a better fit compared to the alternative models (flat prior: parameter free BF = `r format(child_ex3_bf%>%filter (parameter=="parameter free")%>%pull(pragmatic_flat_prior), digits = 2)`, developmental noise BF = `r format(child_ex3_bf%>%filter (parameter=="developmental noise")%>%pull(pragmatic_flat_prior), digits = 2)`; prior only: parameter free BF = `r format(child_ex3_bf%>%filter (parameter=="parameter free")%>%pull(pragmatic_prior_only), digits = 2)`, developmental noise BF = `r format(child_ex3_bf%>%filter (parameter=="developmental noise")%>%pull(pragmatic_prior_only), digits = 2)`). 
 
 # Discussion
 
-Integrating different sources of information is an integral part of human communication. To infer the intended meaning of an utterance, listeners combine their knowledge of communicative conventions (semantics and syntax) with social expectations about their interlocutor. When learning new words, social information is especially vital. But how are different social expectations integrated during word learning? Here we explored the hypothesis that information integration is a process of probabilistic inference. We studied how expectations that speakers communicate in an informative way are contextualized by expectations that follow from prior interactions with the speaker. Across development, participants' learning was best predicted by a Bayesian pragmatics model in which expectations were flexibly traded-off between one another in a probabilistic way. Alternative models, which considered only one type of expectation, made worse predictions.
+Integrating multiple sources of information is an integral part of human communication [@tanenhaus1995integration]. To infer the intended meaning of an utterance, listeners must combine their knowledge of communicative conventions (semantics and syntax) with social expectations about their interlocutor. This integration is especially vital in early language learning, and the different varieties of pragmatic information are among the most important sources [@bohn2019pervasive]. But how are different cues integrated during word learning? Here we used a Bayesian pragmatics model to formalize this integration process. We studied how utterance-level (Gricean expectations) about informative communication are integrated with common ground information that follows from prior interactions with the speaker. Adults’ and children’s learning was best predicted by a model in which both sources of information traded-off flexibly. Alternative models that considered only one source of information made substantially worse predictions.
 
-The pragmatics model goes beyond simply weighing expectations by some ratio. It offers an explicit account about how integration may proceed: Because all objects are new and their labels unknown, the initial probability of each object depends entirely on common ground information. Now, the listener assumes the speaker to produce their utterance based on the expected effect that their utterance will have *in light of* this shared common ground. Thus, inferences are not computed separately but the result of an integrated process. 
+All of the models we compared here integrated some explicit structure, rather than (for example) simply weighing expectations by some ratio. We made this decision because we wanted to make predictions within a framework in which the models were models of the task, rather than simply models of the data. That is, inferences are not computed separately by the modeler and specified as inputs to a regression model, but instead are the results of an integrated process that operates over a (schematic) representation of the experimental stimuli. Further, our models are variants derived from the broader RSA framework, which has been integrated into larger systems for language learning in context [@wang2016learning]. 
 
-In the current model, common ground information was treated in the same way as contextual salience [see e.g. @frank2012predicting]. Interacting around an object changed the probability that this object will be communicated about. In theory, similar changes could be brought about by increasing the object's perceptual salience. Future work could try to explicitly model the social-cognitive processes that gave rise to common ground expectations and contrast social and perceptual salience. 
+We conceptualized developmental change as age related changes in the propensity to make the individual inferences. That is, while the degree to which listeners expect speakers to be informative or follow common ground changes with age, the process by which expectations are integrated remains the same. However, other developmental models are also worth exploring in future work; one possible candidate would be a model in which the integration process itself changes with age. Our model did not successfully describe three-year-olds’ inferences; thus, it is possible that they were not able to integrate information sources. But our findings are also consistent with a simpler explanation, namely that the overall weaker responses we observed in the independent measurement experiments (Experiments 5 and 6), combined with some noise in responding, led the younger children to appear relatively random in their responses. 
 
-We conceptualized developmental change as age related changes in the propensity to make the individual inferences. That is, while the degree to which listeners expect speakers to be informative or follow common ground changes with age, the process by which expectations are integrated remains the same. This is a very parsimonious conception of developmental change and others, in which the integration process itself changes with age, are also plausible and worth exploring.
+Studying how multiple types of pragmatic cues are balanced contributes to a more comprehensive understanding of word learning. In the current study, participants inferred the referent by integrating non-linguistic cues (speakers pointing to a table) with assumptions about speaker informativeness and common ground information, going beyond previous experimental work in measuring how these information sources were combined. The real learning environment is far richer than what we captured in our experimental design, however. For example, in addition to multiple layers of social information, children can rely on semantic and syntactic features of the utterances as cues to meaning [@clark1973s; @abend2017bootstrapping; @gleitman1990structural]. Across development, children learn to recruit these different sources of information and integrate them. RSA models allow for the inclusion of semantic information as part of the utterance [@bergen2016pragmatic] and it will be a fruitful avenue for future research to model the integration of linguistic and pragmatic information across development. 
 
-Studying how multiple types of social information are balanced contributes to a comprehensive and ecologically valid model of word learning. In the current study, participants inferred the referent by integrating non-linguistic cues (speakers turning and looking to one table) with assumptions about speaker informativeness and common ground information. However, the real learning environment is much richer than the what we captured in our experimental design. In addition to multiple layers of social information, children can rely on semantic and syntactic features of the utterances as cues to the meaning of the words embedded therein [@clark1973s; @abend2017bootstrapping; @gleitman1990structural]. Across development, children learn to recruit these different sources of information and integrate them. Our studies show how computational models of language use and comprehension can be used as powerful tools to explicate and test hypothesis about how integration proceeds.  
+More broadly, our work here shows how computational models of language comprehension can be used as powerful tools to explicate and test hypotheses about information integration. Furthermore, we took a first step towards integrating developmental change into this theoretical framework. 
 
 # Methods
 
-All experimental procedures, sample sizes and statistical analysis were pre-registered (https://osf.io/u7kxe/). Experimental stimuli, data files and analysis scripts are freely available in an online repository (https://github.com/manuelbohn/mcc).
+All experimental procedures, sample sizes and statistical analysis were pre-registered (https://osf.io/u7kxe/). Experimental stimuli, data files and analysis scripts are freely available in an online repository (https://github.com/manuelbohn/mcc). 
 
 ## Participants
 
-Adult participants were recruited via Amazon Mechanical Turk (MTurk) and received payment equivalent to an hourly wage of ~ \$9. Experiment 1 and each manipulation of experiment 2 had *N* = 40 participants. Sample size in experiment 3 was *N* = `r length(unique(adult_ex3_data$id))`. *N* = `r length(unique(adult_ex4_prior_data$id))` participated in the experiments to measure the strong, medium and weak preference and novelty manipulations. Finally, experiment 4 had *N* = `r length(unique(adult_ex4_data$id))` participants. 
+Adult participants were recruited via Amazon Mechanical Turk (MTurk) and received payment equivalent to an hourly wage of ~ \$9. Experiment 1 and each manipulation of Experiment 2 had N = 40 participants. Sample size in Experiment 3 was *N* = `r length(unique(adult_ex3_data$id))`. *N* = `r length(unique(adult_ex4_prior_data$id))` participated in the experiments to measure the strong, medium and weak preference and novelty manipulations. Finally, experiment 4 had *N* = `r length(unique(adult_ex4_data$id))` participants. 
 
-Children were recruited from the floor of the Children's Discovery Museum in San Jose, California, USA. Parents gave informed consent and provided demographic information. We collected data from a total of 243 children between 3.0 and 4.9 years of age. We excluded 15 due to less than 75% of reported exposure to English, five because they responded incorrect on 2/2 training trials, three because of equipment malfunction and two because they quit before half of the test trials were completed. The final sample size in each experiment was as follows: *N* = `r length(unique(child_ex1_data$id))` (41 girls, mean age = `r round(mean(child_ex1_data$age_num),2)`) in experiment 1, *N* = `r length(unique(child_ex2_data$id))` (28 girls, mean age = `r round(mean(child_ex2_data$age_num),2)`) in experiment 2 and *N* = `r length(unique(child_ex3_data$id))` (54 girls, mean age = `r round(mean(child_ex3_data$age_num),2)`) in experiment 3.  
+Children were recruited from the floor of the Children’s Discovery Museum in San Jose, California, USA. Parents gave informed consent and provided demographic information. We collected data from a total of 243 children between 3.0 and 5.0 years of age. We excluded 15 children due to less than 75% of reported exposure to English, five because they responded incorrectly on 2/2 training trials, three because of equipment malfunction, and two because they quit before half of the test trials were completed. The final sample size in each experiment was as follows: *N* = `r length(unique(child_ex1_data$id))` (41 girls, mean age = `r round(mean(child_ex1_data$age_num),2)`) in Experiment 5,  *N* = `r length(unique(child_ex2_data$id))` (28 girls, mean age = `r round(mean(child_ex2_data$age_num),2)`) in Experiment 6 and *N* = `r length(unique(child_ex3_data$id))` (54 girls, mean age = `r round(mean(child_ex3_data$age_num),2)`) in Experiment 7.
 
-## Experimental procedures
+## Materials
 
-All experiments were framed as games in which participants would learn words from animals. They were implemented in HTML/JavaScript as a website. Adults were directed to the website via MTurk and responded by clicking objects. Children were guided through the game by an experimenter and responded by touching objects on the screen. For each animal character, we recorded a set of utterances (one native English speaker per animal) that were used to provide information and make requests. All studies started with an introduction to the animals and two training trials in which familiar objects were requested (car and ball). Subsequent test trials in each condition were presented in a random order.
+All experiments were framed as games in which participants would learn words from animals. They were implemented in HTML/JavaScript as a website. Adults were directed to the website via MTurk and responded by clicking objects. Children were guided through the game by an experimenter and responded by touching objects on the screen of an iPad tablet [@frank2016using]. For each animal character, we recorded a set of utterances (one native English speaker per animal) that were used to provide information and make requests. All experiments started with an introduction to the animals and two training trials. Subsequent test trials in each condition were presented in a random order. Detailed experimental procedures for each experiment can be found in the SI Appendix.
 
-The setup of experiment 1 for adults is shown in Fig. 1A. In the beginning of each trial, the animal introduced themselves (e.g. “Hi, I’m Dog”) and then turned towards the table with the two objects. The same utterance was used to make a request in all adult studies ( “Oh cool, there is a [non-word] on the table, how neat, can you give me the [non-word]?”). In the test condition, there was one object on the other table whereas in the control condition there were two. Participants received six trials, three per condition. 
-
-The setup for experiment 2 is shown in Fig. 1B. In the preference manipulation, the animal introduced themselves, then turned to one of the tables and expressed either that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object before turning to the other side and expressing the respective other attitude. Next the animal disappeared and, after a short pause, either the same or a different animal returned and requested an object while facing straight ahead. This procedure was the strong preference manipulation. In the medium version, the animal only expressed preference and did so in a more subtle way (simply saying: "Oh, wow").
-
-In the novelty manipulation one of the tables was initially empty. The animal turned to one of the sides and commented either on the presence (“Aha, look at that”) or the absence (“Hm..., nothing there”) of an object before turning to the other side and commenting in a complementary way. After shortly disappearing, the same animal repeated the sequence above. When the animal left a second time, a new object appeared on the empty table. Next, either the same or a different animal returned and requested an object. This corresponded to the strong manipulation. For the medium manipulation, the animal turned to each table only once before the new object appeared. In the weak manipulation, the animal only commented on the present object once and never turned to the empty table. Participants always received six trials, three with the same and three with the different speaker.
-
-For experiment 3 and 4 we inserted the common ground manipulation before the request in the setup of experiment 1 (Fig. 1C). For example, the animal turned to the table with one object and express that they liked object A, then turned to the other table and express that they did not like object B. Next, after quickly disappearing, the animal reappeared, turned to the table with two objects and make a request. To make it clear, which of the objects the speaker commented on while being turned to the table with the two objects during the common ground manipulation, the object was temporarily enlarged. Participants completed eight trials for one of the common ground manipulations with two  trials per condition (same/different speaker x congruent/incongruent). 
-
-Experiment 1 for children was modeled after @frank2014inferring. Instead of on tables, objects were presented as hanging in trees. After introducing themselves, the animal turned to the tree with two objects and said: “This is a tree with a [non-word], how neat, a tree with a [non-word]”). Next, the trees and the objects in them disappeared and new trees replaced them. The two objects from the tree the animal turned to previously were now spread across the two trees (one object per tree, position counterbalanced). While facing straight, the animal first said "Here are some more trees" and then asked the child to pick the tree with the object that corresponded to the novel word ("Which of these trees has a [non-word]"). Children received six trials in a single test condition. 
-
-Experiment 2 for children was identical to the strong preference manipulation for adults. Children received eight trials, four with the same and four with a different animal returning.
-
-In experiment 3 for children, we again inserted the preference manipulation into the setup of experiment 1. After greeting the child, the animal turned to one of the trees, pointed to an object (object was temporarily enlarged and moved closer to the animal) and expressed liking or disliking. Then the animal turned to the other tree and expressed the other attitude for the other kind of object. Next, the animal disappeared and either the same or a different animal returned. The rest of the trial was identical to the label and request phase of experiment 1. Children received eight trials, two per condition (same/different speaker x congruent/incongruent).
 
 ## Analysis
 
-All analysis were run in R [@R-base]. GLMMs were fit via the function `glmer` from the package `lme4` [@R-lme4]. Probabilistic models and model comparisons were implemented in WebPPL [@dippl] using the r package `rwebppl` [@R-rwebppl]. The flat prior model had the same structure as the pragmatics model but used a uniform prior over objects. The prior only model predicted choice based on the prior probability for each object alone. Bayes Factors for model comparisons are based on marginal likelihoods of each model given the data. The corresponding model code can be found in the associated online repository.
+All analyses were run in R [@R-base]. GLMMs were fit via the function `glmer` from the package `lme4` [@R-lme4] and had a maximal random effect structure conditional on model convergence. Probabilistic models and model comparisons were implemented in WebPPL [@dippl] using the r package `rwebppl` [@R-rwebppl]. Bayes Factors for model comparisons were based on marginal likelihoods of each model given the data. Details on models can be found in the supplementary information.
+
+# Acknowledgements
+
+MB received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement no. 749229. MCF was supported by a Jacobs Foundation Advanced Research Fellowship and the Zhou Fund for Language and Cognition. We thank Jacqueline Quirke and Sabina Zacco for help with the data collection and Bria Long and Gregor Kachel for comments on an earlier version of the paper.
+
 
 \newpage
 
