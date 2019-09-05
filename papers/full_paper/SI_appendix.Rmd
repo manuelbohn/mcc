@@ -369,11 +369,6 @@ To see if participants differentiated between conditions, we fit the following G
 
 ### Prior strength manipualtions
 
-```{r ex4 prior pre-tests data adults}
-# load data from prior strength manipulation experiments to set priors
-adult_ex4_prior_data <-read_csv(file="../../stats/data/adult_ex4_prior.csv") 
-```
-
 ```{r table_prior,results = "asis"}
 ex4_prior_models <- adult_ex4_prior_data %>%
   group_by(common_ground_manipulation,prior_manipulation)%>%
