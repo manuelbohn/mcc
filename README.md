@@ -1,6 +1,6 @@
 # Pragmatic cue integration in adults’ and children’s inferences about novel word meanings
 
-Here you find all experimental procedures, data files and analysis scripts associated with the main manuscript. Please see the manuscript for additional details. 
+Here you find all experimental procedures, data files and analysis scripts associated with the main manuscript (https://psyarxiv.com/xma4f). Please see the manuscript for additional details.
 
 ## Structure
 
