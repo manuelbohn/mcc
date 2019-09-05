@@ -3,7 +3,9 @@
 
 /* We want the page to sit flush inside the browser window - that means no margins or padding. Also, use a nice-looking serif font. */
 body {
-	padding: 0;
+	width: 1024px;
+	height: 768px;
+    padding: 0;
 	margin: 0;
 	font-family: Palatino Linotype, Bookman Antiqua, Palatino, serif;
 	font-size: 16px;
@@ -12,8 +14,8 @@ body {
 
 /* We manage display using "slides". A slide is a <code>div</code> that takes up the entire page. Only one slide should be visible at a time. Navigation between slides is most sensibly accomplished using using buttons, rather than keyboard events. */
 .slide {
-	width: 950px;
-	height: 600px;
+	width: 1024px;
+	height: 768px;
 	display: none;
 	position: absolute;
 	margin: 0;
@@ -22,6 +24,23 @@ body {
 }
 
 input, select, button {font-family: Georgia, serif; font-size: 14px;}
+
+
+.background {
+	width: 1024px;
+	height: 660px;
+    opacity: 0.3;
+    z-index: -5
+}
+
+.dis {
+    position: absolute;
+    bottom: 250px;
+    left: 100px;
+    width: 880px;
+    height: 150px;
+    z-index: -2
+}
 
 
 button {
@@ -91,7 +110,7 @@ nextButton {
 	height: 29px;
 	min-width: 70px;
     position: absolute;
-    top: 530px;
+    top: 680px;
     left: 470px;
     z-index: 2
 }
@@ -103,7 +122,7 @@ nextButton:active {
     top: 50px;
     left: 50px;
     position: absolute;
-    top: 530px;
+    top: 680px;
     left: 470px;
     z-index: 2
 }
@@ -118,40 +137,82 @@ nextButton[disabled] {
 
 .agent {
     position: absolute;
-    bottom: 255px;
+    bottom: 270px;
     left: 380px;
-    width: 280px;
+    width: 300px;
 }
 
 .point_agent_r {
     position: absolute;
-    bottom: 255px;
-    left: 368px;
-    width: 280px;
-}
-
-
-.look_agent_l {
-    position: absolute;
-    bottom: 255px;
-    left: 392px;
-    width: 280px;
-}
-
-.look_agent_r {
-    position: absolute;
-    bottom: 255px;
-    left: 368px;
-    width: 280px;
+    bottom: 270px;
+    left: 380px;
+    width: 300px;
+    z-index: 1;
 }
 
 
 .point_agent_l {
     position: absolute;
-    bottom: 255px;
-    left: 392px;
-    width: 280px;
+    bottom: 270px;
+    left: 380px;
+    width: 300px;
+    z-index: 1;
 }
+
+    
+.look_agent_r {
+    position: absolute;
+    bottom: 270px;
+    left: 380px;
+    width: 300px;
+}
+
+
+.look_agent_l {
+    position: absolute;
+    bottom: 270px;
+    left: 380px;
+    width: 300px;
+}
+
+.barrier_l {
+    position: absolute;
+    bottom: 120px;
+    left: 40px;
+    width: 380px;
+    height: 600px;
+    z-index: 1
+}
+
+
+.barrier_r {
+    position: absolute;
+    bottom: 120px;
+    left: 660px;
+    width: 380px;
+    height:600px;
+    z-index: 1
+}
+
+
+.barrier_lc {
+    position: absolute;
+    bottom: 350px;
+    left: 105px;
+    width: 300px;
+    z-index: -1
+}
+
+
+.barrier_rc {
+    position: absolute;
+    bottom: 350px;
+    left: 630px;
+    width: 300px;
+    z-index: -1
+}
+
+
 
 
 .agent_eat {
@@ -162,10 +223,10 @@ nextButton[disabled] {
 
 .hill {
     position: absolute;
-    bottom: 70px;
+    bottom: 80px;
     left: 380px;
-    width: 280px;
-    z-index: 1
+    width: 300px;
+    z-index: 2
 }
 
 
@@ -176,53 +237,93 @@ nextButton[disabled] {
 
 .fruit_r {
     position: absolute;
-    bottom: 250px;  
-    left: 660px;
-    width: 130px;
+    bottom: 490px;  
+    left: 680px;
+    width: 160px;
     z-index: 2
 }
 
 .fruit_r2 {
     position: absolute;
-    bottom: 250px;  
-    left: 804px;
-    width: 130px;
-    z-index: 1
-}
-
-
-.fruit_l {
-    position: absolute;
-    bottom: 250px;
-    left: 244px;
-    width: 130px;
+    bottom: 490px;  
+    left: 875px;
+    width: 160px;
     z-index: 2
 }
 
+
 .fruit_l2 {
     position: absolute;
-    bottom: 250px;
-    left: 103px;
-    width: 130px;
+    bottom: 490px;
+    left: 15px;
+    width: 160px;
+    z-index: 2
+}
+
+.fruit_l {
+    position: absolute;
+    bottom: 490px;
+    left: 220px;
+    width: 160px;
+    z-index: 2
+}
+
+
+
+.friend_r {
+    position: absolute;
+    bottom: 490px;
+    left: 660px;
+    width: 420px;
+    z-index: 1
+}
+
+.friend_l {
+    position: absolute;
+    bottom: 160px;
+    left: 0px;
+    width: 420px;
+    z-index: 1
+}
+
+
+.tree_r {
+    position: absolute;
+    bottom: 160px;
+    left: 685px;
+    width: 350px;
+    height: 550px;
+    z-index: 1
+}
+
+.tree_l {
+    position: absolute;
+    bottom: 160px;
+    left: 30px;
+    width: 350px;
+    height: 550px;
     z-index: 1
 }
 
 
 
-.table_r {
+.selector_l {
     position: absolute;
-    bottom: 0px;
-    left: 590px;
-    width: 400px;
-    z-index: 0
+    bottom: 160px;
+    left: 25px;
+    width: 350px;
+    height: 550px;
+    z-index: 3
 }
 
-.table_l {
+
+.selector_r {
     position: absolute;
-    bottom: 0px;
-    left: 30px;
-    width: 400px;
-    z-index: 0
+    bottom: 160px;
+    left: 680px;
+    width: 350px;
+    height: 550px;
+    z-index: 3
 }
 
 
@@ -262,15 +363,16 @@ nextButton[disabled] {
 
 
 .text {
-  font-size: 40px;
-  width: 700px;
+  font-size: 20px;
+  width: 900px;
   text-align: center;
   font-family: Arial, sans-serif;
   margin: 0 auto;
   margin-bottom: 1em;
   position: absolute;
   top: 20px;
-  left: 170px;
+  left: 20px;
+    line-height: 40px;
 }
 
 .text2 {
@@ -281,9 +383,12 @@ nextButton[disabled] {
   margin: 0 auto;
   margin-bottom: 1em;
   position: absolute;
-  top: 500px;
-  left: 270px;
+  top: 100px;
+  left: 245px;
 }
+
+
+
 
 
 #legal {

@@ -23,6 +23,13 @@ stats/kids/*
 stats/simulations/*
 stats/data_old/*
 
+experiments/Ex2_novelty/Ex2_novelty_weak_not_used.htmlexperiments/Ex2_novelty/Ex2_novelty_weak_not_used.js
+
+experiments/Ex2_preference/Ex2_preference_weak5.jsexperiments/Ex2_preferenceEx2_preference_weak5.htmlexperiments/Ex2_preferenceEx2_preference_weak4.jsexperiments/Ex2_preferenceEx2_preference_weak4.htmlexperiments/Ex2_preferenceEx2_preference_weak3.jsexperiments/Ex2_preferenceEx2_preference_weak3.htmlexperiments/Ex2_preferenceEx2_preference_weak2.jsexperiments/Ex2_preferenceEx2_preference_weak2.html
+
+experiments/Ex6_child_novelty/*
+
+experiments/Ex5_child_failed/*
 
 
 papers/full_paper/raw_figures/*

@@ -1,0 +1,458 @@
+
+<html>
+
+<head>
+	<title>Learning words from animals</title>
+	<script src="jquery-1.11.2.min.js"></script>
+	<script src="mmturkey.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <link type="text/css" href ="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" rel="stylesheet" />
+	<link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    
+<div id="preload"></div>
+
+	<!-- The instructions slide. -->
+    
+	<div class="slide" id="instructions">
+		<div style="width: 500px; margin: 0 auto; text-align: center; background-color: #8C1516; padding: 20px 15px 10px 10px">
+			<img src="images/stanford.png" height="46" width="360" alt="Stanford University">
+		</div>
+        <p id='logo-text'>Stanford Language and Cognition Lab</p>
+        
+           <p class="block-text"><center>Thank you for participating in this study! <br></center></p>
+
+    <p class="block-text"><center>
+      Enter subject ID: <br>
+      <input type="text" id="subjectID" name="subjectID" size="30"> 
+    </center></p>
+        
+    <p class="block-text"><center>
+      Enter subject age: <br>
+      <input type="text" id="subjectAge" name="subjectAge" size="30"> 
+    </center></p>
+
+        <br><br>
+		<center>
+            <button type="button" onClick="this.blur(); experiment.checkInput()">Start touch training</font></button>
+        <div id="checkMessage"> </div>
+        </center>
+	</div>
+
+<!-- touch training -->   
+<div class="slide" id="dotGame">
+    <br><br><br><br><br><br><br>
+    <center>
+      <button type="button" onClick="this.blur(); experiment.trainingDot()">More Dot Games</font></button>
+    </center>
+    <center>
+      <button type="button" onClick="this.blur(); showSlide('training')">Start Game!</font></button>
+    </center>
+</div>
+    
+
+<div class="slide" id="trainingDot"></div> 
+
+<!-- The training slide. -->
+	<div class="slide" id="training">
+		<div align="center" width="500px">
+            <p id='logo-text'>Instructions</p>
+			<table style="width:100%">
+				<tbody>
+                       <p class="block-text">
+                          This is Frog. She loves her garden. She especially likes to decorate the trees in her garden. Do you want to see Frog's trees?  
+                        </p>
+                    
+                     <p class="block-text">
+                          Frog loves decorating her trees. She puts very special objects in them. Frog will tell you what's special about each tree.  
+                        </p>
+                    
+                    <p class="block-text">
+                         Let's see Frog's trees. 
+                        </p>
+                      
+            
+                
+					<tr align="center" height="300px">
+						<td>
+                        
+                        </td>
+						<td>
+                            
+                            <img src="images/Frog_straight.png"
+                            style="position:absolute; TOP:350px; LEFT:480px; WIDTH:100px; z-index:1">
+                            <img src="images/hill.png" style="position:absolute; TOP:410px; LEFT:480px; WIDTH:100px; z-index: 2">
+                        </td>
+						<td>
+                   
+                        </td>
+					
+					<tr align="center" height="50px">
+						<td>
+                       
+                            <img src="images/tree.png" style="position:absolute; TOP:290px; LEFT:340px; WIDTH:143px">
+                        </td>
+						<td>
+                       
+                        </td>
+						<td>
+                        
+                            <img src="images/tree.png" style="position:absolute; TOP:290px; LEFT:570px; WIDTH:143px">
+                            
+                        </td>
+					</tr>
+				</tbody>
+			</table>
+           <startButton type="button" onClick="this.blur(); experiment.next()">Start</startButton>
+		</div>
+	</div>
+		
+<!-- The intro slide. -->
+	<div class="slide" id="intro">
+		<div align="center" width="500px">
+            <p id='logo-text'>Meet the animals!</p>
+			<table style="width:100%">
+				<tbody>
+                    <p class="block-text">
+                          These are the animals that you will see in this game. Take a look at each of them and try to remember them. Click the button below to start the training.
+                        </p>
+					<tr align="center" height="200px">
+						<td>
+                        <img class="animal_intro" src="images/Monkey_straight.png"> 
+                        </td>
+                        <td>
+                        <img class="animal_intro" src="images/Bunny_straight.png">  
+                        </td>
+                        <td>
+                        <img class="animal_intro" src="images/Dog_straight.png">
+                        </td>
+                        <td>
+                        <img class="animal_intro" src="images/Elephant_straight.png">   
+                        </td>
+                        <td>
+                        <img class="animal_intro" src="images/Pig_straight.png">
+                        </td>
+                         <td>
+                        <img class="animal_intro" src="images/Bear_straight.png">
+                        </td>
+                    </tr>
+                     <tr align="center">
+						<td>
+                        <p>Monkey</p> 
+                        </td>
+                        <td>
+                        <p>Bunny</p>
+                        </td>
+                         <td>
+                        <p>Dog</p>
+                        </td>
+                         <td>
+                        <p>Elephant</p>
+                        </td>
+                         <td>
+                        <p>Pig</p>
+                        </td>
+                         <td>
+                        <p>Bear</p>
+                        </td>
+					</tr>
+                   
+                    <tr align="center" height="200px">
+                          <td>
+                        <img class="animal_intro" src="images/Mouse_straight.png">
+                        </td>
+                          <td>
+                        <img class="animal_intro" src="images/Beaver_straight.png">
+                        </td>
+                          <td>
+                        <img class="animal_intro" src="images/Cat_straight.png">
+                        </td>
+                          <td>
+                        <img class="animal_intro" src="images/Sheep_straight.png">
+                        </td>
+                          <td>
+                        <img class="animal_intro" src="images/Tiger_straight.png">
+                        </td>
+                          <td>
+                        <img class="animal_intro" src="images/Frog_straight.png">
+                        </td>
+					</tr>
+                     <tr align="center">
+						<td>
+                        <p>Mouse</p> 
+                        </td>
+                        <td>
+                        <p>Beaver</p>
+                        </td>
+                         <td>
+                        <p>Cat</p>
+                        </td>
+                         <td>
+                        <p>Sheep</p>
+                        </td>
+                         <td>
+                        <p>Tiger</p>
+                        </td>
+                         <td>
+                        <p>Frog</p>
+                        </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+        <div align="center" width="500px">
+         <button type="button" onClick="this.blur(); experiment.next()">Start Training</button>
+	   </div>
+    </div>
+    
+    
+<!-- The training slide. -->
+	<div class="slide" id="training2">
+		<div align="center" width="500px">
+			<table style="width:100%">
+				<tbody>
+					<tr align="center" height="300px">
+						<td>
+                        </td>
+						<td>
+                            <p id='logo-text'>
+                                You finished the training
+                            </p>    
+                            <p class="block-text">
+                                In the experiment, you will encounter new kinds of toys. Try your best to find out which toy they want. 
+                            </p> 
+                      
+                    
+                        </td>
+						<td></td>
+					</tr>
+					<tr align="center" height="300px">
+						<td>
+                        </td>
+						<td>
+                       <startButton type="button" onClick="this.blur(); experiment.next()">Start experiment</startButton>
+						</td>
+                        <td>
+                        </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+		 
+    
+	
+ <!-- main slide. -->   
+    <div class="slide" id="stage"> 
+       
+        <img class="background" id="background" src="">
+        
+        <img id="hill" class="hill"  src="images/hill.png">
+        
+        <nextButton class ="button" type="button" id="next" onclick="getTime1(); experiment.next();"></nextButton>
+                      
+        <audio id="sound" src = ""></audio>  
+                
+         <p id="text" class="text">{{}}</p>
+        
+        <img id="Frog_straight" class="agent"  src="images/Frog_straight.png">
+                            
+        
+        
+        <img id="Frog_point_l" class="point_agent_l"  src="images/Frog_point_l.png">
+        
+        <img id="Frog_look_r" class="look_agent_r"  src="images/Frog_look_r.png">
+        
+        <img id="Frog_point_r" class="point_agent_r"  src="images/Frog_point_r.png">
+        
+        <img id="Frog_look_l" class="look_agent_l"  src="images/Frog_look_l.png">
+            
+                            
+<!--            <img id="dis" class="dis"  src="images/dis.png">-->
+                            
+                        <img id="barrier_l" class="barrier_l"  src="images/barrier_l.png">
+                            
+                        <img id="barrier_r" class="barrier_r"  src="images/barrier_r.png">
+
+                           
+        
+        <img id="tree_l" class="tree_l"  src="images/tree.png">
+        
+        <img id="tree1_l" class="tree_l"  src="images/tree1.png">
+          <img id="tree2_l" class="tree_l"  src="images/tree2.png">
+          <img id="tree3_l" class="tree_l"  src="images/tree3.png">
+        <img id="tree4_l" class="tree_l"  src="images/tree4.png">
+        <img id="tree5_l" class="tree_l"  src="images/tree5.png">
+        <img id="tree6_l" class="tree_l"  src="images/tree6.png">
+        <img id="tree7_l" class="tree_l"  src="images/tree7.png">
+        
+        
+        
+         <img id="tree_r" class="tree_r"  src="images/tree.png">
+        
+        <img id="tree1_r" class="tree_r"  src="images/tree1.png">
+        
+                <img id="tree2_r" class="tree_r"  src="images/tree2.png">
+                <img id="tree3_r" class="tree_r"  src="images/tree3.png">
+         <img id="tree4_r" class="tree_r"  src="images/tree4.png">
+        <img id="tree5_r" class="tree_r"  src="images/tree5.png">
+         <img id="tree6_r" class="tree_r"  src="images/tree6.png">
+         <img id="tree7_r" class="tree_r"  src="images/tree7.png">
+       
+   
+      
+             
+                      
+                            
+                            <img id="fruit_l" class="fruit_l" src="">
+                            <img id="fruit_l2" class="fruit_l2" src="">
+                      
+                   
+                            
+                            <img id="fruit_r" class="fruit_r" src="">
+                            <img id="fruit_r2" class="fruit_r2" src="">
+                     
+               
+	</div>
+
+<!--  choice slide-->
+    
+   <div class="slide" id="choice"> 
+       
+       <img class="background" id="background2" src="">
+       
+		
+       <p id="text2" class="text">{{}}</p>
+       
+                            <img id="choiceFruit_l" class="fruit_l" src="">
+                            <img id="choiceFruit_l2" class="fruit_l2" src="">
+       
+          <img id="hill" class="hill"  src="images/hill.png">
+                  
+       
+        <img id="selector_r" class="selector_r"  src="images/selector2.png">
+       
+          <img id="selector_l" class="selector_l"  src="images/selector2.png">
+       
+       
+       
+       
+            <img id="tree_l_c" class="tree_l"  src="images/tree.png">
+        
+      
+       
+             <img id="tree1_l_c" class="tree_l"  src="images/tree1.png">
+           <img id="tree2_l_c" class="tree_l"  src="images/tree2.png">
+           <img id="tree3_l_c" class="tree_l"  src="images/tree3.png">
+         <img id="tree4_l_c" class="tree_l"  src="images/tree4.png">
+         <img id="tree5_l_c" class="tree_l"  src="images/tree5.png">
+         <img id="tree6_l_c" class="tree_l"  src="images/tree6.png">
+        <img id="tree7_l_c" class="tree_l"  src="images/tree7.png">
+        
+       
+          <img id="tree_r_c" class="tree_r"  src="images/tree.png">
+       
+          <img id="tree1_r_c" class="tree_r"  src="images/tree1.png">
+       
+          <img id="tree2_r_c" class="tree_r"  src="images/tree2.png">
+       
+          <img id="tree3_r_c" class="tree_r"  src="images/tree3.png">
+       
+       <img id="tree4_r_c" class="tree_r"  src="images/tree4.png">
+       <img id="tree5_r_c" class="tree_r"  src="images/tree5.png">
+       <img id="tree6_r_c" class="tree_r"  src="images/tree6.png">
+       <img id="tree7_r_c" class="tree_r"  src="images/tree7.png">
+                         
+             
+        
+       
+        
+         
+       
+                             
+                        <img id="barrier_lc" class="barrier_lc"  src="images/barrier_l.png">
+                            
+                        <img id="barrier_rc" class="barrier_rc"  src="images/barrier_r.png">     
+                             
+                             
+<!--                        <img id="dis" class="dis"  src="images/dis.png">-->
+                             
+                      
+               
+                            
+
+                           
+       
+                     
+                        <img id="Frog_choice" class="agent"  src="images/Frog_straight.png">
+                        <img id="Frog_point_l_c" class="point_agent_l"  src="images/Frog_point_l.png">
+                        <img id="Frog_look_r_c" class="look_agent_r"  src="images/Frog_look_r.png">
+                       <img id="Frog_point_r_c" class="point_agent_r"  src="images/Frog_point_r.png">
+                        <img id="Frog_look_l_c" class="look_agent_l"  src="images/Frog_look_l.png">
+                    
+              
+                         
+                            <img id="choiceFruit_r" class="fruit_r" src="">
+                            <img id="choiceFruit_r2" class="fruit_r2" src="">
+                    
+                      
+	</div>
+
+<!--  eat slide-->
+    
+   <div class="slide" id="eat"> 
+		<div align="center" width="500px">
+ 
+                          <img id="Mouse_eat" class="agent_eat"  src="images/Mouse_eat.png">
+                          
+                          <img id="Monkey_eat" class="agent_eat"  src="images/Monkey_eat.png">  
+                          
+                          <img id="Bunny_eat" class="agent_eat"  src="images/Bunny_eat.png">   
+                          
+                          <img id="Dog_eat" class="agent_eat"  src="images/Dog_eat.png">
+                             
+                          <img id="Elephant_eat" class="agent_eat"  src="images/Elephant_eat.png">   
+                            
+                          <img id="Pig_eat" class="agent_eat"  src="images/Pig_eat.png">
+                             
+                          <img id="Bear_eat" class="agent_eat"  src="images/Bear_eat.png">  
+                             
+                          <img id="Beaver_eat" class="agent_eat"  src="images/Beaver_eat.png"> 
+                        
+                          <img id="Cat_eat" class="agent_eat"  src="images/Cat_eat.png">
+                          
+                          <img id="Sheep_eat" class="agent_eat"  src="images/Sheep_eat.png">
+                          
+                          <img id="Tiger_eat" class="agent_eat"  src="images/Tiger_eat.png"> 
+                             
+                          <img id="Frog_eat" class="agent_eat"  src="images/Frog_eat.png">  
+     
+		</div>
+	</div>
+       
+    
+	<!-- The finish slide. -->
+	<div class="slide" id="finished">
+		<div style="width: 500px; margin: 0 auto; text-align: center; ">	
+		</div>
+        <br><br>
+        <center>
+        <p id='logo-text'>Thank you for participating!</p>
+        </center>
+	</div>
+
+	<!-- Include the <a href="experiment.html">JavaScript file for the experiment</a>. As written, that script immediately executes commands, so we include it here at the end of the HTML file to ensure that resources referenced by the script actually exist. For instance, one of the immediately executed commands is <code>showSlide("instructions")</code>. If we loaded experiment.js, say, in the <code>head</code> section, <code>showSlide("instructions")</code> would fail because the <code>instructions</code> slide doesn't exist yet. It is possible to load the script in <code>head</code> but you have to ensure that any immediately executed commands, if they rely on potentially uninitialized HTML elements, are _delayed_ until the page is ready, using either [window.onload][onload] or jQuery's more robust [$(document).ready()][domReady]  -->
+	<!-- [onload]: https://developer.mozilla.org/en/DOM/window.onload -->
+	<!-- [domReady]: http://api.jquery.com/ready/ -->
+	<script src="Ex5_child.js"></script>
+
+</body>
+    
+<div id="preload">
+</div>
+
+</html>
