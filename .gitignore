@@ -16,6 +16,16 @@ stats/rsconnect/*
 stats/graphs/*
 stats/simulations/*
 
+
+stats/adults/*
+stats/graphs/*
+stats/kids/*
+stats/simulations/*
+
+
+
+
+
 papers/full_paper/raw_figures/*
 
 papers/full_paper/manuscript_cache/*
@@ -35,3 +45,5 @@ stats/.Rhistory
 .Rproj.user
 
 papers/full_paper/models_new_prior.Rmd
+
+submissions/*

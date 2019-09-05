@@ -106,7 +106,7 @@ child_ex3_data <-read_csv(file="../../stats/data/child_ex3.csv")
 
 # Significance statement
 
-In order to learn the meaning of a new word, children need to integrate multiple sources of information. Some information is provided by the utterance itself, but other contextual information accumulates over the course of a conversation and is stored in common ground. To understand how these sources are integrated with one another and how they might develop, we formalize this process using computational models of pragmatic reasoning. These models make quantitative predictions for different hypotheses about how integration proceeds. Across seven experiments, we find that the way in which preschoolers and adults integrate information is best described by a model that flexibly trades off between different sources of information. Taken together, this work presents an explicit theory of socially grounded language learning.
+In order to learn the meaning of a new word, children need to integrate multiple sources of information. Some information is provided by the utterance itself, but other contextual information accumulates over the course of a conversation and is stored in common ground. To understand how these sources are integrated with one another and how they might develop, we formalize this process using computational models of pragmatic reasoning. These models make quantitative predictions for different hypotheses about how integration proceeds. We find that the way in which preschoolers and adults integrate information is best described by a model that flexibly trades off between different sources of information. Taken together, this work presents an explicit theory of socially grounded language learning.
 
 # Introduction
 
