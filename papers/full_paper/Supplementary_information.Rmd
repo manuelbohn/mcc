@@ -1,6 +1,6 @@
 ---
-title             : "Supplementary information: Pragmatic cue integration in adults’ and children’s inferences about novel word meanings"
-shorttitle        : "Pragmatic cue integration: Supplementary information"
+title             : "Supplementary information: Predicting pragmatic cue integration in adults’ and children’s inferences about novel word meanings"
+shorttitle        : "Predicting pragmatic cue integration: Supplementary information"
 
 author: 
   - name          : "Manuel Bohn"
