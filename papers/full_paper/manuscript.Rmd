@@ -60,6 +60,7 @@ library(coda)
 library(lme4)
 library(broom)
 library(readxl)
+library(lsr)
 
 estimate_mode <- function(s) {
   d <- density(s)
@@ -141,13 +142,18 @@ ex1t <- adult_ex1_data %>%
   summarise(correct = list(correct)) %>%
   group_by(condition) %>%
   mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
+         mean = mean(unlist(correct)),
          t_value = t.test(unlist(correct), mu = 0.5)$statistic,
-         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(condition,df,t_value,p_value)%>%
+         t_lci = t.test(unlist(correct), mu = 0.5)$conf.int[1],
+         t_uci = t.test(unlist(correct), mu = 0.5)$conf.int[2],
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value,
+         d = cohensD(unlist(correct), mu = 0.5)) %>%
+  select(condition,mean,df,t_value,t_lci, t_uci,p_value,d)%>%
   mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
-         t_value = round(t_value,2))
-
-
+         t_value = round(t_value,2),
+         t_lci = round(t_lci,2),
+         t_uci = round(t_uci,2),
+         d = round(d,2))
 # model
 lm_ex1 <- glmer(correct ~ condition +
               (1 |id), 
@@ -162,7 +168,7 @@ ex1_r <- tidy(lm_ex1, effects = "fixed")%>%
          estimate = round(estimate,2))
 ```
 
-In Experiment 1, participants could learn which object a novel word referred to by assuming that the speaker communicated in an informative way [@frank2014inferring]. The speaker was located between two tables, one with two novel objects, A and B, and the other with only object A (Fig \ref{fig:fig1}A). When the speaker turned and pointed to the table with the two objects (A and B) and used a novel word to request one of them, participants could infer that the word referred to object B. This follows from the counter-factual inferences that, if the (informative) speaker had wanted to refer to object A, they would have pointed to the table with the single object (this being the least ambiguous way to refer to that object). In the control condition, both tables contained both objects and no inference could be made based on the speaker’s behavior. Participants selected object B above chance in the test condition (t(`r ex1t%>%filter(condition == "test")%>%pull(df)`) = `r ex1t%>%filter(condition == "test")%>%pull(t_value)`, *p* `r ex1t%>%filter(condition == "test")%>%pull(p_value)`) and more often compared to the control condition (*$\beta$* = `r ex1_r%>%filter(term == "conditiontest")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "conditiontest")%>%pull(std.error)`, *p* `r ex1_r%>%filter(term == "conditiontest")%>%pull(p.value)`, see Fig \ref{fig:fig2}).
+In Experiment 1, participants could learn which object a novel word referred to by assuming that the speaker communicated in an informative way [@frank2014inferring]. The speaker was located between two tables, one with two novel objects, A and B, and the other with only object A (Fig \ref{fig:fig1}A). When the speaker turned and pointed to the table with the two objects (A and B) and used a novel word to request one of them, participants could infer that the word referred to object B. This follows from the counter-factual inferences that, if the (informative) speaker had wanted to refer to object A, they would have pointed to the table with the single object (this being the least ambiguous way to refer to that object). In the control condition, both tables contained both objects and no inference could be made based on the speaker’s behavior. Participants selected object B above chance in the test condition (mean = `r ex1t%>%filter(condition == "test")%>%pull(mean)`, 95% CI of mean = [`r ex1t%>%filter(condition == "test")%>%pull(t_lci)`; `r ex1t%>%filter(condition == "test")%>%pull(t_uci)`], t(`r ex1t%>%filter(condition == "test")%>%pull(df)`) = `r ex1t%>%filter(condition == "test")%>%pull(t_value)`, *p* `r ex1t%>%filter(condition == "test")%>%pull(p_value)`, d = `r ex1t%>%filter(condition == "test")%>%pull(d)`) and more often compared to the control condition (*$\beta$* = `r ex1_r%>%filter(term == "conditiontest")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "conditiontest")%>%pull(std.error)`, *p* `r ex1_r%>%filter(term == "conditiontest")%>%pull(p.value)`, see Fig \ref{fig:fig2}).
 
 ```{r ex2-results}
 ex2tpref <- adult_ex2_preference_data %>%
@@ -171,11 +177,18 @@ ex2tpref <- adult_ex2_preference_data %>%
   summarise(correct = list(correct)) %>%
   group_by(condition) %>%
   mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
+         mean = mean(unlist(correct)),
          t_value = t.test(unlist(correct), mu = 0.5)$statistic,
-         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(condition,df,t_value,p_value)%>%
+         t_lci = t.test(unlist(correct), mu = 0.5)$conf.int[1],
+         t_uci = t.test(unlist(correct), mu = 0.5)$conf.int[2],
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value,
+         d = cohensD(unlist(correct), mu = 0.5)) %>%
+  select(condition,mean,df,t_value,t_lci, t_uci,p_value,d)%>%
   mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
-         t_value = round(t_value,2))
+         t_value = round(t_value,2),
+         t_lci = round(t_lci,2),
+         t_uci = round(t_uci,2),
+         d = round(d,2))
 
 
 # model (maximally converging)
@@ -197,11 +210,18 @@ ex2tnov <- adult_ex2_novelty_data %>%
   summarise(correct = list(correct)) %>%
   group_by(condition) %>%
   mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
+         mean = mean(unlist(correct)),
          t_value = t.test(unlist(correct), mu = 0.5)$statistic,
-         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(condition,df,t_value,p_value)%>%
+         t_lci = t.test(unlist(correct), mu = 0.5)$conf.int[1],
+         t_uci = t.test(unlist(correct), mu = 0.5)$conf.int[2],
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value,
+         d = cohensD(unlist(correct), mu = 0.5)) %>%
+  select(condition,mean,df,t_value,t_lci, t_uci,p_value,d)%>%
   mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
-         t_value = round(t_value,2))
+         t_value = round(t_value,2),
+         t_lci = round(t_lci,2),
+         t_uci = round(t_uci,2),
+         d = round(d,2))
 
 # model
 lm_ex2nov <- glmer(correct ~ condition +
@@ -217,7 +237,7 @@ ex2nov_r <- tidy(lm_ex2nov, effects = "fixed")%>%
          estimate = round(estimate,2))
 ```
 
-In Experiments 2A and 2B, we tested if participants use common ground information that is specific to a speaker to identify the referent of a novel word [@akhtar1996role; @saylor2009preschoolers]. In Experiment 2A, the speaker expressed a preference for one of two objects (Fig \ref{fig:fig1}B, left). Later, the speaker used a novel word to request an object. Adults selected the preferred object above chance (t(`r ex2tpref%>%filter(condition == "same_speaker")%>%pull(df)`) = `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(t_value)`, *p* `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(p_value)`) and more so than in a control condition, where a different speaker, whose preferences were unknown, made the request ($\beta$ = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`). In Experiment 2B, common ground information came in the form of novelty (Fig \ref{fig:fig1}B, right). First, the speaker encountered one object on one of the tables. Later, a second object appeared. When the same speaker then used a novel word to request an object, participants selected the new object above chance (t(`r ex2tnov%>%filter(condition == "same_speaker")%>%pull(df)`) = `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(t_value)`, *p* `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(p_value)`), and more often compared to when a different speaker (to whom both objects were equally new) made the request ($\beta$ = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`, see Fig \ref{fig:fig2}). Taken together, Experiments 1 and 2 confirmed that adults make pragmatic inferences based on information provided by the utterance as well as by common ground and provided quantitative estimates of the strength of these inferences for use in our model. 
+In Experiments 2A and 2B, we tested if participants use common ground information that is specific to a speaker to identify the referent of a novel word [@akhtar1996role; @saylor2009preschoolers]. In Experiment 2A, the speaker expressed a preference for one of two objects (Fig \ref{fig:fig1}B, left). Later, the speaker used a novel word to request an object. Adults selected the preferred object above chance (mean = `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(mean)`, 95% CI of mean = [`r ex2tpref%>%filter(condition == "same_speaker")%>%pull(t_lci)`; `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(t_uci)`], t(`r ex2tpref%>%filter(condition == "same_speaker")%>%pull(df)`) = `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(t_value)`, *p* `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(p_value)`, d = `r ex2tpref%>%filter(condition == "same_speaker")%>%pull(d)`)  and more so than in a control condition, where a different speaker, whose preferences were unknown, made the request ($\beta$ = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2pref_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`). In Experiment 2B, common ground information came in the form of novelty (Fig \ref{fig:fig1}B, right). First, the speaker encountered one object on one of the tables. Later, a second object appeared. When the same speaker then used a novel word to request an object, participants selected the new object above chance (mean = `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(mean)`, 95% CI of mean = [`r ex2tnov%>%filter(condition == "same_speaker")%>%pull(t_lci)`; `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(t_uci)`], t(`r ex2tnov%>%filter(condition == "same_speaker")%>%pull(df)`) = `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(t_value)`, *p* `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(p_value)`, d = `r ex2tnov%>%filter(condition == "same_speaker")%>%pull(d)`) , and more often compared to when a different speaker (to whom both objects were equally new) made the request ($\beta$ = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r ex2nov_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`, see Fig \ref{fig:fig2}). Taken together, Experiments 1 and 2 confirmed that adults make pragmatic inferences based on information provided by the utterance as well as by common ground and provided quantitative estimates of the strength of these inferences for use in our model. 
 
 ```{r fig2, include = T, fig.align = "center", fig.cap = "Results from Experiments 1, 2A, and 2B for adults. For preference and novelty, control refers to a different speaker (see Fig 1B). Transparent dots show data from individual participants, diamonds represent condition means, error bars are 95\\% CIs. Dashed line indicates performance expected by chance.", out.width="300px"}
 knitr::include_graphics("./figures/fig2.png")
@@ -334,11 +354,18 @@ child_ex1t <- child_ex1_data %>%
   summarise(correct = list(correct)) %>%
   group_by(age_bin) %>%
   mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
+         mean = mean(unlist(correct)),
          t_value = t.test(unlist(correct), mu = 0.5)$statistic,
-         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(age_bin,df,t_value,p_value)%>%
+         t_lci = t.test(unlist(correct), mu = 0.5)$conf.int[1],
+         t_uci = t.test(unlist(correct), mu = 0.5)$conf.int[2],
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value,
+         d = cohensD(unlist(correct), mu = 0.5)) %>%
+  select(age_bin,mean,df,t_value,t_lci, t_uci,p_value,d)%>%
   mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
-         t_value = round(t_value,2))
+         t_value = round(t_value,2),
+         t_lci = round(t_lci,2),
+         t_uci = round(t_uci,2),
+         d = round(d,2))
 
 
 child_ex1_lm_data <- child_ex1_data%>%
@@ -363,11 +390,18 @@ child_ex2t <- child_ex2_data %>%
   summarise(correct = list(correct)) %>%
   group_by(condition,age_bin) %>%
   mutate(df= t.test(unlist(correct), mu = 0.5)$parameter,
+         mean = mean(unlist(correct)),
          t_value = t.test(unlist(correct), mu = 0.5)$statistic,
-         p_value = t.test(unlist(correct), mu = 0.5)$p.value) %>%
-  select(age_bin,df,t_value,p_value)%>%
+         t_lci = t.test(unlist(correct), mu = 0.5)$conf.int[1],
+         t_uci = t.test(unlist(correct), mu = 0.5)$conf.int[2],
+         p_value = t.test(unlist(correct), mu = 0.5)$p.value,
+         d = cohensD(unlist(correct), mu = 0.5)) %>%
+  select(condition,age_bin,mean,df,t_value,t_lci, t_uci,p_value,d)%>%
   mutate(p_value = ifelse(p_value<.001,"< .001",as.character(paste("=",substr(round(p_value,3),2,5),sep=" "))),
-         t_value = round(t_value,2))
+         t_value = round(t_value,2),
+         t_lci = round(t_lci,2),
+         t_uci = round(t_uci,2),
+         d = round(d,2))
 
 # GLMM
 
@@ -387,7 +421,7 @@ child_lm_ex2_r <- tidy(child_ex2_lm, effects = "fixed")%>%
 
 ```
 
-Experiment 5 was analogous to Experiment 1 for adults. To compare children’s performance to chance level, we binned age by year. Four-year-olds selected the more informative object (i.e. the object that was unique to the location the speaker turned to) above chance (t(`r child_ex1t%>%filter(age_bin =="4")%>%pull(df)`) = `r child_ex1t%>%filter(age_bin =="4")%>%pull(t_value)`, *p* `r child_ex1t%>%filter(age_bin =="4")%>%pull(p_value)`). Three-year-olds, on the other hand, did not (t(`r child_ex1t%>%filter(age_bin =="3")%>%pull(df)`) = `r child_ex1t%>%filter(age_bin =="3")%>%pull(t_value)`, *p* `r child_ex1t%>%filter(age_bin =="3")%>%pull(p_value)`). Consequently, when we fit a GLMM to the data with age as a continuous predictor, performance increased with age ($\beta$ = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(p.value)`, see Fig \ref{fig:fig4}). Thus, children’s ability to use utterance information in a word learning context increased with age.
+Experiment 5 was analogous to Experiment 1 for adults. To compare children’s performance to chance level, we binned age by year. Four-year-olds selected the more informative object (i.e. the object that was unique to the location the speaker turned to) above chance (mean = `r child_ex1t%>%filter(age_bin =="4")%>%pull(mean)`, 95% CI of mean = [`r child_ex1t%>%filter(age_bin =="4")%>%pull(t_lci)`; `r child_ex1t%>%filter(age_bin =="4")%>%pull(t_uci)`], t(`r child_ex1t%>%filter(age_bin =="4")%>%pull(df)`) = `r child_ex1t%>%filter(age_bin =="4")%>%pull(t_value)`, *p* `r child_ex1t%>%filter(age_bin =="4")%>%pull(p_value)`, d = `r child_ex1t%>%filter(age_bin =="4")%>%pull(d)`). Three-year-olds, on the other hand, did not (mean = `r child_ex1t%>%filter(age_bin =="3")%>%pull(mean)`, 95% CI of mean = [`r child_ex1t%>%filter(age_bin =="3")%>%pull(t_lci)`; `r child_ex1t%>%filter(age_bin =="3")%>%pull(t_uci)`], t(`r child_ex1t%>%filter(age_bin =="3")%>%pull(df)`) = `r child_ex1t%>%filter(age_bin =="3")%>%pull(t_value)`, *p* `r child_ex1t%>%filter(age_bin =="3")%>%pull(p_value)`, d = `r child_ex1t%>%filter(age_bin =="3")%>%pull(d)`). Consequently, when we fit a GLMM to the data with age as a continuous predictor, performance increased with age ($\beta$ = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex1_r%>%filter(term == "age_num")%>%pull(p.value)`, see Fig \ref{fig:fig4}). Thus, children’s ability to use utterance information in a word learning context increased with age.
 
 ```{r fig4, include = T, fig.align = "center", fig.cap = "Results from Experiment 5 and 6 for children. For preference, control refers to to the different speaker condition (see Fig. 1B). Transparent dots show data from individual participants, regression lines show fitted linear models with 95\\% CIs. Dashed line indicates performance expected by chance.", out.width="300px"}
 knitr::include_graphics("./figures/fig4.png")
@@ -395,7 +429,7 @@ knitr::include_graphics("./figures/fig4.png")
 
 In Experiment 6, we assessed whether children use common ground information to identify the referent of a novel word. We tested children with the novelty as well as the preference manipulation but found little evidence that children distinguished between requests made by the same speaker or a different speaker in the case of novelty. Since our focus was on how children selectively integrate the two sources of information, we therefore dropped this manipulation and focused on preference for the remainder of the study.
 
-For preference, four-year-olds selected the preferred object above chance when the same speaker made the request (t(`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(df)`) = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(t_value)`, *p* `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(p_value)`), whereas three-year-olds did not (t(`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(df)`) = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(t_value)`, *p* `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(p_value)`). However, when we fit a GLMM to the data with age as a continuous predictor, we found an effect of speaker identity ($\beta$ = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`) but no effect of age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(p.value)`) or interaction between speaker identity and age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(p.value)`, see Fig \ref{fig:fig4}). Thus, children across the age range used common ground information to infer the referent of a novel word.
+For preference, four-year-olds selected the preferred object above chance when the same speaker made the request (mean = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(mean)`, 95% CI of mean = [`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(t_lci)`; `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(t_uci)`], t(`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(df)`) = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(t_value)`, *p* `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(p_value)`, d = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="4")%>%pull(d)`), whereas three-year-olds did not (mean = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(mean)`, 95% CI of mean = [`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(t_lci)`; `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(t_uci)`], t(`r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(df)`) = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(t_value)`, *p* `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(p_value)`, d = `r child_ex2t%>%filter(condition == "same_speaker" ,age_bin =="3")%>%pull(d)`). However, when we fit a GLMM to the data with age as a continuous predictor, we found an effect of speaker identity ($\beta$ = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "conditionsame_speaker")%>%pull(p.value)`) but no effect of age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num")%>%pull(p.value)`) or interaction between speaker identity and age ($\beta$ = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(estimate)`, se = `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(std.error)`, *p* `r child_lm_ex2_r%>%filter(term == "age_num:conditionsame_speaker")%>%pull(p.value)`, see Fig \ref{fig:fig4}). Thus, children across the age range used common ground information to infer the referent of a novel word.
 
 ### Developmental model predictions evaluated against new data (Experiment 7)
 
@@ -461,13 +495,13 @@ More broadly, our work here shows how computational models of language comprehen
 
 # Methods
 
-All experimental procedures, sample sizes and statistical analysis were pre-registered (https://osf.io/u7kxe/). Experimental stimuli, data files and analysis scripts are freely available in an online repository (https://github.com/manuelbohn/mcc). 
+The study was approved by the Stanford Institutional Review Board (protocol no. 19960). All experimental procedures, sample sizes and statistical analysis were pre-registered (https://osf.io/u7kxe/). Experimental stimuli, data files and analysis scripts are freely available in an online repository (https://github.com/manuelbohn/mcc). 
 
 ## Participants
 
-Adult participants were recruited via Amazon Mechanical Turk (MTurk) and received payment equivalent to an hourly wage of ~ \$9. Experiment 1 and each manipulation of Experiment 2 had N = 40 participants. Sample size in Experiment 3 was *N* = `r length(unique(adult_ex3_data$id))`. *N* = `r length(unique(adult_ex4_prior_data$id))` participated in the experiments to measure the strong, medium and weak preference and novelty manipulations. Finally, experiment 4 had *N* = `r length(unique(adult_ex4_data$id))` participants. 
+Adult participants were recruited via Amazon Mechanical Turk (MTurk) and received payment equivalent to an hourly wage of ~ \$9. Each participant contributed data to only one experiment. Experiment 1 and each manipulation of Experiment 2 had N = 40 participants. Sample size in Experiment 3 was *N* = `r length(unique(adult_ex3_data$id))`. *N* = `r length(unique(adult_ex4_prior_data$id))` participated in the experiments to measure the strong, medium and weak preference and novelty manipulations. Finally, experiment 4 had *N* = `r length(unique(adult_ex4_data$id))` participants. 
 
-Children were recruited from the floor of the Children’s Discovery Museum in San Jose, California, USA. Parents gave informed consent and provided demographic information. We collected data from a total of 243 children between 3.0 and 5.0 years of age. We excluded 15 children due to less than 75% of reported exposure to English, five because they responded incorrectly on 2/2 training trials, three because of equipment malfunction, and two because they quit before half of the test trials were completed. The final sample size in each experiment was as follows: *N* = `r length(unique(child_ex1_data$id))` (41 girls, mean age = `r round(mean(child_ex1_data$age_num),2)`) in Experiment 5,  *N* = `r length(unique(child_ex2_data$id))` (28 girls, mean age = `r round(mean(child_ex2_data$age_num),2)`) in Experiment 6 and *N* = `r length(unique(child_ex3_data$id))` (54 girls, mean age = `r round(mean(child_ex3_data$age_num),2)`) in Experiment 7.
+Children were recruited from the floor of the Children’s Discovery Museum in San Jose, California, USA. Parents gave informed consent and provided demographic information. Each child contributed data to only one experiment. We collected data from a total of 243 children between 3.0 and 5.0 years of age. We excluded 15 children due to less than 75% of reported exposure to English, five because they responded incorrectly on 2/2 training trials, three because of equipment malfunction, and two because they quit before half of the test trials were completed. The final sample size in each experiment was as follows: *N* = `r length(unique(child_ex1_data$id))` (41 girls, mean age = `r round(mean(child_ex1_data$age_num),2)`) in Experiment 5,  *N* = `r length(unique(child_ex2_data$id))` (28 girls, mean age = `r round(mean(child_ex2_data$age_num),2)`) in Experiment 6 and *N* = `r length(unique(child_ex3_data$id))` (54 girls, mean age = `r round(mean(child_ex3_data$age_num),2)`) in Experiment 7.
 
 ## Materials
 
@@ -489,7 +523,7 @@ In Experiment 3 for children, we again inserted the preference manipulation into
 
 ## Analysis
 
-All analyses were run in R [@R-base]. GLMMs were fit via the function `glmer` from the package `lme4` [@R-lme4] and had a maximal random effect structure conditional on model convergence. Probabilistic models and model comparisons were implemented in WebPPL [@dippl] using the r package `rwebppl` [@R-rwebppl]. Bayes Factors for model comparisons were based on marginal likelihoods of each model given the data. Details on models can be found in the supplementary information.
+All analyses were run in R [@R-base]. All p-values are based on two sided analysis. Cohen's d (computed via the function `cohensD`) was used as effect size for t-tests. Frequentist GLMMs were fit via the function `glmer` from the package `lme4` [@R-lme4] and had a maximal random effect structure conditional on model convergence. Probabilistic models and model comparisons were implemented in WebPPL [@dippl] using the r package `rwebppl` [@R-rwebppl]. Bayes Factors for model comparisons were based on marginal likelihoods of each model given the data. Details on models, including information about priors for parameter estimation and Markov chain Monte Carlo settings can be found in the supplementary information and the online repository.
 
 \newpage
 
