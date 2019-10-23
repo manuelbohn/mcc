@@ -1,4 +1,4 @@
-# Pragmatic cue integration in adults’ and children’s inferences about novel word meanings
+# Predicting pragmatic cue integration in adults’ and children’s inferences about novel word meanings
 
 Here you find all experimental procedures, data files and analysis scripts associated with the main manuscript (https://psyarxiv.com/xma4f). Please see the manuscript for additional details.
 
@@ -10,6 +10,6 @@ All data sets can be found in `stats/data/`. Model outputs are stored in `stats/
 
 The main manuscript file includes all analysis reported in it and can be found at `papers/full_paper/manuscript.Rmd`.
 
-The same applies to the SI Appendix, which can be found at `papers/full_paper/SI_appendix.Rmd`.
+The same applies to the SI Appendix, which can be found at `papers/full_paper/Supplementary_information.Rmd`.
 
 Code for cognitive models can be found in `papers/full_paper/models.Rmd`.
