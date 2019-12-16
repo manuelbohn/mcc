@@ -4,7 +4,7 @@ Here you find all experimental procedures, data files and analysis scripts assoc
 
 ## Structure
 
-Experiments can be found in `experiments/`. Experiments measuring the prior strength manipulations for novelty and preference in Experiment 4 can be found in `experiments/Ex2_novelty` and `experiments/Ex2_preference` respectively.
+Experiments can be found in `experiments/`. Experiments measuring the prior strength manipulations for novelty and preference in Experiment 4 can be found in `experiments/Ex2_novelty` and `experiments/Ex2_preference` respectively. To run the experiments, download the repository and click on the respective `.html` file.
 
 All data sets can be found in `stats/data/`. Model outputs are stored in `stats/saves/`. 
 

@@ -53,3 +53,9 @@ stats/.Rhistory
 papers/full_paper/models_new_prior.Rmd
 
 submissions/*
+
+*.aux
+
+*.out
+
+papers/full_paper/Supplementary_information_files/*

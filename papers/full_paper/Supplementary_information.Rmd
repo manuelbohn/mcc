@@ -1,12 +1,10 @@
 ---
-title             : "Supplementary information: Predicting pragmatic cue integration in adults’ and children’s inferences about novel word meanings"
-shorttitle        : "Predicting pragmatic cue integration: Supplementary information"
+title             : "Supplementary information  \nPredicting pragmatic cue integration in adults’ and children’s inferences about novel word meanings"
+shorttitle        : " "
 
 author: 
   - name          : "Manuel Bohn"
     affiliation   : "1,2"
-    address       : "Department of Psychology, 450 Serra Mall, Stanford, CA 94305"
-    email         : "bohn@stanford.edu"
   - name          : "Michael Henry Tessler"
     affiliation   : "3"
   - name          : "Megan Merrick"
@@ -35,6 +33,7 @@ class             : "doc"
 output            : papaja::apa6_pdf
 header-includes:
   \usepackage{caption}
+  \usepackage{setspace}\doublespacing
   \renewcommand{\thetable}{S\arabic{table}} 
   \renewcommand{\thefigure}{S\arabic{figure}}
 ---
@@ -53,6 +52,8 @@ library(ggpubr)
 library(lme4)
 library(broom)
 library(exactRankTests)
+library(matrixStats)
+library(readxl)
 
 estimate_mode <- function(s) {
   d <- density(s)
@@ -99,17 +100,19 @@ child_ex3_data <-read_csv(file="../../stats/data/child_ex3.csv")
 
 # Overview
 
-Here we present additional information about methods, results and cognitive models. Readers who are interested in the model code and analysis code itself are encouraged to consult the associated online repository: https://github.com/manuelbohn/mcc.  
+Here we present additional information about methods, results and cognitive models. Readers who are interested in the model code and analysis code itself are encouraged to consult the associated online repository: https://github.com/manuelbohn/mcc. 
 
 # Supplemental methods and results
 
 The following sections present details on the analyses used to evaluate whether the different experimental manipulations produced different responses. For all generalized linear mixed models (GLMM) we used the maximally converging random effects structure.
 
+We used `r cite_r("library.bib")` for all our analyses reported in the main manuscript and the supplementary material.
+
 ## Experiment 1
 
 ### Procedure
 
-```{r figS1, include = T, fig.align = "center", fig.cap = "Screenshot showing test situation Experiment 1, 3 and 4.", out.width="400px"}
+```{r figS1, include = T, fig.align = "center", fig.cap = "Screenshot showing test situation Experiment 1, 3 and 4.", out.width="100%"}
 knitr::include_graphics("./figures/SI_setup_inf.png")
 ```
 
@@ -148,7 +151,7 @@ apa_table(
   
 ```
 
-```{r plotex12, fig.cap = "Results from experiment 1 and 2 for adults. For preference and novelty, control refers to a different speaker (see Fig. 1B). Transparent dots show data from individual participants, diamonds represent condition means, error bars are 95\\% CIs. Dashed line indicates performance expected by chance.", fig.height = 3}
+```{r plotex12, fig.cap = "Results from experiment 1 and 2 for adults. For preference and novelty, control refers to a different speaker (see Fig. 1B). Transparent dots show data from individual participants, diamonds represent condition means, error bars are 95\\% CIs. Dashed line indicates performance expected by chance.", fig.align = "center", out.width="80%"}
 p1 <- bind_rows(
     adult_ex1_data,
     adult_ex2_novelty_data %>% mutate(condition = ifelse(condition == "same_speaker", "test", "control")),
@@ -203,7 +206,7 @@ To compare the two conditions, we fit the following GLMM: `correct ~ condition +
 
 ### Procedure
 
-```{r figS2, include = T, fig.align = "center", fig.cap = "Screenshot showing test situation in Experiment 2 for adults.", out.width="400px"}
+```{r figS2, include = T, fig.align = "center", fig.cap = "Screenshot showing test situation in Experiment 2 for adults.", out.width="100%"}
 knitr::include_graphics("./figures/SI_setup_pref.png")
 ```
 
@@ -304,7 +307,7 @@ apa_table(
 
 ```
 
-```{r plotex3, fig.cap = "Data and model predictions by condition for Experiment 3 with adults. Transparent dots show data from individual participants, diamonds represent condition means. Empirical means are shonw in black and model predictions in pink. Error bars represent 95\\% HDIs.", fig.height = 4}
+```{r plotex3, fig.cap = "Data and model predictions by condition for Experiment 3 with adults. Transparent dots show data from individual participants, diamonds represent condition means. Empirical means are shonw in black and model predictions in pink. Error bars represent 95\\% HDIs.", fig.align = "center", out.width="100%"}
 adult_ex3_data_summary <- adult_ex3_data %>%
   mutate(model = "data") %>%
   group_by(model,common_ground_manipulation,speaker,alignment)%>%
@@ -400,13 +403,13 @@ apa_table(
 
 Below we describe the different ways in which prior strength was manipulated in Experiment 4. The corresponding experiments can be found in the online repository. The test event was always the same: The animal disappeared and then either the same or a different animal returned and requested an object using an unknown word.
 
-For preference, at the beginning of the experiment both tables contained an object. In preference/strong the animal turned to one side and stated that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object. Then they turned the other side and expressed the respective other attitude. In preference/medium the animal only turned to one side and expressed liking in a more subtle way (saying only: “Oh, wow”). 
+For preference, at the beginning of the experiment both tables contained an object. In preference/strong the animal turned to one side and stated that they liked (“Oh wow, I really like that one”) or disliked (“Oh bleh, I really don’t like that one”) the object. Then they turned the other side and expressed the respective other attitude. In preference/medium the animal only turned to one side and expressed liking in a more subtle way (saying only: “Oh, wow”). We piloted several procedures but did not find a manipualtion that indicated only weak preference.
 
 For novelty, one table was empty while there was an object on the other. In novelty/strong the animal turned to one of the sides and commented either on the presence (“Aha, look at that”) or the absence of an object (“Hm, nothing there”). Then the animal turned to the other side and commented in a complementary way. Next, the animal disappeared. The same animal re-appeared and the sequence above was repeated. When the animal disappeared for the second time, a second object appeared on the empty table while the animal was away. In novelty/medium, the animal commented on the presence/absence of objects in the same way but did so only once. In novelty/weak, the animal only turned to the present object and commented on it. 
 
 In all cases, the order of utterances and/or the side to which the speaker turned first were counterbalanced. Figure \ref{fig:priorplot} shows the results for the same speaker and different speaker conditions for each manipulation.
 
-```{r priorplot, fig.cap = "Results from prior strength manipulation Experiments. Transparent dots show data from individual participants, diamonds represent condition means, error bars are 95\\% CIs. Dashed line indicates performance expected by chance.", fig.height = 4.5}
+```{r priorplot, fig.cap = "Results from prior strength manipulation Experiments. Transparent dots show data from individual participants, diamonds represent condition means, error bars are 95\\% CIs. Dashed line indicates performance expected by chance.", fig.align = "center", out.width="100%"}
 
 p_adult_ex4_priors <- adult_ex4_prior_data%>%
   mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"))%>%
@@ -433,7 +436,7 @@ ggplot() +
 
 ### Procedure
 
-The general procedure in Experiment 4 was the same as in Experiment 3. We ran a total of  2 (novelty or preference) x 3 (weak, medium, strong) x 2 (same or different speaker) x 2 (congruent or incongruent) - 4 (no weak manipulation for preference) = 20 conditions. Each participant was randomly assigned to a common ground manipulation and a level of prior strength and completed eight trials in total, two in each unique condition in that combination. The strong prior manipulation was a direct replication of Experiment 3. 
+The general procedure in Experiment 4 was the same as in Experiment 3. We ran a total of 2 (novelty or preference) x 3 (weak, medium, strong) x 2 (same or different speaker) x 2 (congruent or incongruent) - 4 (no weak manipulation for preference) = 20 conditions. Each participant was randomly assigned to a common ground manipulation and a level of prior strength and completed eight trials in total, two in each unique condition in that combination. The strong prior manipulation was a direct replication of Experiment 3. 
 
 Table \ref{tab:table_prior} shows the results of a GLMM fit to the data from each manipulation. The results show that the parameter estimates for condition (i.e. difference between same speaker and different speaker condition) decreases in line with the hypothesized effect of the prior manipulation. 
 
@@ -564,7 +567,7 @@ A general observation to make is that, with common ground information getting we
 
 ### Procedure
 
-```{r figS3, include = T, fig.align = "center", fig.cap = "Screenshot showing test situation Experiment 5 and 7.", out.width="400px"}
+```{r figS3, include = T, fig.align = "center", fig.cap = "Screenshot showing test situation Experiment 5 and 7.", out.width="100%"}
 knitr::include_graphics("./figures/SI_setup_inf_child.png")
 ```
 
@@ -624,7 +627,7 @@ apa_table(
 
 ```
 
-```{r plotex56, fig.cap = "Results from experiment 5 and 6 for children. For preference, control refers to to the different speaker condition (see Fig. 1B in main manuscript). Transparent dots show data from individual participants, regression lines shows smoothed conditional mean with 95\\% CI. Dashed line indicates performance expected by chance.", fig.height = 3.5}
+```{r plotex56, fig.cap = "Results from experiment 5 and 6 for children. For preference, control refers to to the different speaker condition (see Fig. 1B in main manuscript). Transparent dots show data from individual participants, regression lines shows smoothed conditional mean with 95\\% CI. Dashed line indicates performance expected by chance.", fig.align = "center", out.width="70%"}
 p_child_ex12 <- bind_rows(
   child_ex1_data%>%mutate(condition = "test"),
   child_ex2_data%>%mutate(condition = ifelse(condition == "same_speaker","test","control"))
@@ -636,7 +639,7 @@ p_child_ex12 <- bind_rows(
 ggplot(data = p_child_ex12, aes(x = age_num, y = correct, col = condition)) +
   geom_hline(yintercept = 0.5, lty=2)+
   geom_jitter(alpha = 0.2, height = 0.02, width = 0)+
-  geom_smooth(aes(fill = condition),method = "loess", se = T, span = 2,  alpha = .5, size = .7)+
+  geom_smooth(aes(fill = condition),method = "glm",method.args = list(family = "binomial"), se = T, alpha = .5, size = .7)+
   labs(x="Age",y="Proportion correct")+
   facet_wrap( ~ experiment, labeller = as_labeller(c(`child_ex2`="Exp. 6 - Preference", `child_ex1`="Exp. 5 - Informativeness")))+
   theme_few() +
@@ -736,7 +739,7 @@ apa_table(
 )
 ```
 
-```{r plotmodelpredex7, fig.cap = "Model predictions and data for Experiment 7 with children. Colored lines show model predictions with 95\\% HDIs, transparent dots show data from individual participants and the black line with grey CI shows the smoothed conditional mean of the data in each condition.", fig.height = 4}
+```{r plotmodelpredex7, fig.cap = "Model predictions and data for Experiment 7 with children. Colored lines show model predictions with 95\\% HDIs, transparent dots show data from individual participants and the black line with grey CI shows the smoothed conditional mean of the data in each condition.", fig.align = "center", out.width="100%"}
 child_model_predictions <- readRDS("../../stats/saves/child_ex3_model_predictions.rds")%>%
   mutate(speaker = ifelse(speaker == "different_speaker", "Different speaker", "Same speaker"),
          alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"))
@@ -756,7 +759,7 @@ ggplot(child_model_predictions)+
   geom_jitter(data = plot_child_ex3_data, aes(x = age_num, y = mean), width = .025,height = .025, alpha = .2)+
   geom_ribbon(aes(x = age, ymin = ci_lower, ymax = ci_upper, fill = model), alpha = .4) +
   geom_line(aes(x = age, y = mean, col = model), size = 1, alpha = 1, linetype = 1) + 
-  geom_smooth(data = p_child_ex3_data, aes(x = age_num, y = correct_inf), col = "black", size = 0.6, method = "loess", span = 2,  se = T,  alpha = .5)+
+  geom_smooth(data = p_child_ex3_data, aes(x = age_num, y = correct_inf), col = "black", size = 0.6, method = "glm",method.args = list(family = "binomial"),  se = T,  alpha = .5)+
   #geom_hline(yintercept = 0.5, lty=2)+
   labs(y="Proportion more informative", x = "Age")+
   ylim(-0.05,1.05)+
@@ -1046,7 +1049,7 @@ Analysis code for model comparison can be found in the online repository.
 
 Here we report details on the model comparisons. Model fit was assessed based on marginal log-likelihoods of the data under each model. Bayes Factors were computed by first subtracting log-likelihoods for two models and then exponentiating the result. Table \ref{tab:ex3_comp} shows Bayes Factors for model comparisons in Experiment 3. We did not pre-register the inclusion of the noise parameter for Experiment 3, but did so for all subsequent experiments for which we did model comparisons (4 and 7). The first row in Table \ref{tab:ex3_comp} compares the pragmatics model with noise parameter to the model without the noise parameter. This comparison shows that including the noise parameter greatly improves model fit. Figure \ref{fig:modelpredex3} correlates model predictions from the models including noise parameters to the data from Experiment 3. 
 
-```{r modelpredex3, include = T, fig.cap = "Correlation plot for model predictions and data from Experiment 3. All models depicted here included a noise parameter. Coefficients and p-values are based on Pearson correlation statistics. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.height=2.5}
+```{r modelpredex3, include = T, fig.cap = "Correlation plot for model predictions and data from Experiment 3. All models depicted here included a noise parameter. Coefficients and p-values are based on Pearson correlation statistics. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.align = "center", out.width="100%"}
 
 adult_ex3_data_summary <- adult_ex3_data %>%
   mutate(model = "data") %>%
@@ -1184,7 +1187,7 @@ apa_table(
 
 ```
 
-```{r ex3noise, include = T, fig.cap = "Posterior distribution of noise parameter for each model in Experiment 4", fig.height = 2}
+```{r ex3noise, include = T, fig.cap = "Posterior distribution of noise parameter for each model in Experiment 4", fig.align = "center", out.width="80%", fig.height=3}
 ex3_noise_parameters <- bind_rows(
   readRDS("../../stats/saves/ex3_pragm_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
@@ -1212,7 +1215,7 @@ Figure \ref{fig:ex3noise} shows the posterior distribution of the noise paramete
 
 ## Experiment 4
 
-```{r modelpredex4, include = T, fig.cap = "Correlation plot for model predictions and data from Experiment 4. All models included a noise parameter. Coefficients and p-values are based on Pearson correlation statistics. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.height=3}
+```{r modelpredex4, include = T, fig.cap = "Correlation plot for model predictions and data from Experiment 4. All models included a noise parameter. Coefficients and p-values are based on Pearson correlation statistics. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.align = "center", out.width="100%"}
 
 adult_ex4_data_summary <- adult_ex4_data %>%
   mutate(prior_manipulation = relevel(as.factor(prior_manipulation), ref = "strong"))%>%
@@ -1342,7 +1345,7 @@ apa_table(
 
 ```
 
-```{r ex4noise, include = T, fig.cap = "Posterior distribution of noise parameter for each model in Experiment 4", fig.height = 2}
+```{r ex4noise, include = T, fig.cap = "Posterior distribution of noise parameter for each model in Experiment 4", fig.align = "center", out.width="80%", fig.height=3}
 ex4_noise_parameters <- bind_rows(
   readRDS("../../stats/saves/ex4_pragm_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
@@ -1494,13 +1497,13 @@ child_dev_noise_plot <- ggplot(developmental_noise_parameter, aes(x = age, y= y,
 
 Figure \ref{fig:childnoise} shows the different types of noise parameters for the each model. Figure \ref{fig:childnoise}A shows that the pragmatics model has the lowest estimated level of noise of all the models considered. Figure \ref{fig:childnoise}B shows that the the pragmatics model has the lowest level of estimated noise across the entire age range. It also shows that noise decreases with age for the pragmatics model, suggesting that older children behaved more in line with model predictions compared to younger children. 
 
-```{r childnoise, include = T, fig.cap = "Posterior distribution of noise parameter for each model in Experiment 7. A: single noise parameter across age, B: Developmental noise parameter.", fig.height = 2.5}
+```{r childnoise, include = T, fig.cap = "Posterior distribution of noise parameter for each model in Experiment 7. A: single noise parameter across age, B: Developmental noise parameter.", fig.align = "center", out.width="100%", fig.height=3}
 ggarrange(child_noise_plot,child_dev_noise_plot, nrow = 1, ncol = 2, common.legend = T, legend = "right", labels = c("A","B"))
 ```
 
 Finally, Figure \ref{fig:childcor} shows correlations between model predictions and the data, binned by year. Across noise parameters, model predictions and data are closest aligned (i.e. closest to the dotted line) for the pragmatics model, thereby corroborating the conclusions drawn based on the model comparison and the evaluation of the noise parameters. Correlations are also higher for 4yo compared to 3yo, supporting the interpretation based on the developmental noise parameter that children behaved more in line with the model predictions as they got older.  
 
-```{r childcor,  include = T, fig.cap = "Correlation plot for model predictions and data for all models considered in Experiment 7. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.height = 7}
+```{r childcor,  include = T, fig.cap = "Correlation plot for model predictions and data for all models considered in Experiment 7. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.align = "center", out.width="100%", fig.height=7}
 # child_cor <- bind_rows(
 #   readRDS("../../stats/saves/child_ex3_pragm_model_noise.rds") %>%
 #   filter(!(Parameter %in% c("noise"))) %>%
@@ -1648,7 +1651,7 @@ ggplot(p_child_cor, aes(x = mean, y = data_mean, col = age)) +
 
 ## Note on alternative approach
 
-In this model, we assume that the literal listener ($L_0$) is also sensitive to the prior manipulation. An alternative approach [used e.g. in @frank2012predicting] is to assume that $L_0$ has a uniform prior distribution over referents [.33, .33, .33]. We also ran the entire analysis with this alternative approach and found no major changes in the results. In all cases, the pragmatics model outperformed the two alternative models, both for children as well as for adults. Interestingly, for adults but not for children, using a uniform prior $L_0$ yielded a lower estimate for the noise parameter in Experiment 3 and 4. 
+In this model, we assume that the literal listener ($L_0$) is also sensitive to the prior manipulation. An alternative approach [used e.g. in @frank2012predicting] is to assume that $L_0$ has a uniform prior distribution over referents [.33, .33, .33]. We also ran the entire analysis with this alternative approach and found no major changes in the results. In all cases, the pragmatics model outperformed the two alternative models, both for children as well as for adults. Interestingly, for adults but not for children, using a uniform prior for $L_0$ yielded a lower estimate for the noise parameter in Experiment 3 and 4. 
 
 
 \newpage
