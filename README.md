@@ -10,6 +10,6 @@ All data sets can be found in `stats/data/`. Model outputs are stored in `stats/
 
 The main manuscript file includes all analysis reported in it and can be found at `papers/full_paper/manuscript.Rmd`.
 
-The same applies to the SI Appendix, which can be found at `papers/full_paper/Supplementary_information.Rmd`.
+The same applies to the supplementary material, which can be found at `papers/full_paper/Supplementary_information.Rmd`.
 
 Code for cognitive models can be found in `papers/full_paper/models.Rmd`.
