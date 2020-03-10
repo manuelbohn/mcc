@@ -323,7 +323,7 @@ adult_ex3_data_summary <- adult_ex3_data %>%
 adult_ex3_pragm_model_pred_noise <- readRDS("../../stats/saves/ex3_pragm_model_noise.rds") %>%
   filter(!(Parameter %in% c("noise")))  %>%
   separate(Parameter, into = c("common_ground_manipulation","speaker", "alignment"), sep="/")%>%
-  mutate(model="pragmatic")%>%
+  mutate(model="integration")%>%
   group_by(model,common_ground_manipulation,speaker,alignment)%>%
   summarise(mean = estimate_mode(value), 
             ci_lower = hdi_lower(value),
@@ -364,7 +364,7 @@ ggplot(data = adult_ex3_pred, aes(x = alignment, y = mean, col = model)) +
         legend.background = element_blank())
 ```
 
-We discuss and visualize the results as the proportion with which participants chose the more informative object (i.e., the object that would be the more informative referent when only utterance information is considered). Figure\ref{fig:plotex3} shows the result in each of the eight conditions of Experiment 3. Results are plotted from  The plot also shows model predictions from the pragmatics model (including the noise parameter - see below).
+We discuss and visualize the results as the proportion with which participants chose the more informative object (i.e., the object that would be the more informative referent when only utterance information is considered). Figure\ref{fig:plotex3} shows the result in each of the eight conditions of Experiment 3. Results are plotted from  The plot also shows model predictions from the integration model (including the noise parameter - see below).
 
 To see if participants differentiated between conditions, we fit the following GLMM to the data: `correct_inf ~ common ground*speaker*alignment + (alignment|id)`. Table \ref{tab:ex3_model} shows the model output. Results show that participants clearly differentiated between congruent and incongruent trials when the speaker remained the same. 
 
@@ -739,7 +739,7 @@ apa_table(
 )
 ```
 
-```{r plotmodelpredex7, fig.cap = "Model predictions and data for Experiment 7 with children. Colored lines show model predictions with 95\\% HDIs, transparent dots show data from individual participants and the black line with grey CI shows the smoothed conditional mean of the data in each condition.", fig.align = "center", out.width="100%"}
+```{r plotmodelpredex7, fig.cap = "Model predictions and data for Experiment 7 with children. Colored lines show model predictions with 95\\% HDIs, transparent dots show data from individual participants and the black line with grey CI shows the smoothed conditional mean of the data in each condition. Black diamonds with error bars show mean for age bined by year with 95\\% HDIs.", fig.align = "center", out.width="100%"}
 child_model_predictions <- readRDS("../../stats/saves/child_ex3_model_predictions.rds")%>%
   mutate(speaker = ifelse(speaker == "different_speaker", "Different speaker", "Same speaker"),
          alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"))
@@ -755,27 +755,43 @@ p_child_ex3_data <- child_ex3_data %>%
   mutate(speaker = ifelse(speaker == "different_speaker", "Different speaker", "Same speaker"),
          alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"))
 
+
+p_child_ex3_data_binned <- child_ex3_data %>%
+  mutate(age = as.character(age_bin), 
+         model = "Data",
+         speaker = ifelse(speaker == "different_speaker", "Different speaker", "Same speaker"),
+         alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"))%>%
+  group_by(model,age, alignment, speaker) %>%
+  summarize(k = sum(correct_inf), n = n())%>%
+  ungroup() %>%
+  mutate(a = 1 + k,
+         b = 1 + n - k,
+         mean = (a-1)/(a+b-2),
+         ci_lower  = qbeta(.025, a, b),
+         ci_upper = qbeta(.975, a, b))%>%
+  select(-a,-b,-n,-k)
+
 ggplot(child_model_predictions)+
   geom_jitter(data = plot_child_ex3_data, aes(x = age_num, y = mean), width = .025,height = .025, alpha = .2)+
   geom_ribbon(aes(x = age, ymin = ci_lower, ymax = ci_upper, fill = model), alpha = .4) +
   geom_line(aes(x = age, y = mean, col = model), size = 1, alpha = 1, linetype = 1) + 
   geom_smooth(data = p_child_ex3_data, aes(x = age_num, y = correct_inf), col = "black", size = 0.6, method = "glm",method.args = list(family = "binomial"),  se = T,  alpha = .5)+
-  #geom_hline(yintercept = 0.5, lty=2)+
+geom_pointrange(data = p_child_ex3_data_binned, aes(x = as.numeric(age)+0.5, y = mean, ymin = ci_lower, ymax = ci_upper), size = .6,  position = position_dodge(width = .5), pch = 5)+
   labs(y="Proportion more informative", x = "Age")+
   ylim(-0.05,1.05)+
   facet_grid(~speaker+alignment)+
   theme_few()+
   theme(legend.position="bottom")+
   scale_color_manual(name="Model",
-                     breaks=c("pragmatic","pragmatic_noise","pragmatic_developmental_noise"),
+                     breaks=c("integration","integration_noise","integration_developmental_noise"),
                      values= c("#00afaf","#af6300","#6c71c4"))+
   scale_fill_manual(name="Model",
-                     breaks=c("pragmatic","pragmatic_noise","pragmatic_developmental_noise"),
+                     breaks=c("integration","integration_noise","integration_developmental_noise"),
                      values= c("#00afaf","#af6300","#6c71c4"))
 
 ```
 
-Figure \ref{fig:plotmodelpredex7} shows the results for each condition plotted by age as a continuous variable. The same figure also shows model predictions from the pragmatics model with different noise parameters (see below).
+Figure \ref{fig:plotmodelpredex7} shows the results for each condition plotted by age as a continuous variable. The same figure also shows model predictions from the integration model with different noise parameters (see below).
 
 To see if children differentiated between the different combinations of manipulations in Experiment 7, we fit the following GLMM to the data: `correct_inf ~ age_num*speaker*alignment+ (speaker+alignment|id)`. Model output is shown in Table \ref{tab:child_models}.
 
@@ -793,7 +809,7 @@ There are two kinds of lexica, corresponding to the two utterance components: Th
 The lexicon of pointing $\mathcal{L}_{point}$ encodes the meaning of a point: The action of pointing reduces the set of referents to those that are on the table targeted by the point.
 The lexica of labels map labels $u_w$ onto referents: $\mathcal{L}_1$ which maps label 1 $w_1$ to type 1 $t_1$ and label 2 $w_2$ to type 2 $t_2$, and $\mathcal{L}_2$ which has the inverse mapping. 
 
-## Pragmatics model
+## Integration model
 
 Our word-learning model is a model of pragmatic reasoning couched in the Rational Speech Act modeling framework [@frank2012predicting; @goodman2016pragmatic]. The model describes the following process: A pragmatic listener ($L_1$) jointly infers a referent (what object is being picked out by the utterance) and a lexicon (label--type mappings) by reasoning about a pragmatic speaker ($S_1$) who produces utterances to convey information to a literal listener ($L_0$), who in turn interprets utterances according to their literal meaning. According to Bayes rule, the pragmatic listener's inference is given by:
 
@@ -838,7 +854,7 @@ The above formulation of a literal interpretation model based only on the semant
 
 ### Worked Example
 
-In this section, we work through a toy numerical example for how model predictions were generated for the pragmatics model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from a preference  condition (see below). Figure \ref{fig:figS1} shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents of two types (pink-ish and yellow-ish; for simplicity, we refer refer the object's type by its color) on two tables: $r_{type:pink, table: 1}$, $r_{type:pink,table: 2}$; one yellow-ish, $r_{type:yellow,table: 2}$). For simplicity, we refer to the referents by the shorthand: $r_{p1}, r_{p2}, r_{y2}$.
+In this section, we work through a toy numerical example for how model predictions were generated for the integration model. The prediction will correspond to the parameter free model described above (excluding the noise parameter). The values of the parameters are taken from a preference  condition (see below). Figure \ref{fig:figS1} shows a screenshot from the adult experiment, which the model was designed to capture. In this context, there are three potential referents of two types (pink-ish and yellow-ish; for simplicity, we refer refer the object's type by its color) on two tables: $r_{type:pink, table: 1}$, $r_{type:pink,table: 2}$; one yellow-ish, $r_{type:yellow,table: 2}$). For simplicity, we refer to the referents by the shorthand: $r_{p1}, r_{p2}, r_{y2}$.
 In principle, the speaker, the frog in this case, can produce one of four utterances, pointing either to the left or right table and saying either label ("dax" or "wug"):  $u_1 = (\text{left}, dax)$, $u_2 = (\text{left}, wug)$, $u_3 = (\text{right}, dax)$, $u_4 = (\text{right}, wug)$.
 We work out the example where the speaker produces utterance $u_3$, pointing to the right table (two objects) and saying the label "dax" (though since the labels have no *a priori* meanings, the computation would be the same for utterance $u_4$). 
 
@@ -1013,27 +1029,27 @@ $$
 \end{aligned}
 $$
 
-To conclude the example, according to the parameter free pragmatics model, the probability that $L_1$ thinks that $S_1$ is referring to a yellow-ish object when producing $u_3$ is 0.91. Based on this model we thus expected that, on average, participants would select the yellow-ish object in 91% of cases in a condition with the prior distribution specified above.  
+To conclude the example, according to the parameter free integration model, the probability that $L_1$ thinks that $S_1$ is referring to a yellow-ish object when producing $u_3$ is 0.91. Based on this model we thus expected that, on average, participants would select the yellow-ish object in 91% of cases in a condition with the prior distribution specified above.  
 
-## Prior only model
+## No informativeness model
 
-The prior only model ignored the information about the intended referent that was expressed by the utterance and instead only focused on common ground manipulation. The only information available to $L_1$ is the prior distribution over referents. It is therefore defined as: 
+The No informativeness model ignored the information about the intended referent that was expressed by the utterance and instead only focused on common ground manipulation. The only information available to $L_1$ is the prior distribution over referents. It is therefore defined as: 
 
 \begin{equation} 
 P_{L_1}(r|u)\propto P(r)
 \end{equation} 
 
-That is, the probability of the referent given the utterance is determined by the prior probability of the referent for a particular speaker. The prior distributions were set in the same way as for the pragmatics model.
+That is, the probability of the referent given the utterance is determined by the prior probability of the referent for a particular speaker. The prior distributions were set in the same way as for the integration model.
 
-## Flat prior model
+## No common ground model
 
-This model was identical in structure to the pragmatics model with the exception that the prior distribution did not correspond to the measurements from Experiment 2 and did not vary with speaker identity. That is, regardless of common ground manipulation and speaker identity the prior distribution was always uniform (i.e. [0.33,0.33,0.33]). The speaker optimality parameter $\alpha$ was set in the same way as in the pragmatics model. 
+This model was identical in structure to the integration model with the exception that the prior distribution did not correspond to the measurements from Experiment 2 and did not vary with speaker identity. That is, regardless of common ground manipulation and speaker identity the prior distribution was always uniform (i.e. [0.33,0.33,0.33]). The speaker optimality parameter $\alpha$ was set in the same way as in the integration model. 
 
 ## Model parameters  
 
-As noted in the main text, the parameter $\alpha$ (speaker optimality parameter) in equation 2 determines the absolute strength of the likelihood term. It's interpretation is *how* rational $L_1$ thinks $S_1$ is in this particular context. For adults, we used the data from Experiment 1 to infer the value of $\alpha$. That is, we inferred which value of $\alpha$ would generate model predictions for the pragmatics model (assuming equal prior probability over referents) that corresponded to the average proportion of correct responses measured in Experiment 1. This value for $\alpha$ was then used in Experiment 3 and 4. 
+As noted in the main text, the parameter $\alpha$ (speaker optimality parameter) in equation 2 determines the absolute strength of the likelihood term. It's interpretation is *how* rational $L_1$ thinks $S_1$ is in this particular context. For adults, we used the data from Experiment 1 to infer the value of $\alpha$. That is, we inferred which value of $\alpha$ would generate model predictions for the integration model (assuming equal prior probability over referents) that corresponded to the average proportion of correct responses measured in Experiment 1. This value for $\alpha$ was then used in Experiment 3 and 4. 
 
-For children, the speaker optimality parameter changed with age. Instead of inferring a single value across age, we used the data from Experiment 5 to find the slope and intercept for $\alpha$ that best described the developmental trajectory in the data. As for adults, this was done via the pragmatics model with equal prior probability for each object. In Experiment 7, the speaker optimality parameter for a given child of a given age was computed by taking the overall intercept and adding the slope times the child's age (with age anchored at 0). The analysis code corresponding to these calculations can be found in the associated online repository.
+For children, the speaker optimality parameter changed with age. Instead of inferring a single value across age, we used the data from Experiment 5 to find the slope and intercept for $\alpha$ that best described the developmental trajectory in the data. As for adults, this was done via the integration model with equal prior probability for each object. In Experiment 7, the speaker optimality parameter for a given child of a given age was computed by taking the overall intercept and adding the slope times the child's age (with age anchored at 0). The analysis code corresponding to these calculations can be found in the associated online repository.
 
 The prior distribution over objects, $P(r)$, varied with the common ground manipulation, the identity of the speaker and the alignment of utterance and common ground information. Numerically, it depended on the measurement obtained in Experiment 2A and B for adults and Experiment 6 for children. Fig. \ref{fig:figS2} shows the test situation on Experiment 2.  
 
@@ -1047,7 +1063,7 @@ Analysis code for model comparison can be found in the online repository.
 
 ## Experiment 3
 
-Here we report details on the model comparisons. Model fit was assessed based on marginal log-likelihoods of the data under each model. Bayes Factors were computed by first subtracting log-likelihoods for two models and then exponentiating the result. Table \ref{tab:ex3_comp} shows Bayes Factors for model comparisons in Experiment 3. We did not pre-register the inclusion of the noise parameter for Experiment 3, but did so for all subsequent experiments for which we did model comparisons (4 and 7). The first row in Table \ref{tab:ex3_comp} compares the pragmatics model with noise parameter to the model without the noise parameter. This comparison shows that including the noise parameter greatly improves model fit. Figure \ref{fig:modelpredex3} correlates model predictions from the models including noise parameters to the data from Experiment 3. 
+Here we report details on the model comparisons. Model fit was assessed based on marginal log-likelihoods of the data under each model. Bayes Factors were computed by first subtracting log-likelihoods for two models and then exponentiating the result. Table \ref{tab:ex3_comp} shows Bayes Factors for model comparisons in Experiment 3. We did not pre-register the inclusion of the noise parameter for Experiment 3, but did so for all subsequent experiments for which we did model comparisons (4 and 7). The first row in Table \ref{tab:ex3_comp} compares the integration model with noise parameter to the model without the noise parameter. This comparison shows that including the noise parameter greatly improves model fit. Figure \ref{fig:modelpredex3} correlates model predictions from the models including noise parameters to the data from Experiment 3. 
 
 ```{r modelpredex3, include = T, fig.cap = "Correlation plot for model predictions and data from Experiment 3. All models depicted here included a noise parameter. Coefficients and p-values are based on Pearson correlation statistics. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.align = "center", out.width="100%"}
 
@@ -1068,7 +1084,7 @@ adult_ex3_data_summary <- adult_ex3_data %>%
 ex3_flat_prior_model_pred_noise <- readRDS("../../stats/saves/ex3_flat_prior_model_noise.rds") %>%
   filter(!(Parameter %in% c("noise")))  %>%
   separate(Parameter, into = c("common_ground_manipulation","speaker", "alignment"), sep="/")%>%
-  mutate(model="flat_prior_noise")%>%
+  mutate(model="no_common_ground_noise")%>%
   group_by(model,common_ground_manipulation,speaker,alignment)%>%
   summarise(mean = estimate_mode(value), 
             ci_lower = hdi_lower(value),
@@ -1077,7 +1093,7 @@ ex3_flat_prior_model_pred_noise <- readRDS("../../stats/saves/ex3_flat_prior_mod
 ex3_prior_only_model_pred_noise <- readRDS("../../stats/saves/ex3_prior_only_model_noise.rds") %>%
   filter(!(Parameter %in% c("noise")))  %>%
   separate(Parameter, into = c("common_ground_manipulation","speaker", "alignment"), sep="/")%>%
-  mutate(model="prior_only_noise")%>%
+  mutate(model="no_informativeness_noise")%>%
   group_by(model,common_ground_manipulation,speaker,alignment)%>%
   summarise(mean = estimate_mode(value), 
             ci_lower = hdi_lower(value),
@@ -1086,7 +1102,7 @@ ex3_prior_only_model_pred_noise <- readRDS("../../stats/saves/ex3_prior_only_mod
 ex3_pragm_model_pred_noise <- readRDS("../../stats/saves/ex3_pragm_model_noise.rds") %>%
   filter(!(Parameter %in% c("noise")))  %>%
   separate(Parameter, into = c("common_ground_manipulation","speaker", "alignment"), sep="/")%>%
-  mutate(model="pragmatic_noise")%>%
+  mutate(model="integration_noise")%>%
   group_by(model,common_ground_manipulation,speaker,alignment)%>%
   summarise(mean = estimate_mode(value), 
             ci_lower = hdi_lower(value),
@@ -1115,9 +1131,9 @@ ex_3_cor_plot <- ex_3_pred %>%
     rename(data_mean = mean, data_ci_lower = ci_lower, data_ci_upper = ci_upper) %>%
     select(-model)
   )%>%
-  mutate(model =  case_when(model == "pragmatic_noise" ~ "Pragmatics",
-                            model == "prior_only_noise" ~ "Prior only",
-                            model == "flat_prior_noise" ~ "Flat prior"
+  mutate(model =  case_when(model == "integration_noise" ~ "Integration",
+                            model == "no_informativeness_noise" ~ "No informativeness",
+                            model == "no_common_ground_noise" ~ "No common ground"
                             ))
 
 
@@ -1140,20 +1156,21 @@ ggplot(data = ex_3_cor_plot,aes(x = mean, y = data_mean, col = "1")) +
 ```
 
 ```{r ex3_comp,results = "asis"}
-log_like_pragmatic_ex3 <- readRDS("../../stats/saves/ex3_pragm_model_loglike.rds")
+log_like_pragmatic_ex3 <- readRDS("../../stats/saves/ex3_pragm_model_loglike.rds")%>%
+  mutate(model = "integration")
 
 ex3_pragm_model_noise_loglike <- readRDS("../../stats/saves/ex3_pragm_model_noise_loglike.rds")%>%
-  mutate(model = "pragmatic_noise")%>%
+  mutate(model = "integration_noise")%>%
   group_by(model)%>%
   summarize(logP = logSumExp(value))
 
 ex3_prior_only_model_noise_loglike <- readRDS("../../stats/saves/ex3_prior_only_model_noise_loglike.rds")%>%
-  mutate(model = "prior_only_noise")%>%
+  mutate(model = "no_informativeness_noise")%>%
   group_by(model)%>%
   summarize(logP = logSumExp(value))
 
 ex3_flat_prior_model_noise_loglike <- readRDS("../../stats/saves/ex3_flat_prior_model_noise_loglike.rds")%>%
-  mutate(model = "flat_prior_noise")%>%
+  mutate(model = "no_common_ground_noise")%>%
   group_by(model)%>%
   summarize(logP = logSumExp(value))
 
@@ -1171,11 +1188,11 @@ ex3_bf <- bind_rows(
   ex3_flat_prior_model_noise_loglike,
   ex3_prior_only_model_noise_loglike
 ) %>% spread(model, logP) %>%
-  mutate("pragmatic_noise > pragmatic" = exp(pragmatic_noise - pragmatic),
-         "pragmatic_noise > prior_only_noise" = exp(pragmatic_noise - prior_only_noise),
-         "pragmatic_noise > flat_prior_noise" = exp(pragmatic_noise - flat_prior_noise),
-         "prior_only_noise > flat_prior_noise" = exp(prior_only_noise - flat_prior_noise)) %>%
-  select(-pragmatic,-pragmatic_noise, -flat_prior_noise, -prior_only_noise)%>%
+  mutate("integration_noise > integration" = exp(integration_noise - integration),
+         "integration_noise > no_informativeness_noise" = exp(integration_noise - no_informativeness_noise),
+         "integration_noise > no_common_ground_noise" = exp(integration_noise - no_common_ground_noise),
+         "no_informativeness_noise > no_common_ground_noise" = exp(no_informativeness_noise - no_common_ground_noise)) %>%
+  select(-integration,-integration_noise, -no_informativeness_noise, -no_common_ground_noise)%>%
   gather(Comparison, BF)%>%
   mutate(BF = formatC(BF,2))
 
@@ -1191,13 +1208,13 @@ apa_table(
 ex3_noise_parameters <- bind_rows(
   readRDS("../../stats/saves/ex3_pragm_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Pragmatics"),
+  mutate(Model = "Integration"),
   readRDS("../../stats/saves/ex3_prior_only_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Prior only"),
+  mutate(Model = "No informativeness"),
   readRDS("../../stats/saves/ex3_flat_prior_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Flat prior")
+  mutate(Model = "No common ground")
   )
 
 ggplot(ex3_noise_parameters, aes(x = value, col = Model, fill = Model))+
@@ -1205,13 +1222,13 @@ ggplot(ex3_noise_parameters, aes(x = value, col = Model, fill = Model))+
   theme_few()+
   xlab("Noise parameter")+
   xlim(0,1)+
-  scale_color_manual(breaks=c("Pragmatics","Prior only","Flat prior"),
+  scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
                     values= c("#b58900","#6c71c4","#859900"))+
-  scale_fill_manual(breaks=c("Pragmatics","Prior only","Flat prior"),
+  scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
                     values= c("#b58900","#6c71c4","#859900"))
 ```
 
-Figure \ref{fig:ex3noise} shows the posterior distribution of the noise parameter under each model. The noise parameter was fit to the data and indicates the proportion of responses that are estimated to be due to random guessing rather than in line with model predictions. Consequently, a model that makes predictions that are closer to the data is likely to have a lower noise parameter. The results corroborate the model comparison by showing that the pragmatics model has the lowest noise parameter.  
+Figure \ref{fig:ex3noise} shows the posterior distribution of the noise parameter under each model. The noise parameter was fit to the data and indicates the proportion of responses that are estimated to be due to random guessing rather than in line with model predictions. Consequently, a model that makes predictions that are closer to the data is likely to have a lower noise parameter. The results corroborate the model comparison by showing that the integration model has the lowest noise parameter.  
 
 ## Experiment 4
 
@@ -1235,7 +1252,7 @@ adult_ex4_data_summary <- adult_ex4_data %>%
 ex4_flat_prior_model_pred_noise <- readRDS("../../stats/saves/ex4_flat_prior_model_noise.rds") %>%
   filter(!(Parameter %in% c("noise")))  %>%
   separate(Parameter, into = c("common_ground_manipulation","prior_manipulation","speaker", "alignment"), sep="/")%>%
-  mutate(model="flat_prior_noise")%>%
+  mutate(model="no_common_ground")%>%
   group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
   summarise(mean = estimate_mode(value), 
             ci_lower = hdi_lower(value),
@@ -1244,7 +1261,7 @@ ex4_flat_prior_model_pred_noise <- readRDS("../../stats/saves/ex4_flat_prior_mod
 ex4_prior_only_model_pred_noise <- readRDS("../../stats/saves/ex4_prior_only_model_noise.rds") %>%
   filter(!(Parameter %in% c("noise")))  %>%
   separate(Parameter, into = c("common_ground_manipulation","prior_manipulation","speaker", "alignment"), sep="/")%>%
-  mutate(model="prior_only_noise")%>%
+  mutate(model="no_informativeness")%>%
   group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
   summarise(mean = estimate_mode(value), 
             ci_lower = hdi_lower(value),
@@ -1253,7 +1270,7 @@ ex4_prior_only_model_pred_noise <- readRDS("../../stats/saves/ex4_prior_only_mod
 ex4_pragm_model_pred_noise <- readRDS("../../stats/saves/ex4_pragm_model_noise.rds") %>%
   filter(!(Parameter %in% c("noise")))  %>%
   separate(Parameter, into = c("common_ground_manipulation","prior_manipulation","speaker", "alignment"), sep="/")%>%
-  mutate(model="pragmatic_noise")%>%
+  mutate(model="integration_noise")%>%
   group_by(model,common_ground_manipulation,prior_manipulation,speaker,alignment)%>%
   summarise(mean = estimate_mode(value), 
             ci_lower = hdi_lower(value),
@@ -1284,9 +1301,9 @@ ex_4_cor_plot <- ex_4_pred %>%
     rename(data_mean = mean, data_ci_lower = ci_lower, data_ci_upper = ci_upper) %>%
     select(-model)
   )%>%
-  mutate(model =  case_when(model == "pragmatic_noise" ~ "Pragmatics",
-                            model == "prior_only_noise" ~ "Prior only",
-                            model == "flat_prior_noise" ~ "Flat prior"
+  mutate(model =  case_when(model == "integration_noise" ~ "Integration",
+                            model == "no_informativeness" ~ "No informativeness",
+                            model == "no_common_ground" ~ "No common ground"
                             ))
 
 
@@ -1309,17 +1326,17 @@ ggplot(data = ex_4_cor_plot,aes(x = mean, y = data_mean, col = prior_manipulatio
 
 ```{r ex4_comp, results="asis"}
 ex4_pragm_model_noise_loglike <- readRDS("../../stats/saves/ex4_pragm_model_noise_loglike.rds")%>%
-  mutate(model = "pragmatic_noise")%>%
+  mutate(model = "integration_noise")%>%
   group_by(model)%>%
   summarize(logP = logSumExp(value))
 
 ex4_prior_only_model_noise_loglike <- readRDS("../../stats/saves/ex4_prior_only_model_noise_loglike.rds")%>%
-  mutate(model = "prior_only_noise")%>%
+  mutate(model = "no_informativeness")%>%
   group_by(model)%>%
   summarize(logP = logSumExp(value))
 
 ex4_flat_prior_model_noise_loglike <- readRDS("../../stats/saves/ex4_flat_prior_model_noise_loglike.rds")%>%
-  mutate(model = "flat_prior_noise")%>%
+  mutate(model = "no_common_ground")%>%
   group_by(model)%>%
   summarize(logP = logSumExp(value))
 
@@ -1328,10 +1345,10 @@ ex4_bf <- bind_rows(
   ex4_flat_prior_model_noise_loglike,
   ex4_prior_only_model_noise_loglike
 ) %>% spread(model, logP) %>%
-  mutate("Pragmatics > Prior only" = exp(pragmatic_noise - prior_only_noise),
-         "Pragmatics > Flat prior" = exp(pragmatic_noise - flat_prior_noise),
-         "Flat prior > Prior only" = exp(flat_prior_noise - prior_only_noise)) %>%
-  select(-pragmatic_noise, -flat_prior_noise, -prior_only_noise)%>%
+  mutate("Integration > No informativeness" = exp(integration_noise - no_informativeness),
+         "Integration > No common ground" = exp(integration_noise - no_common_ground),
+         "No common ground > No informativeness" = exp(no_common_ground - no_informativeness)) %>%
+  select(-integration_noise, -no_common_ground, -no_informativeness)%>%
   gather(Comparison, BF)%>%
   mutate(BF = formatC(BF,2))
 
@@ -1349,13 +1366,13 @@ apa_table(
 ex4_noise_parameters <- bind_rows(
   readRDS("../../stats/saves/ex4_pragm_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Pragmatics"),
+  mutate(Model = "Integration"),
   readRDS("../../stats/saves/ex4_prior_only_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Prior only"),
+  mutate(Model = "No informativeness"),
   readRDS("../../stats/saves/ex4_flat_prior_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Flat prior")
+  mutate(Model = "No common ground")
   )
 
 ggplot(ex4_noise_parameters, aes(x = value, col = Model, fill = Model))+
@@ -1363,19 +1380,19 @@ ggplot(ex4_noise_parameters, aes(x = value, col = Model, fill = Model))+
   theme_few()+
   xlab("Noise parameter")+
   xlim(0,1)+
-  scale_color_manual(breaks=c("Pragmatics","Prior only","Flat prior"),
+  scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
                     values= c("#b58900","#6c71c4","#859900"))+
-  scale_fill_manual(breaks=c("Pragmatics","Prior only","Flat prior"),
+  scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
                     values= c("#b58900","#6c71c4","#859900"))
 ```
 
-Figure \ref{fig:modelpredex4} correlates model predictions with the data from Experiment 4. Table \ref{tab:ex4_comp} shows Bayes Factors for model comparisons in Experiment 4. As pre-registered, all models included a noise parameter. Figure \ref{fig:ex4noise} shows the posterior distribution of the noise parameter for each model in Experiment 4. All results suggest that the pragmatics model captures the structure in the data better compared to the alternative models considered. 
+Figure \ref{fig:modelpredex4} correlates model predictions with the data from Experiment 4. Table \ref{tab:ex4_comp} shows Bayes Factors for model comparisons in Experiment 4. As pre-registered, all models included a noise parameter. Figure \ref{fig:ex4noise} shows the posterior distribution of the noise parameter for each model in Experiment 4. All results suggest that the integration model captures the structure in the data better compared to the alternative models considered. 
 
 ## Experiment 7
 
-For children, we compared models using different types of noise parameters. We preregistered the model comparison for models including a single noise parameter. We added the additional model comparisons because the noise parameter was relatively high. The additional model comparisons allow us to see if the pragmatics model provides a better fit when more emphasis is put on the model structure itself (see Figure \ref{fig:plotmodelpredex7} for model predictions from the models with different noise parameters). The results show that this was the case.
+For children, we compared models using different types of noise parameters. We preregistered the model comparison for models including a single noise parameter. We added the additional model comparisons because the noise parameter was relatively high. The additional model comparisons allow us to see if the integration model provides a better fit when more emphasis is put on the model structure itself (see Figure \ref{fig:plotmodelpredex7} for model predictions from the models with different noise parameters). The results show that this was the case.
 
-Parameter free models did not include a noise parameter. Noise models included a single noise parameter for all ages. Developmental noise models included a noise parameter that changed with age. That is, instead of a single value, we inferred an intercept and a slope for the noise parameter. Noise was therefore a function of the child's age. Table \ref{tab:child_prag_bf} shows model comparisons for the pragmatics models using different noise parameters. This shows that including a noise parameter improves model fit but that the type of noise parameter does not make much of a difference.  
+Parameter free models did not include a noise parameter. Noise models included a single noise parameter for all ages. Developmental noise models included a noise parameter that changed with age. That is, instead of a single value, we inferred an intercept and a slope for the noise parameter. Noise was therefore a function of the child's age. Table \ref{tab:child_prag_bf} shows model comparisons for the integration models using different noise parameters. This shows that including a noise parameter improves model fit but that the type of noise parameter does not make much of a difference.  
 
 ```{r child_prag_bf, results = "asis"}
 child_ex3_model_comparison <- readRDS("../../stats/saves/child_ex3_model_comparison.rds")
@@ -1390,22 +1407,22 @@ child_ex3_pragmatic_models_bf <- child_ex3_model_comparison%>%
   mutate(BF = formatC(BF,2))
 apa_table(
   child_ex3_pragmatic_models_bf
-  , caption = "Model comparisons for pragmatics models in Experiment 7"
+  , caption = "Model comparisons for integration models in Experiment 7"
   , note = "BF = Bayes Factor"
   , escape = T
 )
 ```
 
-Table \ref{tab:child_bf} shows results for model comparison for the different types of noise parameters. In all cases, the pragmatics model provides a substantially better fit to the data compared to the alternative models.
+Table \ref{tab:child_bf} shows results for model comparison for the different types of noise parameters. In all cases, the integration model provides a substantially better fit to the data compared to the alternative models.
 
 ```{r child_bf, results = "asis"}
 child_ex3_bf <- child_ex3_model_comparison%>%
   rename(Parameter = parameter)%>%
   group_by(Parameter)%>%
   spread(model, logP) %>%
-  mutate("Pragmatics > Flat P." = formatC(exp(pragmatic - flat_prior),2),
-         "Pragmatics > P. only" = formatC(exp(pragmatic - prior_only),2),
-         "Flat P. > P. only" = formatC(exp(flat_prior - prior_only),2)) %>%
+  mutate("Integration > No common ground" = formatC(exp(pragmatic - flat_prior),2),
+         "Integration > No informativeness" = formatC(exp(pragmatic - prior_only),2),
+         "No common ground > No informativeness" = formatC(exp(flat_prior - prior_only),2)) %>%
   select(-pragmatic,-flat_prior, -prior_only)
 apa_table(
   child_ex3_bf
@@ -1419,22 +1436,22 @@ apa_table(
 child_noise_parameters <- bind_rows(
   readRDS("../../stats/saves/child_ex3_pragm_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Pragmatics"),
+  mutate(Model = "Integration"),
   readRDS("../../stats/saves/child_ex3_prior_only_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Prior only"),
+  mutate(Model = "No informativeness"),
   readRDS("../../stats/saves/child_ex3_flat_prior_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "Flat prior")
+  mutate(Model = "No common ground")
   )
 child_noise_plot <- ggplot(child_noise_parameters, aes(x = value, col = Model, fill = Model))+
   geom_density(alpha = .5)+
   theme_few()+
   xlab("Noise parameter")+
   xlim(0,1)+
-  scale_color_manual(breaks=c("Pragmatics","Prior only","Flat prior"),
+  scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
                     values= c("#b58900","#6c71c4","#859900"))+
-  scale_fill_manual(breaks=c("Pragmatics","Prior only","Flat prior"),
+  scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
                     values= c("#b58900","#6c71c4","#859900"))
 ```
 
@@ -1459,9 +1476,9 @@ child_ex3_flat_prior_model_developmental_noise_param <- readRDS("../../stats/sav
             ci_upper = hdi_upper(value))
 developmental_noise_parameter <- data_frame(
   age = rep(seq(0,2, by = 0.05),3),
-  Model = c(rep("Pragmatics",41),
-            rep("Flat prior",41),
-            rep("Prior only",41)),
+  Model = c(rep("Integration",41),
+            rep("No common ground",41),
+            rep("No informativeness",41)),
   int = c(rep(child_ex3_pragm_model_developmental_noise_param%>%
                 filter(Parameter == "noise_int")%>%
                 pull(mean),41),
@@ -1491,17 +1508,17 @@ child_dev_noise_plot <- ggplot(developmental_noise_parameter, aes(x = age, y= y,
   xlab("Age")+
   ylim(0,1)+
   theme_few()+
-  scale_color_manual(breaks=c("Pragmatics","Prior only","Flat prior"),
+  scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
                     values= c("#b58900","#6c71c4","#859900"))
 ```
 
-Figure \ref{fig:childnoise} shows the different types of noise parameters for the each model. Figure \ref{fig:childnoise}A shows that the pragmatics model has the lowest estimated level of noise of all the models considered. Figure \ref{fig:childnoise}B shows that the the pragmatics model has the lowest level of estimated noise across the entire age range. It also shows that noise decreases with age for the pragmatics model, suggesting that older children behaved more in line with model predictions compared to younger children. 
+Figure \ref{fig:childnoise} shows the different types of noise parameters for the each model. Figure \ref{fig:childnoise}A shows that the integration model has the lowest estimated level of noise of all the models considered. Figure \ref{fig:childnoise}B shows that the the integration model has the lowest level of estimated noise across the entire age range. It also shows that noise decreases with age for the integration model, suggesting that older children behaved more in line with model predictions compared to younger children. 
 
 ```{r childnoise, include = T, fig.cap = "Posterior distribution of noise parameter for each model in Experiment 7. A: single noise parameter across age, B: Developmental noise parameter.", fig.align = "center", out.width="100%", fig.height=3}
 ggarrange(child_noise_plot,child_dev_noise_plot, nrow = 1, ncol = 2, common.legend = T, legend = "right", labels = c("A","B"))
 ```
 
-Finally, Figure \ref{fig:childcor} shows correlations between model predictions and the data, binned by year. Across noise parameters, model predictions and data are closest aligned (i.e. closest to the dotted line) for the pragmatics model, thereby corroborating the conclusions drawn based on the model comparison and the evaluation of the noise parameters. Correlations are also higher for 4yo compared to 3yo, supporting the interpretation based on the developmental noise parameter that children behaved more in line with the model predictions as they got older.  
+Finally, Figure \ref{fig:childcor} shows correlations between model predictions and the data, binned by year. Across noise parameters, model predictions and data are closest aligned (i.e. closest to the dotted line) for the integration model, thereby corroborating the conclusions drawn based on the model comparison and the evaluation of the noise parameters. Correlations are also higher for 4yo compared to 3yo, supporting the interpretation based on the developmental noise parameter that children behaved more in line with the model predictions as they got older.  
 
 ```{r childcor,  include = T, fig.cap = "Correlation plot for model predictions and data for all models considered in Experiment 7. Dots represent condition modes. Error bars represent 95\\% HDIs.", fig.align = "center", out.width="100%", fig.height=7}
 # child_cor <- bind_rows(
@@ -1520,7 +1537,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #   filter(!(Parameter %in% c("noise"))) %>%
 #   separate(Parameter, into = c("age", "speaker", "alignment"), sep="/")%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "Flat prior",
+#   mutate(model = "No common ground",
 #          noise = "Noise")%>%
 #   group_by(model, noise,age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1531,7 +1548,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #   filter(!(Parameter %in% c("noise"))) %>%
 #   separate(Parameter, into = c("age", "speaker", "alignment"), sep="/")%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "Prior only",
+#   mutate(model = "No informativeness",
 #          noise = "Noise")%>%
 #   group_by(model, noise,age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1553,7 +1570,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #   filter(!(Parameter %in% c("noise"))) %>%
 #   separate(Parameter, into = c("age", "speaker", "alignment"), sep="/")%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "Flat prior",
+#   mutate(model = "No common ground",
 #          noise = "Dev. noise")%>%
 #   group_by(model, noise,age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1564,7 +1581,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #   filter(!(Parameter %in% c("noise"))) %>%
 #   separate(Parameter, into = c("age", "speaker", "alignment"), sep="/")%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "Prior only",
+#   mutate(model = "No informativeness",
 #          noise = "Dev. noise")%>%
 #   group_by(model, noise,age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1591,7 +1608,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #          age = as.numeric(age))%>%
 #   select(-`1`)%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "Prior only",
+#   mutate(model = "No informativeness",
 #          noise = "Param. free")%>%
 #   group_by(model,noise, age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1604,7 +1621,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #          age = as.numeric(age))%>%
 #   select(-`1`)%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "Flat prior",
+#   mutate(model = "No common ground",
 #          noise = "Param. free")%>%
 #   group_by(model,noise, age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1613,26 +1630,18 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 # 
 # )
 
-p_child_ex3_data <- child_ex3_data %>%
-  mutate(age = as.character(age_bin), 
-         model = "Data")%>%
-  group_by(model,age, alignment, speaker) %>%
-  summarize(k = sum(correct_inf), n = n())%>%
-  ungroup() %>%
-  mutate(a = 1 + k,
-         b = 1 + n - k,
-         mean = (a-1)/(a+b-2),
-         ci_lower  = qbeta(.025, a, b),
-         ci_upper = qbeta(.975, a, b))%>%
-  select(-a,-b,-n,-k)
-
 
 p_child_cor<- readRDS("../../stats/saves/child_all_models_cor.rds") %>%
   na.omit()%>%
   ungroup()%>%
-  mutate(data_mean = rep(p_child_ex3_data%>%pull(mean),9),
-         data_ci_upper = rep(p_child_ex3_data%>%pull(ci_upper),9),
-         data_ci_lower = rep(p_child_ex3_data%>%pull(ci_lower),9))
+  mutate(model = recode(model,
+                          "Pragmatic" = "Integration",
+                          "Flat prior" = "No common ground",
+                          "Prior only" = "No informativeness"),
+         data_mean = rep(p_child_ex3_data_binned%>%pull(mean),9),
+         data_ci_upper = rep(p_child_ex3_data_binned%>%pull(ci_upper),9),
+         data_ci_lower = rep(p_child_ex3_data_binned%>%pull(ci_lower),9))
+
 ggplot(p_child_cor, aes(x = mean, y = data_mean, col = age)) +
   geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
   geom_point(size = 3)+
@@ -1651,7 +1660,7 @@ ggplot(p_child_cor, aes(x = mean, y = data_mean, col = age)) +
 
 ## Note on alternative approach
 
-In this model, we assume that the literal listener ($L_0$) is also sensitive to the prior manipulation. An alternative approach [used e.g. in @frank2012predicting] is to assume that $L_0$ has a uniform prior distribution over referents [.33, .33, .33]. We also ran the entire analysis with this alternative approach and found no major changes in the results. In all cases, the pragmatics model outperformed the two alternative models, both for children as well as for adults. Interestingly, for adults but not for children, using a uniform prior for $L_0$ yielded a lower estimate for the noise parameter in Experiment 3 and 4. 
+In this model, we assume that the literal listener ($L_0$) is also sensitive to the prior manipulation. An alternative approach [used e.g. in @frank2012predicting] is to assume that $L_0$ has a uniform prior distribution over referents [.33, .33, .33]. We also ran the entire analysis with this alternative approach and found no major changes in the results. In all cases, the integration model outperformed the two alternative models, both for children as well as for adults. Interestingly, for adults but not for children, using a uniform prior for $L_0$ yielded a lower estimate for the noise parameter in Experiment 3 and 4. 
 
 
 \newpage
