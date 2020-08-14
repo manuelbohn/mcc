@@ -28,6 +28,7 @@ tablelist         : no
 footnotelist      : no
 lineno            : no
 mask              : no
+toc               : yes
 
 class             : "doc"
 output            : papaja::apa6_pdf
@@ -51,7 +52,7 @@ library(matrixStats)
 library(ggpubr)
 library(lme4)
 library(broom)
-library(exactRankTests)
+library(broom.mixed)
 library(matrixStats)
 library(readxl)
 
@@ -69,6 +70,7 @@ hdi_lower<- function(s){
   m <- HPDinterval(mcmc(s))
   return(m["var1","lower"])
 }
+
 
 ```
 
@@ -104,7 +106,7 @@ Here we present additional information about methods, results and cognitive mode
 
 # Supplemental methods and results
 
-The following sections present details on the analyses used to evaluate whether the different experimental manipulations produced different responses. For all generalized linear mixed models (GLMM) we used the maximally converging random effects structure.
+The following sections present details on the analyses used to evaluate whether the different experimental manipulations produced different responses. For all generalized linear mixed models (GLMM), we included random intercepts for participant id (`id`) and the animal speaker (`agent` - representing the respective "item") with random slopes for condition (same speaker vs. different speaker), alignment (congruent vs. incongruent; experiment 3, 4 and 7) and age (experiment 5-7). We also included interactions between random effects. This maximal structure was reduced until the model converged. The formula of the final model is presented in the text. To access further details about GLMMS, including variance estimates for random effects, please download the online repository, open the file `papers/full_paper/Supplementary_information.Rmd` and run the command `summary()` on the respective object that stores the output of each model. 
 
 We used `r cite_r("library.bib")` for all our analyses reported in the main manuscript and the supplementary material.
 
@@ -194,10 +196,11 @@ lm_ex1 <- glmer(correct ~ condition +
 
 #summary(lm_ex1)
 
-ex1_r <- tidy(lm_ex1, effects = "fixed")%>%
+ex1_r <- broom.mixed::tidy(lm_ex1, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))
+
 ```
 
 To compare the two conditions, we fit the following GLMM: `correct ~ condition + (1 |id)`. Participants chose the more informative object more often in the test condition compared to the control condition ($\beta$ = `r ex1_r%>%filter(term == "conditiontest")%>%pull(estimate)`, se = `r ex1_r%>%filter(term == "conditiontest")%>%pull(std.error)`, *p* `r ex1_r%>%filter(term == "conditiontest")%>%pull(p.value)`). 
@@ -227,7 +230,7 @@ lm_ex2pref <- glmer(correct ~ condition +
 
 #summary(lm_ex2pref)
 
-ex2pref_r <- tidy(lm_ex2pref, effects = "fixed")%>%
+ex2pref_r <- broom.mixed::tidy(lm_ex2pref, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))
@@ -252,7 +255,7 @@ lm_ex2nov <- glmer(correct ~ condition +
 
 #summary(lm_ex2nov)
 
-ex2nov_r <- tidy(lm_ex2nov, effects = "fixed")%>%
+ex2nov_r <- broom.mixed::tidy(lm_ex2nov, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))
@@ -281,7 +284,7 @@ lm_ex3 <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignment + (al
 
 #summary(lm_ex3)
 
-lm_ex3_r <- tidy(lm_ex3, effects = "fixed")%>%
+lm_ex3_r <- broom.mixed::tidy(lm_ex3, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))%>%
@@ -375,12 +378,13 @@ To see if participants differentiated between conditions, we fit the following G
 ```{r table_prior,results = "asis"}
 ex4_prior_models <- adult_ex4_prior_data %>%
   group_by(common_ground_manipulation,prior_manipulation)%>%
-  do(models = glmer(correct ~ speaker + (1|id) + (1|agent),data = .,family=binomial,  control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5))))
+  do(broom::tidy(glmer(correct ~ speaker + (1|id) + (1|agent),data = .,family=binomial,  control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))))
+  
 
 
-ex4_prior_models_table <- tidy(ex4_prior_models, models)%>%
-  filter(group == "fixed")%>%
-  select(-statistic, -group)%>%
+ex4_prior_models_table <- ex4_prior_models%>%
+  filter(effect == "fixed")%>%
+  select(-statistic, -group, -effect)%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2),
@@ -469,7 +473,7 @@ lm_ex4_strong <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignmen
 
 #summary(lm_ex4_strong)
 
-lm_ex4_r_strong <- tidy(lm_ex4_strong, effects = "fixed")%>%
+lm_ex4_r_strong <- broom.mixed::tidy(lm_ex4_strong, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))%>%
@@ -494,7 +498,7 @@ lm_ex4_medium <- glmer(correct_inf ~ common_ground_manipulation*speaker*alignmen
 
 #summary(lm_ex4_medium)
 
-lm_ex4_r_medium <- tidy(lm_ex4_medium, effects = "fixed")%>%
+lm_ex4_r_medium <- broom.mixed::tidy(lm_ex4_medium, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))%>%
@@ -518,7 +522,7 @@ lm_ex4_weak <- glmer(correct_inf ~ speaker*alignment + (speaker+alignment|id),
 
 #summary(lm_ex4_weak)
 
-lm_ex4_r_weak <- tidy(lm_ex4_weak, effects = "fixed")%>%
+lm_ex4_r_weak <- broom.mixed::tidy(lm_ex4_weak, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))%>%
@@ -553,7 +557,7 @@ apa_table(
 
 ```
 
-Results from Experiment 3 and 4 (strong prior manipulation) were highly correlated (r = `r cor_3_4$estimate`, *p* > .001). 
+Results from Experiments 3 and 4 (strong prior manipulation) were highly correlated (r = `r cor_3_4$estimate`, *p* > .001). 
 
 To assess how participants differentiated between combinations of manipulations, we fit a separate GLMM to the data of each level of prior strength manipulation. Please note that we did not find a weak manipulation for preference. Model outputs are shown in Table \ref{tab:ex4_models}. Model structure for each level of prior strength manipulation was as follows: 
 
@@ -632,7 +636,7 @@ p_child_ex12 <- bind_rows(
   child_ex1_data%>%mutate(condition = "test"),
   child_ex2_data%>%mutate(condition = ifelse(condition == "same_speaker","test","control"))
 )%>%
-  mutate(condition = factor(condition, levels = c("control","test")))%>%
+  mutate(condition = factor(condition, levels = c("test","control")))%>%
   group_by(experiment,condition,age_num, id) %>%
   summarise(correct = mean(correct))
 
@@ -646,9 +650,9 @@ ggplot(data = p_child_ex12, aes(x = age_num, y = correct, col = condition)) +
   ylim(-0.05,1.05)+
   guides(alpha = F)+ 
   scale_colour_solarized(name = "Condition",
-                     labels=c("Control","Test"))+
+                     labels=c("Test","Control"))+
   scale_fill_solarized(name = "Condition",
-                    labels=c("Control","Test"))+
+                    labels=c("Test","Control"))+
   theme(legend.position = c(0.1, 0.15), 
         legend.background = element_blank())
 ```
@@ -665,7 +669,7 @@ child_ex1_lm <- glmer(correct ~ age_num + (1 | id),
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
 
-child_lm_ex1_r <- tidy(child_ex1_lm, effects = "fixed")%>%
+child_lm_ex1_r <- broom.mixed::tidy(child_ex1_lm, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))
@@ -684,7 +688,7 @@ child_ex2_lm <- glmer(correct ~ age_num*condition + (condition | id) + (1 | agen
               data = child_ex2_lm_data, family = binomial, 
               control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
-child_lm_ex2_r <- tidy(child_ex2_lm, effects = "fixed")%>%
+child_lm_ex2_r <- broom.mixed::tidy(child_ex2_lm, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))
@@ -706,7 +710,7 @@ In Experiment 7 for children, we again inserted the preference manipulation from
 
 ### Results
 
-```{r child_models, results = "asis"}
+```{r child_models, results = "asis", out.width="100%"}
 child_ex3_lm_data <- child_ex3_data%>%
   mutate(age_num = scale(age_num, center = TRUE, scale = TRUE))
 
@@ -716,7 +720,7 @@ child_ex3_lm <- glmer(correct_inf ~ age_num*speaker*alignment
       data = child_ex3_lm_data,
       control=glmerControl(optimizer="bobyqa",optCtrl=list(maxfun=2e5)))
 
-child_lm_ex3_r <- tidy(child_ex3_lm, effects = "fixed")%>%
+child_lm_ex3_r <- broom.mixed::tidy(child_ex3_lm, effects = "fixed")%>%
   mutate(p.value = ifelse(p.value<.001,"< .001",as.character(paste("=",substr(round(p.value,3),2,5),sep=" "))),
          std.error = round(std.error,2),
          estimate = round(estimate,2))%>%
@@ -742,7 +746,8 @@ apa_table(
 ```{r plotmodelpredex7, fig.cap = "Model predictions and data for Experiment 7 with children. Colored lines show model predictions with 95\\% HDIs, transparent dots show data from individual participants and the black line with grey CI shows the smoothed conditional mean of the data in each condition. Black diamonds with error bars show mean for age bined by year with 95\\% HDIs.", fig.align = "center", out.width="100%"}
 child_model_predictions <- readRDS("../../stats/saves/child_ex3_model_predictions.rds")%>%
   mutate(speaker = ifelse(speaker == "different_speaker", "Different speaker", "Same speaker"),
-         alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"))
+         alignment = ifelse(alignment == "congruent", "Congruent", "Incongruent"))%>%
+  mutate(model = recode(model, pragmatic = "Parameter free", pragmatic_developmental_noise = "Developmental noise", pragmatic_noise = "Noise"))
 
 plot_child_ex3_data <- child_ex3_data%>%
   mutate(speaker = ifelse(speaker == "different_speaker", "Different speaker", "Same speaker"),
@@ -783,11 +788,11 @@ geom_pointrange(data = p_child_ex3_data_binned, aes(x = as.numeric(age)+0.5, y =
   theme_few()+
   theme(legend.position="bottom")+
   scale_color_manual(name="Model",
-                     breaks=c("integration","integration_noise","integration_developmental_noise"),
-                     values= c("#00afaf","#af6300","#6c71c4"))+
+                     breaks=c("Parameter free","Noise","Developmental noise"),
+                     values= c("#00afaf","#6c71c4","#af6300"))+
   scale_fill_manual(name="Model",
-                     breaks=c("integration","integration_noise","integration_developmental_noise"),
-                     values= c("#00afaf","#af6300","#6c71c4"))
+                     breaks=c("Parameter free","Noise","Developmental noise"),
+                     values= c("#00afaf","#6c71c4","#af6300"))
 
 ```
 
@@ -1047,15 +1052,15 @@ This model was identical in structure to the integration model with the exceptio
 
 ## Model parameters  
 
-As noted in the main text, the parameter $\alpha$ (speaker optimality parameter) in equation 2 determines the absolute strength of the likelihood term. It's interpretation is *how* rational $L_1$ thinks $S_1$ is in this particular context. For adults, we used the data from Experiment 1 to infer the value of $\alpha$. That is, we inferred which value of $\alpha$ would generate model predictions for the integration model (assuming equal prior probability over referents) that corresponded to the average proportion of correct responses measured in Experiment 1. Technically, we used MCMC to compute the posterior distribution for $\alpha$ and took the MAP. This value for $\alpha$ was then used in Experiment 3 and 4. 
+As noted in the main text, the parameter $\alpha$ (speaker optimality parameter) in equation 2 determines the absolute strength of the likelihood term. It's interpretation is *how* rational $L_1$ thinks $S_1$ is in this particular con    text. For adults, we used the data from Experiment 1 to infer $\alpha$. That is, we inferred which value of $\alpha$ would generate model predictions for the integration model (assuming equal prior probability over referents) that corresponded to the average proportion of correct responses measured in Experiment 1. Technically, we used MCMC to compute the posterior distribution for $\alpha$ and computed the maximum a posteriori (MAP). This value for $\alpha$ was then used in Experiments 3 and 4. 
 
-For children, the speaker optimality parameter changed with age. Instead of inferring a single value across age, we used the data from Experiment 5 to find the slope and intercept (MAP values) for $\alpha$ that best described the developmental trajectory in the data. As for adults, this was done via the integration model with equal prior probability for each object. In Experiment 7, the speaker optimality parameter for a given child of a given age was computed by taking the overall intercept and adding the slope times the child's age (with age anchored at 0). The analysis code corresponding to these calculations can be found in the associated online repository in the file `models.Rmd`.
+For children, the speaker optimality parameter changed with age. Instead of inferring a single value across age, we used the data from Experiment 5 to find the slope and intercept for $\alpha$ that best described the developmental trajectory in the data. As for adults, this was done via the integration model with equal prior probability for each object. In this model, $\alpha$ for a given age was defined via a simple linear regression. We calculated the MAP for the intercept and the slope of this regression based on their posterior distributions. In Experiment 7, the speaker optimality parameter for a given child of a given age was computed by taking the MAP for the intercept and adding the MAP for the slope times the child's age (with age anchored at 0).
 
 The prior distribution over objects, $P(r)$, varied with the common ground manipulation, the identity of the speaker and the alignment of utterance and common ground information. Numerically, it depended on the measurement obtained in Experiment 2A and B for adults and Experiment 6 for children. Fig. \ref{fig:figS2} shows the test situation on Experiment 2.  
 
-For adults, this worked in the following way: For example, in Experiment 2, for the preference/same speaker condition, when the speaker previously indicated that they liked the yellow-ish object (right table in Fig. \ref{fig:figS2}) and disliked the pink-ish object (left table in Fig.\ref{fig:figS2}), the average proportion with which participants chose the yellow-ish object  was `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` and for the pink-ish object it was `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` respectively. In Experiment 3 and 4, this measurement determined the prior distribution over objects in cases whenever the the same manipulation was used (preference/same speaker). Note that Experiment 3 involved three objects while Experiment 2 only involved two. We nevertheless used the exact proportions measured in Experiment 2 for each object to inform the prior. This approach spread out the absolute probability mass but conserved the relative relation between objects. Thus, when utterance and common ground information were aligned (i.e. the yellow-ish object was the more informative object as in Fig. \ref{fig:figS1}), the distribution of objects was [$r_{p1}, r_{p2}, r_{y2}$]. Using the raw proportions, the corresponding prior distribution was [$P(r_{p}^1) = 0.03, P(r_{p}^2) = 0.03, P(r_{y}^2) = 0.97$] and after normalizing (so that they add up to 1) it was [0.03, 0.03, 0.94]. When information sources were dis-aligned (i.e. the pink-ish object was the more informative one), the object distribution was [$r_{y1}, r_{p2}, r_{y2}$] and the prior distribution was thus [0.97, 0.03, 0.97] or [0.49, 0.02, 0.49] after normalizing.
+For adults, this worked in the following way: For example, in Experiment 2, for the preference/same speaker condition, when the speaker previously indicated that they liked the yellow-ish object (right table in Fig. \ref{fig:figS2}) and disliked the pink-ish object (left table in Fig.\ref{fig:figS2}), the average proportion with which participants chose the yellow-ish object  was `r adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` and for the pink-ish object it was `r 1-adult_ex2_preference_data %>% filter(condition == "same_speaker") %>% summarise(mean = mean(correct)) %>% pull(mean)` respectively. In Experiments 3 and 4, this measurement determined the prior distribution over objects in cases whenever the same manipulation was used (preference/same speaker). Note that Experiment 3 involved three objects while Experiment 2 only involved two. We nevertheless used the exact proportions measured in Experiment 2 for each object to inform the prior. This approach spread out the absolute probability mass but conserved the relative relation between objects. Thus, when utterance and common ground information were aligned (i.e. the yellow-ish object was the more informative object as in Fig. \ref{fig:figS1}), the distribution of objects was [$r_{p1}, r_{p2}, r_{y2}$]. Using the raw proportions, the corresponding prior distribution was [$P(r_{p}^1) = 0.03, P(r_{p}^2) = 0.03, P(r_{y}^2) = 0.97$] and after normalizing (so that they add up to 1) it was [0.03, 0.03, 0.94]. When information sources were dis-aligned (i.e. the pink-ish object was the more informative one), the object distribution was [$r_{y1}, r_{p2}, r_{y2}$] and the prior distribution was thus [0.97, 0.03, 0.97] or [0.49, 0.02, 0.49] after normalizing.
 
-For children, we used the data from Experiment 6 to model the slope and intercept that best described the developmental trajectory in the data for each of the two conditions. As for the speaker optimality parameter, this allowed us to generate prior distributions that were sensitive to the child's age. In Experiment 7, the prior probability for an object was computed by taking the intercept for the respective condition (same or different speaker), adding the slope times the child's age and then using a logistic transformation to convert the outcome into proportions. The overall distribution then depended on the alignment of information sources in the same way as it did for adults. Model code for inferring the intercept and the slope for the child study can be found in the associated online repository.
+For children, we used the data from Experiment 6 to model the slope and intercept that best described the developmental trajectory in the data for each of the two conditions. As for the speaker optimality parameter, this allowed us to generate prior distributions that were sensitive to the child's age. We used a simple logistic regression to find the intercept and slope (MAP of posterior distribution) that best described children's performance in the two conditions of experiment 6. In Experiment 7, the prior probability for an object was computed by taking the intercept for the respective condition (same or different speaker), adding the slope times the child's age and then using a logistic transformation to convert the outcome into proportions. Because these proportions corresponded to a two object scenario they were then converted to the three object scenario via normalized in the same way for adults. The overall distribution then depended on the alignment of information sources in the same way as it did for adults. Model code for inferring the intercept and the slope for the child study can be found in the associated online repository in the file `models.Rmd`.
 
 # Model comparison
 
@@ -1139,7 +1144,7 @@ ex_3_cor_plot <- ex_3_pred %>%
 
 ggplot(data = ex_3_cor_plot,aes(x = mean, y = data_mean, col = "1")) +
   geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.7, size = 0.5)+
-  geom_point(size = 2)+
+  geom_point(size = 2, pch = 1, stroke = 1)+
   geom_errorbar(aes(ymin = data_ci_lower, ymax = data_ci_upper),width = 0,size = .7)+
   geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .7)+
   coord_fixed()+
@@ -1309,7 +1314,7 @@ ex_4_cor_plot <- ex_4_pred %>%
 
 ggplot(data = ex_4_cor_plot,aes(x = mean, y = data_mean, col = prior_manipulation)) +
   geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 0.7, size = 0.5)+
-  geom_point(size = 2)+
+  geom_point(size = 2, pch = 1, stroke = 1)+
   geom_errorbar(aes(ymin = data_ci_lower, ymax = data_ci_upper),width = 0,size = .7)+
   geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .7)+
   coord_fixed()+
@@ -1415,19 +1420,20 @@ apa_table(
 
 Table \ref{tab:child_bf} shows results for model comparison for the different types of noise parameters. In all cases, the integration model provides a substantially better fit to the data compared to the alternative models.
 
-```{r child_bf, results = "asis"}
+```{r child_bf, results = "asis", out.width="100%"}
 child_ex3_bf <- child_ex3_model_comparison%>%
   rename(Parameter = parameter)%>%
   group_by(Parameter)%>%
   spread(model, logP) %>%
-  mutate("Integration > No common ground" = formatC(exp(pragmatic - flat_prior),2),
-         "Integration > No informativeness" = formatC(exp(pragmatic - prior_only),2),
-         "No common ground > No informativeness" = formatC(exp(flat_prior - prior_only),2)) %>%
+  mutate("Int > No CG" = formatC(exp(pragmatic - flat_prior),2),
+         "Int > No Inf" = formatC(exp(pragmatic - prior_only),2),
+         "No CG > No Inf" = formatC(exp(flat_prior - prior_only),2)) %>%
   select(-pragmatic,-flat_prior, -prior_only)
+
 apa_table(
   child_ex3_bf
   , caption = "Model comparisons in Experiment 7"
-  , note = "BF = Bayes Factor"
+  , note = "BF = Bayes Factor, Int = Integration, No CG = No common ground, No Inf = No informativeness "
   , escape = T
 )
 ```
@@ -1644,7 +1650,7 @@ p_child_cor<- readRDS("../../stats/saves/child_all_models_cor.rds") %>%
 
 ggplot(p_child_cor, aes(x = mean, y = data_mean, col = age)) +
   geom_abline(intercept = 0, slope = 1, lty = 2, alpha = 1, size = .5)+
-  geom_point(size = 3)+
+  geom_point(size = 2, pch = 1, stroke = 1)+
   geom_errorbar(aes(ymin = data_ci_lower, ymax = data_ci_upper),width = 0,size = .7)+
   geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0,size = .7)+
   coord_fixed()+
@@ -1660,7 +1666,7 @@ ggplot(p_child_cor, aes(x = mean, y = data_mean, col = age)) +
 
 ## Note on alternative approach
 
-In this model, we assume that the literal listener ($L_0$) is also sensitive to the prior manipulation. An alternative approach [used e.g. in @frank2012predicting] is to assume that $L_0$ has a uniform prior distribution over referents [.33, .33, .33]. We also ran the entire analysis with this alternative approach and found no major changes in the results. In all cases, the integration model outperformed the two alternative models, both for children as well as for adults. Interestingly, for adults but not for children, using a uniform prior for $L_0$ yielded a lower estimate for the noise parameter in Experiment 3 and 4. 
+In this model, we assume that the literal listener ($L_0$) is also sensitive to the prior manipulation. An alternative approach [used e.g. in @frank2012predicting] is to assume that $L_0$ has a uniform prior distribution over referents [.33, .33, .33]. We also ran the entire analysis with this alternative approach and found no major changes in the results. In all cases, the integration model outperformed the two alternative models, both for children as well as for adults. Interestingly, for adults but not for children, using a uniform prior for $L_0$ yielded a lower estimate for the noise parameter in Experiments 3 and 4. 
 
 
 \newpage

@@ -12,4 +12,4 @@ The main manuscript file includes all analysis reported in it and can be found a
 
 The same applies to the supplementary material, which can be found at `papers/full_paper/Supplementary_information.Rmd`.
 
-Code for cognitive models can be found in `papers/full_paper/models.Rmd`.
+Code for cognitive models (including parameter estimation) can be found in `papers/full_paper/models.Rmd`.
