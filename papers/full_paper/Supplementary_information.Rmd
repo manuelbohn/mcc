@@ -4,9 +4,9 @@ shorttitle        : " "
 
 author: 
   - name          : "Manuel Bohn"
-    affiliation   : "1,2"
+    affiliation   : "1,2,3"
   - name          : "Michael Henry Tessler"
-    affiliation   : "3"
+    affiliation   : "4"
   - name          : "Megan Merrick"
     affiliation   : "1"
   - name          : "Michael C. Frank"
@@ -18,6 +18,8 @@ affiliation:
   - id            : "2"
     institution   : "Leipzig Research Center for Early Child Development, Leipzig University"
   - id            : "3"
+    institution   : "Department of Comparative Cultural Psychology, Max Planck Institute for Evolutionary Anthropology"
+  - id            : "4"
     institution   : "Department of Brain and Cognitive Sciences, Massachusetts Institute of Technology"
 
 bibliography      : ["library.bib"]

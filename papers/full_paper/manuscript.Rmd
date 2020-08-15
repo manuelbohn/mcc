@@ -6,8 +6,8 @@ author:
   - name          : "Manuel Bohn"
     affiliation   : "1,2,3"
     corresponding : yes    # Define only one corresponding author
-    address       : "Leipzig Research Center for Early Child Development, Jahnallee 59, 04109 Leipzig, Germany"
-    email         : "manuel.bohn@uni-leipzig.de"
+    address       : "Max Planck Institute for Evolutionary Anthropology, Deutscher Platz 6, 04103 Leipzig, Germany"
+    email         : "manuel_bohn@eva.mpg.de"
   - name          : "Michael Henry Tessler"
     affiliation   : "4"
   - name          : "Megan Merrick"
