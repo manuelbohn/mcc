@@ -1070,7 +1070,7 @@ Analysis code for model comparison can be found in the online repository.
 
 ## Experiment 3
 
-Here we report details on the model comparisons. Model fit was assessed based on marginal log-likelihoods of the data under each model. To compute the log-likelihood for models including a noise parameter, we used forward sampling on four independent chains to collect 5000 samples from the prior distribution of the noise parameter, calculated the log-likelihood for each sample and then averaged over the resulting distribution. 
+Here we report details on the model comparisons. Model fit was assessed based on marginal log-likelihoods of the data under each model. To compute the log-likelihood for models including a noise parameter, we used forward sampling to collect 20,000 samples from the prior distribution of the noise parameter, calculated the log-likelihood for each sample and then averaged over the resulting distribution. 
 
 Bayes Factors were then computed by first subtracting log-likelihoods for two models and then exponentiating the result. Table \ref{tab:ex3_comp} shows Bayes Factors for model comparisons in Experiment 3. We did not pre-register the inclusion of the noise parameter for Experiment 3, but did so for all subsequent experiments for which we did model comparisons (4 and 7). The first row in Table \ref{tab:ex3_comp} compares the integration model with noise parameter to the model without the noise parameter. This comparison shows that including the noise parameter greatly improves model fit. Figure \ref{fig:modelpredex3} correlates model predictions from the models including noise parameters to the data from Experiment 3. 
 
