@@ -1,43 +1,21 @@
 ---
-title             : "Predicting information integration in pragmatic word learning across development"
-shorttitle        : "Supplementary Information"
-
-author: 
-  - name          : "Manuel Bohn"
-    affiliation   : "1,2"
-    corresponding : yes    # Define only one corresponding author
-    address       : "Department of Psychology, 450 Serra Mall, Stanford, CA 94305"
-    email         : "bohn@stanford.edu"
-  - name          : "Michael Henry Tessler"
-    affiliation   : "3"
-  - name          : "Megan Merrick"
-    affiliation   : "1"
-  - name          : "Michael C. Frank"
-    affiliation   : "1"
-
-affiliation:
-  - id            : "1"
-    institution   : "Department of Psychology, Stanford University"
-  - id            : "2"
-    institution   : "Leipzig Research Center for Early Child Development, Leipzig University"
-  - id            : "3"
-    institution   : "Department of Brain and Cognitive Sciences, Massachusetts Institute of Technology"
-
-bibliography      : ["library.bib"]
-
-figsintext        : yes
-figurelist        : no
-tablelist         : no
-footnotelist      : no
-lineno            : no
-mask              : no
-
-class             : "man"
-output            : papaja::apa6_pdf
+title: "Predicting information integration in pragmatic word learning across development"
+subtitle: "Probabilistic Models"
+author: "Manuel Bohn, Michael Henry Tessler, Megan Merrick and Michael C. Frank"
+output: 
+  bookdown::html_document2:
+    toc: yes
+    toc_float: true
+    fig_caption: yes
+    code_folding: show
+    number_sections: false
+  bookdown::pdf_document2:
+    toc: yes 
+    number_sections: false  
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F, warning = F, message = F, include = T)
+knitr::opts_chunk$set(echo = T, warning = F, message = F, include = T)
 
 library(tidyverse)
 library(knitr)
@@ -64,6 +42,17 @@ hdi_lower<- function(s){
 }
 
 ```
+# Overview
+
+This file includes model code for the probabilistic models. The section [Model code](#model-code) gives the code for the basic integration model. Firs, we define the objects and locations that feature in the experiments along with some helper functions and then we specify the actual cognitive model. 
+
+The section [Adults](#adults) presents the analysis code for Experiment 3 and 4. In the section [Inferring speaker optimality parameter and setting priors](#parameters), we estimated the speaker optimality parameter $\alpha$ based on the data from Experiment 1 and define the prior distribution over objects, $P(r)$, based on Experiment 2. 
+
+Then follows the code with which we generated the model predictions for the models in Experiment 3, that is, the integration model (with and without a noise parameter), the no informativeness model and the no common ground model (Section: [Model predictions](#ex3-predictions)). Next, we evaluate the noise parameter for each model and plot the model predictions and correlate predictions and the data for each model (Section: [Compare model predictions to data](#ex3-correlations)). Finally, we compute the log-likelihoods for each model and the Bayes Factors for the model comparisons (Section: [Model comparison](#ex3-comparison)).
+
+We start the section on [Experiment 4](#experiment-4) with specifying $P(r)$ for each version of prior strength manipulations. Next, we generate predictions for the three models (Section: [Model predictions (including noise parameter)](#ex4-predictions), inspect the corresponding noise parameters, and correlate the model predictions with the data (Section: [Compare model predictions to data](#ex4-correlations)). Finally, we compute the log-likelihoods and Bayes Factors (Section: [Model comparison](#ex4-comparison)).
+
+The section [Children](#children) follows the same logic as the one for adults. We first present the code used to estimate the intercept and slope necessary to compute $\alpha$ (using the data from Experiment 5) and $P(r)$ (using the data from Experiment 6) in an age-sensitive way (Section: [Model parameters and data](#child-parameters)). Then we generate model predictions for the three models, each in three versions,: without a noise parameter, with a single noise parameter and with a developmentally changing noise parameter (Section: [Model predictions](#child-predictions)). Then we compare the different noise parameters and correlate model predictions with the data (Section: [Compare model predictions to data](#child-correlations)). Finally, we compute the log-likelihoods for the different models and compare them via Bayes Factors (Section: [Model comparison](#child-comparison)). 
 
 # Model code
 
@@ -221,7 +210,7 @@ adult_ex2_novelty_data <- read_csv(file="../../stats/data/adult_ex2_novelty.csv"
 adult_ex2_preference_data <- read_csv(file="../../stats/data/adult_ex2_preference.csv")
 ```
 
-#### Inferring speaker optimality parameter and setting priors
+#### Inferring speaker optimality parameter and setting priors {#parameters} 
 
 ```{r model parameter adults, include = T}
 # Cauchy prior on the speaker optimality parameter around 1, based on previous work (e.g. Frank & Goodman, 2014) 
@@ -307,9 +296,9 @@ model_params_ex3 <- left_join(
 
 ```
 
-### Model predictions
+### Model predictions {#ex3-predictions}
 
-#### Pragmatic model
+#### Integration model
 
 ##### Parameter free
 
@@ -383,7 +372,7 @@ var model = function(){
 '
 ```
 
-```{r predictions pragmatic model ex 3 noise, include = FALSE}
+```{r predictions pragmatic model ex 3 noise, include = T}
 # ex3_pragm_model_noise <- webppl(
 #   program_code = paste(rsaUtils, rsaModel, predictions.rsa.ex3.noise, sep='\n'),
 #   data = list(allData = adult_ex3_data, allParams = model_params_ex3),
@@ -414,11 +403,11 @@ ex3_pragm_model_noise_param <- readRDS("../../stats/saves/ex3_pragm_model_noise.
             ci_upper = hdi_upper(value))
 ```
 
-#### Prior only model
+#### No informativeness model
 
 ##### Noise parameter
 
-```{r model prior only noise ex3, include = FALSE}
+```{r model prior only noise ex3, include = T}
 predictions.prior.only.ex3.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -453,7 +442,7 @@ var model = function(){
 '
 ```
 
-```{r predictions prior only model ex 3 noise, include = FALSE}
+```{r predictions prior only model ex 3 noise, include = T}
 # ex3_prior_only_model_noise <- webppl(
 #   program_code = paste(rsaUtils, rsaModel, predictions.prior.only.ex3.noise, sep='\n'),
 #   data = list(allData = adult_ex3_data, allParams = model_params_ex3),
@@ -484,7 +473,7 @@ ex3_prior_only_model_noise_param <- readRDS("../../stats/saves/ex3_prior_only_mo
             ci_upper = hdi_upper(value))
 ```
 
-#### Flat prior model
+#### No common ground model
 
 ##### Noise parameter
 
@@ -520,7 +509,7 @@ var model = function(){
 '
 ```
 
-```{r predictions flat prior model ex 3 noise, include = FALSE}
+```{r predictions flat prior model ex 3 noise, include = T}
 # ex3_flat_prior_model_noise <- webppl(
 #   program_code = paste(rsaUtils, rsaModel, predictions.flat.prior.ex3.noise, sep='\n'),
 #   data = list(allData = adult_ex3_data, allParams = model_params_ex3),
@@ -551,7 +540,7 @@ ex3_flat_prior_model_noise_param <- readRDS("../../stats/saves/ex3_flat_prior_mo
             ci_upper = hdi_upper(value))
 ```
 
-#### Compare model predictions to data
+#### Compare model predictions to data {#ex3-correlations}
 
 ##### Noise parameters
 
@@ -671,11 +660,11 @@ ggplot(data = ex_3_cor_plot,aes(x = mean, y = data_mean, col = "#BB5566")) +
 
 ```
 
-### Model comparison
+### Model comparison {#ex3-comparison}
 
 #### Marginal likelihoods
 
-##### Pragmatic model 
+##### Integration model 
 
 ###### Parameter free
 
@@ -694,7 +683,7 @@ log_like_pragmatic_ex3 <- readRDS("../../stats/saves/ex3_pragm_model_loglike.rds
 
 ###### Noise parameter
 
-```{r loglike rsa noise ex3, include = FALSE}
+```{r loglike rsa noise ex3, include = T}
 loglike.rsa.ex3.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -745,11 +734,11 @@ ex3_pragm_model_noise_loglike <- readRDS("../../stats/saves/ex3_pragm_model_nois
   group_by(model)%>%
   summarize(logP = logSumExp(value))
 ```
-##### Prior only model 
+##### No informativeness model 
 
 ###### Noise parameter
 
-```{r loglike prior only noise ex3, include = FALSE}
+```{r loglike prior only noise ex3, include = T}
 loglike.prior.only.ex3.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -804,11 +793,11 @@ ex3_prior_only_model_noise_loglike <- readRDS("../../stats/saves/ex3_prior_only_
   summarize(logP = logSumExp(value))
 ```
 
-##### Flat prior model 
+##### No common ground model 
 
 ###### Noise parameter
 
-```{r loglike flat prior noise ex3, include = FALSE}
+```{r loglike flat prior noise ex3, include = T}
 loglike.flat.prior.ex3.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -948,11 +937,11 @@ model_params_ex4 <- left_join(
   mutate(speak_opt = adult_model_param$so_map)
 ```
 
-### Model predictions (including noise parameter)
+### Model predictions (including noise parameter) {#ex4-predictions}
 
-#### Pragmatic model
+#### Integration model
 
-```{r model rsa noise ex4, include = FALSE}
+```{r model rsa noise ex4, include = T}
 predictions.rsa.ex4.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -984,7 +973,7 @@ var model = function(){
 '
 ```
 
-```{r predictions pragmatic model ex 4 noise, include = FALSE}
+```{r predictions pragmatic model ex 4 noise, include = T}
 # ex4_pragm_model_noise <- webppl(
 #   program_code = paste(rsaUtils, rsaModel, predictions.rsa.ex4.noise, sep='\n'),
 #   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
@@ -1015,9 +1004,9 @@ ex4_pragm_model_noise_param <- readRDS("../../stats/saves/ex4_pragm_model_noise.
             ci_upper = hdi_upper(value))
 ```
 
-#### Prior only model 
+#### No informativeness model 
 
-```{r model prior only noise ex4, include = FALSE}
+```{r model prior only noise ex4, include = T}
 predictions.prior.only.ex4.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -1052,7 +1041,7 @@ var model = function(){
 '
 ```
 
-```{r predictions prior only model ex 4 noise, include = FALSE}
+```{r predictions prior only model ex 4 noise, include = T}
 # ex4_prior_only_model_noise <- webppl(
 #   program_code = paste(rsaUtils, rsaModel, predictions.prior.only.ex4.noise, sep='\n'),
 #   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
@@ -1083,9 +1072,9 @@ ex4_prior_only_model_noise_param <- readRDS("../../stats/saves/ex4_prior_only_mo
             ci_upper = hdi_upper(value))
 ```
 
-#### Flat prior model 
+#### No common ground model 
 
-```{r model flat prior noise ex4, include = FALSE}
+```{r model flat prior noise ex4, include = T}
 predictions.flat.prior.ex4.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -1117,7 +1106,7 @@ var model = function(){
 '
 ```
 
-```{r predictions flat prior model ex 4 noise, include = FALSE}
+```{r predictions flat prior model ex 4 noise, include = T}
 # ex4_flat_prior_model_noise <- webppl(
 #   program_code = paste(rsaUtils, rsaModel, predictions.flat.prior.ex4.noise, sep='\n'),
 #   data = list(allData = adult_ex4_data, allParams = model_params_ex4),
@@ -1186,7 +1175,7 @@ ex_4_pred <- bind_rows(
 
 ```
 
-### Compare model predictions to data
+### Compare model predictions to data {#ex4-correlations}
 
 ##### Noise parameters
 
@@ -1260,12 +1249,12 @@ ggplot(data = ex_4_cor_plot,aes(x = mean, y = data_mean, col = prior_manipulatio
   scale_colour_ptol()
 ```
 
-### Model comparison
+### Model comparison {#ex4-comparison}
 
 #### Marginal likelihoods
 
-##### Pragmatic model 
-```{r loglike rsa noise ex4, include = FALSE}
+##### Integration model 
+```{r loglike rsa noise ex4, include = T}
 loglike.rsa.ex4.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -1317,9 +1306,9 @@ ex4_pragm_model_noise_loglike <- readRDS("../../stats/saves/ex4_pragm_model_nois
   summarize(logP = logSumExp(value))
 ```
 
-##### Prior only model 
+##### No informativeness model 
 
-```{r loglike prior only noise ex4, include = FALSE}
+```{r loglike prior only noise ex4, include = T}
 loglike.prior.only.ex4.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -1374,9 +1363,9 @@ ex4_prior_only_model_noise_loglike <- readRDS("../../stats/saves/ex4_prior_only_
   summarize(logP = logSumExp(value))
 ```
 
-##### Flat prior model 
+##### No common ground model 
 
-```{r loglike flat prior noise ex4, include = FALSE}
+```{r loglike flat prior noise ex4, include = T}
 loglike.flat.prior.ex4.noise <-'
 var allParams = dataFromR.allParams
 var allData = dataFromR.allData
@@ -1472,7 +1461,7 @@ ex4_bf %>%
 
 # Children
 
-## Model parameters and data
+## Model parameters and data {#child-parameters}
 
 ```{r ex3 data children}
 # children ex3 data
@@ -1680,9 +1669,9 @@ ex3_model_data <- child_ex3_data%>%
   select(speaker,age_num,minage,alignment,so,priorProbs,correct_inf)
 
 ```
-## Model predictions
+## Model predictions {#child-predictions}
 
-### Pragmatic model
+### Integration model
 
 #### Parameter free 
 
@@ -1854,7 +1843,7 @@ child_ex3_pragm_model_developmental_noise_param <- readRDS("../../stats/saves/ch
 
 ```
 
-### Prior only model
+### No informativeness model
 
 #### Parameter free
 
@@ -2034,7 +2023,7 @@ child_ex3_prior_only_model_developmental_noise_param <- readRDS("../../stats/sav
 
 ```
 
-### Flat prior model
+### No common ground model
 
 #### Parameter free
 
@@ -2210,7 +2199,7 @@ child_ex3_flat_prior_model_developmental_noise_param <- readRDS("../../stats/sav
 
 ```
 
-## Compare model predictions to data
+## Compare model predictions to data {#child-correlations}
 
 ### Noise parameters
 
@@ -2383,98 +2372,11 @@ ggplot(data = child_cor_plot,aes(x = model_mode, y = data_mode, col = age)) +
   scale_colour_ptol()
 ```
 
-## Model comparison
+## Model comparison {#child-comparison}
 
 ### Marginal likelihoods
 
-```{r}
-child_ex3_pragm_model_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")
-
-
-child_ex3_pragm_model_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_pragm_model_noise_loglike.rds")
-
-child_ex3_pragm_model_developmental_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.developmental.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_pragm_model_developmenatl_noise_loglike.rds")
-
-child_ex3_flat_prior_model_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_flat_prior_model_loglike.rds")
-
-child_ex3_flat_prior_model_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_flat_prior_model_noise_loglike.rds")
-
-child_ex3_flat_prior_model_developmental_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.developmental.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_flat_prior_model_developmental_noise_loglike.rds")
-
-child_ex3_prior_only_model_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_prior_only_model_loglike.rds")
-
-child_ex3_prior_only_model_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_prior_only_model_noise_loglike.rds")
-
-
-child_ex3_prior_only_model_developmental_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.developmental.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_prior_only_model_developmental_noise_loglike.rds")
-
-```
-
-
-#### Pragmatic model
+#### Integration model
 
 ##### Parameter free
 
@@ -2504,14 +2406,14 @@ mll
 ```
 
 ```{r}
-child_ex3_pragm_model_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")
+# child_ex3_pragm_model_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")
 
 child_ex3_pragm_model_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")%>%
   as.tibble()%>%
@@ -2554,14 +2456,14 @@ mll
 
 
 ```{r}
-child_ex3_pragm_model_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_pragm_model_noise_loglike.rds")
+# child_ex3_pragm_model_noise_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.noise.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_pragm_model_noise_loglike.rds")
 
 
 child_ex3_pragm_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_noise_loglike.rds")%>%
@@ -2608,14 +2510,14 @@ mll
 
 
 ```{r}
-child_ex3_pragm_model_developmental_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.developmental.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_pragm_model_developmenatl_noise_loglike.rds")
+# child_ex3_pragm_model_developmental_noise_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.developmental.noise.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_pragm_model_developmenatl_noise_loglike.rds")
 
 
 child_ex3_pragm_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_developmenatl_noise_loglike.rds")%>%
@@ -2627,7 +2529,7 @@ child_ex3_pragm_model_developmental_noise_likelihood <- readRDS("../../stats/sav
 
 ```
 
-#### Flat prior model
+#### No common ground model
 
 ##### Parameter free
 
@@ -2661,14 +2563,14 @@ mll
 
 
 ```{r}
-child_ex3_flat_prior_model_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_flat_prior_model_loglike.rds")
+# child_ex3_flat_prior_model_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_flat_prior_model_loglike.rds")
 
 child_ex3_flat_prior_model_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_loglike.rds")%>%
   as.tibble()%>%
@@ -2712,14 +2614,14 @@ mll
 
 
 ```{r}
-child_ex3_flat_prior_model_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_flat_prior_model_noise_loglike.rds")
+# child_ex3_flat_prior_model_noise_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.noise.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_flat_prior_model_noise_loglike.rds")
 
 child_ex3_flat_prior_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_noise_loglike.rds")%>%
   as.tibble()%>%
@@ -2766,14 +2668,14 @@ mll
 
 
 ```{r}
-child_ex3_flat_prior_model_developmental_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.developmental.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_flat_prior_model_developmental_noise_loglike.rds")
+# child_ex3_flat_prior_model_developmental_noise_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.developmental.noise.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_flat_prior_model_developmental_noise_loglike.rds")
 
 
 child_ex3_flat_prior_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_developmental_noise_loglike.rds")%>%
@@ -2785,7 +2687,7 @@ child_ex3_flat_prior_model_developmental_noise_likelihood <- readRDS("../../stat
   
 ```
 
-#### Prior only model
+#### No informativeness model
 
 ##### Parameter free
 
@@ -2819,14 +2721,14 @@ mll
 ```
 
 ```{r}
-child_ex3_prior_only_model_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_prior_only_model_loglike.rds")
+# child_ex3_prior_only_model_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_prior_only_model_loglike.rds")
 
 
 child_ex3_prior_only_model_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_loglike.rds")%>%
@@ -2871,14 +2773,14 @@ mll
 ```
 
 ```{r}
-child_ex3_prior_only_model_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_prior_only_model_noise_loglike.rds")
+# child_ex3_prior_only_model_noise_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_prior_only_model_noise_loglike.rds")
 
 
 child_ex3_prior_only_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_noise_loglike.rds")%>%
@@ -2926,14 +2828,14 @@ mll
 ```
 
 ```{r}
-child_ex3_prior_only_model_developmental_noise_likelihood<- webppl(
-  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.developmental.noise.marginal.likelihood , sep='\n'),
-  data =list(allData = ex3_model_data),
-  data_var = "dataFromR",
-  chains = 3,
-  cores = 3
-)%>%
-  saveRDS("../../stats/saves/child_ex3_prior_only_model_developmental_noise_loglike.rds")
+# child_ex3_prior_only_model_developmental_noise_likelihood<- webppl(
+#   program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.developmental.noise.marginal.likelihood , sep='\n'),
+#   data =list(allData = ex3_model_data),
+#   data_var = "dataFromR",
+#   chains = 3,
+#   cores = 3
+# )%>%
+#   saveRDS("../../stats/saves/child_ex3_prior_only_model_developmental_noise_loglike.rds")
 
 
 child_ex3_prior_only_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_developmental_noise_loglike.rds")%>%
@@ -3004,9 +2906,9 @@ child_ex3_pragmatic_models_bf%>%
 child_ex3_bf <- child_ex3_model_comparison%>%
   group_by(parameter)%>%
   spread(model, logP) %>%
-  mutate("pragmatic > flat_prior" = pragmatic - flat_prior,
-         "pragmatic > prior_only" = pragmatic - prior_only,
-         "flat_prior > prior_only" = flat_prior - prior_only) %>%
+  mutate("pragmatic > flat_prior" = exp(pragmatic - flat_prior),
+         "pragmatic > prior_only" = exp(pragmatic - prior_only),
+         "flat_prior > prior_only" = exp(flat_prior - prior_only)) %>%
   select(-pragmatic,-flat_prior, -prior_only)
 
 child_ex3_bf%>%

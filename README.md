@@ -6,10 +6,10 @@ Here you find all experimental procedures, data files and analysis scripts assoc
 
 Experiments can be found in `experiments/`. Experiments measuring the prior strength manipulations for novelty and preference in Experiment 4 can be found in `experiments/Ex2_novelty` and `experiments/Ex2_preference` respectively. To run the experiments, download the repository and click on the respective `.html` file.
 
-All data sets can be found in `stats/data/`. Model outputs are stored in `stats/saves/`. 
+The main manuscript and the supplementary material can be found in `papers/full_paper/`. For an easy to read version, open the respective `.pdf` files. For detailed information about the analyses reported in the manuscript or the supplementary material, take a look at the respective `.Rmd` files.
 
-The main manuscript file includes all analysis reported in it and can be found at `papers/full_paper/manuscript.Rmd`.
+All data sets can be found in `stats/data/`. 
 
-The same applies to the supplementary material, which can be found at `papers/full_paper/Supplementary_information.Rmd`.
+Code for cognitive models and Bayesian parameter estimation can be found in `papers/full_paper/models.Rmd` (see `papers/full_paper/models.html` for a rendered version).
 
-Code for cognitive models (including parameter estimation) can be found in `papers/full_paper/models.Rmd`.
+Model predictions for probabilistic models and some summary statistics are saved as `.rds` files in `stats/saves/`. 
