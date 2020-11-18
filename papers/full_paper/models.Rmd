@@ -2397,30 +2397,47 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_prag_param_free.csv"
+var modelVariant = "integration parameter free"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+//var mll = AIS(model, {steps:steps, samples: samples})
+//mll
 
 '
 ```
 
 ```{r}
-# child_ex3_pragm_model_likelihood<- webppl(
+# webppl(
 #   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.marginal.likelihood , sep='\n'),
+#   packages ="webppl-csv",
 #   data =list(allData = ex3_model_data),
 #   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
+#   chains = 1,
+#   cores = 1
+# )
+# 
+# read_csv("../../stats/data/llh_child_prag_param_free.csv")%>%
+#   mutate(model = "pragmatic",
+#          parameter = "parameter free")%>%
 #   saveRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")
 
-child_ex3_pragm_model_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")%>%
-  as.tibble()%>%
-  mutate(model = "pragmatic",
-         parameter = "parameter free")%>%
+child_ex3_pragm_model_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")
+
+
+child_ex3_pragm_model_likelihood_marginal <- child_ex3_pragm_model_likelihood%>%
   group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
+  summarise(logP = mean(weight))
   
 ```
 
@@ -2447,32 +2464,47 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_prag_noise.csv"
+var modelVariant = "integration noise"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+// var mll = AIS(model, {steps:steps, samples: samples})
+// mll
 '
 ```
 
 
 ```{r}
-# child_ex3_pragm_model_noise_likelihood<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.noise.marginal.likelihood , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
-#   saveRDS("../../stats/saves/child_ex3_pragm_model_noise_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.noise.marginal.likelihood , sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  packages ="webppl-csv",
+  chains = 1,
+  cores = 1
+)
 
-
-child_ex3_pragm_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_noise_loglike.rds")%>%
-  as.tibble()%>%
+read_csv("../../stats/data/llh_child_prag_noise.csv")%>%
   mutate(model = "pragmatic",
          parameter = "noise")%>%
-  group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
+  saveRDS("../../stats/saves/child_ex3_pragm_model_noise_loglike.rds")
 
+child_ex3_pragm_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_noise_loglike.rds")
+
+
+child_ex3_pragm_model_noise_likelihood_marginal <- child_ex3_pragm_model_noise_likelihood%>%
+  group_by(model,parameter)%>%
+  summarise(logP = mean(weight))
 ```
 
 ##### Developmental noise parameter
@@ -2501,31 +2533,47 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_prag_dev_noise.csv"
+var modelVariant = "integration dev noise"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+//var mll = AIS(model, {steps:steps, samples: samples})
+//mll
 '
 ```
 
 
 ```{r}
-# child_ex3_pragm_model_developmental_noise_likelihood<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.developmental.noise.marginal.likelihood , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
-#   saveRDS("../../stats/saves/child_ex3_pragm_model_developmenatl_noise_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.developmental.noise.marginal.likelihood , sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  packages ="webppl-csv",
+  chains = 1,
+  cores = 1
+)
 
-
-child_ex3_pragm_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_developmenatl_noise_loglike.rds")%>%
-  as.tibble()%>%
+read_csv("../../stats/data/llh_child_prag_dev_noise.csv")%>%
   mutate(model = "pragmatic",
          parameter = "developmental noise")%>%
+  saveRDS("../../stats/saves/child_ex3_pragm_model_developmenatl_noise_loglike.rds")
+
+child_ex3_pragm_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_developmenatl_noise_loglike.rds")
+
+
+child_ex3_pragm_model_developmental_noise_likelihood_marginal <- child_ex3_pragm_model_developmental_noise_likelihood%>%
   group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
+  summarise(logP = mean(weight))
 
 ```
 
@@ -2554,30 +2602,49 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_flat_prior_param_free.csv"
+var modelVariant = "flat prior parameter free"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+//var mll = AIS(model, {steps:steps, samples: samples})
+//mll
 '
 ```
 
 
 ```{r}
-# child_ex3_flat_prior_model_likelihood<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.marginal.likelihood , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
-#   saveRDS("../../stats/saves/child_ex3_flat_prior_model_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.marginal.likelihood , sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  packages ="webppl-csv",
+  chains = 1,
+  cores = 1
+)
 
-child_ex3_flat_prior_model_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_loglike.rds")%>%
-  as.tibble()%>%
+read_csv("../../stats/data/llh_child_flat_prior_param_free.csv")%>%
   mutate(model = "flat_prior",
          parameter = "parameter free")%>%
+  saveRDS("../../stats/saves/child_ex3_flat_prior_model_loglike.rds")
+
+child_ex3_flat_prior_model_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_loglike.rds")
+
+
+child_ex3_flat_prior_model_likelihood_marginal <- child_ex3_flat_prior_model_likelihood%>%
   group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
+  summarise(logP = mean(weight))
+
+
 ```
 
 ##### Noise parameter
@@ -2605,30 +2672,49 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_flat_prior_noise.csv"
+var modelVariant = "flat prior noise"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+//var mll = AIS(model, {steps:steps, samples: samples})
+//mll
+
 '
 ```
 
 
 ```{r}
-# child_ex3_flat_prior_model_noise_likelihood<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.noise.marginal.likelihood , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
-#   saveRDS("../../stats/saves/child_ex3_flat_prior_model_noise_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.noise.marginal.likelihood , sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  packages ="webppl-csv",
+  chains = 1,
+  cores = 1
+)
 
-child_ex3_flat_prior_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_noise_loglike.rds")%>%
-  as.tibble()%>%
+read_csv("../../stats/data/llh_child_flat_prior_noise.csv")%>%
   mutate(model = "flat_prior",
          parameter = "noise")%>%
+  saveRDS("../../stats/saves/child_ex3_flat_prior_model_noise_loglike.rds")
+
+child_ex3_flat_prior_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_noise_loglike.rds")
+
+
+child_ex3_flat_prior_model_noise_likelihood_marginal <- child_ex3_flat_prior_model_noise_likelihood%>%
   group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
+  summarise(logP = mean(weight))
+
 ```
 
 ##### Developmental noise parameter
@@ -2659,32 +2745,47 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_flat_prior_dev_noise.csv"
+var modelVariant = "flat prior dev noise"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+//var mll = AIS(model, {steps:steps, samples: samples})
+//mll
 '
 ```
 
 
 ```{r}
-# child_ex3_flat_prior_model_developmental_noise_likelihood<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.developmental.noise.marginal.likelihood , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
-#   saveRDS("../../stats/saves/child_ex3_flat_prior_model_developmental_noise_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.flat.prior.developmental.noise.marginal.likelihood , sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  packages ="webppl-csv",
+  chains = 1,
+  cores = 1
+)
 
-
-child_ex3_flat_prior_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_developmental_noise_loglike.rds")%>%
-  as.tibble()%>%
+read_csv("../../stats/data/llh_child_flat_prior_dev_noise.csv")%>%
   mutate(model = "flat_prior",
          parameter = "developmental noise")%>%
+  saveRDS("../../stats/saves/child_ex3_flat_prior_model_developmental_noise_loglike.rds")
+
+child_ex3_flat_prior_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_flat_prior_model_developmental_noise_loglike.rds")
+
+
+child_ex3_flat_prior_model_developmental_noise_likelihood_marginal <- child_ex3_flat_prior_model_developmental_noise_likelihood%>%
   group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
-  
+  summarise(logP = mean(weight))
 ```
 
 #### No informativeness model
@@ -2713,30 +2814,46 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_prior_only_param_free.csv"
+var modelVariant = "prior only parameter free"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+//var mll = AIS(model, {steps:steps, samples: samples})
+//mll
 '
 ```
 
 ```{r}
-# child_ex3_prior_only_model_likelihood<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
-#   saveRDS("../../stats/saves/child_ex3_prior_only_model_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.marginal.likelihood, sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  packages ="webppl-csv",
+  chains = 1,
+  cores = 1
+)
 
-
-child_ex3_prior_only_model_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_loglike.rds")%>%
-  as.tibble()%>%
+read_csv("../../stats/data/llh_child_prior_only_param_free.csv")%>%
   mutate(model = "prior_only",
          parameter = "parameter free")%>%
+  saveRDS("../../stats/saves/child_ex3_prior_only_model_loglike.rds")
+
+child_ex3_prior_only_model_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_loglike.rds")
+
+
+child_ex3_prior_only_model_likelihood_marginal <- child_ex3_prior_only_model_likelihood%>%
   group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
+  summarise(logP = mean(weight))
 ```
 
 ##### Noise parameter
@@ -2765,30 +2882,46 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_prior_only_noise.csv"
+var modelVariant = "prior only noise"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+//var mll = AIS(model, {steps:steps, samples: samples})
+//mll
 '
 ```
 
 ```{r}
-# child_ex3_prior_only_model_noise_likelihood<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
-#   saveRDS("../../stats/saves/child_ex3_prior_only_model_noise_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.noise.marginal.likelihood, sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  packages ="webppl-csv",
+  chains = 1,
+  cores = 1
+)
 
-
-child_ex3_prior_only_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_noise_loglike.rds")%>%
-  as.tibble()%>%
+read_csv("../../stats/data/llh_child_prior_only_noise.csv")%>%
   mutate(model = "prior_only",
          parameter = "noise")%>%
+  saveRDS("../../stats/saves/child_ex3_prior_only_model_noise_loglike.rds")
+
+child_ex3_prior_only_model_noise_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_noise_loglike.rds")
+
+
+child_ex3_prior_only_model_noise_likelihood_marginal <- child_ex3_prior_only_model_noise_likelihood%>%
   group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
+  summarise(logP = mean(weight))
 ```
 
 ##### Developmental noise parameter
@@ -2820,49 +2953,66 @@ var model = function(){
 
 }
 
-var steps = 5000
-var samples = 100
-var mll = AIS(model, {steps:steps, samples: samples})
-mll
+var steps = 10
+var samples = 10
+
+var resultsOutFile = "../../stats/data/llh_child_prior_only_dev_noise.csv"
+var modelVariant = "prior only developmental noise"
+ var fileHandle = webpplCsv.openFile(resultsOutFile)
+ var header_to_write = ["modelVariant", "steps", "iter", "weight"].join(",")
+ webpplCsv.writeLine(header_to_write,fileHandle)
+ var weights = map(function(i) {
+	 var weight = AIS(model, {samples: 1, steps: steps})
+	 var line_to_write = [modelVariant, steps, i, weight].join(",")
+ 	 webpplCsv.writeLine(line_to_write,fileHandle)
+ }, _.range(samples))
+
+//var mll = AIS(model, {steps:steps, samples: samples})
+//mll
 '
 ```
 
 ```{r}
-# child_ex3_prior_only_model_developmental_noise_likelihood<- webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.developmental.noise.marginal.likelihood , sep='\n'),
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 3,
-#   cores = 3
-# )%>%
-#   saveRDS("../../stats/saves/child_ex3_prior_only_model_developmental_noise_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.prior.only.developmental.noise.marginal.likelihood, sep='\n'),
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  packages ="webppl-csv",
+  chains = 1,
+  cores = 1
+)
 
-
-child_ex3_prior_only_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_developmental_noise_loglike.rds")%>%
-  as.tibble()%>%
+read_csv("../../stats/data/llh_child_prior_only_dev_noise.csv")%>%
   mutate(model = "prior_only",
          parameter = "developmental noise")%>%
+  saveRDS("../../stats/saves/child_ex3_prior_only_model_developmental_noise_loglike.rds")
+
+child_ex3_prior_only_model_developmental_noise_likelihood <- readRDS("../../stats/saves/child_ex3_prior_only_model_developmental_noise_loglike.rds")
+
+
+child_ex3_prior_only_model_developmental_noise_likelihood_marginal <- child_ex3_prior_only_model_developmental_noise_likelihood%>%
   group_by(model,parameter)%>%
-  summarise(logP = mean(V1))
+  summarise(logP = mean(weight))
+
 ```
 
 ```{r model loglike ex3 children}
-# calculating model log-likelihoods
+# combining model log-likelihoods
 
-# child_ex3_model_comparison <- bind_rows(
-#   child_ex3_pragm_model_likelihood,
-#   child_ex3_pragm_model_noise_likelihood,
-#   child_ex3_pragm_model_developmental_noise_likelihood,
-#   child_ex3_flat_prior_model_noise_likelihood,
-#   child_ex3_flat_prior_model_likelihood,
-#   child_ex3_flat_prior_model_developmental_noise_likelihood,
-#   child_ex3_prior_only_model_noise_likelihood,
-#   child_ex3_prior_only_model_likelihood,
-#   child_ex3_prior_only_model_developmental_noise_likelihood
-# )%>%
-#   ungroup()%>%
-#   mutate(model = reorder(model,logP))%>%
-#   saveRDS("../../stats/saves/child_ex3_model_comparison.rds")
+child_ex3_model_comparison <- bind_rows(
+  child_ex3_pragm_model_likelihood_marginal,
+  child_ex3_pragm_model_noise_likelihood_marginal,
+  child_ex3_pragm_model_developmental_noise_likelihood_marginal,
+  child_ex3_flat_prior_model_noise_likelihood_marginal,
+  child_ex3_flat_prior_model_likelihood_marginal,
+  child_ex3_flat_prior_model_developmental_noise_likelihood_marginal,
+  child_ex3_prior_only_model_noise_likelihood_marginal,
+  child_ex3_prior_only_model_likelihood_marginal,
+  child_ex3_prior_only_model_developmental_noise_likelihood_marginal
+)%>%
+  ungroup()%>%
+  mutate(model = reorder(model,logP))%>%
+  saveRDS("../../stats/saves/child_ex3_model_comparison.rds")
 
 child_ex3_model_comparison <- readRDS("../../stats/saves/child_ex3_model_comparison.rds")
 
@@ -2870,6 +3020,7 @@ child_ex3_model_comparison <- readRDS("../../stats/saves/child_ex3_model_compari
 
 ### Plot for likelihoods
 
+#### Means
 ```{r plot model loglikes ex3 children, include = T}
 ggplot(child_ex3_model_comparison, aes(x = model, y = logP, col = model))+
   geom_segment( aes(x=model, xend=model, y=-400, yend=logP), col = "black", size = 1)+
@@ -2880,11 +3031,39 @@ ggplot(child_ex3_model_comparison, aes(x = model, y = logP, col = model))+
   theme(axis.text.x=element_text(angle = 45, vjust = 1, hjust = 1))+
   guides(col = F)+
   facet_grid(~parameter)+
-  ylim(-475,-400)+
+  ylim(-550,-400)+
   scale_color_manual(breaks=c("pragmatic","prior_only","flat_prior"),
                     values= c("#859900","#b58900","#6c71c4"))
 
 ```
+#### Likelihood distributions (noise models only)
+
+```{r}
+child_ex3_model_ll_dist <- bind_rows(
+  child_ex3_pragm_model_likelihood,
+  child_ex3_pragm_model_noise_likelihood,
+  child_ex3_pragm_model_developmental_noise_likelihood,
+  child_ex3_flat_prior_model_noise_likelihood,
+  child_ex3_flat_prior_model_likelihood,
+  child_ex3_flat_prior_model_developmental_noise_likelihood,
+  child_ex3_prior_only_model_noise_likelihood,
+  child_ex3_prior_only_model_likelihood,
+  child_ex3_prior_only_model_developmental_noise_likelihood
+)%>%
+  ungroup()%>%
+  mutate(model = reorder(model,weight))
+
+ggplot(child_ex3_model_ll_dist, aes(x = weight, col = model, fill = model))+
+  geom_histogram(alpha = .5)+
+  facet_wrap(~parameter)+
+  theme_few()+
+  scale_color_manual(breaks=c("pragmatic","prior_only","flat_prior"),
+                    values= c("#859900","#b58900","#6c71c4"))+
+  scale_fill_manual(breaks=c("pragmatic","prior_only","flat_prior"),
+                    values= c("#859900","#b58900","#6c71c4"))
+
+```
+
 
 ### Bayes factors
 
