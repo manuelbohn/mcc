@@ -2397,8 +2397,8 @@ var model = function(){
 
 }
 
-var steps = 10
-var samples = 10
+var steps = 5000
+var samples = 1
 
 var resultsOutFile = "../../stats/data/llh_child_prag_param_free.csv"
 var modelVariant = "integration parameter free"
@@ -2418,19 +2418,19 @@ var modelVariant = "integration parameter free"
 ```
 
 ```{r}
-# webppl(
-#   program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.marginal.likelihood , sep='\n'),
-#   packages ="webppl-csv",
-#   data =list(allData = ex3_model_data),
-#   data_var = "dataFromR",
-#   chains = 1,
-#   cores = 1
-# )
-# 
-# read_csv("../../stats/data/llh_child_prag_param_free.csv")%>%
-#   mutate(model = "pragmatic",
-#          parameter = "parameter free")%>%
-#   saveRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")
+webppl(
+  program_code = paste(rsaUtils, rsaModel, child.ex3.rsa.marginal.likelihood , sep='\n'),
+  packages ="webppl-csv",
+  data =list(allData = ex3_model_data),
+  data_var = "dataFromR",
+  chains = 1,
+  cores = 1
+)
+
+read_csv("../../stats/data/llh_child_prag_param_free.csv")%>%
+  mutate(model = "pragmatic",
+         parameter = "parameter free")%>%
+  saveRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")
 
 child_ex3_pragm_model_likelihood <- readRDS("../../stats/saves/child_ex3_pragm_model_loglike.rds")
 
@@ -2464,8 +2464,8 @@ var model = function(){
 
 }
 
-var steps = 10
-var samples = 10
+var steps = 5000
+var samples = 100
 
 var resultsOutFile = "../../stats/data/llh_child_prag_noise.csv"
 var modelVariant = "integration noise"
