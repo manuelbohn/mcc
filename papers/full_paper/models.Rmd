@@ -2533,8 +2533,8 @@ var model = function(){
 
 }
 
-var steps = 10
-var samples = 10
+var steps = 5000
+var samples = 100
 
 var resultsOutFile = "../../stats/data/llh_child_prag_dev_noise.csv"
 var modelVariant = "integration dev noise"
@@ -2602,8 +2602,8 @@ var model = function(){
 
 }
 
-var steps = 10
-var samples = 10
+var steps = 5000
+var samples = 1
 
 var resultsOutFile = "../../stats/data/llh_child_flat_prior_param_free.csv"
 var modelVariant = "flat prior parameter free"
@@ -2672,8 +2672,8 @@ var model = function(){
 
 }
 
-var steps = 10
-var samples = 10
+var steps = 5000
+var samples = 100
 
 var resultsOutFile = "../../stats/data/llh_child_flat_prior_noise.csv"
 var modelVariant = "flat prior noise"
