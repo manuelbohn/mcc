@@ -2953,8 +2953,8 @@ var model = function(){
 
 }
 
-var steps = 10
-var samples = 10
+var steps = 5000
+var samples = 100
 
 var resultsOutFile = "../../stats/data/llh_child_prior_only_dev_noise.csv"
 var modelVariant = "prior only developmental noise"
