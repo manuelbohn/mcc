@@ -1048,7 +1048,7 @@ P_{L_1}(r|u)\propto P(r)
 
 That is, the probability of the referent given the utterance is determined by the prior probability of the referent for a particular speaker. The prior distributions were set in the same way as for the integration model.
 
-## No common ground model
+## No conversational prior model
 
 This model was identical in structure to the integration model with the exception that the prior distribution did not correspond to the measurements from Experiment 2 and did not vary with speaker identity. That is, regardless of common ground manipulation and speaker identity the prior distribution was always uniform (i.e. [0.33,0.33,0.33]). The speaker optimality parameter $\alpha$ was set in the same way as in the integration model. 
 
@@ -1142,7 +1142,7 @@ ex_3_cor_plot <- ex_3_pred %>%
   )%>%
   mutate(model =  case_when(model == "integration_noise" ~ "Integration",
                             model == "no_informativeness_noise" ~ "No informativeness",
-                            model == "no_common_ground_noise" ~ "No common ground"
+                            model == "no_common_ground_noise" ~ "No conversational prior"
                             ))
 
 
@@ -1223,7 +1223,7 @@ ex3_noise_parameters <- bind_rows(
   mutate(Model = "No informativeness"),
   readRDS("../../stats/saves/ex3_flat_prior_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "No common ground")
+  mutate(Model = "No conversational prior")
   )
 
 ggplot(ex3_noise_parameters, aes(x = value, col = Model, fill = Model))+
@@ -1231,9 +1231,9 @@ ggplot(ex3_noise_parameters, aes(x = value, col = Model, fill = Model))+
   theme_few()+
   xlab("Noise parameter")+
   xlim(0,1)+
-  scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
+  scale_color_manual(breaks=c("Integration","No informativeness","No conversational prior"),
                     values= c("#C5D86D","#86615C","#AFE0CE"))+
-  scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
+  scale_fill_manual(breaks=c("Integration","No informativeness","No conversational prior"),
                     values= c("#C5D86D","#86615C","#AFE0CE"))
 ```
 
@@ -1312,7 +1312,7 @@ ex_4_cor_plot <- ex_4_pred %>%
   )%>%
   mutate(model =  case_when(model == "integration_noise" ~ "Integration",
                             model == "no_informativeness" ~ "No informativeness",
-                            model == "no_common_ground" ~ "No common ground"
+                            model == "no_common_ground" ~ "No conversational prior"
                             ))
 
 
@@ -1355,8 +1355,8 @@ ex4_bf <- bind_rows(
   ex4_prior_only_model_noise_loglike
 ) %>% spread(model, logP) %>%
   mutate("Integration > No informativeness" = exp(integration_noise - no_informativeness),
-         "Integration > No common ground" = exp(integration_noise - no_common_ground),
-         "No common ground > No informativeness" = exp(no_common_ground - no_informativeness)) %>%
+         "Integration > No conversational prior" = exp(integration_noise - no_common_ground),
+         "No conversational prior > No informativeness" = exp(no_common_ground - no_informativeness)) %>%
   select(-integration_noise, -no_common_ground, -no_informativeness)%>%
   gather(Comparison, BF)%>%
   mutate(BF = formatC(BF,2))
@@ -1381,7 +1381,7 @@ ex4_noise_parameters <- bind_rows(
   mutate(Model = "No informativeness"),
   readRDS("../../stats/saves/ex4_flat_prior_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "No common ground")
+  mutate(Model = "No conversational prior")
   )
 
 ggplot(ex4_noise_parameters, aes(x = value, col = Model, fill = Model))+
@@ -1389,9 +1389,9 @@ ggplot(ex4_noise_parameters, aes(x = value, col = Model, fill = Model))+
   theme_few()+
   xlab("Noise parameter")+
   xlim(0,1)+
-  scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
+  scale_color_manual(breaks=c("Integration","No informativeness","No conversational prior"),
                     values= c("#C5D86D","#86615C","#AFE0CE"))+
-  scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
+  scale_fill_manual(breaks=c("Integration","No informativeness","No conversational prior"),
                     values= c("#C5D86D","#86615C","#AFE0CE"))
 ```
 
@@ -1432,15 +1432,15 @@ child_ex3_bf <- child_ex3_model_comparison%>%
   rename(Parameter = parameter)%>%
   group_by(Parameter)%>%
   spread(model, logP) %>%
-  mutate("Int > No CG" = formatC(exp(pragmatic - flat_prior),2),
+  mutate("Int > No CP" = formatC(exp(pragmatic - flat_prior),2),
          "Int > No Inf" = formatC(exp(pragmatic - prior_only),2),
-         "No CG > No Inf" = formatC(exp(flat_prior - prior_only),2)) %>%
+         "No CP > No Inf" = formatC(exp(flat_prior - prior_only),2)) %>%
   select(-pragmatic,-flat_prior, -prior_only)
 
 apa_table(
   child_ex3_bf
   , caption = "Model comparisons in Experiment 7"
-  , note = "BF = Bayes Factor, Int = Integration, No CG = No common ground, No Inf = No informativeness "
+  , note = "BF = Bayes Factor, Int = Integration, No CP = No conversational prior, No Inf = No informativeness "
   , escape = T
 )
 ```
@@ -1455,16 +1455,16 @@ child_noise_parameters <- bind_rows(
   mutate(Model = "No informativeness"),
   readRDS("../../stats/saves/child_ex3_flat_prior_model_noise.rds") %>%
   filter(Parameter %in% c("noise"))  %>%
-  mutate(Model = "No common ground")
+  mutate(Model = "No conversational prior")
   )
 child_noise_plot <- ggplot(child_noise_parameters, aes(x = value, col = Model, fill = Model))+
   geom_density(alpha = .5)+
   theme_few()+
   xlab("Noise parameter")+
   xlim(0,1)+
-  scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
+  scale_color_manual(breaks=c("Integration","No informativeness","No conversational prior"),
                     values= c("#C5D86D","#86615C","#AFE0CE"))+
-  scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
+  scale_fill_manual(breaks=c("Integration","No informativeness","No conversational prior"),
                     values= c("#C5D86D","#86615C","#AFE0CE"))
 ```
 
@@ -1490,7 +1490,7 @@ child_ex3_flat_prior_model_developmental_noise_param <- readRDS("../../stats/sav
 developmental_noise_parameter <- data_frame(
   age = rep(seq(0,2, by = 0.05),3),
   Model = c(rep("Integration",41),
-            rep("No common ground",41),
+            rep("No conversational prior",41),
             rep("No informativeness",41)),
   int = c(rep(child_ex3_pragm_model_developmental_noise_param%>%
                 filter(Parameter == "noise_int")%>%
@@ -1521,7 +1521,7 @@ child_dev_noise_plot <- ggplot(developmental_noise_parameter, aes(x = age, y= y,
   xlab("Age")+
   ylim(0,1)+
   theme_few()+
-  scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
+  scale_color_manual(breaks=c("Integration","No informativeness","No conversational prior"),
                     values= c("#C5D86D","#86615C","#AFE0CE"))
 ```
 
@@ -1550,7 +1550,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #   filter(!(Parameter %in% c("noise"))) %>%
 #   separate(Parameter, into = c("age", "speaker", "alignment"), sep="/")%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "No common ground",
+#   mutate(model = "No conversational prior",
 #          noise = "Noise")%>%
 #   group_by(model, noise,age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1583,7 +1583,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #   filter(!(Parameter %in% c("noise"))) %>%
 #   separate(Parameter, into = c("age", "speaker", "alignment"), sep="/")%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "No common ground",
+#   mutate(model = "No conversational prior",
 #          noise = "Dev. noise")%>%
 #   group_by(model, noise,age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1634,7 +1634,7 @@ Finally, Figure \ref{fig:childcor} shows correlations between model predictions 
 #          age = as.numeric(age))%>%
 #   select(-`1`)%>%
 #   mutate(age = ifelse(age<4,"3-year-olds","4-year-olds"))%>%
-#   mutate(model = "No common ground",
+#   mutate(model = "No conversational prior",
 #          noise = "Param. free")%>%
 #   group_by(model,noise, age,alignment,speaker) %>%
 #   summarise(mean = estimate_mode(value), 
@@ -1649,7 +1649,7 @@ p_child_cor<- readRDS("../../stats/saves/child_all_models_cor.rds") %>%
   ungroup()%>%
   mutate(model = recode(model,
                           "Pragmatic" = "Integration",
-                          "Flat prior" = "No common ground",
+                          "Flat prior" = "No conversational prior",
                           "Prior only" = "No informativeness"),
          data_mean = rep(p_child_ex3_data_binned%>%pull(mean),9),
          data_ci_upper = rep(p_child_ex3_data_binned%>%pull(ci_upper),9),
