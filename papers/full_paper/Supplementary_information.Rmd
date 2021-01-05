@@ -1232,9 +1232,9 @@ ggplot(ex3_noise_parameters, aes(x = value, col = Model, fill = Model))+
   xlab("Noise parameter")+
   xlim(0,1)+
   scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
-                    values= c("#b58900","#6c71c4","#859900"))+
+                    values= c("#C5D86D","#86615C","#AFE0CE"))+
   scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
-                    values= c("#b58900","#6c71c4","#859900"))
+                    values= c("#C5D86D","#86615C","#AFE0CE"))
 ```
 
 Figure \ref{fig:ex3noise} shows the posterior distribution of the noise parameter under each model. The noise parameter was fit to the data and indicates the proportion of responses that are estimated to be due to random guessing rather than in line with model predictions. Consequently, a model that makes predictions that are closer to the data is likely to have a lower noise parameter. The results corroborate the model comparison by showing that the integration model has the lowest noise parameter.  
@@ -1390,9 +1390,9 @@ ggplot(ex4_noise_parameters, aes(x = value, col = Model, fill = Model))+
   xlab("Noise parameter")+
   xlim(0,1)+
   scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
-                    values= c("#b58900","#6c71c4","#859900"))+
+                    values= c("#C5D86D","#86615C","#AFE0CE"))+
   scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
-                    values= c("#b58900","#6c71c4","#859900"))
+                    values= c("#C5D86D","#86615C","#AFE0CE"))
 ```
 
 Figure \ref{fig:modelpredex4} correlates model predictions with the data from Experiment 4. Table \ref{tab:ex4_comp} shows Bayes Factors for model comparisons in Experiment 4. As pre-registered, all models included a noise parameter. Figure \ref{fig:ex4noise} shows the posterior distribution of the noise parameter for each model in Experiment 4. All results suggest that the integration model captures the structure in the data better compared to the alternative models considered. 
@@ -1406,6 +1406,7 @@ Parameter free models did not include a noise parameter. Noise models included a
 ```{r child_prag_bf, results = "asis"}
 child_ex3_model_comparison <- readRDS("../../stats/saves/child_ex3_model_comparison.rds")
 child_ex3_pragmatic_models_bf <- child_ex3_model_comparison%>%
+  select(-ci_lower, -ci_upper)%>%
   filter(model == "pragmatic")%>%
   spread(parameter, logP) %>%
   mutate("dev. noise > noise" = exp(`developmental noise` - noise),
@@ -1414,6 +1415,7 @@ child_ex3_pragmatic_models_bf <- child_ex3_model_comparison%>%
   select(-model,-`parameter free`,-`developmental noise`, -noise)%>%
   gather(Comparison, BF)%>%
   mutate(BF = formatC(BF,2))
+
 apa_table(
   child_ex3_pragmatic_models_bf
   , caption = "Model comparisons for integration models in Experiment 7"
@@ -1426,6 +1428,7 @@ Table \ref{tab:child_bf} shows results for model comparison for the different ty
 
 ```{r child_bf, results = "asis", out.width="100%"}
 child_ex3_bf <- child_ex3_model_comparison%>%
+  select(-ci_lower, -ci_upper)%>%
   rename(Parameter = parameter)%>%
   group_by(Parameter)%>%
   spread(model, logP) %>%
@@ -1460,9 +1463,9 @@ child_noise_plot <- ggplot(child_noise_parameters, aes(x = value, col = Model, f
   xlab("Noise parameter")+
   xlim(0,1)+
   scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
-                    values= c("#b58900","#6c71c4","#859900"))+
+                    values= c("#C5D86D","#86615C","#AFE0CE"))+
   scale_fill_manual(breaks=c("Integration","No informativeness","No common ground"),
-                    values= c("#b58900","#6c71c4","#859900"))
+                    values= c("#C5D86D","#86615C","#AFE0CE"))
 ```
 
 ```{r, include = T}
@@ -1519,7 +1522,7 @@ child_dev_noise_plot <- ggplot(developmental_noise_parameter, aes(x = age, y= y,
   ylim(0,1)+
   theme_few()+
   scale_color_manual(breaks=c("Integration","No informativeness","No common ground"),
-                    values= c("#b58900","#6c71c4","#859900"))
+                    values= c("#C5D86D","#86615C","#AFE0CE"))
 ```
 
 Figure \ref{fig:childnoise} shows the different types of noise parameters for the each model. Figure \ref{fig:childnoise}A shows that the integration model has the lowest estimated level of noise of all the models considered. Figure \ref{fig:childnoise}B shows that the the integration model has the lowest level of estimated noise across the entire age range. It also shows that noise decreases with age for the integration model, suggesting that older children behaved more in line with model predictions compared to younger children. 

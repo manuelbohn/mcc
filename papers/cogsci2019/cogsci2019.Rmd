@@ -37,7 +37,7 @@ library(matrixStats)
 library(coda)
 library(ggpubr)
 library(lme4)
-library(broom)
+library(broom.mixed)
 library(exactRankTests)
 ```
 
@@ -64,7 +64,7 @@ dex4 <- read_csv(file="../../stats/data/adult_ex4.csv")
 
 # loading model comparisons and predictions
 
-pred_ex3 <- readRDS(file = "saves/model_predictions_ex3_1.rds")
+pred_ex3 <- readRDS(file = "saves/model_predictions_ex3_1.rds")%>%ungroup()
 
 pred_ex4 <- readRDS(file = "saves/model_predictions_ex3_variable_priors.rds")
 
