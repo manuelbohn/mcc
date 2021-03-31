@@ -8,7 +8,11 @@ my-own-auth.json
 *.fff
 *.log
 *.docx
-*.tex
+
+
+papers/full_paper/Supplementary_information.tex
+papers/full_paper/manuscript.tex
+
 stats/kids/rsconnect/*
 stats/adults/rsconnect/*
 models/rsconnect/*
