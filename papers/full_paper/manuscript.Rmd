@@ -6,7 +6,7 @@ author:
   - name          : "Manuel Bohn"
     affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
-    address       : "Max Planck Institute for Evolutionary Anthropology, Deutscher Platz 6, 04103 Leipzig, Germany"
+    address       : "Max Planck Institute for Evolutionary Anthropology, Department of Comparative Cultural Psychology, Max Planck Institute for Evolutionary Anthropology, Deutscher Platz 6, 04103 Leipzig"
     email         : "manuel_bohn@eva.mpg.de"
   - name          : "Michael Henry Tessler"
     affiliation   : "2"
@@ -22,13 +22,12 @@ affiliation:
     institution   : "Department of Brain and Cognitive Sciences, Massachusetts Institute of Technology"
   - id            : "3"
     institution   : "Department of Psychology, Stanford University"
-
+    
 
 abstract: |
   Language is learned in complex social settings where listeners must reconstruct speakers’ intended meanings from context. To navigate this challenge, children can use pragmatic reasoning to learn the meaning of unfamiliar words. One important challenge for pragmatic reasoning is that it requires integrating multiple information sources. Here we study this integration process. We isolate two sources of pragmatic information and -- using a probabilistic model of conversational reasoning -- formalize how they should be combined and how this process might develop. We use this model to generate quantitative predictions, which we test against new behavioral data from three- to five-year-old children (N = 243) and adults (N = 694). Results show close numerical alignment between model predictions and data. Furthermore, the model provided a better explanation of the data compared to simpler alternative models assuming that participnats selectively ignore one information source. This work integrates distinct sets of findings regarding early language and suggests that pragmatic reasoning models can provide a quantitative framework for understanding developmental changes in language learning.  
   
 keywords          : "language acquisition, social cognition, pragmatics, Bayesian modeling, common ground"
-wordcount         : "7708"
 
 bibliography      : ["library.bib"]
 
@@ -38,6 +37,7 @@ tablelist         : no
 footnotelist      : no
 lineno            : yes
 mask              : no
+numbersections    : false
 
 
 class             : "man"
@@ -646,6 +646,10 @@ r_refs(file = "r-references.bib")
 
 \newpage
 
+# Authornote
+
+We thank Jacqueline Quirke and Sabina Zacco for help with the data collection and Bria Long and Gregor Kachel for comments on an earlier version of the paper. M. Bohn received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement no. 749229. M. C. Frank was supported by a Jacobs Foundation Advanced Research Fellowship and the Zhou Fund for Language and Cognition. All experiments and analyses were pre-registered (https://osf.io/u7kxe/). Stimuli, data, and analysis code are available in a public repository (https://github.com/manuelbohn/mcc).
+
 # Declarations of interest
 
 None.
@@ -654,13 +658,6 @@ None.
 
 M. Bohn and M.C. Frank conceptualized the study, M. Merrick collected the data, M. Bohn and M.H. Tessler analyzed the data, M. Bohn, M. H. Tessler and M.C. Frank wrote the manuscript, all authors approved the final version of the manuscript.
 
-# Acknowledgments
-
-We thank Jacqueline Quirke and Sabina Zacco for help with the data collection and Bria Long and Gregor Kachel for comments on an earlier version of the paper.
-
-# Funding
-
-M. Bohn received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement no. 749229. M. C. Frank was supported by a Jacobs Foundation Advanced Research Fellowship and the Zhou Fund for Language and Cognition.
 
 
 

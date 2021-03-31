@@ -16,6 +16,10 @@ stats/rsconnect/*
 stats/graphs/*
 stats/simulations/*
 
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
 
 stats/adults/*
 stats/graphs/*
